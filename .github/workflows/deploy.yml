@@ -1,0 +1,49 @@
+name: Deploy MyFi
+
+on:
+  push:
+    branches:
+    - main
+
+env:
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
+  CARGO_TERM_COLOR: always
+  ACCOUNT_NAME: myficdn
+  PROFILE_NAME: myficdnprofile
+  PROFILE_ACCOUNT_NAME: myficdn
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Copy Files to Azure Blob Storage
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az storage copy -s 'cdn/*' --destination-account-name ${{ env.ACCOUNT_NAME }} --destination-container '$web' --recursive
+    - name: logout
+      run: |
+        az logout
+      if: always()
+  purge-storage-cache:
+    runs-on: ubuntu-latest
+    needs: build-and-deploy
+    steps:
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Purge Storage Cache
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az cdn endpoint purge -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ env.PROFILE_ACCOUNT_NAME }} --profile-name ${{ env.PROFILE_NAME }} --content-paths '/*'
+    - name: logout
+      run: |
+        az logout
+      if: always()
