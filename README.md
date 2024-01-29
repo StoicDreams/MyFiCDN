@@ -1,8 +1,6 @@
-# MyFi
+# MyFi CDN
 
-[WebUI Version: 0.7.2](https://github.com/StoicDreams/RustWebUI)
-
-API Services for Stoic Dreams
+CDN Services for Stoic Dreams
 
 ## Author
 
