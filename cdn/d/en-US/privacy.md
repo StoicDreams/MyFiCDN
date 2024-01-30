@@ -3,15 +3,10 @@
 ````quote "primary"
 This privacy notice discloses the privacy practices for this website {DOMAIN}, and all of it's platforms, including software products, services, and websites. This notice includes the following:
 
-```list
-What personally identifiable information is collected from you through our websites or applications, how it is used, and with whom it may be shared.
-
-What choices are available to you regarding the use of your data.
-
-The security procedures in place to protect the misuse of your information.
-
-How you can correct any inaccuracies in the information.
-```
+-What personally identifiable information is collected from you through our websites or applications, how it is used, and with whom it may be shared.
+-What choices are available to you regarding the use of your data.
+-The security procedures in place to protect the misuse of your information.
+-How you can correct any inaccuracies in the information.
 
 ````
 
@@ -40,17 +35,11 @@ When you explicitely opt-in, we may contact you via email, sms, or notification 
 
 **Log Data:** Log data is any data collected and stored in our logs. This may include browser data, as well as metrics such as time spent on a page or website. We do not log personal data.
 
-```list
-See what personal data we have collected from you, if any.
-
-Change/correct any personal data we have collected from you.
-
-Have us delete any personal data we have collected from you.
-
-Browser and log data we have collected from you cannot be viewed or deleted, as we only use this data for aggregate reporting and do not link this data to accounts.
-
-Express any concern you have about our use of your data.
-```
+- See what personal data we have collected from you, if any.
+- Change/correct any personal data we have collected from you.
+- Have us delete any personal data we have collected from you.
+- Browser and log data we have collected from you cannot be viewed or deleted, as we only use this data for aggregate reporting and do not link this data to accounts.
+- Express any concern you have about our use of your data.
 
 ````
 
