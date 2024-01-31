@@ -1,5 +1,5 @@
 ﻿/*
- * This file performs some preliminary setup for Stoic Dreams websites.
+ * This file performs some preliminary setup for Stoic Dreams Blazor-based websites.
  * Steps include:
  * - Assure URL is using SSL (https) security, and redirect to SSL if not.
  * - Setup window.DomInterop with methods to be accessed from C# processes.
