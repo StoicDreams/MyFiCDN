@@ -358,7 +358,7 @@ code {
     display: inline;
     background-color: var(--color-info);
     color: var(--color-info-offset);
-    border-radius: 1px;
+    border-radius: var(--padding);
     outline: 1.5px solid var(--color-info);
 }
 
