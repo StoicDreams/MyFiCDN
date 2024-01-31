@@ -2693,6 +2693,36 @@ a.theme-inherit:active {
     color: var(--color-button);
 }
 
+body > div.tooltip {
+	position: fixed;
+	display: block;
+	max-width: 80%;
+	max-height: 50%;
+	width: auto;
+	height: auto;
+	border: 1px solid var(--color-primary);
+	border-radius: 1em;
+	top: 50%;
+	left: 50%;
+	background-color: var(--color-background);
+	color: var(--color-background-offset);
+	padding: calc(1.4 * var(--padding));
+	font-size: var(--typography-size);
+	z-index: 99999;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	box-sizing: border-box;
+}
+
+	body > div.tooltip.open {
+		transform: scale(1);
+	}
+
+	body > div.tooltip.closed {
+		transform: scale(0);
+	}
+
 /* Screen Size Helpers
 body.w-4k
 body.w-wqhd

@@ -1,4 +1,4 @@
-﻿(function SetupTooltips() {
+﻿setTimeout(() => {
 	'use strict';
 	const Tooltip = document.createElement('div');
 	Tooltip.className = 'tooltip closed';
@@ -41,4 +41,4 @@
 		Tooltip.style.left = `${myposition.x}px`;
 		Tooltip.style.top = `${myposition.y}px`;
 	});
-})();
+}, 1000);
