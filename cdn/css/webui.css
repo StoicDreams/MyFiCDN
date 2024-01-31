@@ -2521,8 +2521,8 @@ a.theme-background:link,
 a.theme-background:visited,
 a.theme-background:focus,
 a.theme-background:active {
-    background-color: var(--color-background);
-    color: var(--color-background-offset);
+    background-color: var(--site-background-color);
+    color: var(--site-background-offset);
 }
 
 .theme-black,
@@ -2638,7 +2638,7 @@ a.theme-inherit:active {
 }
 
 .color-background {
-    color: var(--color-background);
+    color: var(--site-background-color);
 }
 
 .color-black {
@@ -2704,8 +2704,8 @@ body > div.tooltip {
 	border-radius: 1em;
 	top: 50%;
 	left: 50%;
-	background-color: var(--color-background);
-	color: var(--color-background-offset);
+	background-color: var(--site-background-color);
+	color: var(--site-background-offset);
 	padding: calc(1.4 * var(--padding));
 	font-size: var(--typography-size);
 	z-index: 99999;
@@ -2877,8 +2877,8 @@ body.w-4k .hide-at-4k {
 
 .titlebar-button:hover {
     background: #5bbec3;
-    background: var(--color-background-offset);
-    color: var(--color-background);
+    background: var(--site-background-offset);
+    color: var(--site-background-color);
 }
 
 /* Code highlight defaults */

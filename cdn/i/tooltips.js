@@ -12,30 +12,32 @@
 		Tooltip.className = 'tooltip closed';
 	}
 	function CheckContainersForAriaLabel(target) {
-		while (target !== null) {
-			if (target.ariaLabel) { return target; }
+		while (target) {
+			if (target.ariaLabel) { return [target, target.ariaLabel]; }
+            if (target.getAttribute && target.getAttribute('title')) { return [target, target.getAttribute('title')]; }
 			target = target.parentNode;
 		}
-		return target;
+		return [null, null];
 	}
 	let tooltipDistancePadding = 30;
 	document.body.addEventListener('click', CloseIfOpen);
 	document.body.addEventListener('input', CloseIfOpen);
 	document.body.addEventListener('mouseover', ev => {
-		let target = CheckContainersForAriaLabel(ev.target);
+		let [target, display] = CheckContainersForAriaLabel(ev.target);
 		if (!target) { CloseIfOpen(); return; }
+        console.log('good?', target, display);
 		if (target === capturedElement) { return; }
 		let client = target.getBoundingClientRect();
 		isShowing = true;
 		capturedElement = target;
-		Tooltip.innerText = target.ariaLabel;
+		Tooltip.innerText = display;
 		Tooltip.className = 'tooltip open';
 		let myposition = {
 			x: client.left + (client.width / 2) - (Tooltip.clientWidth / 2),
 			y: client.top - tooltipDistancePadding
 		};
-		if (myposition.x + Tooltip.clientWidth > window.innerWidth) { myposition.x = window.innerWidth - Tooltip.clientWidth - 5; }
-		if (myposition.x < 0) { myposition.x = 5; }
+		if (myposition.x + Tooltip.clientWidth > window.innerWidth) { myposition.x = window.innerWidth - Tooltip.clientWidth - 10; }
+		if (myposition.x < 0) { myposition.x = 10; }
 		if (myposition.y < 0) { myposition.y = client.top + client.height; }
 
 		Tooltip.style.left = `${myposition.x}px`;
