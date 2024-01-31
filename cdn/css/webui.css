@@ -282,6 +282,8 @@ img:not(:only-child) {
     height: 1em;
 }
 
+blockquote>p:not(:first-child),
+blockquote>div:not(:first-child),
 .paper>p:not(:first-child),
 .paper>div:not(:first-child) {
     margin-top: calc(1.5 * var(--padding));
