@@ -194,9 +194,11 @@ footer>* {
     transition-duration: 200ms;
 }
 
-#app.pin-left > main,
-#app.pin-left > header {
+#app.pin-left > main {
     padding-left: var(--drawer-left-width);
+}
+#app.pin-left > header {
+    padding-left: calc(var(--drawer-left-width) + var(--padding));
 }
 #app.pin-left .app-drawer.left .page-cover {
     display:none;
