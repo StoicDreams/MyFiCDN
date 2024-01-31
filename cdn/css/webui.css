@@ -2706,7 +2706,7 @@ body > div.tooltip {
 	left: 50%;
 	background-color: var(--site-background-color);
 	color: var(--site-background-offset);
-	padding: calc(1.4 * var(--padding));
+	padding: calc(1 * var(--padding)) calc(2 * var(--padding));
 	font-size: var(--typography-size);
 	z-index: 99999;
 	white-space: nowrap;
