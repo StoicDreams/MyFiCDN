@@ -1,5 +1,6 @@
 ﻿setTimeout(() => {
 	'use strict';
+    window.tooltipsEnabled = true;
 	const Tooltip = document.createElement('div');
 	Tooltip.className = 'tooltip closed';
 	let capturedElement = null;
@@ -23,9 +24,9 @@
 	document.body.addEventListener('click', CloseIfOpen);
 	document.body.addEventListener('input', CloseIfOpen);
 	document.body.addEventListener('mouseover', ev => {
+        if (!window.tooltipsEnabled) return;
 		let [target, display] = CheckContainersForAriaLabel(ev.target);
 		if (!target) { CloseIfOpen(); return; }
-        console.log('good?', target, display);
 		if (target === capturedElement) { return; }
 		let client = target.getBoundingClientRect();
 		isShowing = true;
