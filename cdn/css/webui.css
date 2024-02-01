@@ -198,7 +198,7 @@ footer>* {
     padding-left: var(--drawer-left-width);
 }
 #app.pin-left > header {
-    padding-left: calc(var(--drawer-left-width) + var(--padding));
+    padding-left: calc(var(--drawer-left-width) + (2 * var(--padding)));
 }
 #app.pin-left .app-drawer.left .page-cover {
     display:none;
