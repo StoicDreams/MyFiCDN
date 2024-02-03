@@ -1307,6 +1307,7 @@ a.btn:active,
     color: var(--color-button-offset);
 }
 
+.icon,
 .btn {
     display: inline-flex;
     flex-flow: row;
@@ -1314,11 +1315,16 @@ a.btn:active,
     align-items: center;
     text-decoration: none;
     padding: calc(1 * var(--padding)) calc(2 * var(--padding));
-    cursor: pointer;
     border-radius: var(--corners);
     min-height: 2em;
     -webkit-user-select: text;
     user-select: text;
+}
+
+.btn:not(.disabled:not(:disabled)),
+button:not(:disabled):not(.disabled),
+a[href]:not(:disabled):not(.disabled) {
+    cursor: pointer;
 }
 
 .disabled,
