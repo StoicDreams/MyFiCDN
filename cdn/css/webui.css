@@ -879,6 +879,12 @@ aside.app-drawer.left {
 .field-group-line a {
     border-radius: 0;
 }
+.field-group-line .btn,
+.field-group-line button,
+.field-group-line a {
+    text-align: center;
+    justify-content: center;
+}
 .field-group-line > *:first-child {
     border-top-left-radius: var(--corners);
     border-bottom-left-radius: var(--corners);
@@ -3009,7 +3015,29 @@ body.w-4k .hide-at-4k {
     font-style: italic
 }
 
+.grow-open {
+    animation-name: grow-open;
+    animation-duration: 1s;
+}
+
 /* Animations */
+
+@keyframes grow-open {
+    0% {
+        overflow: hidden;
+        max-height: 0;
+    }
+    10% {
+        max-height: 0;
+    }
+    99% {
+        max-height: 100%;
+    }
+    100% {
+        max-height: none;
+        overflow: visible;
+    }
+}
 
 @keyframes animation-fadein {
     0% {
