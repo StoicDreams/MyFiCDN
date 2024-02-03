@@ -868,10 +868,15 @@ aside.app-drawer.left {
     color: var(--color-active-offset);
 }
 .field-group-line {
+    gap: 0;
     outline: 1.5px solid var(--color-info);
     border-radius: var(--corners);
 }
-.field-group-line * {
+.field-group-line *,
+.field-group-line > *,
+.field-group-line .btn,
+.field-group-line button,
+.field-group-line a {
     border-radius: 0;
 }
 .field-group-line > *:first-child {
