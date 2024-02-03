@@ -851,7 +851,7 @@ aside.app-drawer.left {
 }
 
 .paper {
-    border-radius: var(--default-borderradius);
+    border-radius: var(--corners);
 }
 
 .navlink {
@@ -867,7 +867,21 @@ aside.app-drawer.left {
     background-color: var(--color-active);
     color: var(--color-active-offset);
 }
-
+.field-group-line {
+    outline: 1.5px solid var(--color-info);
+    border-radius: var(--corners);
+}
+.field-group-line * {
+    border-radius: 0;
+}
+.field-group-line > *:first-child {
+    border-top-left-radius: var(--corners);
+    border-bottom-left-radius: var(--corners);
+}
+.field-group-line > *:last-child {
+    border-top-right-radius: var(--corners);
+    border-bottom-right-radius: var(--corners);
+}
 .auto_message_box {
     flex-grow: 1;
 }
@@ -2703,7 +2717,7 @@ body > div.tooltip {
 	width: auto;
 	height: auto;
 	border: 1px solid var(--color-primary);
-	border-radius: 1em;
+	border-radius: var(--corners);
 	top: 50%;
 	left: 50%;
 	background-color: var(--site-background-color);
