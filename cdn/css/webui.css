@@ -871,6 +871,7 @@ aside.app-drawer.left {
     gap: 0;
     outline: 1.5px solid var(--color-info);
     border-radius: var(--corners);
+    overflow: hidden;
 }
 .field-group-line *,
 .field-group-line > *,
