@@ -3,7 +3,7 @@
 ## 1. Terms
 
 ```section
-By accessing this application, {DOMAIN}, or any of our associated software, you are agreeing to be bound by these Terms and Conditions of Use, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this web site are protected by applicable copyright and trade mark law.
+By accessing this application, {DOMAIN}, or any of {COMPANY_PLURAL} other associated software, you are agreeing to be bound by these Terms and Conditions of Use, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this web site are protected by applicable copyright and trade mark law.
 ```
 
 ## 2. Cookies & Browser Storage
