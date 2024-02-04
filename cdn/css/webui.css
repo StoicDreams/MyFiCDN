@@ -190,8 +190,12 @@ footer>* {
 
 .app-drawer.left .logo {
     height: calc(6*1em);
+    width: 100%;
     transition-property: all;
     transition-duration: 200ms;
+}
+.app-drawer.left .logo > .image {
+    width: 100%;
 }
 
 #app.pin-left > main {
