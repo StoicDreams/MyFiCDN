@@ -15,7 +15,11 @@
 	function CheckContainersForAriaLabel(target) {
 		while (target) {
 			if (target.ariaLabel) { return [target, target.ariaLabel]; }
-            if (target.getAttribute && target.getAttribute('title')) { return [target, target.getAttribute('title')]; }
+            if (target.getAttribute && target.getAttribute('title')) {
+				target.setAttribute('aria-label', target.getAttribute('title'));
+				target.removeAttribute('title');
+			}
+            if (target.getAttribute && target.getAttribute('aria-label')) { return [target, target.getAttribute('aria-label')]; }
 			target = target.parentNode;
 		}
 		return [null, null];
