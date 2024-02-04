@@ -1,7 +1,7 @@
-# {DOMAIN} Privacy Policy
+# {APP_NAME} Privacy Policy
 
 ````quote "primary"
-This privacy notice discloses the privacy practices for this website {DOMAIN}, and all of it's platforms, including software products, services, and websites. This notice includes the following:
+This privacy notice discloses the privacy practices for this application {APP_NAME}, its domain {DOMAIN}, and all of it's platforms, including software products, services, and websites. This notice includes the following:
 
 -What personally identifiable information is collected from you through our websites or applications, how it is used, and with whom it may be shared.
 -What choices are available to you regarding the use of your data.
@@ -15,7 +15,7 @@ This privacy notice discloses the privacy practices for this website {DOMAIN}, a
 ## Information Collection, Use, and Sharing
 
 ```section
-We are the sole owners of the information collected on {DOMAIN} and our associated platforms. We only have access to collect information that you voluntarily give us via use of {DOMAIN} and our associated platforms, email, or other direct contact from you. We will not share, sell, or rent any personally identifiable information to anyone.
+We are the sole owners of the information collected on {APP_NAME} and our associated platforms. We only have access to collect information that you voluntarily give us via use of {APP_NAME} and our associated platforms, email, or other direct contact from you. We will not share, sell, or rent any personally identifiable information to anyone.
 
 We will use your information that you provide as needed to provide our services to you through our platforms, and to respond to you, regarding reasons you contact us. We will not share your personal information with any third party outside of our organization, except when it is required to perform a service you have requested.
 
@@ -29,11 +29,11 @@ When you explicitely opt-in, we may contact you via email, sms, or notification 
 ## Your Access to and Control Over Information
 
 ````section
-**Personal Data:** Personal data is any data you submit through forms or other input methods through our websites or applications. This may include your email, password, name, etc.
+**Personal Data:** Personal data is any data you submit through forms or other input methods through our applications or websites. This may include your email, password, name, etc.
 
 **Browser Data:** Browser data is data your browser gives us about it and the connection it has with our services. This may include your IP address, browser name, browser capabilities, etc.
 
-**Log Data:** Log data is any data collected and stored in our logs. This may include browser data, as well as metrics such as time spent on a page or website. We do not log personal data.
+**Log Data:** Log data is any data collected and stored in our logs. This may include browser data, as well as metrics such as time spent on an application, page, or website. We do not log personally identifiable data such as name or email.
 
 - See what personal data we have collected from you, if any.
 - Change/correct any personal data we have collected from you.
@@ -46,7 +46,7 @@ When you explicitely opt-in, we may contact you via email, sms, or notification 
 ## Security
 
 ```section
-At {COMPANY_SINGULAR}, we take precautions to protect your information. When you submit sensitive information via {DOMAIN}, your information is protected both online and offline.
+At {COMPANY_SINGULAR}, we take precautions to protect your information. When you submit sensitive information via {APP_NAME}, your information is protected both online and offline.
 
 When we collect or transfer information, that information is encrypted and transmitted to us in a secure way. You can verify this by looking for a lock icon in the address bar and looking for "https" at the beginning of the address of the web page.
 
@@ -56,7 +56,7 @@ While we use encryption to protect information transmitted online, we also prote
 ## Registration
 
 ```section
-Some of our features and services may require registration. Registration requires certain information, such as name and email address. This information is used to securily identify you and potentially contact you about the products or services on {DOMAIN} or other {COMPANY_SINGULAR} platforms in which you have expressed interest. At your option, you may also provide other information about yourself, but it is not required for reqistration.
+Some of our features and services may require registration. Registration requires certain information, such as name and email address. This information is used to securily identify you and potentially contact you about the products or services on {APP_NAME} or other {COMPANY_SINGULAR} platforms in which you have expressed interest. At your option, you may also provide other information about yourself, but it is not required for reqistration.
 ```
 
 ## Cookies
@@ -78,11 +78,11 @@ We may partner with other parties to provide specific services (for example, Azu
 ## Links
 
 ```section
-Our websites and apps may contain links to other websites. Please be aware that we are not responsible for the content or privacy practices of such other websites. We encourage our users to be aware when they leave our site and to read the privacy statements of any other site that collects personally identifiable information.
+Our websites and applications may contain links to other third-party websites. Please be aware that we are not responsible for the content or privacy practices of such other third-party websites. We encourage our users to be aware when they leave our site and to read the privacy statements of any other site that collects personally identifiable information.
 ```
 
 ## Surveys
 
 ```section
-From time-to-time we may request information via surveys. Participation in these surveys is completely voluntary, and you may choose whether or not to participate and therefore disclose this information. Any information obtained in these surveys will be aggregated and not linked directly to any individual person.
+From time-to-time we may request information via surveys. Participation in these surveys is completely voluntary, and you may choose whether or not to participate and therefore disclose this information. Any information obtained in these surveys will be aggregated and not linked directly to any individual person, except when an explicit opt-in is permitted to allow contact in response to survey.
 ```
