@@ -74,11 +74,27 @@
     --drawer-width-mini-left: 56px;
     --drawer-width-mini-right: 56px;
     --appbar-height: 64px;
-    --typography-family: 'Roboto', 'Helvetica', 'Arial', 'sans-serif';
+    --typography-family: system-ui, 'Roboto', 'Helvetica', Arial, sans-serif;
     --typography-size: 1rem;
     --typography-weight: 400;
     --typography-lineheight: 1.33;
     --typography-letterspacing: normal;
+}
+
+svg.logo .top-left {
+    fill: var(--color-success);
+}
+svg.logo .top-right {
+    fill: var(--color-tertiary);
+}
+svg.logo .bottom-left {
+    fill: var(--color-secondary);
+}
+svg.logo .bottom-right {
+    fill: var(--color-primary);
+}
+svg.logo .diamond {
+    fill: var(--color-title);
 }
 
 * {
