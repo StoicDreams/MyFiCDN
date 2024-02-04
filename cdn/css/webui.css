@@ -195,7 +195,8 @@ footer>* {
     transition-duration: 200ms;
 }
 .app-drawer.left .logo > .image {
-    width: 100%;
+    display: flex;
+    text-align: center;
 }
 
 #app.pin-left > main {
