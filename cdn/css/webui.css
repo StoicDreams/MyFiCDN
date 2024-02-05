@@ -83,8 +83,8 @@
 
 svg.logo text {
     fill: white;
-    font-size: 4em;
-    font-weight: 700;
+    font-size: 4.2em;
+    font-weight: 600;
 }
 svg.logo .top-left {
     fill: var(--color-success);
