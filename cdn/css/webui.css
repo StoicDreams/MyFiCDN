@@ -218,6 +218,7 @@ footer>* {
 .app-drawer.left .logo > .image {
     display: flex;
     text-align: center;
+    width: 100%;
 }
 
 #app.pin-left > main {
