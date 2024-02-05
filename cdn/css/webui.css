@@ -209,6 +209,12 @@ footer>* {
     z-index: 1;
 }
 
+.image {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
 .app-drawer.left .logo {
     height: calc(6*1em);
     width: 100%;
@@ -216,8 +222,6 @@ footer>* {
     transition-duration: 200ms;
 }
 .app-drawer.left .logo > .image {
-    display: flex;
-    text-align: center;
     width: 100%;
 }
 
