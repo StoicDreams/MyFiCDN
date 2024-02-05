@@ -81,6 +81,11 @@
     --typography-letterspacing: normal;
 }
 
+svg.logo text {
+    fill: white;
+    font-size: 70;
+    font-weight: 700;
+}
 svg.logo .top-left {
     fill: var(--color-success);
 }
