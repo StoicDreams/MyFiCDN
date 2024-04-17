@@ -65,9 +65,9 @@
 	const startObserving = (domNode) => {
 		const observer = new MutationObserver(mutations => {
 			mutations.forEach(function (mutation) {
+				console.log(mutation);
 				Array.from(mutation.addedNodes).forEach(el => {
 					if (!el.nodeName || el.nodeName !== 'TEXTAREA') return;
-					console.log(el);
 					autosizeTextArea(el);
 				});
 			});
