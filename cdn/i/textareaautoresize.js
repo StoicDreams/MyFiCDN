@@ -2,9 +2,9 @@
 	'use strict';
 	window.GetInnerText = ref => ref.innerText;
 	window.GetInnerHtml = ref => ref.innerHtml;
-	['input', 'focusin'].forEach(eventKey => {
+	['input', 'focusin', 'change'].forEach(eventKey => {
 		document.body.addEventListener(eventKey, ev => {
-			if (!ev.target) { return; }
+			if (!ev.target || ev.target.nodeName !== 'TEXTAREA') { return; }
 			autosizeTextArea(ev.target);
 		});
 	});
@@ -40,21 +40,12 @@
 		el.selectionStart = cursorPos;
 		el.selectionEnd = cursorPos;
 	});
-	const mock = document.createElement('textarea');
-	mock.style.maxHeight = '0px';
 	function autosizeTextArea(target) {
 		if (target.nodeName !== 'TEXTAREA') { return; }
 		setTimeout(() => {
-			mock.value = target.value;
-			target.parentNode.insertBefore(mock, target);
-			let heightOffset = 52;
-			let newHeight = mock.scrollHeight + heightOffset
+			target.style.height = `0px`;
+			let newHeight = target.scrollHeight;
 			target.style.height = `${(newHeight)}px`;
-			mock.remove();
-			let dif = target.scrollHeight - target.clientHeight;
-			if (dif > 0) {
-				target.style.height = `${(newHeight + heightOffset + dif)}px`;
-			}
 		}, 10);
 	}
 	function UpdateAllDisplayedTextareaSizes() {
@@ -62,9 +53,33 @@
 			autosizeTextArea(instance);
 		});
 	}
+
+	// Publicly available helper methods
 	window.AutosizeTextarea = autosizeTextArea;
 	window.RefreshTextareaSizes = () => {
 		// Add slight delay to allow time for DOM rendering to complete
 		setTimeout(UpdateAllDisplayedTextareaSizes, 100);
 	}
+
+	const startObserving = (domNode) => {
+		const observer = new MutationObserver(mutations => {
+			mutations.forEach(function (mutation) {
+				Array.from(mutation.addedNodes).forEach(el => {
+					if (!el.nodeName || el.nodeName !== 'TEXTAREA') return;
+					console.log(el);
+					autosizeTextArea(el);
+				});
+			});
+		});
+
+		observer.observe(domNode, {
+			childList: true,
+			attributes: true,
+			characterData: true,
+			subtree: true,
+		});
+
+		return observer;
+	};
+	startObserving(document.body);
 })();
