@@ -1,15 +1,8 @@
 ﻿(function SetupTextareaAutoResize() {
 	'use strict';
-	window.GetInnerText = ref => ref.innerText;
-	window.GetInnerHtml = ref => ref.innerHtml;
-	['input', 'focusin', 'change'].forEach(eventKey => {
-		document.body.addEventListener(eventKey, ev => {
-			if (!ev.target || ev.target.nodeName !== 'TEXTAREA') { return; }
-			autosizeTextArea(ev.target);
-		});
-	});
+	// This process allows textarea inputs to accept Shift+Tab input to enter Tab character.
 	document.body.addEventListener("keydown", (ev) => {
-		if (ev.key !== 'Tab') { return; }
+		if (ev.key !== 'Tab' || !ev.shiftKey) { return; }
 		if (!ev.target || ev.target.nodeName !== 'TEXTAREA') { return; }
 		ev.preventDefault();
 		let el = ev.target;
@@ -23,7 +16,7 @@
 					if (i > 0) { break; }
 					--cursorPos;
 					break;
-				}
+				} s
 				if (text.charAt(cursorPos - 1) === ' ') {
 					--cursorPos;
 					continue;
@@ -53,14 +46,22 @@
 			autosizeTextArea(instance);
 		});
 	}
-
 	// Publicly available helper methods
 	window.AutosizeTextarea = autosizeTextArea;
 	window.RefreshTextareaSizes = () => {
 		// Add slight delay to allow time for DOM rendering to complete
 		setTimeout(UpdateAllDisplayedTextareaSizes, 100);
 	}
-
+	// Listen for updates from textarea inputs
+	['input', 'focusin', 'change', 'compositionend'].forEach(eventKey => {
+		document.body.addEventListener(eventKey, ev => {
+			if (!ev.target || ev.target.nodeName !== 'TEXTAREA') { return; }
+			autosizeTextArea(ev.target);
+		});
+	});
+	// Process updates if the window is resized
+	window.addEventListener('resize', UpdateAllDisplayedTextareaSizes);
+	// Observe for DOM updates to set sizing as textarea elements are attached to DOM.
 	const startObserving = (domNode) => {
 		const observer = new MutationObserver(mutations => {
 			mutations.forEach(function (mutation) {
@@ -71,14 +72,12 @@
 				});
 			});
 		});
-
 		observer.observe(domNode, {
 			childList: true,
 			attributes: true,
 			characterData: true,
 			subtree: true,
 		});
-
 		return observer;
 	};
 	startObserving(document.body);
