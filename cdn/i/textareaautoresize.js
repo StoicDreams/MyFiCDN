@@ -53,19 +53,20 @@
 		setTimeout(UpdateAllDisplayedTextareaSizes, 100);
 	}
 	// Listen for updates from textarea inputs
+	/*
 	['input', 'focusin', 'change'].forEach(eventKey => {
 		document.body.addEventListener(eventKey, ev => {
 			if (!ev.target || ev.target.nodeName !== 'TEXTAREA') { return; }
 			autosizeTextArea(ev.target);
 		});
 	});
+	*/
 	// Process updates if the window is resized
 	window.addEventListener('resize', UpdateAllDisplayedTextareaSizes);
 	// Observe for DOM updates to set sizing as textarea elements are attached to DOM.
 	const startObserving = (domNode) => {
 		const observer = new MutationObserver(mutations => {
 			mutations.forEach(function (mutation) {
-				console.log(mutation.target);
 				if (mutation.target && mutation.target.parentNode && mutation.target.parentNode.nodeName === 'TEXTAREA') {
 					autosizeTextArea(mutation.target.parentNode);
 				}
