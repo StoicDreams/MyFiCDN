@@ -53,7 +53,7 @@
 		setTimeout(UpdateAllDisplayedTextareaSizes, 100);
 	}
 	// Listen for updates from textarea inputs
-	['input', 'focusin', 'change', 'compositionend'].forEach(eventKey => {
+	['input', 'focusin', 'change'].forEach(eventKey => {
 		document.body.addEventListener(eventKey, ev => {
 			if (!ev.target || ev.target.nodeName !== 'TEXTAREA') { return; }
 			autosizeTextArea(ev.target);
@@ -65,7 +65,10 @@
 	const startObserving = (domNode) => {
 		const observer = new MutationObserver(mutations => {
 			mutations.forEach(function (mutation) {
-				console.log(mutation);
+				console.log(mutation.target);
+				if (mutation.target && mutation.target.nodeName === 'TEXTAREA') {
+					autosizeTextArea(mutation.target);
+				}
 				Array.from(mutation.addedNodes).forEach(el => {
 					if (!el.nodeName || el.nodeName !== 'TEXTAREA') return;
 					autosizeTextArea(el);
