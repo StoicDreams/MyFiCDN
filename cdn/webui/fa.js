@@ -33,6 +33,10 @@ class FontAwesome extends HTMLElement {
     async updateIcon() {
         let name = this.icon;
         let family = this.family;
+        if (!name || !family) {
+            this.svg = ``;
+            return;
+        }
         if (!faCache[family]) {
             faCache[family] = {};
         }
