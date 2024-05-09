@@ -15,7 +15,7 @@ class FontAwesome extends HTMLElement {
         this.family = 'regular';
     }
     static get observedAttributes() {
-        return ['icon', 'class'];
+        return ['icon', 'family', 'class'];
     }
     attributeChangedCallback(property, oldValue, newValue) {
         if (oldValue === newValue) return;
