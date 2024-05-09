@@ -26,7 +26,8 @@ class FontAwesome extends HTMLElement {
     }
     connectedCallback() {
         const shadow = this.attachShadow({ mode: 'open' });
-        template.innerHTML = this.svg;
+        template.innerHTML = `Test ${this.svg}`;
+        console.log(`SVG:${this.svg}`);
         shadow.append(template);
     }
     disconnectedCallback() { }
@@ -44,11 +45,12 @@ class FontAwesome extends HTMLElement {
             let result = await fetch(`https://cdn.myfi.ws/fa/svgs/${family}/${name}.svg`);
             if (!result.ok) return;
             let svg = await result.text();
+            console.log(`Downloaded:${family}.${name}:${svg}`);
             if (!svg.startsWith("<svg")) return;
             faCache[family][name] = svg;
         }
-
         this.svg = faCache[family][name];
+        console.log(`Set SVG:${this.svg}`);
     }
 }
 customElements.define('webui-fa', FontAwesome);
