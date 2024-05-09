@@ -36,7 +36,7 @@ window.DomInterop = (() => {
 	})();
 	setTimeout(function LoadOtherIndependentJavascriptComponentsFromCDN() {
 		[
-			'i/tooltips.js',
+			'i/tooltips.min.js',
 			'i/mermaid.js',
 			'i/prism.js'
 		].forEach(url => {
