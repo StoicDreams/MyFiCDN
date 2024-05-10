@@ -4,13 +4,17 @@ const template = document.createElement('template')
 template.setAttribute('shadowrootmode', true);
 template.innerHTML = `
 <style type="text/css">
+    :host {
+        display: inline-flex;
+        align-items: center;
+        justify-items: center;
+    }
     svg {
         height: 2ch;
         width: 3ch;
         fill: currentColor;
         line-height: 2ch;
         vertical-align: middle;
-        margin-top: -0.5ch;
     }
 </style>
 <slot name="icon"></slot>
