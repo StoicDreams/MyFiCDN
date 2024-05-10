@@ -86,18 +86,23 @@ svg.logo text {
     font-size: 4.2em;
     font-weight: 600;
 }
+
 svg.logo .top-left {
     fill: var(--color-success);
 }
+
 svg.logo .top-right {
     fill: var(--color-tertiary);
 }
+
 svg.logo .bottom-left {
     fill: var(--color-secondary);
 }
+
 svg.logo .bottom-right {
     fill: var(--color-primary);
 }
+
 svg.logo .diamond {
     fill: var(--color-title);
 }
@@ -215,40 +220,49 @@ footer>* {
     justify-content: center;
     align-items: center;
 }
+
 .app-drawer.left .logo {
     height: calc(6*1em);
     width: 100%;
     transition-property: all;
     transition-duration: 200ms;
 }
-.app-drawer.left .logo > .image {
+
+.app-drawer.left .logo>.image {
     width: 100%;
 }
 
-#app.pin-left > main {
+#app.pin-left>main {
     padding-left: var(--drawer-left-width);
 }
-#app.pin-left > header {
+
+#app.pin-left>header {
     padding-left: calc(var(--drawer-left-width) + (2 * var(--padding)));
 }
+
 #app.pin-left .app-drawer.left .page-cover {
-    display:none;
-}
-#app.pin-left.only-icons .app-drawer.left .navlink > svg + span,
-#app.pin-left.only-icons .app-drawer.left .navlink > img + span {
     display: none;
 }
+
+#app.pin-left.only-icons .app-drawer.left .navlink>svg+span,
+#app.pin-left.only-icons .app-drawer.left .navlink>img+span {
+    display: none;
+}
+
 .pin-options {
     flex-flow: row;
 }
+
 .pin-options button {
     font-size: calc(var(--typography-size) * 2.25);
     min-width: calc(var(--typography-size) * 2.25);
     cursor: pointer;
 }
+
 #app.pin-left.only-icons .pin-options.pinnable-left {
     flex-flow: column;
 }
+
 #app.pin-left.only-icons .pin-options.pinnable-left button {
     font-size: calc(var(--typography-size) * 2.25);
     min-width: calc(var(--typography-size) * 2.25);
@@ -257,16 +271,20 @@ footer>* {
 .pin-options.pinnable-left button.pin-unpinned {
     display: none;
 }
+
 #app.pin-left .pin-options.pinnable-left button.pin-unpinned {
     display: inline-block;
 }
+
 #app.pin-left:not(.only-icons) .pin-options.pinnable-left button.pin-pinned-full {
     display: none;
 }
+
 #app.pin-left .drawer-toggle-left,
 #app.pin-left.only-icons .pin-options.pinnable-left button.pin-pinned-icon-only {
     display: none;
 }
+
 #app.pin-left.only-icons .app-drawer.left .logo {
     height: calc(3*1em);
 }
@@ -290,6 +308,11 @@ main h4,
 main h5,
 main h6 {
     box-shadow: 0px 4px 12px 1px rgba(0, 0, 0, 0.4);
+}
+
+a {
+    display: inline-flex;
+    align-items: center;
 }
 
 a:link,
@@ -898,33 +921,39 @@ aside.app-drawer.left {
     background-color: var(--color-active);
     color: var(--color-active-offset);
 }
+
 .field-group-line {
     gap: 0;
     outline: 1.5px solid var(--color-info);
     border-radius: var(--corners);
     overflow: hidden;
 }
+
 .field-group-line *,
-.field-group-line > *,
+.field-group-line>*,
 .field-group-line .btn,
 .field-group-line button,
 .field-group-line a {
     border-radius: 0;
 }
+
 .field-group-line .btn,
 .field-group-line button,
 .field-group-line a {
     text-align: center;
     justify-content: center;
 }
-.field-group-line > *:first-child {
+
+.field-group-line>*:first-child {
     border-top-left-radius: var(--corners);
     border-bottom-left-radius: var(--corners);
 }
-.field-group-line > *:last-child {
+
+.field-group-line>*:last-child {
     border-top-right-radius: var(--corners);
     border-bottom-right-radius: var(--corners);
 }
+
 .auto_message_box {
     flex-grow: 1;
 }
@@ -2758,35 +2787,35 @@ a.theme-inherit:active {
     color: var(--color-button);
 }
 
-body > div.tooltip {
-	position: fixed;
-	display: block;
-	max-width: 80%;
-	max-height: 50%;
-	width: auto;
-	height: auto;
-	border: 1px solid var(--color-primary);
-	border-radius: var(--corners);
-	top: 50%;
-	left: 50%;
-	background-color: var(--site-background-color);
-	color: var(--site-background-offset);
-	padding: calc(1 * var(--padding)) calc(2 * var(--padding));
-	font-size: var(--typography-size);
-	z-index: 99999;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	box-sizing: border-box;
+body>div.tooltip {
+    position: fixed;
+    display: block;
+    max-width: 80%;
+    max-height: 50%;
+    width: auto;
+    height: auto;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--corners);
+    top: 50%;
+    left: 50%;
+    background-color: var(--site-background-color);
+    color: var(--site-background-offset);
+    padding: calc(1 * var(--padding)) calc(2 * var(--padding));
+    font-size: var(--typography-size);
+    z-index: 99999;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
 }
 
-	body > div.tooltip.open {
-		transform: scale(1);
-	}
+body>div.tooltip.open {
+    transform: scale(1);
+}
 
-	body > div.tooltip.closed {
-		transform: scale(0);
-	}
+body>div.tooltip.closed {
+    transform: scale(0);
+}
 
 /* Screen Size Helpers
 body.w-4k
@@ -3057,7 +3086,8 @@ body.w-4k .hide-at-4k {
     position: relative;
     overflow: visible;
 }
-.dropdown.show > button::before {
+
+.dropdown.show>button::before {
     content: " ";
     display: block;
     position: fixed;
@@ -3065,10 +3095,11 @@ body.w-4k .hide-at-4k {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255,255,255,0.01);
+    background-color: rgba(255, 255, 255, 0.01);
     z-index: 9999;
 }
-.dropdown > .dropdown-menu {
+
+.dropdown>.dropdown-menu {
     display: flex;
     flex-direction: column;
     gap: 1px;
@@ -3083,10 +3114,12 @@ body.w-4k .hide-at-4k {
     z-index: 99999;
     border: 2px solid var(--color-info);
 }
-.dropdown > .dropdown-menu > li {
+
+.dropdown>.dropdown-menu>li {
     padding: var(--padding);
 }
-.dropdown > .dropdown-menu > li.selected {
+
+.dropdown>.dropdown-menu>li.selected {
     background-color: var(--color-info);
     color: var(--color-info-offset);
 }
@@ -3098,12 +3131,15 @@ body.w-4k .hide-at-4k {
         overflow: hidden;
         max-height: 0;
     }
+
     10% {
         max-height: 0;
     }
+
     99% {
         max-height: 100%;
     }
+
     100% {
         max-height: none;
         overflow: visible;
