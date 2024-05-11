@@ -8,9 +8,9 @@ on:
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
   CARGO_TERM_COLOR: always
-  ACCOUNT_NAME: myficdn
+  ACCOUNT_NAME: myficdneast
   PROFILE_NAME: myficdnprofile
-  PROFILE_ACCOUNT_NAME: myficdn
+  PROFILE_ACCOUNT_NAME: myficdneast
 
 jobs:
   copy-files:
