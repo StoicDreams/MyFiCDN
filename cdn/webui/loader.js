@@ -6,7 +6,6 @@
     const wcLoading = {};
     const wcRoot = location.hostname === '127.0.0.1' ? '' : 'https://cdn.myfi.ws/';
     const wcMin = wcRoot === '' ? '' : '.min';
-    console.groupCollapsed(`${wcLabel}s Loaded`);
     async function processNode(node) {
         if (wcLoading[node.nodeName]) return;
         wcLoading[node.nodeName] = true;
@@ -15,7 +14,6 @@
         script.setAttribute('async', true);
         script.setAttribute('src', `${wcRoot}webui/${wc}${wcMin}.js`)
         document.head.append(script);
-        console.info(`Added ${wcLabel} ${wc}`);
     }
     function checkNodes(nodes) {
         if (nodes.length === 0) return;

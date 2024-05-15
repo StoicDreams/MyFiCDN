@@ -35,7 +35,7 @@
             const shadow = this.attachShadow({ mode: 'open' });
             this.template = template.content.cloneNode(true);
             this.iconSlot = this.template.querySelector('slot[name=icon]');
-            this.iconSlot.innerHTML = `${this.svg}`;
+            this.iconSlot.innerHTML = this.innerHTML.trim() || `${this.svg}`;
             shadow.appendChild(this.template);
         }
         static get observedAttributes() {

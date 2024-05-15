@@ -14,7 +14,7 @@
     <link href="Logo.svg" rel="icon" type="image/svg+xml" sizes="any" />
     <link rel="manifest" href="app.webmanifest">
 
-    <link href="css/webui.min.css" rel="stylesheet" />
+    <link href="css/webui.css" rel="stylesheet" />
 
     <meta name="theme-color" content="#FF2E46" />
 
@@ -34,16 +34,24 @@
 </head>
 
 <body>
-    <h1>MyFi CDN</h1>
-    <h2>Web Component Testing</h2>
-    <p>This page is a testing page for developing and testing WebUI JavaScript based Web Components.</p>
-    <webui-fa icon="user" family="duotone"></webui-fa>
-    <webui-fa icon="user" family="regular"></webui-fa>
-    <webui-fa icon="user" family="thin"></webui-fa>
+    <webui-app>
+        <header slot="header">
+            <h1>MyFi CDN</h1>
+            <h2>Web Component Testing</h2>
+        </header>
+        <p>This page is a testing page for developing and testing WebUI JavaScript based Web Components.</p>
+        <footer slot="footer" class="pl-2 pr-2">
+            <webui-flexbox grow></webui-flexbox>
+            <webui-fa icon="copyright" family="regular"></webui-fa>
+            2022-2024 Stoic Dreams All Rights Reserved
+            <webui-flexbox grow></webui-flexbox>
+            <sup>Powered by </sup>
+            <a title="Web UI version 0.8.6" href="https://webui.stoicdreams.com">Web UI</a>
+        </footer>
+    </webui-app>
     <script src="webui/loader.js" async></script>
     <script src="highlight/highlight.min.js" async></script>
     <script src="i/tooltips.min.js" async></script>
-    <link data-trunk href="css/app.min.css" rel="css" />
 </body>
 
 </html>
