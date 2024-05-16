@@ -6,7 +6,7 @@
     template.innerHTML = `
 <style type="text/css">
     :host {
-        display: flex;
+        display: flex!important;
     }
 </style>
 <slot></slot>

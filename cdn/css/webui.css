@@ -344,6 +344,11 @@ svg {
     max-width: 100%;
 }
 
+svg,
+svg path {
+    transition: all 200ms;
+}
+
 img:not(:only-child) {
     height: 1em;
 }

@@ -28,13 +28,13 @@
         overflow: auto;
     }
     ::slotted([slot="header"]) {
-        display: flex;
+        display: flex!important;
         font-size: 1.2rem;
         gap:var(--padding, 1em);
         padding:var(--padding,1em);
     }
     ::slotted([slot="footer"]) {
-        display: flex;
+        display: flex!important;
         font-size: 0.8rem;
         align-items:center;
         padding:var(--padding, 1em);
@@ -42,7 +42,11 @@
         gap:var(--padding, 1em);
     }
     ::slotted([slot="left-panel"]) {
-        display: flex;
+        display: flex!important;
+        flex-direction: column;
+    }
+    ::slotted([slot="right-panel"]) {
+        display: flex!important;
         flex-direction: column;
     }
     ::slotted(:not([slot])) {
