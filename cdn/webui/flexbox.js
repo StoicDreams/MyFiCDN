@@ -9,6 +9,7 @@
         display: flex;
     }
 </style>
+<slot></slot>
 `;
     class FlexBox extends HTMLElement {
         constructor() {
@@ -20,7 +21,7 @@
             shadow.appendChild(this.template);
         }
         static get observedAttributes() {
-            return [];
+            return ["gap"];
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
@@ -31,10 +32,19 @@
         disconnectedCallback() { }
         setStyles() {
             let styles = ["display:flex"];
-            if (!!this.attributes.grow) { styles.push('flex-grow:1'); }
-            if (!!this.attributes.column) { styles.push('flex-direction:column'); }
+            let a = this.attributes;
+            if (!!a.grow) { styles.push('flex-grow:1'); }
+            if (!!a.column) { styles.push('flex-direction:column'); }
+            if (a.gap && a.gap.value) { styles.push(`gap:${getDim(this.attributes.gap.value)}`); }
+            else { styles.push('gap:var(--flexgap,var(--padding,1em))'); }
             this._style.innerHTML = `:host{${styles.join(';')};}`;
         }
+    }
+    function getDim(value) {
+        if (!value) return '';
+        let num = parseFloat(value);
+        if (num == value) return `${value}px`;
+        return value;
     }
     customElements.define('webui-flexbox', FlexBox);
 }

@@ -41,10 +41,18 @@
         </header>
         <p>This page is a testing page for developing and testing WebUI JavaScript based Web Components.</p>
         <h2>Test Data Subscriptions & Updates</h2>
-        <label for="test1">Data Input</label>
-        <input id="test1" type="text" data-trigger="test1" />
+        <webui-flexbox>
+            <label for="test1" class="nowrap">Data Input</label>
+            <input id="test1" type="text" data-trigger="test1" />
+        </webui-flexbox>
         <h2>Data Output</h2>
-        <section data-subscribe="test1" data-set="innerHTML"></section>
+        <section>
+            InnerHTML: <span data-subscribe="test1" data-set="innerHTML"></span>
+        </section>
+        <webui-flexbox gap="5">
+            <label class="nowrap">Input Field:</label>
+            <input type="text" readonly data-subscribe="test1" data-set="value"></textarea>
+        </webui-flexbox>
         <footer slot="footer" class="pl-2 pr-2">
             <webui-flexbox grow></webui-flexbox>
             <webui-fa icon="copyright" family="regular"></webui-fa>

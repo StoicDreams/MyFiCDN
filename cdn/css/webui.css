@@ -1494,6 +1494,7 @@ main.page.transition.in img {
     margin-top: 0;
 }
 
+.nowrap,
 .navlink>span {
     white-space: nowrap;
 }
