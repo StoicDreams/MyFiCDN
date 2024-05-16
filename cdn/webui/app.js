@@ -1,6 +1,18 @@
 /* Dynamically load font-awesome svg icons as requested */
 "use strict"
 {
+    function handleDataTrigger(ev) {
+        let el = ev.srcElement || ev.target;
+        let key = el.dataset.trigger;
+        if (!key) return;
+        let value = el.value;
+        document.querySelectorAll(`[data-subscribe="${key}"]`).forEach(sub => {
+            let toSet = sub.dataset.set || 'innerText';
+            sub[toSet] = value;
+        });
+    }
+    document.body.addEventListener('input', handleDataTrigger);
+    document.body.addEventListener('change', handleDataTrigger);
     const template = document.createElement('template')
     template.setAttribute('shadowrootmode', true);
     template.innerHTML = `

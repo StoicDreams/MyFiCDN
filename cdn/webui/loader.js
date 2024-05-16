@@ -1,8 +1,6 @@
 /* This script is used to dynamically load web components as webui-* components are encountered in the dom. */
 {
     const wuiPrefix = `WEBUI-`;
-    const wcLabel = `WebUI Web Component`;
-    const wcLoaded = {};
     const wcLoading = {};
     const wcRoot = location.hostname === '127.0.0.1' ? '' : 'https://cdn.myfi.ws/';
     const wcMin = wcRoot === '' ? '' : '.min';
