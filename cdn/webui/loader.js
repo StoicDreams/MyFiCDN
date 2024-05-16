@@ -4,12 +4,11 @@
     const wcLoading = {};
     const wcRoot = location.hostname === '127.0.0.1' ? '' : 'https://cdn.myfi.ws/';
     const wcMin = wcRoot === '' ? '' : '.min';
-    async function processNode(node) {
-        if (wcLoading[node.nodeName]) return;
-        wcLoading[node.nodeName] = true;
+    function processNode(nodeName) {
+        if (wcLoading[nodeName]) return;
+        wcLoading[nodeName] = true;
         let script = document.createElement('script');
-        console.log(`Debug:${node.nodeName}`, node);
-        let wc = node.nodeName.split('-').splice(1).join('-').toLowerCase();
+        let wc = nodeName.split('-').splice(1).join('-').toLowerCase();
         script.setAttribute('async', true);
         script.setAttribute('src', `${wcRoot}webui/${wc}${wcMin}.js`)
         document.head.append(script);
@@ -18,7 +17,7 @@
         if (nodes.length === 0) return;
         nodes.forEach(node => {
             if (node.nodeName.startsWith(wuiPrefix)) {
-                processNode(node);
+                processNode(node.nodeName);
             }
             checkNodes(node.childNodes);
         });
