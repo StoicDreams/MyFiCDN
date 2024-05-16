@@ -8,6 +8,7 @@
         if (wcLoading[node.nodeName]) return;
         wcLoading[node.nodeName] = true;
         let script = document.createElement('script');
+        console.log(`Debug:${node.nodeName}`, node);
         let wc = node.nodeName.split('-').splice(1).join('-').toLowerCase();
         script.setAttribute('async', true);
         script.setAttribute('src', `${wcRoot}webui/${wc}${wcMin}.js`)
