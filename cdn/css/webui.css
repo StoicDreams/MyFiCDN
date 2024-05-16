@@ -145,17 +145,17 @@ body,
     letter-spacing: var(--typography-letterspacing);
 }
 
-main:not([slot]),
-header:not([slot]),
-footer:not([slot]),
+main,
+header,
+footer,
 iframe,
-aside:not([slot]),
-section:not([slot]),
-div:not([slot]) {
+aside,
+section,
+div {
     display: block;
 }
 
-main:not([slot]) {
+main {
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -167,7 +167,7 @@ main:not([slot]) {
     transition-duration: var(--main-transition);
 }
 
-main:not([slot])>.paper {
+main>.paper {
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -180,11 +180,11 @@ main:not([slot])>.paper {
     overflow: auto;
 }
 
-main:not([slot]) * {
+main * {
     white-space: pre-wrap;
 }
 
-header:not([slot]) {
+header {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -199,12 +199,12 @@ header {
     box-shadow: 0px 4px 12px 1px rgba(0, 0, 0, 0.4);
 }
 
-footer:not([slot]) {
+footer {
     position: relative;
     background-color: inherit;
 }
 
-footer:not([slot])::before {
+footer::before {
     content: " ";
     display: block;
     position: absolute;
@@ -220,7 +220,7 @@ footer {
     box-shadow: 0px 4px 12px 1px inset rgba(0, 0, 0, 0.4);
 }
 
-footer:not([slot])>* {
+footer>* {
     z-index: 1;
 }
 
@@ -311,12 +311,12 @@ h6 {
     border-radius: var(--corners) var(--corners) 0 0;
 }
 
-main:not([slot]) h1,
-main:not([slot]) h2,
-main:not([slot]) h3,
-main:not([slot]) h4,
-main:not([slot]) h5,
-main:not([slot]) h6 {
+main h1,
+main h2,
+main h3,
+main h4,
+main h5,
+main h6 {
     box-shadow: 0px 4px 12px 1px rgba(0, 0, 0, 0.4);
 }
 
@@ -414,7 +414,7 @@ pre[languagetag]:before {
     box-sizing: border-box;
 }
 
-main:not([slot])>.paper>pre {
+main>.paper>pre {
     margin-left: var(--padding);
     margin-right: var(--padding);
 }
