@@ -20,7 +20,7 @@
     :host {
         display: grid;
         grid-template-columns: min-content auto min-content;
-        grid-template-rows: min-content auto min-content;
+        grid-template-rows: min-content min-content auto min-content min-content;
         position: fixed;
         left: 0;
         top: 0;
@@ -28,9 +28,8 @@
         height: 100%;
         overflow: auto;
     }
-    ::slotted([slot="header"]),
-    header::slotted([slot="header"]) {
-        grid-row: 1;
+    ::slotted([slot="header"]) {
+        grid-row: 2;
         grid-column: 2;
         display: flex!important;
         align-items: start;
@@ -40,7 +39,7 @@
         padding:var(--padding,1em);
     }
     ::slotted([slot="footer"]) {
-        grid-row: 3;
+        grid-row: 4;
         grid-column: 2;
         display: flex!important;
         font-size: 0.8rem;
@@ -51,20 +50,20 @@
     }
     ::slotted([slot="left"]) {
         grid-column: 1;
-        grid-row: 1/4;
+        grid-row: 1/5;
         z-index: 10;
         display: flex!important;
         flex-direction: column;
     }
     ::slotted([slot="right"]) {
         grid-column: 3;
-        grid-row: 1/4;
+        grid-row: 1/5;
         z-index: 11;
         display: flex!important;
         flex-direction: column;
     }
     ::slotted([slot="bottom"]) {
-        grid-row: 3;
+        grid-row: 5;
         grid-column: 1/4;
         z-index: 12;
     }
@@ -78,7 +77,7 @@
     main {
         flex-grow:1;
         padding:var(--padding,1em);
-        grid-row: 2;
+        grid-row: 3;
         grid-column: 2;
     }
 </style>

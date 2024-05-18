@@ -12,6 +12,10 @@
         background-color:red;
         z-index:100;
     }
+    :host([slot="bottom"]),
+    :host([slot="top"]){
+        flex-direction: row;
+    }
     :host([fixed]) {
         position: fixed;
         left: 0;
@@ -54,9 +58,7 @@
 <slot name="header"></slot>
 <slot></slot>
 <webui-flexbox grow></webui-flexbox>
-<section class="footer">
-    <slot name="footer"></slot>
-</section>
+<slot name="footer"></slot>
 `;
     class Drawer extends HTMLElement {
         constructor() {
@@ -66,9 +68,27 @@
             this.headerSlot = this.template.querySelector('slot[name=header]');
             this.footerSlot = this.template.querySelector('slot[name=footer]');
             shadow.appendChild(this.template);
+            this.footerSlot.addEventListener('click', ev => {
+                let target = ev.target;
+                while (target !== this) {
+                    if (target.dataset.setdrawer) {
+                        this.slot = target.dataset.setdrawer;
+                        break;
+                    }
+                    if (target.dataset.toggledrawer === 'fixed') {
+                        if (this.getAttribute('fixed')) {
+                            this.removeAttribute('fixed');
+                        } else {
+                            this.setAttribute('fixed', true);
+                        }
+                        break;
+                    }
+                    target = target.parentNode;
+                }
+            });
         }
         static get observedAttributes() {
-            return ["position"];
+            return ["position", "fixed"];
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;

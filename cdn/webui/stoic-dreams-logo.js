@@ -60,7 +60,6 @@
             const shadow = this.attachShadow({ mode: 'open' });
             this.template = template.content.cloneNode(true);
             this._slot = this.template.querySelector('slot[name=logo]');
-            console.log('l', this._slot);
             let tempDiv = document.createElement('div');
             tempDiv.innerHTML = `<svg class="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 150 150" version="1.1" title="">
             <g class="background">
@@ -97,14 +96,12 @@
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
             this[property] = newValue;
-            console.log(`Prop ${property} : ${oldValue} -> ${newValue}`)
             this.render();
         }
         connectedCallback() { }
         disconnectedCallback() { }
         render() {
             let title = this.title ? this.title : `${(`${this.text} ${this.text2}`.trim())} Logo`;
-            console.log(this.slot);
             this.svg.setAttribute('title', title);
             this._text.innerHTML = this.getText();
         }

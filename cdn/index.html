@@ -66,25 +66,25 @@
             <sup>Powered by </sup>
             <a title="Web UI version 0.8.7" href="https://webui.stoicdreams.com">Web UI</a>
         </footer>
-        <webui-drawer slot="left" class="elevation-20">
-            <section slot="header">
+        <webui-drawer slot="left" class="nav elevation-20">
+            <section class="d-flex justify-center" slot="header">
                 <webui-stoic-dreams-logo title="MyFi CDN Logo" text="MyFi" text2="CDN"></webui-stoic-dreams-logo>
             </section>
             <webui-nav></webui-nav>
             <section slot="footer">
-                <button title="Set navigation to left" class="toggle-pos-left">
+                <button data-setdrawer="left" title="Set navigation to left" class="toggle-pos-left">
                     <webui-fa icon="sidebar" family="regular"></webui-fa>
                 </button>
-                <button title="Set navigation to left" class="toggle-pos-right">
+                <button data-setdrawer="right" title="Set navigation to right" class="toggle-pos-right">
                     <webui-fa icon="sidebar-flip" family="regular"></webui-fa>
                 </button>
-                <button title="Set navigation to left" class="toggle-pos-top">
+                <button data-setdrawer="top" title="Set navigation to top" class="toggle-pos-top">
                     <webui-fa icon="window" family="regular"></webui-fa>
                 </button>
-                <button title="Set navigation to left" class="toggle-pos-bottom">
+                <button data-setdrawer="bottom" title="Set navigation to bottom" class="toggle-pos-bottom">
                     <webui-fa icon="window-flip" family="regular" class="fa-rotate-180"></webui-fa>
                 </button>
-                <button title="Toggle Fixed" class="toggle-fixed">
+                <button data-toggledrawer="fixed" title="Toggle Fixed" class="toggle-fixed">
                     <webui-fa icon="send-backward"></webui-fa>
                 </button>
             </section>
