@@ -1,4 +1,4 @@
-/* Dynamically load font-awesome svg icons as requested */
+/* Flex container */
 "use strict"
 {
     const template = document.createElement('template')

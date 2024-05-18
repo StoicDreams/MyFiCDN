@@ -1,4 +1,4 @@
-/* Dynamically load font-awesome svg icons as requested */
+/* Wrapper element for application */
 "use strict"
 {
     function handleDataTrigger(ev) {
@@ -18,8 +18,9 @@
     template.innerHTML = `
 <style type="text/css">
     :host {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: min-content auto min-content;
+        grid-template-rows: min-content auto min-content;
         position: fixed;
         left: 0;
         top: 0;
@@ -27,13 +28,20 @@
         height: 100%;
         overflow: auto;
     }
-    ::slotted([slot="header"]) {
+    ::slotted([slot="header"]),
+    header::slotted([slot="header"]) {
+        grid-row: 1;
+        grid-column: 2;
         display: flex!important;
+        align-items: start;
+        justify-items: start;
         font-size: 1.2rem;
         gap:var(--padding, 1em);
         padding:var(--padding,1em);
     }
     ::slotted([slot="footer"]) {
+        grid-row: 3;
+        grid-column: 2;
         display: flex!important;
         font-size: 0.8rem;
         align-items:center;
@@ -41,28 +49,46 @@
         vertical-align:middle;
         gap:var(--padding, 1em);
     }
-    ::slotted([slot="left-panel"]) {
+    ::slotted([slot="left"]) {
+        grid-column: 1;
+        grid-row: 1/4;
+        z-index: 10;
         display: flex!important;
         flex-direction: column;
     }
-    ::slotted([slot="right-panel"]) {
+    ::slotted([slot="right"]) {
+        grid-column: 3;
+        grid-row: 1/4;
+        z-index: 11;
         display: flex!important;
         flex-direction: column;
+    }
+    ::slotted([slot="bottom"]) {
+        grid-row: 3;
+        grid-column: 1/4;
+        z-index: 12;
+    }
+    ::slotted([slot="top"]) {
+        grid-row: 1;
+        grid-column: 1/4;
+        z-index: 13;
     }
     ::slotted(:not([slot])) {
     }
     main {
         flex-grow:1;
         padding:var(--padding,1em);
+        grid-row: 2;
+        grid-column: 2;
     }
 </style>
 <slot name="header"></slot>
 <main><slot></slot></main>
 <slot name="footer"></slot>
-<slot name="left-panel"></slot>
-<slot name="right-panel"></slot>
-<slot name="top-panel"></slot>
-<slot name="bottom-panel"></slot>
+<slot name="left"></slot>
+<slot name="right"></slot>
+<slot name="top"></slot>
+<slot name="bottom"></slot>
 `;
     class App extends HTMLElement {
         constructor() {
@@ -71,10 +97,10 @@
             this.template = template.content.cloneNode(true);
             this.headerSlot = this.template.querySelector('slot[name=header]');
             this.footerSlot = this.template.querySelector('slot[name=footer]');
-            this.leftPanelSlot = this.template.querySelector('slot[name=left-panel]');
-            this.rightPanelSlot = this.template.querySelector('slot[name=right-panel]');
-            this.topPanelSlot = this.template.querySelector('slot[name=top-panel]');
-            this.bottomPanelSlot = this.template.querySelector('slot[name=bottom-panel]');
+            this.leftPanelSlot = this.template.querySelector('slot[name=left]');
+            this.rightPanelSlot = this.template.querySelector('slot[name=right]');
+            this.topPanelSlot = this.template.querySelector('slot[name=top]');
+            this.bottomPanelSlot = this.template.querySelector('slot[name=bottom]');
             shadow.appendChild(this.template);
         }
         static get observedAttributes() {

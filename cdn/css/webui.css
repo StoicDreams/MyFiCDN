@@ -2992,6 +2992,13 @@ body.w-4k .hide-at-4k {
     color: var(--site-background-color);
 }
 
+webui-drawer[slot="top"] .toggle-pos-top,
+webui-drawer[slot="right"] .toggle-pos-right,
+webui-drawer[slot="bottom"] .toggle-pos-bottom,
+webui-drawer[slot="left"] .toggle-pos-left {
+    display: none;
+}
+
 /* Code highlight defaults */
 .hljs-keyword {
     color: #fff
