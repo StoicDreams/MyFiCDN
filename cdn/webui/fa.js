@@ -5,18 +5,18 @@
     template.setAttribute('shadowrootmode', true);
     template.innerHTML = `
 <style type="text/css">
-    :host {
-        display: inline-flex;
-        align-items: center;
-        justify-items: center;
-    }
-    svg {
-        height: 2ch;
-        width: 3ch;
-        fill: currentColor;
-        line-height: 2ch;
-        vertical-align: middle;
-    }
+:host {
+display: inline-flex;
+align-items: center;
+justify-items: center;
+}
+svg {
+height: 2ch;
+width: 3ch;
+fill: currentColor;
+line-height: 2ch;
+vertical-align: middle;
+}
 </style>
 <slot name="icon"></slot>
 `;

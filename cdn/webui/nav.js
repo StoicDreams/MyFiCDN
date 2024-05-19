@@ -5,10 +5,10 @@
     template.setAttribute('shadowrootmode', true);
     template.innerHTML = `
 <style type="text/css">
-    :host {
-        display: flex;
-        flex-direction: column;
-    }
+:host {
+display: flex;
+flex-direction: column;
+}
 </style>
 <slot></slot>
 `;

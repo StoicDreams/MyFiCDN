@@ -2999,6 +2999,10 @@ webui-drawer[slot="left"] .toggle-pos-left {
     display: none;
 }
 
+webui-drawer:not([fixed])+header [data-toggleclass=".nav|open"] {
+    display: none;
+}
+
 /* Code highlight defaults */
 .hljs-keyword {
     color: #fff
