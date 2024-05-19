@@ -13,7 +13,7 @@
     }
     svg text {
         font-family: inherit;
-        font-size: 3.8em;
+        font-size: 2.8em;
         font-weight: 600;
     }
     svg {
@@ -112,7 +112,7 @@
         }
         getText() {
             if (this.text2 && this.text) {
-                return `<tspan class="line1" x="75" y="40">${this.text}</tspan><tspan class="line2" x="75" y="95">${this.text2}</tspan>`;
+                return `<tspan class="line1" x="75" y="50">${this.text}</tspan><tspan class="line2" x="75" y="95">${this.text2}</tspan>`;
             }
             if (this.text2) {
                 return `<tspan class="single" x="75" y="75">${this.text2}</tspan>`;
