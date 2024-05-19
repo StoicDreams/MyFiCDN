@@ -95,13 +95,13 @@
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
-            this[property] = newValue;
+            this[property] = !newValue || newValue == 'null' || newValue == 'undefined' ? '' : newValue;
             this.render();
         }
         connectedCallback() { }
         disconnectedCallback() { }
         render() {
-            let title = this.title ? this.title : `${(`${this.text} ${this.text2}`.trim())} Logo`;
+            let title = this.title || `${(`${this.text} ${this.text2}`.trim())} Logo`;
             this.svg.setAttribute('title', title);
             this._text.innerHTML = this.getText();
         }

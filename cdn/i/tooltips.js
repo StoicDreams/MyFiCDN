@@ -1,6 +1,6 @@
 ﻿setTimeout(() => {
 	'use strict';
-    window.tooltipsEnabled = true;
+	window.tooltipsEnabled = true;
 	const Tooltip = document.createElement('div');
 	Tooltip.className = 'tooltip closed';
 	let capturedElement = null;
@@ -13,13 +13,19 @@
 		Tooltip.className = 'tooltip closed';
 	}
 	function CheckContainersForAriaLabel(target) {
-		while (target) {
-			if (target.ariaLabel) { return [target, target.ariaLabel]; }
-            if (target.getAttribute && target.getAttribute('title')) {
-				target.setAttribute('aria-label', target.getAttribute('title'));
+		while (target && target !== target.parentNode) {
+			if (!target.getAttribute) {
+				target = target.parentNode;
+				continue;
+			}
+			let title = target.getAttribute('title');
+			if (title) {
+				target.setAttribute('aria-label', title);
 				target.removeAttribute('title');
 			}
-            if (target.getAttribute && target.getAttribute('aria-label')) { return [target, target.getAttribute('aria-label')]; }
+			//if (target.ariaLabel) { return [target, target.ariaLabel]; }
+			let ariaLabel = target.getAttribute('aria-label');
+			if (ariaLabel) { return [target, ariaLabel]; }
 			target = target.parentNode;
 		}
 		return [null, null];
@@ -28,7 +34,7 @@
 	document.body.addEventListener('click', CloseIfOpen);
 	document.body.addEventListener('input', CloseIfOpen);
 	document.body.addEventListener('mouseover', ev => {
-        if (!window.tooltipsEnabled) return;
+		if (!window.tooltipsEnabled) return;
 		let [target, display] = CheckContainersForAriaLabel(ev.target);
 		if (!target) { CloseIfOpen(); return; }
 		if (target === capturedElement) { return; }

@@ -54,14 +54,8 @@
                 <button data-setattr=".nav|slot|bottom" title="Set navigation to bottom" class="toggle-pos-bottom">
                     <webui-fa icon="window-flip" family="regular" class="fa-rotate-180"></webui-fa>
                 </button>
-                <button data-toggleattr=".nav|fixed" data-hide=".nav:not([fixed])" title="Hide Navigation"
-                    class="toggle-fixed">
-                    <webui-fa icon="send-backward"></webui-fa>
-                </button>
-                <button data-toggleattr=".nav|fixed" data-hide=".nav[fixed]" title="Lock Navigation"
-                    class="toggle-fixed">
-                    <webui-fa icon="bring-forward"></webui-fa>
-                </button>
+                <webui-toggle-icon data-toggleattr=".nav|fixed" data-enabled=".nav:not([fixed])" icon-on="send-backward"
+                    icon-off="bring-forward" title-on="Hide Navigation" title-off="Lock Navigation"></webui-toggle-icon>
             </section>
         </webui-drawer>
         <header slot="header">

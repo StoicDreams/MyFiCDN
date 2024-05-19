@@ -5,9 +5,9 @@
     template.setAttribute('shadowrootmode', true);
     template.innerHTML = `
 <style type="text/css">
-    :host {
-        display: flex!important;
-    }
+:host {
+display: flex!important;
+}
 </style>
 <slot></slot>
 `;
