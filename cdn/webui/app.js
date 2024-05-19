@@ -183,6 +183,8 @@ left: 0;
 top: 0;
 width: 100%;
 height: 100%;
+max-width: 100%;
+max-height: 100%;
 overflow: auto;
 }
 ::slotted([slot="header"]) {
@@ -236,6 +238,9 @@ flex-grow:1;
 padding:var(--padding,1em);
 grid-row: 3;
 grid-column: 2;
+max-height:100%;
+max-width:100%;
+overflow:auto;
 }
 </style>
 <slot name="header"></slot>
