@@ -244,6 +244,10 @@ z-index: 13;
 ::slotted(:not([slot])) {
 }
 main {
+display:block;
+overflow:auto;
+box-sizing:border-box;
+height:var(--main-height);
 flex-grow:1;
 padding:var(--padding,1em);
 grid-row: 3;
@@ -273,7 +277,7 @@ grid-column: 2;
             this.topPanelSlot = this.template.querySelector('slot[name=top]');
             this.bottomPanelSlot = this.template.querySelector('slot[name=bottom]');
             shadow.appendChild(this.template);
-            shadow.appendChild(this.dynstyles);
+            document.head.appendChild(this.dynstyles);
             this.applyDynamicStyles();
         }
         static get observedAttributes() {
@@ -285,13 +289,22 @@ grid-column: 2;
         }
         connectedCallback() { }
         disconnectedCallback() { }
+        getSlot(name) {
+            let node = null;
+            this.childNodes.forEach(n => {
+                if (n.slot === name) {
+                    node = n;
+                }
+            })
+            return node;
+        }
         applyDynamicStyles() {
-            let h = this.querySelector('[slot=header]') || { clientHeight: 0 };
-            let f = this.querySelector('[slot=footer]') || { clientHeight: 0 };
-            let t = this.querySelector('[slot=top]') || { clientHeight: 0 };
-            let r = this.querySelector('[slot=right]') || { clientWidth: 0 };
-            let b = this.querySelector('[slot=bottom]') || { clientHeight: 0 };
-            let l = this.querySelector('[slot=left]') || { clientWidth: 0 };
+            let h = this.getSlot('header') || { clientHeight: 0 };
+            let f = this.getSlot('footer') || { clientHeight: 0 };
+            let t = this.getSlot('top') || { clientHeight: 0 };
+            let r = this.getSlot('right') || { clientWidth: 0 };
+            let b = this.getSlot('bottom') || { clientHeight: 0 };
+            let l = this.getSlot('left') || { clientWidth: 0 };
             let m = this.shadowRoot.children[2];
             let w = window;
             let wb = document.body;
@@ -312,15 +325,12 @@ grid-column: 2;
         --drawer-top-height: ${t.clientHeight}px;
         --drawer-bottom-height: ${b.clientHeight}px;
         }
-        main {
-            height:${mh}px;
-        }
         `;
             if (_adsrCache !== value) {
                 _adsrCache = value;
                 this.dynstyles.innerHTML = value;
             }
-            setTimeout(() => this.applyDynamicStyles(), 100);
+            setTimeout(() => this.applyDynamicStyles(), 10000);
         }
     }
     customElements.define('webui-app', App);
