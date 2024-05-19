@@ -6,14 +6,19 @@
     template.innerHTML = `
 <style type="text/css">
     :host {
-        height: 5em;
+        height: 6em;
+        overflow: visible;
+        font-family: inherit;
+        margin: 0 var(--padding,1em);
     }
     svg text {
-        font-size: 2.9em;
+        font-family: inherit;
+        font-size: 3.8em;
         font-weight: 600;
     }
     svg {
         height: 100%;
+        overflow:visible;
     }
     svg > g {
         fill-rule:nonzero;
