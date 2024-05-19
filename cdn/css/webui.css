@@ -1970,6 +1970,116 @@ main>*>.d-flex>*[width] {
     margin: auto;
 }
 
+.mx-a {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mx-1 {
+    margin-left: var(--padding);
+    margin-right: var(--padding);
+}
+
+.mx-2 {
+    margin-left: calc(2 * var(--padding));
+    margin-right: calc(2 * var(--padding));
+}
+
+.mx-3 {
+    margin-left: calc(3 * var(--padding));
+    margin-right: calc(3 * var(--padding));
+}
+
+.mx-4 {
+    margin-left: calc(4 * var(--padding));
+    margin-right: calc(4 * var(--padding));
+}
+
+.mx-5 {
+    margin-left: calc(5 * var(--padding));
+    margin-right: calc(5 * var(--padding));
+}
+
+.mx-6 {
+    margin-left: calc(6 * var(--padding));
+    margin-right: calc(6 * var(--padding));
+}
+
+.mx-7 {
+    margin-left: calc(7 * var(--padding));
+    margin-right: calc(7 * var(--padding));
+}
+
+.mx-8 {
+    margin-left: calc(8 * var(--padding));
+    margin-right: calc(8 * var(--padding));
+}
+
+.mx-9 {
+    margin-left: calc(9 * var(--padding));
+    margin-right: calc(9 * var(--padding));
+}
+
+.mx-10 {
+    margin-left: calc(10 * var(--padding));
+    margin-right: calc(10 * var(--padding));
+}
+
+.my-a {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.my-1 {
+    margin-top: var(--padding);
+    margin-bottom: var(--padding);
+}
+
+.my-2 {
+    margin-top: calc(2 * var(--padding));
+    margin-bottom: calc(2 * var(--padding));
+}
+
+.my-3 {
+    margin-top: calc(3 * var(--padding));
+    margin-bottom: calc(3 * var(--padding));
+}
+
+.my-4 {
+    margin-top: calc(4 * var(--padding));
+    margin-bottom: calc(4 * var(--padding));
+}
+
+.my-5 {
+    margin-top: calc(5 * var(--padding));
+    margin-bottom: calc(5 * var(--padding));
+}
+
+.my-6 {
+    margin-top: calc(6 * var(--padding));
+    margin-bottom: calc(6 * var(--padding));
+}
+
+.my-7 {
+    margin-top: calc(7 * var(--padding));
+    margin-bottom: calc(7 * var(--padding));
+}
+
+.my-8 {
+    margin-top: calc(8 * var(--padding));
+    margin-bottom: calc(8 * var(--padding));
+}
+
+.my-9 {
+    margin-top: calc(9 * var(--padding));
+    margin-bottom: calc(9 * var(--padding));
+}
+
+.my-10 {
+    margin-top: calc(10 * var(--padding));
+    margin-bottom: calc(10 * var(--padding));
+}
+
 .ma-1 {
     margin: var(--padding);
 }
@@ -2048,6 +2158,106 @@ main>*>.d-flex>*[width] {
 
 .ma-n10 {
     margin: calc(-10 * var(--padding));
+}
+
+.mx-n1 {
+    margin-left: calc(-1 * var(--padding));
+    margin-right: calc(-1 * var(--padding));
+}
+
+.mx-n2 {
+    margin-left: calc(-2 * var(--padding));
+    margin-right: calc(-2 * var(--padding));
+}
+
+.mx-n3 {
+    margin-left: calc(-3 * var(--padding));
+    margin-right: calc(-3 * var(--padding));
+}
+
+.mx-n4 {
+    margin-left: calc(-4 * var(--padding));
+    margin-right: calc(-4 * var(--padding));
+}
+
+.mx-n5 {
+    margin-left: calc(-5 * var(--padding));
+    margin-right: calc(-5 * var(--padding));
+}
+
+.mx-n6 {
+    margin-left: calc(-6 * var(--padding));
+    margin-right: calc(-6 * var(--padding));
+}
+
+.mx-n7 {
+    margin-left: calc(-7 * var(--padding));
+    margin-right: calc(-7 * var(--padding));
+}
+
+.mx-n8 {
+    margin-left: calc(-8 * var(--padding));
+    margin-right: calc(-8 * var(--padding));
+}
+
+.mx-n9 {
+    margin-left: calc(-9 * var(--padding));
+    margin-right: calc(-9 * var(--padding));
+}
+
+.mx-n10 {
+    margin-left: calc(-10 * var(--padding));
+    margin-right: calc(-10 * var(--padding));
+}
+
+.my-n1 {
+    margin-top: calc(-1 * var(--padding));
+    margin-bottom: calc(-1 * var(--padding));
+}
+
+.my-n2 {
+    margin-top: calc(-2 * var(--padding));
+    margin-bottom: calc(-2 * var(--padding));
+}
+
+.my-n3 {
+    margin-top: calc(-3 * var(--padding));
+    margin-bottom: calc(-3 * var(--padding));
+}
+
+.my-n4 {
+    margin-top: calc(-4 * var(--padding));
+    margin-bottom: calc(-4 * var(--padding));
+}
+
+.my-n5 {
+    margin-top: calc(-5 * var(--padding));
+    margin-bottom: calc(-5 * var(--padding));
+}
+
+.my-n6 {
+    margin-top: calc(-6 * var(--padding));
+    margin-bottom: calc(-6 * var(--padding));
+}
+
+.my-n7 {
+    margin-top: calc(-7 * var(--padding));
+    margin-bottom: calc(-7 * var(--padding));
+}
+
+.my-n8 {
+    margin-top: calc(-8 * var(--padding));
+    margin-bottom: calc(-8 * var(--padding));
+}
+
+.my-n9 {
+    margin-top: calc(-9 * var(--padding));
+    margin-bottom: calc(-9 * var(--padding));
+}
+
+.my-n10 {
+    margin-top: calc(-10 * var(--padding));
+    margin-bottom: calc(-10 * var(--padding));
 }
 
 .mt-a {
