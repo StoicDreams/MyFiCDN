@@ -12,6 +12,8 @@ button {
     border:none;
     box-shadow:none;
     color:inherit;
+    margin:0;
+    padding:0;
 }
 </style>
 <button><webui-fa></webui-fa></button>

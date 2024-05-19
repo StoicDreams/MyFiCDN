@@ -21,7 +21,7 @@ display: flex!important;
             shadow.appendChild(this.template);
         }
         static get observedAttributes() {
-            return ["gap"];
+            return ["gap", "grow", "column"];
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;

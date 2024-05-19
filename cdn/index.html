@@ -41,7 +41,7 @@
                 <webui-stoic-dreams-logo title="MyFi CDN Logo" text="MyFi" text2="CDN"></webui-stoic-dreams-logo>
             </section>
             <webui-nav></webui-nav>
-            <section slot="footer">
+            <webui-flexbox slot="footer" class="justify-center align-center">
                 <button data-setattr=".nav|slot|left" title="Set navigation to left" class="toggle-pos-left">
                     <webui-fa icon="sidebar" family="regular"></webui-fa>
                 </button>
@@ -56,7 +56,7 @@
                 </button>
                 <webui-toggle-icon data-toggleattr=".nav|fixed" data-enabled=".nav:not([fixed])" icon-on="send-backward"
                     icon-off="bring-forward" title-on="Hide Navigation" title-off="Lock Navigation"></webui-toggle-icon>
-            </section>
+            </webui-flexbox>
         </webui-drawer>
         <header slot="header">
             <button data-toggleclass=".nav|open"><webui-fa icon="bars"></webui-fa></button>
