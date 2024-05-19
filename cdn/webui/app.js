@@ -317,8 +317,6 @@ grid-column: 2;
         }
         `;
             if (_adsrCache !== value) {
-                console.log('Adjust styles', value, this);
-                console.dir(this);
                 _adsrCache = value;
                 this.dynstyles.innerHTML = value;
             }
