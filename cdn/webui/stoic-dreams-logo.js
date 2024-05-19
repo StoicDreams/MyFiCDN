@@ -9,7 +9,7 @@
         height: 6em;
         overflow: visible;
         font-family: inherit;
-        margin: 0 var(--padding,1em);
+        margin: 1px var(--padding,1em);
     }
     svg text {
         font-family: inherit;

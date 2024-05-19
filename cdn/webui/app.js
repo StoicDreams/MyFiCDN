@@ -196,6 +196,8 @@ justify-items: start;
 font-size: 1.2rem;
 gap:var(--padding, 1em);
 padding:var(--padding,1em);
+height:min-content;
+max-height:min-content;
 }
 ::slotted([slot="footer"]) {
 grid-row: 4;
@@ -206,30 +208,38 @@ align-items:center;
 padding:var(--padding, 1em);
 vertical-align:middle;
 gap:var(--padding, 1em);
+height:min-content;
+max-height:min-content;
 }
 ::slotted([slot="left"]) {
 grid-column: 1;
-grid-row: 1/5;
 z-index: 10;
-display: flex!important;
-flex-direction: column;
 }
 ::slotted([slot="right"]) {
 grid-column: 3;
-grid-row: 1/5;
 z-index: 11;
-display: flex!important;
-flex-direction: column;
 }
 ::slotted([slot="bottom"]) {
+height:min-content;
 grid-row: 5;
-grid-column: 1/4;
 z-index: 12;
 }
 ::slotted([slot="top"]) {
+height:min-content;
 grid-row: 1;
-grid-column: 1/4;
 z-index: 13;
+}
+::slotted([slot="left"]),
+::slotted([slot="right"]) {
+    max-width: calc(0.5 * var(--window-width));
+    grid-row: 2/5;
+    display: flex!important;
+    flex-direction: column;
+}
+::slotted([slot="top"]),
+::slotted([slot="bottom"]) {
+    max-height: calc(0.5 * var(--window-height));
+    grid-column: 2;
 }
 ::slotted(:not([slot])) {
 }
@@ -238,9 +248,6 @@ flex-grow:1;
 padding:var(--padding,1em);
 grid-row: 3;
 grid-column: 2;
-max-height:100%;
-max-width:100%;
-overflow:auto;
 }
 </style>
 <slot name="header"></slot>
@@ -251,10 +258,13 @@ overflow:auto;
 <slot name="top"></slot>
 <slot name="bottom"></slot>
 `;
+    let _adsrCache = '';
     class App extends HTMLElement {
         constructor() {
             super();
             const shadow = this.attachShadow({ mode: 'open' });
+            this.dynstyles = document.createElement('style');
+            this.dynstyles.setAttribute('type', 'text/css');
             this.template = template.content.cloneNode(true);
             this.headerSlot = this.template.querySelector('slot[name=header]');
             this.footerSlot = this.template.querySelector('slot[name=footer]');
@@ -263,6 +273,8 @@ overflow:auto;
             this.topPanelSlot = this.template.querySelector('slot[name=top]');
             this.bottomPanelSlot = this.template.querySelector('slot[name=bottom]');
             shadow.appendChild(this.template);
+            shadow.appendChild(this.dynstyles);
+            this.applyDynamicStyles();
         }
         static get observedAttributes() {
             return [];
@@ -273,6 +285,45 @@ overflow:auto;
         }
         connectedCallback() { }
         disconnectedCallback() { }
+        applyDynamicStyles() {
+            let h = this.querySelector('[slot=header]') || { clientHeight: 0 };
+            let f = this.querySelector('[slot=footer]') || { clientHeight: 0 };
+            let t = this.querySelector('[slot=top]') || { clientHeight: 0 };
+            let r = this.querySelector('[slot=right]') || { clientWidth: 0 };
+            let b = this.querySelector('[slot=bottom]') || { clientHeight: 0 };
+            let l = this.querySelector('[slot=left]') || { clientWidth: 0 };
+            let m = this.shadowRoot.children[2];
+            let w = window;
+            let wb = document.body;
+            let ww = w.innerWidth || wb.clientWidth;
+            let wh = w.innerHeight || wb.clientHeight;
+            let mw = m.clientWidth;
+            let mh = wh - (h.clientHeight + f.clientHeight + t.clientHeight + b.clientHeight);
+            let value = `
+        :root {
+        --window-width: ${ww}px;
+        --window-height: ${wh}px;
+        --main-width: ${mw}px;
+        --main-height: ${mh}px;
+        --header-height: ${h.clientHeight}px;
+        --footer-height: ${f.clientHeight}px;
+        --drawer-left-width: ${l.clientWidth}px;
+        --drawer-right-width: ${r.clientWidth}px;
+        --drawer-top-height: ${t.clientHeight}px;
+        --drawer-bottom-height: ${b.clientHeight}px;
+        }
+        main {
+            height:${mh}px;
+        }
+        `;
+            if (_adsrCache !== value) {
+                console.log('Adjust styles', value, this);
+                console.dir(this);
+                _adsrCache = value;
+                this.dynstyles.innerHTML = value;
+            }
+            setTimeout(() => this.applyDynamicStyles(), 100);
+        }
     }
     customElements.define('webui-app', App);
 }
