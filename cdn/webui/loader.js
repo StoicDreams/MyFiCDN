@@ -2,16 +2,28 @@
 {
     const wuiPrefix = `WEBUI-`;
     const wcLoading = {};
+    const wcLoaded = {};
     const wcRoot = location.hostname === '127.0.0.1' ? '' : 'https://cdn.myfi.ws/';
     const wcMin = wcRoot === '' ? '' : '.min';
     function processNode(nodeName) {
         if (wcLoading[nodeName]) return;
         wcLoading[nodeName] = true;
+        loadComponent(nodeName.split('-').splice(1).join('-').toLowerCase());
+    }
+    function loadComponent(wc) {
+        if (wcLoaded[wc]) return;
+        wcLoaded[wc] = true;
         let script = document.createElement('script');
-        let wc = nodeName.split('-').splice(1).join('-').toLowerCase();
         script.setAttribute('async', true);
         script.setAttribute('src', `${wcRoot}webui/${wc}${wcMin}.js`)
         document.head.append(script);
+    }
+    function appPreload(el) {
+        if (!el) return;
+        let pl = el.getAttribute('preload');
+        if (pl) {
+            pl.replace(';', ' ').replace(',', ' ').split(' ').forEach(loadComponent);
+        }
     }
     function checkNodes(nodes) {
         if (nodes.length === 0) return;
@@ -25,6 +37,9 @@
     const startObserving = (domNode) => {
         const observer = new MutationObserver(mutations => {
             mutations.forEach(function (mutation) {
+                if (mutation.target.nodeName === 'WEBUI-APP' && mutation.type === 'attributes' && mutation.attributeName === 'preload') {
+                    appPreload(mutation.target);
+                }
                 Array.from(mutation.addedNodes).forEach(el => {
                     if (el.nodeName.startsWith(wuiPrefix)) {
                         processNode(el.nodeName);
@@ -42,4 +57,5 @@
     };
     startObserving(document.body);
     checkNodes(document.childNodes);
+    appPreload(document.querySelector('webui-app'));
 }
