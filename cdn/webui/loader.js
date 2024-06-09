@@ -18,7 +18,7 @@
         script.setAttribute('src', `${wcRoot}webui/${wc}${wcMin}.js`)
         document.head.append(script);
     }
-    function appPreload(el) {
+    function componentPreload(el) {
         if (!el) return;
         let pl = el.getAttribute('preload');
         if (pl) {
@@ -37,8 +37,8 @@
     const startObserving = (domNode) => {
         const observer = new MutationObserver(mutations => {
             mutations.forEach(function (mutation) {
-                if (mutation.target.nodeName === 'WEBUI-APP' && mutation.type === 'attributes' && mutation.attributeName === 'preload') {
-                    appPreload(mutation.target);
+                if (mutation.target.nodeName.startsWith('WEBUI-') && mutation.type === 'attributes' && mutation.attributeName === 'preload') {
+                    componentPreload(mutation.target);
                 }
                 Array.from(mutation.addedNodes).forEach(el => {
                     if (el.nodeName.startsWith(wuiPrefix)) {
@@ -57,5 +57,5 @@
     };
     startObserving(document.body);
     checkNodes(document.childNodes);
-    appPreload(document.querySelector('webui-app'));
+    componentPreload(document.querySelector('webui-app'));
 }

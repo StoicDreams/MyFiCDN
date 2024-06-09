@@ -261,7 +261,7 @@ grid-column: 2;
 <slot name="right"></slot>
 <slot name="top"></slot>
 <slot name="bottom"></slot>
-<webui-dialog></webui-dialog>
+<webui-dialogs></webui-dialogs>
 `;
     let _adsrCache = '';
     class App extends HTMLElement {
@@ -280,7 +280,7 @@ grid-column: 2;
             shadow.appendChild(this.template);
             document.head.appendChild(this.dynstyles);
             if (!this.getAttribute('preload')) {
-                this.setAttribute('preload', 'dialog');
+                this.setAttribute('preload', 'dialogs');
             }
             this.applyDynamicStyles();
         }

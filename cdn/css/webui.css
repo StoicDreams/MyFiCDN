@@ -27,6 +27,8 @@
     --color-active-offset: var(--color-white);
     --color-button: var(--color-info);
     --color-button-offset: var(--color-info-offset);
+    --color-footer: var(--color-shade);
+    --color-footer-offset: var(--color-shade-offset);
 
     --main-transition: 200ms;
     --readability-line-limit: 66ch;
@@ -34,6 +36,7 @@
     --transition-speed: 180ms;
     --corners: 3px;
     --padding: 5px;
+    --button-padding: calc(1 * var(--padding)) calc(2 * var(--padding));
     --nav-transition-in: 300ms;
     --nav-transition-out: 300ms;
     --window-width: 900px;
@@ -68,7 +71,6 @@
     --elevation-23: 0px 0px 12px 12px rgba(0, 0, 0, 0.2);
     --elevation-24: 0px 0px 12px 13px rgba(0, 0, 0, 0.2);
     --elevation-25: 0px 0px 13px 13px rgba(0, 0, 0, 0.2);
-    --default-borderradius: 4px;
     --drawer-width-left: 240px;
     --drawer-width-right: 240px;
     --drawer-width-mini-left: 56px;
@@ -216,7 +218,8 @@ footer::before {
 }
 
 footer {
-    background-color: var(--color-shade);
+    background-color: var(--color-footer);
+    color: var(--color-footer-offset);
     box-shadow: 0px 4px 12px 1px inset rgba(0, 0, 0, 0.4);
 }
 
@@ -428,7 +431,7 @@ code {
     display: inline;
     background-color: var(--color-info);
     color: var(--color-info-offset);
-    border-radius: var(--padding);
+    border-radius: var(--corners);
     outline: 1.5px solid var(--color-info);
 }
 
@@ -3348,7 +3351,7 @@ webui-drawer:not([fixed])+header [data-toggleclass=".nav|open"] {
     padding: 0px;
     background-color: var(--color-white);
     color: var(--color-black);
-    border-radius: var(--border-radius, 5px);
+    border-radius: var(--corners, 5px);
     z-index: 99999;
     border: 2px solid var(--color-info);
 }

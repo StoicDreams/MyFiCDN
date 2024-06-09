@@ -54,16 +54,17 @@
                 <button data-setattr=".nav|slot|bottom" title="Set navigation to bottom" class="toggle-pos-bottom">
                     <webui-fa icon="window-flip" family="regular" class="fa-rotate-180"></webui-fa>
                 </button>
-                <webui-toggle-icon data-toggleattr=".nav|fixed" data-enabled=".nav:not([fixed])" icon-on="send-backward"
-                    icon-off="bring-forward" title-on="Hide Navigation" title-off="Lock Navigation"></webui-toggle-icon>
+                <webui-toggle-icon data-toggleattr=".nav|fixed" data-enabled=".nav:not([fixed])" icon-on="send-backward" icon-off="bring-forward" title-on="Hide Navigation" title-off="Lock Navigation"></webui-toggle-icon>
             </webui-flexbox>
         </webui-drawer>
         <header slot="header">
-            <button data-toggleclass=".nav|open" class="elevation-10 pa-1 mx-1"><webui-fa
-                    icon="bars"></webui-fa></button>
+            <button data-toggleclass=".nav|open" class="elevation-10 pa-1 mx-1"><webui-fa icon="bars"></webui-fa></button>
             <h1>MyFi CDN</h1>
             <h2>Web Component Testing</h2>
             <webui-flexbox grow></webui-flexbox>
+            <webui-feedback data-post="https://api.myfi.ws/feedback/new">
+                <p>You can also come <a href="https://discord.com/channels/972856291909332993/1025781071608037466">chat with us on the Stoic Dreams discord server.</a></p>
+            </webui-feedback>
         </header>
         <p>This page is a testing page for developing and testing WebUI JavaScript based Web Components.</p>
         <h2>Test Data Subscriptions & Updates</h2>
