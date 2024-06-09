@@ -1,4 +1,4 @@
-/* Dialog component */
+/* Enables use of await webuiDialog(options) to call a dialog */
 "use strict"
 {
     const template = document.createElement('template')
@@ -169,8 +169,6 @@ color:var(--color-success-offset, #FFF);
                         t.btnCancel.addEventListener('click', () => close(true));
                         t.btnConfirm.addEventListener('click', async (ev) => {
                             ev.preventDefault();
-
-                            console.log('form', t.form);
                             let formData = new FormData(t.form);
                             if (data.onconfirm) {
                                 if (data.onconfirm.constructor && data.onconfirm.constructor.name === 'AsyncFunction') {
@@ -179,7 +177,13 @@ color:var(--color-success-offset, #FFF);
                                         return;
                                     }
                                 } else {
-                                    if (!data.onconfirm(formData, t.content)) {
+                                    let result = data.onconfirm(formData, t.content);
+                                    if (result.then) {
+                                        result = await result;
+                                        if (!result) {
+                                            return;
+                                        }
+                                    } else if (!result) {
                                         return;
                                     }
                                 }
@@ -220,7 +224,11 @@ color:var(--color-success-offset, #FFF);
             this[property] = newValue;
             this.updateElements();
         }
-        connectedCallback() { }
+        connectedCallback() {
+            if (!this.getAttribute('preload')) {
+                this.setAttribute('preload', 'fa');
+            }
+        }
         disconnectedCallback() { }
     }
     customElements.define('webui-dialogs', Dialog);

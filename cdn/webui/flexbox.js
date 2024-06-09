@@ -21,7 +21,7 @@ display: flex!important;
             shadow.appendChild(this.template);
         }
         static get observedAttributes() {
-            return ["gap", "grow", "column"];
+            return ["gap", "grow", "column", "align", "justify"];
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
@@ -33,6 +33,8 @@ display: flex!important;
         setStyles() {
             let styles = ["display:flex"];
             let a = this.attributes;
+            if (!!a.justify) { styles.push(`justify-content:${a.justify.value};`); }
+            if (!!a.align) { styles.push(`align-items:${a.align.value};`); }
             if (!!a.grow) { styles.push('flex-grow:1'); }
             if (!!a.column) { styles.push('flex-direction:column'); }
             if (a.gap && a.gap.value) { styles.push(`gap:${getDim(this.attributes.gap.value)}`); }

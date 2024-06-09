@@ -126,13 +126,21 @@
         document.body.addEventListener('click', ev => {
             let target = ev.target;
             while (target !== document.body) {
+                if (target.hasAttribute('data-stopclick')) {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    return false;
+                }
                 if (target.dataset.setattr) {
                     let [val, attr, sel] = target.dataset.setattr.split('|').reverse();
                     if (sel) {
-                        document.querySelectorAll(sel).forEach(el => setAttr(el, attr, val));
+                        document.querySelectorAll(sel).forEach(el => {
+                            setAttr(el, attr, val);
+                        });
                     } else {
                         setAttr(target, attr, val);
                     }
+                    us();
                     break;
                 }
                 if (target.dataset.toggleclass) {
@@ -142,6 +150,7 @@
                     } else {
                         toggleClass(target, cls);
                     }
+                    us();
                     break;
                 }
                 if (target.dataset.removeclass) {
@@ -152,7 +161,8 @@
                         } else {
                             removeClass(target, cls);
                         }
-                    })
+                    });
+                    us();
                 }
                 if (target.dataset.toggleattr) {
                     let [attr, sel] = target.dataset.toggleattr.split('|').reverse();
@@ -161,6 +171,7 @@
                     } else {
                         toggleAttr(target, attr);
                     }
+                    us();
                     break;
                 }
                 target = target.parentNode;
@@ -264,6 +275,10 @@ grid-column: 2;
 <webui-dialogs></webui-dialogs>
 `;
     let _adsrCache = '';
+    let us = () => { };
+    window.addEventListener('resize', ev => {
+        us();
+    });
     class App extends HTMLElement {
         constructor() {
             super();
@@ -282,7 +297,8 @@ grid-column: 2;
             if (!this.getAttribute('preload')) {
                 this.setAttribute('preload', 'dialogs');
             }
-            this.applyDynamicStyles();
+            us = () => { this.applyDynamicStyles(); };
+            this.applyDynamicStylesTimer();
         }
         static get observedAttributes() {
             return [];
@@ -334,7 +350,10 @@ grid-column: 2;
                 _adsrCache = value;
                 this.dynstyles.innerHTML = value;
             }
-            setTimeout(() => this.applyDynamicStyles(), 10000);
+        }
+        applyDynamicStylesTimer() {
+            us();
+            setTimeout(() => this.applyDynamicStylesTimer(), 1000);
         }
     }
     customElements.define('webui-app', App);

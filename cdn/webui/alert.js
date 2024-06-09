@@ -56,13 +56,10 @@ border-radius:var(--corners);
             t.template = template.content.cloneNode(true);
             t.icon = t.template.querySelector('#icon');
             t.btnClose = t.template.querySelector('#close');
-            if (!t.getAttribute('preload')) {
-                t.setAttribute('preload', 'fa');
-            }
             t.btnClose.addEventListener('click', ev => {
+                t.userclosed = true;
                 t.removeAttribute('show');
             });
-            t.setVariant('warning');
             shadow.appendChild(t.template);
         }
         static get observedAttributes() {
@@ -81,7 +78,6 @@ border-radius:var(--corners);
         }
         clearThemes() {
             this.classList.forEach(c => {
-                console.log('class', c);
                 if (c.startsWith('theme-')) {
                     this.classList.remove(c);
                 }
@@ -107,7 +103,14 @@ border-radius:var(--corners);
                     break;
             }
         }
-        connectedCallback() { }
+        connectedCallback() {
+            if (!this.variant) {
+                this.setVariant('warning');
+            }
+            if (!this.getAttribute('preload')) {
+                this.setAttribute('preload', 'fa');
+            }
+        }
         disconnectedCallback() { }
     }
     customElements.define('webui-alert', Alert);
