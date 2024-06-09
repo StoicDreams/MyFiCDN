@@ -8,7 +8,7 @@
 :host {
 display:inline-flex;
 cursor:pointer;
-padding:var(--button-padding, 0.5em 1em);
+padding:1px;
 align-items:center;
 justify-content:center;
 }

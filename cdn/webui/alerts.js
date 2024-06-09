@@ -8,7 +8,7 @@
 :host {
 display:inline-flex;
 cursor:pointer;
-padding:var(--button-padding, 0.5em 1em);
+padding:1px;
 align-items:center;
 justify-content:center;
 }
@@ -62,7 +62,7 @@ justify-content:center;
         webuiDialog({
             title: getAlertHeader(),
             content: getAlertContent(),
-            confirm: 'Close'
+            confirm: 'Close',
         });
     }
 
@@ -90,8 +90,9 @@ justify-content:center;
             super();
             const shadow = this.attachShadow({ mode: 'open' });
             const t = this;
+            t.count = 0;
             t.template = template.content.cloneNode(true);
-            t.icon = t.template.querySelector('#icon');
+            t.icon = t.template.querySelector('webui-fa');
             t.btnClose = t.template.querySelector('#close');
             if (!window.webuiAlert) {
                 window.webuiAlert = (message, variant) => {
@@ -105,6 +106,8 @@ justify-content:center;
                     alert.setAttribute('show', true);
                     alert.userclosed = false;
                     alertList.push(alert);
+                    t.count += 1;
+                    t.icon.setAttribute('count', t.count.toLocaleString());
                     popup.appendChild(alert);
                     setTimeout(() => {
                         if (alert.parentNode === popup) {
@@ -122,9 +125,23 @@ justify-content:center;
                 return true;
             });
             shadow.appendChild(t.template);
+            setTimeout(() => this.checkCounts(), 1000);
         }
         static get observedAttributes() {
             return ['data-toggleclass', 'data-title'];
+        }
+        checkCounts() {
+            let newCount = 0;
+            alertList.map(a => {
+                if (!a.userclosed) {
+                    newCount++;
+                }
+            });
+            if (newCount != this.count) {
+                this.count = newCount;
+                this.icon.setAttribute('count', newCount === 0 ? '' : newCount.toLocaleString());
+            }
+            setTimeout(() => this.checkCounts(), 1000);
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;

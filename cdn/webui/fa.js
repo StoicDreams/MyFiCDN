@@ -7,6 +7,7 @@
 <style type="text/css">
 :host {
 display: inline-flex;
+position: relative;
 align-items: center;
 justify-items: center;
 }
@@ -17,8 +18,23 @@ fill: currentColor;
 line-height: 2ch;
 vertical-align: middle;
 }
+slot[name="count"] {
+display:block;
+position:absolute;
+border-radius:1em;
+background-color:var(--color-info);
+color:var(--color-info-offset);
+bottom:50%;
+left:50%;
+padding:1px;
+font-size:0.6em;
+}
+slot[name="count"]:empty {
+display:none;
+}
 </style>
 <slot name="icon"></slot>
+<slot name="count"></slot>
 `;
     const faCache = {
         'regular': {
@@ -28,18 +44,19 @@ vertical-align: middle;
     class FontAwesome extends HTMLElement {
         constructor() {
             super();
-            this.loadid = 0;
-            this.svg = document.createElement('svg');
-            this.icon = "triangle-exclamation";
-            this.family = 'regular';
-            const shadow = this.attachShadow({ mode: 'open' });
-            this.template = template.content.cloneNode(true);
-            this.iconSlot = this.template.querySelector('slot[name=icon]');
-            this.iconSlot.appendChild(this.svg);
-            shadow.appendChild(this.template);
+            let t = this;
+            t.loadid = 0;
+            t.svg = document.createElement('svg');
+            t.icon = "triangle-exclamation";
+            t.family = 'regular';
+            const shadow = t.attachShadow({ mode: 'open' });
+            t.template = template.content.cloneNode(true);
+            t.iconSlot = t.template.querySelector('slot[name=icon]');
+            t.countSlot = t.template.querySelector('slot[name=count]');
+            shadow.appendChild(t.template);
         }
         static get observedAttributes() {
-            return ['icon', 'family', 'class'];
+            return ['icon', 'family', 'class', 'count'];
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
@@ -51,9 +68,16 @@ vertical-align: middle;
                     if (this.loadid !== loadid) return;
                     this.updateIcon();
                 }, 1);
+                return;
+            }
+            switch (property) {
+                case 'count':
+                    this.countSlot.innerHTML = `<div slot="count">${newValue}</div>`;
+                    break;
             }
         }
-        connectedCallback() { }
+        connectedCallback() {
+        }
         disconnectedCallback() { }
         async updateIcon() {
             let name = this.icon;
