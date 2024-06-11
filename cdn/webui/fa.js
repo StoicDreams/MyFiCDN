@@ -72,7 +72,7 @@ display:none;
             }
             switch (property) {
                 case 'count':
-                    this.countSlot.innerHTML = `<div slot="count">${newValue}</div>`;
+                    this.countSlot.innerHTML = `${newValue}`;
                     break;
             }
         }
