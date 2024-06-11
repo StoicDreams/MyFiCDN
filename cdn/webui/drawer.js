@@ -65,6 +65,10 @@ display: flex!important;
 gap:var(--padding, 1em);
 padding:var(--padding,1em);
 }
+slot:not([name]) {
+display:block;
+flex-grow:1;
+}
 .footer {
 padding: var(--padding, 1em);
 }
@@ -78,7 +82,7 @@ cursor:pointer;
 }
 </style>
 <slot name="header"></slot>
-<webui-flexbox grow><slot></slot></webui-flexbox>
+<slot></slot>
 <slot name="footer"></slot>
 `;
     const dockableTemplate = `
