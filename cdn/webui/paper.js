@@ -1,4 +1,4 @@
-/* Display multi-line, auto-resizing text input field. */
+/* Display paper element. */
 "use strict"
 {
     class Paper extends HTMLElement {
