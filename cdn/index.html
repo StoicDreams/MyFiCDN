@@ -49,7 +49,7 @@
             </button>
             <h1>MyFi CDN</h1>
             <h2>Web Component Testing</h2>
-            <webui-flexbox grow></webui-flexbox>
+            <webui-flex grow></webui-flex>
             <webui-feedback data-post="https://api.myfi.ws/feedback/new" data-json-name="message">
                 <p>You can also come <a href="https://discord.com/channels/972856291909332993/1025781071608037466">chat with us on the Stoic Dreams discord server.</a></p>
             </webui-feedback>
@@ -57,19 +57,19 @@
         </header>
         <p>This page is a testing page for developing and testing WebUI JavaScript based Web Components.</p>
         <h2>Test Data Subscriptions & Updates</h2>
-        <webui-flexbox>
+        <webui-flex>
             <label for="test1" class="nowrap">Data Input</label>
             <input id="test1" type="text" data-trigger="test1" />
-        </webui-flexbox>
+        </webui-flex>
         <h2>Data Output</h2>
         <section>
             InnerHTML: <span data-subscribe="test1" data-set="innerHTML"></span>
         </section>
-        <webui-flexbox gap="5">
+        <webui-flex gap="5">
             <label class="nowrap">Input Field:</label>
             <input type="text" readonly data-subscribe="test1" data-set="value"></textarea>
-        </webui-flexbox>
-        <webui-flexbox class="ma-10"></webui-flexbox>
+        </webui-flex>
+        <webui-flex class="ma-10"></webui-flex>
         <webui-fa icon="star" class=""></webui-fa>
         <webui-fa icon="fish" class="fa-bounce"></webui-fa>
         <webui-fa icon="user" class=""></webui-fa>
@@ -548,9 +548,9 @@
             nulla facilisi morbi tempus.
         </p>
         <footer slot="footer" class="pl-2 pr-2">
-            <webui-flexbox grow></webui-flexbox>
+            <webui-flex grow></webui-flex>
             <webui-paper>© 2022-2024 Stoic Dreams All Rights Reserved</webui-paper>
-            <webui-flexbox grow></webui-flexbox>
+            <webui-flex grow></webui-flex>
             <webui-poweredby version="0.8.7"></webui-poweredby>
         </footer>
     </webui-app>

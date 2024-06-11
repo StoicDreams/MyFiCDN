@@ -11,7 +11,7 @@ display: flex!important;
 </style>
 <slot></slot>
 `;
-    class FlexBox extends HTMLElement {
+    class Flex extends HTMLElement {
         constructor() {
             super();
             const shadow = this.attachShadow({ mode: 'open' });
@@ -48,5 +48,5 @@ display: flex!important;
         if (num == value) return `${value}px`;
         return value;
     }
-    customElements.define('webui-flexbox', FlexBox);
+    customElements.define('webui-flex', Flex);
 }

@@ -151,7 +151,7 @@ cursor:pointer;
         buildFooterContent() {
             this.querySelectorAll('[slot="footer"]').forEach(el => el.remove());
             let content = '';
-            let fb = document.createElement('webui-flexbox');
+            let fb = document.createElement('webui-flex');
             fb.setAttribute('justify', 'center');
             fb.setAttribute('slot', 'footer');
             if (this['data-moveable']) { content += moveableTempalte.split('[ID]').join(this._idselector); }
@@ -161,7 +161,7 @@ cursor:pointer;
         }
         connectedCallback() {
             if (!this.getAttribute('preload')) {
-                this.setAttribute('preload', 'fa flexbox toggle-icon');
+                this.setAttribute('preload', 'fa flex toggle-icon');
             }
             this.setAttribute('id', this._id);
         }
