@@ -6,7 +6,7 @@
     template.innerHTML = `
 <style type="text/css">
     :host {
-        height: 6em;
+        height: 5em;
         overflow: visible;
         font-family: inherit;
         margin: 1px var(--padding,1em);
