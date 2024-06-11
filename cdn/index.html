@@ -36,9 +36,9 @@
 <body>
     <webui-app data-removeclass=".nav|open;.shared|open">
         <webui-drawer slot="left" class="nav elevation-20" data-state="slot|fixed" data-moveable data-dockable>
-            <section class="d-flex justify-center" slot="header">
+            <webui-flex justify="center" slot="header">
                 <webui-stoic-dreams-logo title="MyFi CDN Logo" text="MyFi" text2="CDN"></webui-stoic-dreams-logo>
-            </section>
+            </webui-flex>
             <webui-nav></webui-nav>
         </webui-drawer>
         <webui-drawer slot="right" class="shared elevation-20" data-stopclick data-moveable data-state="slot|fixed" fixed>
@@ -552,7 +552,7 @@
             <webui-flex grow></webui-flex>
             <webui-paper>© 2022-2024 Stoic Dreams All Rights Reserved</webui-paper>
             <webui-flex grow></webui-flex>
-            <webui-poweredby version="0.8.11"></webui-poweredby>
+            <webui-poweredby version="0.8.12"></webui-poweredby>
         </footer>
     </webui-app>
     <script src=" webui/loader.js" async></script>
