@@ -22,7 +22,7 @@
     --color-danger: rgb(183, 5, 5);
     --color-danger-offset: var(--color-white);
     --color-shade: rgba(125, 125, 125, 0.2);
-    --color-shade-offset: var(--color-white);
+    --color-shade-offset: inherit;
     --color-active: rgb(31, 112, 92);
     --color-active-offset: var(--color-white);
     --color-button: var(--color-info);
