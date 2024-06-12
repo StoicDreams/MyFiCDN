@@ -60,7 +60,11 @@ display:none;
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
-            this[property] = newValue;
+            if (newValue === null || newValue === undefined) {
+                delete this[property];
+            } else {
+                this[property] = newValue;
+            }
             if (property === 'icon' || property === 'family') {
                 let loadid = this.loadid + 1;
                 this.loadid = loadid;

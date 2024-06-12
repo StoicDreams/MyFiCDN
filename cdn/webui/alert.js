@@ -67,7 +67,11 @@ border-radius:var(--corners);
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
-            this[property] = newValue;
+            if (newValue === null || newValue === undefined) {
+                delete this[property];
+            } else {
+                this[property] = newValue;
+            }
             switch (property) {
                 case 'variant':
                     this.setVariant(newValue);

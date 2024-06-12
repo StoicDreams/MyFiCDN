@@ -91,7 +91,11 @@ padding:var(--padding);
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
-            this[property] = newValue;
+            if (newValue === null || newValue === undefined) {
+                delete this[property];
+            } else {
+                this[property] = newValue;
+            }
             switch (property) {
                 case 'name':
                     this.field.setAttribute('name', newValue);

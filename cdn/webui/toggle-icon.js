@@ -44,7 +44,11 @@ button {
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
-            this[property] = newValue;
+            if (newValue === null || newValue === undefined) {
+                delete this[property];
+            } else {
+                this[property] = newValue;
+            }
             this.updateElements();
         }
         connectedCallback() { }

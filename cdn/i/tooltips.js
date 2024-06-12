@@ -19,8 +19,10 @@
 				continue;
 			}
 			let title = target.getAttribute('title');
-			if (title) {
+			if (title && title != 'null') {
 				target.setAttribute('aria-label', title);
+				target.removeAttribute('title');
+			} else if (title === 'null') {
 				target.removeAttribute('title');
 			}
 			//if (target.ariaLabel) { return [target, target.ariaLabel]; }
