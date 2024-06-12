@@ -263,6 +263,10 @@ footer>* {
     align-items: center;
 }
 
+[slot="header"]>.image>svg {
+    height: 5em;
+}
+
 .app-drawer.left .logo {
     height: calc(6*1em);
     width: 100%;
