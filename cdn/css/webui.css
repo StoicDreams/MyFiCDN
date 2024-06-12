@@ -109,6 +109,10 @@
 }
 
 webui-app {
+    animation: animation-fadein 400ms ease-out;
+}
+
+webui-app {
     min-width: 380px;
 }
 
