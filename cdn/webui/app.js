@@ -495,7 +495,7 @@ opacity:0;
                     webuiSetData(key, '');
                 }
             });
-            if (content.startsWith(`!DOCTYPE`)) {
+            if (content.startsWith(`<!DOCTYPE`)) {
                 console.error('Invalid page content loaded:', content);
                 return;
             }
