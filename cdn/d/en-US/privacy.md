@@ -2,7 +2,7 @@
 
 <webui-quote theme="primary">
 
-This privacy notice discloses the privacy practices for this application {APP_NAME}, its domain {DOMAIN}, and all of {COMPANY_PLURAL} platforms, including software products, services, and websites. This notice includes the following:
+This privacy notice discloses the privacy practices for this application {APP_NAME}, its domain {DOMAIN}, and all of {COMPANY_POSSESSIVE} platforms, including software products, services, and websites. This notice includes the following:
 
 - What personally identifiable information is collected from you through our websites or applications, how it is used, and with whom it may be shared.
 - What choices are available to you regarding the use of your data.

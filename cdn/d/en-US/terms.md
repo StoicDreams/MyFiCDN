@@ -4,7 +4,7 @@
 
 <webui-page-segment>
 
-By accessing this application, {DOMAIN}, or any of {COMPANY_PLURAL} other associated software, you are agreeing to be bound by these Terms and Conditions of Use, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this web site are protected by applicable copyright and trade mark law.
+By accessing this application, {DOMAIN}, or any of {COMPANY_POSSESSIVE} other associated software, you are agreeing to be bound by these Terms and Conditions of Use, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this web site are protected by applicable copyright and trade mark law.
 
 </webui-page-segment>
 
@@ -20,7 +20,7 @@ Features of {APP_NAME} may requires the use of cookies and other browser storage
 
 <webui-page-segment>
 
-Permission is granted to temporarily download one copy of the materials (information or software) on {COMPANY_PLURAL} web sites and software for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
+Permission is granted to temporarily download one copy of the materials (information or software) on {COMPANY_POSSESSIVE} web sites and software for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
 
 - modify or copy the materials;
 - use the materials for any commercial purpose, or for any public display (commercial or non-commercial);
@@ -36,7 +36,7 @@ This license shall automatically terminate if you violate any of these restricti
 
 <webui-page-segment>
 
-The materials on {APP_NAME} and any other {COMPANY_PLURAL} web sites and software are provided "as is". {COMPANY_SINGULAR} makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties, including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights. Further, {COMPANY_SINGULAR} does not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on its Internet web site or otherwise relating to such materials or on any sites linked to this site.
+The materials on {APP_NAME} and any other {COMPANY_POSSESSIVE} web sites and software are provided "as is". {COMPANY_SINGULAR} makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties, including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights. Further, {COMPANY_SINGULAR} does not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on its Internet web site or otherwise relating to such materials or on any sites linked to this site.
 
 </webui-page-segment>
 
@@ -52,7 +52,7 @@ In no event shall {COMPANY_SINGULAR} or its suppliers be liable for any damages 
 
 <webui-page-segment>
 
-The materials appearing in {APP_NAME}, on {DOMAIN}, and other {COMPANY_PLURAL} web sites and software could include technical, typographical, or photographic errors. {COMPANY_SINGULAR} does not warrant that any of the materials on {APP_NAME} are accurate, complete, or current. {COMPANY_SINGULAR} may make changes to the materials contained on {APP_NAME} at any time without notice. {COMPANY_SINGULAR} does not, however, make any commitment to update the materials.
+The materials appearing in {APP_NAME}, on {DOMAIN}, and other {COMPANY_POSSESSIVE} web sites and software could include technical, typographical, or photographic errors. {COMPANY_SINGULAR} does not warrant that any of the materials on {APP_NAME} are accurate, complete, or current. {COMPANY_SINGULAR} may make changes to the materials contained on {APP_NAME} at any time without notice. {COMPANY_SINGULAR} does not, however, make any commitment to update the materials.
 
 </webui-page-segment>
 
@@ -76,7 +76,7 @@ The materials appearing in {APP_NAME}, on {DOMAIN}, and other {COMPANY_PLURAL} w
 
 <webui-page-segment>
 
-Any claim relating to {APP_NAME}, {DOMAIN}, or any other {COMPANY_PLURAL} web sites and software shall be governed by the laws of the United States without regard to its conflict of law provisions.
+Any claim relating to {APP_NAME}, {DOMAIN}, or any other {COMPANY_POSSESSIVE} web sites and software shall be governed by the laws of the United States without regard to its conflict of law provisions.
 
 General Terms and Conditions applicable to Use of a Web Site.
 
@@ -86,6 +86,6 @@ General Terms and Conditions applicable to Use of a Web Site.
 
 <webui-page-segment>
 
-{COMPANY_PLURAL} sites and software, including {APP_NAME} and {DOMAIN}, may contain user generated content. We may review content and periodically delete or alter content we believe to be inappropriate, offensive, or disrespectful. This is at our discretion, and we make no guarantees regarding the safety or accuracy of user generated content.
+{COMPANY_POSSESSIVE} sites and software, including {APP_NAME} and {DOMAIN}, may contain user generated content. We may review content and periodically delete or alter content we believe to be inappropriate, offensive, or disrespectful. This is at our discretion, and we make no guarantees regarding the safety or accuracy of user generated content.
 
 </webui-page-segment>

@@ -7,7 +7,7 @@
     const appData = {
         'app-name': 'App',
         'company-singular': 'Company',
-        'company-plural': `Company's`,
+        'company-possessive': `Company's`,
         'page-title': '',
         'page-subtitle': '',
         'domain': location.hostname.toLowerCase()
