@@ -1,9 +1,9 @@
-/* This script is used to dynamically load WebUI web components (webui-*) from cdn.myfi.ws as they are encountered in the dom. */
+/* This script is used to dynamically load app hosted web components (app-*) from /wc/*.min.js as they are encountered in the dom. */
 {
-    const wuiPrefix = `WEBUI-`;
+    const wcPrefix = `APP-`;
     const wcLoading = {};
     const wcLoaded = {};
-    const wcRoot = location.hostname === '127.0.0.1' ? '' : 'https://cdn.myfi.ws/';
+    const wcRoot = '/wc';
     const wcMin = wcRoot === '' ? '' : '.min';
     function processNode(nodeName) {
         if (wcLoading[nodeName]) return;
@@ -15,7 +15,7 @@
         wcLoaded[wc] = true;
         let script = document.createElement('script');
         script.setAttribute('async', true);
-        script.setAttribute('src', `${wcRoot}webui/${wc}${wcMin}.js`)
+        script.setAttribute('src', `${wcRoot}/${wc}${wcMin}.js`)
         document.head.append(script);
     }
     function componentPreload(el) {
@@ -28,7 +28,7 @@
     function checkNodes(nodes) {
         if (nodes.length === 0) return;
         nodes.forEach(node => {
-            if (node.nodeName.startsWith(wuiPrefix)) {
+            if (node.nodeName.startsWith(wcPrefix)) {
                 processNode(node.nodeName);
             }
             checkNodes(node.childNodes);
@@ -37,14 +37,13 @@
     const startObserving = (domNode) => {
         const observer = new MutationObserver(mutations => {
             mutations.forEach(function (mutation) {
-                if (mutation.target.nodeName.startsWith(wuiPrefix) && mutation.type === 'attributes' && mutation.attributeName === 'preload') {
+                if (mutation.target.nodeName.startsWith(wcPrefix) && mutation.type === 'attributes' && mutation.attributeName === 'preload') {
                     componentPreload(mutation.target);
                 }
                 Array.from(mutation.addedNodes).forEach(el => {
-                    if (el.nodeName.startsWith(wuiPrefix)) {
+                    if (el.nodeName.startsWith(wcPrefix)) {
                         processNode(el.nodeName);
                     }
-                    checkNodes(el.childNodes);
                 });
             });
         });
@@ -58,5 +57,4 @@
     };
     startObserving(document.body);
     checkNodes(document.childNodes);
-    componentPreload(document.querySelector('webui-app'));
 }

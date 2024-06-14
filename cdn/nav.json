@@ -1,0 +1,33 @@
+[
+    {
+        "name": "Home",
+        "icon": "house",
+        "iconFamily": "duotone",
+        "url": "/"
+    },
+    {
+        "name": "Privacy",
+        "icon": "shield-exclamation",
+        "iconFamily": "duotone",
+        "url": "/privacy"
+    },
+    {
+        "name": "Terms",
+        "icon": "handshake",
+        "iconFamily": "duotone",
+        "url": "/terms"
+    },
+    {
+        "name": "Test",
+        "icon": "jedi",
+        "iconFamily": "duotone",
+        "children": [
+            {
+                "name": "Page",
+                "icon": "circle",
+                "iconFamily": "solid",
+                "url": "/test"
+            }
+        ]
+    }
+]

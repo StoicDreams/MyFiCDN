@@ -347,6 +347,12 @@ h6 {
     border-radius: var(--corners) var(--corners) 0 0;
 }
 
+webui-app>h1,
+webui-app>h2,
+webui-app>h3,
+webui-app>h4,
+webui-app>h5,
+webui-app>h6,
 main h1,
 main h2,
 main h3,
@@ -354,6 +360,46 @@ main h4,
 main h5,
 main h6 {
     box-shadow: 0px 4px 12px 1px rgba(0, 0, 0, 0.4);
+}
+
+webui-app>h1,
+webui-app>h2,
+webui-app>h3,
+webui-app>h4,
+webui-app>h5,
+webui-app>h6 {
+    padding: var(--padding);
+    font-size: calc(var(--typography-size) * 1.75);
+}
+
+webui-app>h1 {
+    background-color: var(--color-title);
+    color: var(--color-title-offset);
+}
+
+webui-app>h2 {
+    background-color: var(--color-primary);
+    color: var(--color-primary-offset);
+}
+
+webui-app>h3 {
+    background-color: var(--color-secondary);
+    color: var(--color-secondary-offset);
+}
+
+webui-app>h4 {
+    background-color: var(--color-tertiary);
+    color: var(--color-tertiary-offset);
+}
+
+webui-app>h5 {
+    background-color: var(--color-info);
+    color: var(--color-info-offset);
+}
+
+webui-app>h6 {
+    background-color: var(--color-action);
+    color: var(--color-action-offset);
 }
 
 a {
@@ -1080,6 +1126,7 @@ aside.app-drawer.left {
     z-index: 1;
 }
 
+webui-quote,
 blockquote,
 .quote {
     display: block;
@@ -1090,117 +1137,145 @@ blockquote,
     box-sizing: border-box;
 }
 
+webui-quote>slot[name="cite"],
 .quote>cite {
     margin: 0 0 0 auto;
     display: block;
     width: max-content;
 }
 
+webui-quote[theme="white"],
 .quote.highlight-theme-white {
     border-left-color: var(--color-white);
 }
 
+webui-quote[theme="black"],
 .quote.highlight-theme-black {
     border-left-color: var(--color-black);
 }
 
+webui-quote[theme="title"],
 .quote.highlight-theme-title {
     border-left-color: var(--color-title);
 }
 
+webui-quote[theme="primary"],
 .quote.highlight-theme-primary {
     border-left-color: var(--color-primary);
 }
 
+webui-quote[theme="secondary"],
 .quote.highlight-theme-secondary {
     border-left-color: var(--color-secondary);
 }
 
+webui-quote[theme="tertiary"],
 .quote.highlight-theme-tertiary {
     border-left-color: var(--color-tertiary);
 }
 
+webui-quote[theme="info"],
 .quote.highlight-theme-info {
     border-left-color: var(--color-info);
 }
 
+webui-quote[theme="success"],
 .quote.highlight-theme-success {
     border-left-color: var(--color-success);
 }
 
+webui-quote[theme="warning"],
 .quote.highlight-theme-warning {
     border-left-color: var(--color-warning);
 }
 
+webui-quote[theme="danger"],
 .quote.highlight-theme-danger {
     border-left-color: var(--color-danger);
 }
 
+webui-quote[theme="shade"],
 .quote.highlight-theme-shade {
     border-left-color: var(--color-shade);
 }
 
+webui-quote[theme="active"],
 .quote.highlight-theme-active {
     border-left-color: var(--color-active);
 }
 
+webui-quote[theme="button"],
 .quote.highlight-theme-button {
     border-left-color: var(--color-button);
 }
 
+webui-quote>slot[name="cite"]:before,
 .quote>cite:before {
     content: "— ";
     color: var(--color-primary);
 }
 
+webui-quote[theme="white"]>slot[name="cite"]:before,
 .quote.highlight-theme-white>cite:before {
     color: var(--color-white);
 }
 
+webui-quote[theme="black"]>slot[name="cite"]:before,
 .quote.highlight-theme-black>cite:before {
     color: var(--color-black);
 }
 
+webui-quote[theme="title"]>slot[name="cite"]:before,
 .quote.highlight-theme-title>cite:before {
     color: var(--color-title);
 }
 
+webui-quote[theme="primary"]>slot[name="cite"]:before,
 .quote.highlight-theme-primary>cite:before {
     color: var(--color-primary);
 }
 
+webui-quote[theme="secondary"]>slot[name="cite"]:before,
 .quote.highlight-theme-secondary>cite:before {
     color: var(--color-secondary);
 }
 
+webui-quote[theme="tertiary"]>slot[name="cite"]:before,
 .quote.highlight-theme-tertiary>cite:before {
     color: var(--color-tertiary);
 }
 
+webui-quote[theme="info"]>slot[name="cite"]:before,
 .quote.highlight-theme-info>cite:before {
     color: var(--color-info);
 }
 
+webui-quote[theme="success"]>slot[name="cite"]:before,
 .quote.highlight-theme-success>cite:before {
     color: var(--color-success);
 }
 
+webui-quote[theme="warning"]>slot[name="cite"]:before,
 .quote.highlight-theme-warning>cite:before {
     color: var(--color-warning);
 }
 
+webui-quote[theme="danger"]>slot[name="cite"]:before,
 .quote.highlight-theme-danger>cite:before {
     color: var(--color-danger);
 }
 
+webui-quote[theme="shade"]>slot[name="cite"]:before,
 .quote.highlight-theme-shade>cite:before {
     color: var(--color-shade);
 }
 
+webui-quote[theme="active"]>slot[name="cite"]:before,
 .quote.highlight-theme-active>cite:before {
     color: var(--color-active);
 }
 
+webui-quote[theme="button"]>slot[name="cite"]:before,
 .quote.highlight-theme-button>cite:before {
     color: var(--color-button);
 }
@@ -1314,11 +1389,14 @@ blockquote,
 
 /* Common Helpers */
 
+webui-page-segment,
 .page-segment-standard {
+    display: block;
     padding: calc(1.5 * var(--padding));
     margin: var(--padding);
 }
 
+webui-page-segment.cards,
 .page-segment-cards {
     display: flex;
     padding: calc(1.5 * var(--padding));
@@ -1511,26 +1589,41 @@ main.page.transition.in img {
     opacity: 1;
 }
 
+a.navlink {
+    cursor: pointer;
+}
+
+webui-nav-group,
+webui-nav-link,
 .nav-group,
 .nav-link {
     display: block;
     padding: calc(0.1 * var(--padding));
 }
 
+webui-nav-group>webui-nav-link,
+webui-nav-group>webui-nav-group,
 .nav-group>section {
+    padding: calc(0.1 * var(--padding));
     padding-left: calc(2 * var(--padding));
 }
 
+webui-nav-group>webui-nav-link,
+webui-nav-group>webui-nav-group,
 .nav-group>section {
     overflow: hidden;
     transition: all 300ms ease-in-out;
 }
 
+webui-nav-group>webui-nav-link>*,
+webui-nav-group>webui-nav-group>*,
 .nav-group>section>* {
     transition: all 300ms ease-in-out;
     margin-top: -100%;
 }
 
+webui-nav-group>.navlink.show~webui-nav-link>*,
+webui-nav-group>.navlink.show~webui-nav-group>*,
 .nav-group>.navlink.show~section>* {
     margin-top: 0;
 }

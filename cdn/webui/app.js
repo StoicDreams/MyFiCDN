@@ -1,6 +1,18 @@
 /* Wrapper element for application - contains several app-level features for managing state and transferring data between elements within the app */
 "use strict"
 {
+    const markdownOptions = {
+        gfm: true,
+    };
+    const appData = { 'page-title': '', 'page-subtitle': '', 'domain': location.hostname.toLowerCase() };
+    const appSettings = {
+        rootPage: 'root',
+        contentExtension: '.md',
+        pageContentEndpoint: '/d/en-US',
+        pageDataEndpoint: 'https://api.myfi.ws/data/page/',
+        encryptPageContent: false,
+        encryptPageData: 'base64'
+    };
     //storage_accepted
     {
         function getStorage() {
@@ -61,7 +73,7 @@
                 el.style.display = found ? '' : 'none';
             });
         }
-        const startObserving = (domNode) => {
+        const observerDataStates = (domNode) => {
             const observer = new MutationObserver(mutations => {
                 mutations.forEach(function (mutation) {
                     if (mutation.target && mutation.target.dataset && mutation.target.dataset.state) {
@@ -83,7 +95,7 @@
             });
             return observer;
         };
-        startObserving(document.body);
+        observerDataStates(document.body);
         checkNodes(document.childNodes);
         applyDataHide();
     }
@@ -94,11 +106,39 @@
             let key = el.dataset.trigger;
             if (!key) return;
             let value = el.value;
+            dataChanged(key, value);
+        }
+        function setDataToEl(el, key) {
+            let toSet = el.dataset.set || key;
+            let value = appData[key];
+            if (value === null || value === undefined) return;
+            switch (toSet) {
+                case 'innerText':
+                    el.innerText = appData[key];
+                    break;
+                case 'innerHTML':
+                    el.innerHTML = appData[key];
+                    break;
+                default:
+                    el.setAttribute(toSet, appData[key]);
+                    break;
+            }
+        }
+        function camelToSnake(key) {
+            return key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+        }
+        function dataChanged(key, value) {
+            key = camelToSnake(key);
+            if (value === null || value === undefined) {
+                delete appData[key];
+            } else {
+                appData[key] = typeof value === 'string' ? value : JSON.stringify(value);
+            }
             document.querySelectorAll(`[data-subscribe="${key}"]`).forEach(sub => {
-                let toSet = sub.dataset.set || 'innerText';
-                sub[toSet] = value;
+                setDataToEl(sub, key);
             });
         }
+        window.webuiSetData = dataChanged;
         function toggleAttr(el, attr) {
             if (el.getAttribute(attr)) {
                 el.removeAttribute(attr);
@@ -121,11 +161,27 @@
         function setAttr(el, attr, val) {
             el.setAttribute(attr, val);
         }
+        function changePage(url) {
+            window.history.pushState(appData, document.title, url);
+            loadPage(url);
+        }
+        window.addEventListener('popstate', ev => {
+            if (ev.state) {
+                console.log("TODO: handle history updates", ev);
+            }
+        });
         document.body.addEventListener('input', handleDataTrigger);
         document.body.addEventListener('change', handleDataTrigger);
         document.body.addEventListener('click', ev => {
             let target = ev.target;
             while (target !== document.body) {
+                let href = target.getAttribute('href');
+                if (href && target.getAttribute('target') !== 'blank' && (href[0] === '/' || href.substr(0, 4) !== 'http')) {
+                    changePage(href);
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    return false;
+                }
                 if (target.hasAttribute('data-stopclick')) {
                     ev.stopPropagation();
                     ev.preventDefault();
@@ -177,6 +233,88 @@
                 target = target.parentNode;
             }
         });
+
+        const observeDataSubscriptions = (domNode) => {
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(function (mutation) {
+                    Array.from(mutation.addedNodes).forEach(el => {
+                        if (!el || !el.getAttribute) return;
+                        let dataKey = el.getAttribute('data-subscribe');
+                        if (!dataKey) return;
+                        setDataToEl(el, dataKey);
+                    });
+                });
+            });
+            observer.observe(domNode, {
+                childList: true,
+                attributes: true,
+                characterData: true,
+                subtree: true,
+            });
+            return observer;
+        };
+        observeDataSubscriptions(document.body);
+        document.querySelectorAll('[data-subscribe]').forEach(el => {
+            let key = el.dataset.subscribe;
+            setDataToEl(el, key);
+        })
+    }
+    function transitionDelay(ms) {
+        return new Promise((resolve, _) => {
+            setTimeout(() => resolve(), ms);
+        });
+    }
+    async function loadPage() {
+        let page = location.pathname === '/' ? '/' + appSettings.rootPage : location.pathname;
+        let url = page + location.search;
+        let dataUrl = encryptUrl(url, appSettings.encryptPageData);
+        let contentUrl = encryptUrl(url, appSettings.encryptPageContent);
+        let fetchContent = fetch(`${appSettings.pageContentEndpoint}${contentUrl}${appSettings.contentExtension}`);
+        let fetchData = fetch(`${appSettings.pageDataEndpoint}${dataUrl}`);
+        appSettings.app.main.classList.add('transition');
+        let timerStart = Date.now();
+        try {
+            let contentResult = await fetchContent;
+            if (!contentResult.ok) {
+                throw Error("Returned page content was not ok");
+            }
+            let body = await contentResult.text();
+            let elapsed = Date.now() - timerStart;
+            if (elapsed < 300) {
+                await transitionDelay(300 - elapsed);
+            }
+            appSettings.app.setPageContent(body);
+        } catch (ex) {
+            console.error('Failed loading page content', ex);
+            let elapsed = Date.now() - timerStart;
+            if (elapsed < 300) {
+                await transitionDelay(300 - elapsed);
+            }
+            appSettings.app.setPageContent('<webui-page-not-found></webui-page-not-found>');
+        }
+        try {
+            let dataResult = await fetchData;
+            if (!dataResult.ok) {
+                throw Error("Returned page data was not ok");
+            }
+            let data = await dataResult.json();
+        } catch (ex) {
+            console.error('Failed loading page data', ex);
+        }
+        let elapsed = Date.now() - timerStart;
+        if (elapsed < 300) {
+            await transitionDelay(300 - elapsed);
+        }
+        appSettings.app.main.classList.remove('transition');
+    }
+    function encryptUrl(url, encryption) {
+        if (!encryption) return url;
+        switch (encryption) {
+            case 'base64':
+                return btoa(url);
+            default:
+                return url;
+        }
     }
     // Web component
     const template = document.createElement('template')
@@ -242,15 +380,15 @@ z-index: 13;
 }
 ::slotted([slot="left"]),
 ::slotted([slot="right"]) {
-    max-width: calc(0.5 * var(--window-width));
-    grid-row: 2/5;
-    display: flex!important;
-    flex-direction: column;
+max-width: calc(0.5 * var(--window-width));
+grid-row: 2/5;
+display: flex!important;
+flex-direction: column;
 }
 ::slotted([slot="top"]),
 ::slotted([slot="bottom"]) {
-    max-height: calc(0.5 * var(--window-height));
-    grid-column: 2;
+max-height: calc(0.5 * var(--window-height));
+grid-column: 2;
 }
 ::slotted(:not([slot])) {
 }
@@ -263,6 +401,14 @@ flex-grow:1;
 padding:var(--padding,1em);
 grid-row: 3;
 grid-column: 2;
+transition:
+opacity 0.4s ease-out,
+transform 0.4s ease-out
+;
+}
+main.transition {
+transform:rotateY(90deg);
+opacity:0;
 }
 </style>
 <slot name="header"></slot>
@@ -276,12 +422,13 @@ grid-column: 2;
 `;
     let _adsrCache = '';
     let us = () => { };
-    window.addEventListener('resize', ev => {
+    window.addEventListener('resize', _ev => {
         us();
     });
     class App extends HTMLElement {
         constructor() {
             super();
+            appSettings.app = this;
             const shadow = this.attachShadow({ mode: 'open' });
             this.dynstyles = document.createElement('style');
             this.dynstyles.setAttribute('type', 'text/css');
@@ -292,6 +439,8 @@ grid-column: 2;
             this.rightPanelSlot = this.template.querySelector('slot[name=right]');
             this.topPanelSlot = this.template.querySelector('slot[name=top]');
             this.bottomPanelSlot = this.template.querySelector('slot[name=bottom]');
+            this.main = this.template.querySelector('main');
+            this.mainSlot = this.template.querySelector('main>slot');
             shadow.appendChild(this.template);
             document.head.appendChild(this.dynstyles);
             if (!this.getAttribute('preload')) {
@@ -299,9 +448,10 @@ grid-column: 2;
             }
             us = () => { this.applyDynamicStyles(); };
             this.applyDynamicStylesTimer();
+            setTimeout(() => loadPage(), 10);
         }
         static get observedAttributes() {
-            return [];
+            return ['page-content', 'page-data', 'page-content-encrypt', 'page-data-encrypt', 'root-page', 'content-extension'];
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
@@ -310,6 +460,59 @@ grid-column: 2;
             } else {
                 this[property] = newValue;
             }
+            switch (property) {
+                case 'root-page':
+                    appSettings.rootPage = newValue;
+                    break;
+                case 'content-extension':
+                    appSettings.contentExtension = newValue;
+                    break;
+                case 'page-content':
+                    appSettings.pageContentEndpoint = newValue;
+                    break;
+                case 'page-data':
+                    appSettings.pageDataEndpoint = newValue;
+                    break;
+                case 'page-data-encrypt':
+                    appSettings.encryptPageData = newValue;
+                    break;
+                case 'page-content-encrypt':
+                    appSettings.encryptPageContent = newValue;
+                    break;
+            }
+        }
+        setPageContent(content) {
+            if (!window.marked) {
+                setTimeout(() => this.setPageContent(content), 10);
+                return;
+            }
+            this.mainSlot.assignedElements().forEach(node => {
+                node.remove();
+            });
+            // Clear page data
+            Object.keys(appData).forEach(key => {
+                if (key.startsWith('page-')) {
+                    webuiSetData(key, '');
+                }
+            });
+            if (content.startsWith(`!DOCTYPE`)) {
+                console.error('Invalid page content loaded:', content);
+                return;
+            }
+            Object.keys(appData).forEach(key => {
+                let rkey = `{${key.replace(/-/g, '_').toUpperCase()}}`;
+                let val = appData[key];
+                let limit = 0;
+                while (content.indexOf(rkey) !== -1 && limit < 100) {
+                    ++limit;
+                    content = content.replace(rkey, val);
+                }
+            });
+            let temp = document.createElement('div');
+            temp.innerHTML = marked.parse(content, markdownOptions);
+            temp.childNodes.forEach(node => {
+                this.appendChild(node);
+            });
         }
         connectedCallback() { }
         disconnectedCallback() { }

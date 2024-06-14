@@ -1,12 +1,12 @@
-/* Display paper element. */
+/* Display side-by-side content */
 "use strict"
 {
-    class Paper extends HTMLElement {
+    class SideBySide extends HTMLElement {
         constructor() {
             super();
         }
         static get observedAttributes() {
-            return ['elevation'];
+            return ['elevation', 'reverse'];
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
@@ -24,12 +24,22 @@
                         this.classList.add(`elevation-n${v * -1}`);
                     }
                     break;
+                case 'reverse':
+                    console.log('reverse', newValue);
+                    if (newValue) {
+                        this.classList.remove('auto-maxcontent');
+                        this.classList.add('maxcontent-auto');
+                    } else {
+                        this.classList.remove('maxcontent-auto');
+                        this.classList.add('auto-maxcontent');
+                    }
+                    break;
             }
         }
         connectedCallback() {
-            this.classList.add('paper');
+            this.classList.add('auto-maxcontent');
         }
         disconnectedCallback() { }
     }
-    customElements.define('webui-paper', Paper);
+    customElements.define('webui-side-by-side', SideBySide);
 }

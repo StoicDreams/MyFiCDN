@@ -44,8 +44,16 @@ color:inherit;
                     break;
             }
         }
-        connectedCallback() { }
+        connectedCallback() {
+            if (!this.version) {
+                this.setAttribute("version", "0.10.0");
+            }
+        }
         disconnectedCallback() { }
     }
     customElements.define('webui-poweredby', PoweredBy);
 }
+
+
+
+

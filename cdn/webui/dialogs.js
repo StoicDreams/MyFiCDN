@@ -144,11 +144,25 @@ color:var(--color-success-offset, #FFF);
                     close(true);
                 }
             });
+            t.dialog.addEventListener('click', ev => {
+                if (t._ignoreBackdropClick) return;
+                const rect = t.dialog.getBoundingClientRect();
+                const isInDialog = (
+                    rect.top <= ev.clientY &&
+                    ev.clientY <= rect.top + rect.height &&
+                    rect.left <= ev.clientX &&
+                    ev.clientX <= rect.left + rect.width
+                );
+                if (!isInDialog) {
+                    close(true);
+                }
+            });
             if (!window.webuiDialog) {
                 window.webuiDialog = function (data) {
                     return new Promise((resolve, reject) => {
                         resetNodes();
                         data = data || defaultData;
+                        t._ignoreBackdropClick = !!data.ignoreBackdropClick;
                         t.dialog.style.minWidth = data.minWidth || '';
                         setContent(t.content, data.content || defaultData.content);
                         setContent(t.btnCancel, data.cancel || defaultData.cancel);

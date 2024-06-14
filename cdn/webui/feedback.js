@@ -97,7 +97,8 @@ justify-content:center;
                 try {
                     await webuiDialog(options);
                 } catch (ex) {
-                    console.log(ex);
+                    if (ex === 'canceled') return;
+                    console.error('Unexpected error from feedback->webuiDialog()', ex);
                 }
             });
         }
