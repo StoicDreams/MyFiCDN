@@ -4,7 +4,14 @@
     const markdownOptions = {
         gfm: true,
     };
-    const appData = { 'page-title': '', 'page-subtitle': '', 'domain': location.hostname.toLowerCase() };
+    const appData = {
+        'app-name': 'App',
+        'company-singular': 'Company',
+        'company-plural': `Company's`,
+        'page-title': '',
+        'page-subtitle': '',
+        'domain': location.hostname.toLowerCase()
+    };
     const appSettings = {
         rootPage: 'root',
         contentExtension: '.md',
@@ -530,7 +537,32 @@ opacity:0;
             })
             return node;
         }
+        setBodyClasses() {
+            let winWidth = window.innerWidth;
+            // Flag general width by class
+            let w = winWidth > 3800 ? 'w-4k'
+                : winWidth > 3400 ? 'w-wqhd'
+                    : winWidth > 2500 ? 'w-qhd'
+                        : winWidth > 1900 ? 'w-fhd'
+                            : winWidth > 1500 ? 'w-hdp'
+                                : winWidth > 1300 ? 'w-hd'
+                                    : winWidth > 500 ? 'w-tab'
+                                        : 'w-mob'
+                ;
+            let hasClass = false;
+            document.body.classList.forEach(cl => {
+                if (cl.startsWith('w-') && cl !== w) {
+                    document.body.classList.remove(cl);
+                } else if (cl === w) {
+                    hasClass = true;
+                }
+            });
+            if (!hasClass) {
+                document.body.classList.add(`${w}`);
+            }
+        }
         applyDynamicStyles() {
+            this.setBodyClasses();
             let h = this.getSlot('header') || { clientHeight: 0 };
             let f = this.getSlot('footer') || { clientHeight: 0 };
             let t = this.getSlot('top') || { clientHeight: 0 };
