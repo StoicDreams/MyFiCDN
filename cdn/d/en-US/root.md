@@ -1,6 +1,6 @@
 <webui-data data-page-title="Stoic Dreams Content Delivery" data-page-subtitle=""></webui-data>
 
-<webui-page-segment>
+<webui-sideimage src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg">
 
 Welcome to Stoic Dreams' MyFi Content Delivery Network (CDN) website.
 
@@ -8,9 +8,14 @@ This website is home to many common files used across Stoid Dreams' websites and
 
 This website showcases the use of raw WebUI web components, without the use of any other frameworks or languages. In other words, this website only uses raw HTML, CSS, and Vanilla JavaScript. No Rust, Node, React, C#, or any other languages are powering this website's frontend interface.
 
+</webui-sideimage>
+
+
+<webui-page-segment>
+
 </webui-page-segment>
 
-<webui-quote theme="primary" cite="Erik Gassler">This is a an example of webui-quote web compont. Visit <a href="https://webui.stoicdreams.com">webui.StoicDreams.com for documentation on Stoic Dreams' Web UI web components</a>.</webui-quote>
+<webui-quote theme="primary" cite="Erik Gassler">This is a an example of webui-quote web compont. Visit [webui.StoicDreams.com for documentation on Stoic Dreams' Web UI web components](https://webui.stoicdreams.com).</webui-quote>
 
 ## Data Subscriptions
 

@@ -1419,7 +1419,7 @@ webui-page-segment.cards,
 
 .side-by-side {
     grid-template-columns: 1fr 1fr;
-    grid-gap: var(--padding);
+    grid-gap: calc(2 * var(--padding));
 }
 
 .gap-0 {
