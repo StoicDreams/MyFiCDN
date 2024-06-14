@@ -13,6 +13,19 @@
         encryptPageContent: false,
         encryptPageData: 'base64'
     };
+    function applyAppDataToContent(content) {
+        Object.keys(appData).forEach(key => {
+            let rkey = `{${key.replace(/-/g, '_').toUpperCase()}}`;
+            let val = appData[key];
+            let limit = 0;
+            while (content.indexOf(rkey) !== -1 && limit < 1000) {
+                ++limit;
+                content = content.replace(rkey, val);
+            }
+        });
+        return marked.parse(content, markdownOptions);
+    }
+    window.webuiApplyAppData = applyAppDataToContent;
     //storage_accepted
     {
         function getStorage() {
@@ -499,17 +512,9 @@ opacity:0;
                 console.error('Invalid page content loaded:', content);
                 return;
             }
-            Object.keys(appData).forEach(key => {
-                let rkey = `{${key.replace(/-/g, '_').toUpperCase()}}`;
-                let val = appData[key];
-                let limit = 0;
-                while (content.indexOf(rkey) !== -1 && limit < 100) {
-                    ++limit;
-                    content = content.replace(rkey, val);
-                }
-            });
+            content = applyAppDataToContent(content);
             let temp = document.createElement('div');
-            temp.innerHTML = marked.parse(content, markdownOptions);
+            temp.innerHTML = content;
             temp.childNodes.forEach(node => {
                 this.appendChild(node);
             });

@@ -4,9 +4,24 @@
     class SideImage extends HTMLElement {
         constructor() {
             super();
+            let t = this;
+            t._content = document.createElement('webui-flex');
+            t._content.setAttribute('column', true);
+            t._content.setAttribute('align', 'center');
+            t._content.setAttribute('justify', 'center');
+            t.childNodes.forEach(node => {
+                t._content.appendChild(node);
+            });
+            t.appendChild(t._content);
+            t._sideImage = document.createElement('img');
+            t._imgContainer = document.createElement('webui-flex');
+            t._imgContainer.setAttribute('align', 'center');
+            t._imgContainer.setAttribute('justify', 'center');
+            t.appendChild(t._imgContainer);
+            t._imgContainer.appendChild(t._sideImage);
         }
         static get observedAttributes() {
-            return ['elevation', 'reverse'];
+            return ['elevation', 'reverse', 'src'];
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
@@ -16,6 +31,9 @@
                 this[property] = newValue;
             }
             switch (property) {
+                case 'src':
+                    this._sideImage.setAttribute('src', newValue);
+                    break;
                 case 'elevation':
                     let v = parseInt(newValue);
                     if (v > 0) {
@@ -25,19 +43,12 @@
                     }
                     break;
                 case 'reverse':
-                    console.log('reverse', newValue);
-                    if (newValue) {
-                        this.classList.remove('auto-maxcontent');
-                        this.classList.add('maxcontent-auto');
-                    } else {
-                        this.classList.remove('maxcontent-auto');
-                        this.classList.add('auto-maxcontent');
-                    }
+                    this.insertBefore(this._imgContainer, this._content);
                     break;
             }
         }
         connectedCallback() {
-            this.classList.add('auto-maxcontent');
+            this.classList.add('side-by-side');
         }
         disconnectedCallback() { }
     }
