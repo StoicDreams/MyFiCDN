@@ -417,6 +417,7 @@ a:active {
 p {
     padding: 0;
     margin: 0;
+    text-align: left;
 }
 
 img,
@@ -1418,7 +1419,7 @@ webui-page-segment.cards,
 
 .side-by-side {
     grid-template-columns: 1fr 1fr;
-    grid-gap: var(--main-padding-size);
+    grid-gap: var(--padding);
 }
 
 .gap-0 {

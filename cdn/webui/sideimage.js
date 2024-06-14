@@ -9,9 +9,6 @@
             t._content.setAttribute('column', true);
             t._content.setAttribute('align', 'center');
             t._content.setAttribute('justify', 'center');
-            t.childNodes.forEach(node => {
-                t._content.appendChild(node);
-            });
             t.appendChild(t._content);
             t._sideImage = document.createElement('img');
             t._imgContainer = document.createElement('webui-flex');
@@ -48,7 +45,21 @@
             }
         }
         connectedCallback() {
-            this.classList.add('side-by-side');
+            let t = this;
+            t.classList.add('side-by-side');
+            setTimeout(() => {
+                console.log(t.childNodes);
+                for (let index = 0; index < t.childNodes.length; ++index) {
+                    let node = t.childNodes[index];
+                    console.log('Check child', node);
+                    if (node !== t._content && node !== t._imgContainer) {
+                        node.parentNode.removeChild(node);
+                        console.log('Append child', node);
+                        t._content.appendChild(node);
+                        --index;
+                    }
+                }
+            }, 100);
         }
         disconnectedCallback() { }
     }

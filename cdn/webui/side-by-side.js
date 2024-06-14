@@ -25,7 +25,6 @@
                     }
                     break;
                 case 'reverse':
-                    console.log('reverse', newValue);
                     if (newValue) {
                         this.classList.remove('auto-maxcontent');
                         this.classList.add('maxcontent-auto');

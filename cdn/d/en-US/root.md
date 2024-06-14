@@ -42,3 +42,15 @@ This website showcases the use of raw WebUI web components, without the use of a
 <webui-fa icon="user" class=""></webui-fa>
 
 </webui-page-segment>
+
+<webui-sideimage src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg">
+
+I am very excited to be sharing this tool with you, as well as my journey into the world of Rust development.
+
+One of my last major projects at Stoic Dreams was working on a UI framework utilizing the C# Blazor framework, which allows for C# code and Razor pages to be compiled to webassembly, thus allowing for C# native libraries and code to be used for developing front-end web applications.
+
+Blazor was a very interesting framework for me, as I have always loved the C# language and I was very excited by the prospect of getting to use if for both front-end and back-end development.
+
+But Blazor is not without it's major issues, which I will not dive into here. But, you can check out my [Blazor UI project](https://blazorui.stoicdreams.com "Blazor UI documentation and website demo") to see for yourself the differences between it and what I am accomplishing here.
+
+</webui-sideimage>
