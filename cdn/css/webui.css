@@ -512,6 +512,8 @@ code {
     color: var(--color-info-offset);
     border-radius: var(--corners);
     outline: 1.5px solid var(--color-info);
+    white-space: pre-wrap;
+    overflow: hidden;
 }
 
 pre>code {
