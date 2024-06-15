@@ -47,3 +47,11 @@ This website showcases the use of raw WebUI web components, without the use of a
 <webui-fa icon="user" class=""></webui-fa>
 
 </webui-page-segment>
+
+<webui-cards>
+
+<webui-card name="Test" width="500" theme="tertiary" avatar="duotone star">
+
+</webui-card>
+
+</webui-cards>

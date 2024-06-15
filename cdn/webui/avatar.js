@@ -52,6 +52,19 @@ height:1em;
                         t._slot.innerHTML = newValue;
                         return;
                     }
+
+                    if (newValue.indexOf(' ') !== -1) {
+                        let fi = newValue.split(' ');
+                        if (fi.length !== 2) { return; }
+                        let fam = fi[0];
+                        let ico = fi[1];
+                        if (['brands', 'solid', 'regular', 'thin', 'duotone'].indexOf(fam) === -1) {
+                            fam = fi[1];
+                            ico = fi[0];
+                        }
+                        t._slot.innerHTML = `<webui-fa icon="${ico}" family="${fam}"></webui-fa>`;
+                        return;
+                    }
                     if (newValue.length < 3) {
                         t._slot.innerHTML = newValue;
                         return;
