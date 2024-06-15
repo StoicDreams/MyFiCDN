@@ -30,6 +30,7 @@
     --color-footer: var(--color-shade);
     --color-footer-offset: var(--color-shade-offset);
 
+    --link-shadow: 0 0 5px #00C9FF;
     --main-transition: 200ms;
     --readability-line-limit: 66ch;
     --backdrop-blur: blur(4px);
@@ -1641,7 +1642,12 @@ a.navlink {
 a[href],
 a[data-click] {
     text-decoration: underline;
-    text-shadow: 0 0 5px #00c9ff;
+    text-shadow: var(--link-shadow);
+}
+
+a[href] svg,
+a[data-click] svg {
+    filter: drop-shadow(var(--link-shadow))
 }
 
 webui-nav-group,
