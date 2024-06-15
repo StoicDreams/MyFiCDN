@@ -302,7 +302,8 @@
         let url = page + location.search;
         let dataUrl = encryptUrl(url, appSettings.encryptPageData);
         let contentUrl = encryptUrl(url, appSettings.encryptPageContent);
-        let fetchContent = fetch(`${appSettings.pageContentEndpoint}${contentUrl}${appSettings.contentExtension}`);
+        let fullContentUrl = `${appSettings.pageContentEndpoint}${contentUrl}${appSettings.contentExtension}`;
+        let fetchContent = fetch(fullContentUrl);
         let fetchData = fetch(`${appSettings.pageDataEndpoint}${dataUrl}`);
         appSettings.app.main.classList.add('transition');
         let timerStart = Date.now();
@@ -316,7 +317,7 @@
             if (elapsed < 300) {
                 await transitionDelay(300 - elapsed);
             }
-            appSettings.app.setPageContent(body);
+            appSettings.app.setPageContent(body, fullContentUrl);
         } catch (ex) {
             console.error('Failed loading page content', ex);
             let elapsed = Date.now() - timerStart;
@@ -516,7 +517,7 @@ opacity:0;
                     break;
             }
         }
-        setPageContent(content) {
+        setPageContent(content, source) {
             if (!window.marked) {
                 setTimeout(() => this.setPageContent(content), 10);
                 return;
@@ -531,7 +532,7 @@ opacity:0;
                 }
             });
             if (content.startsWith(`<!DOCTYPE`)) {
-                console.error('Invalid page content loaded:', content);
+                console.error('Invalid page content loaded:', source);
                 return;
             }
             content = applyAppDataToContent(content);
