@@ -33,9 +33,22 @@
             let temp = document.createElement('div');
             temp.innerHTML = webuiApplyAppData(body);
             let t = this;
+            let n = [];
+            let p = t.parentNode;
+            let b = t;
+            if (p.nodeName === 'P') {
+                b = p;
+                p = p.parentNode;
+            }
             temp.childNodes.forEach(node => {
-                t.parentNode.insertBefore(node, t);
+                n.push(node);
             });
+            n.forEach(node => {
+                p.insertBefore(node, b);
+            });
+            if (t.parentNode !== p) {
+                b.remove();
+            }
             t.remove();
         }
         connectedCallback() {
