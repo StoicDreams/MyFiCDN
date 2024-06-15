@@ -4,11 +4,6 @@
     class UnderConstruction extends HTMLElement {
         constructor() {
             super();
-            let container = document.createElement('webui-sideimage');
-            container.setAttribute('src', 'https://cdn.myfi.ws/v/Vecteezy/people-are-building-a-spaceship-rocket-cohesive-teamwork-in.svg');
-            container.innerHTML = `<p>This website <span data-subscribe="domain"></span> is under construction.</p>`;
-            this.parentNode.insertBefore(container, this);
-            this.remove();
         }
         static get observedAttributes() {
             return [];
@@ -22,7 +17,11 @@
             }
         }
         connectedCallback() {
-            this.classList.add('auto-maxcontent');
+            let container = document.createElement('webui-sideimage');
+            container.setAttribute('src', 'https://cdn.myfi.ws/v/Vecteezy/people-are-building-a-spaceship-rocket-cohesive-teamwork-in.svg');
+            container.innerHTML = `<p>This website <span data-subscribe="domain"></span> is under construction.</p>`;
+            this.parentNode.insertBefore(container, this);
+            this.remove();
         }
         disconnectedCallback() { }
     }

@@ -27,7 +27,6 @@
             }
         }
         connectedCallback() {
-            this.classList.add('paper');
         }
         disconnectedCallback() { }
     }

@@ -439,6 +439,8 @@ img:not(:only-child) {
 
 blockquote>p:not(:first-child),
 blockquote>div:not(:first-child),
+webui-paper>p:not(:first-child),
+webui-paper>div:not(:first-child),
 .paper>p:not(:first-child),
 .paper>div:not(:first-child) {
     margin-top: calc(1.5 * var(--padding));
@@ -503,6 +505,7 @@ pre[languagetag]:before {
     box-sizing: border-box;
 }
 
+webui-app>webui-paper>pre,
 main>.paper>pre {
     margin-left: var(--padding);
     margin-right: var(--padding);
@@ -1006,6 +1009,7 @@ aside.app-drawer.left {
     max-width: 100%;
 }
 
+webui-paper,
 .paper {
     border-radius: var(--corners);
 }
