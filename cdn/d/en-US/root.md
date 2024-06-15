@@ -16,7 +16,11 @@ Please don't hesitate to share your <a data-click="feedback">questions, comments
 
 </webui-page-segment>
 
-<webui-quote theme="primary" cite="Erik Gassler">This is a an example of webui-quote web compont. Visit [webui.StoicDreams.com for documentation on Stoic Dreams' Web UI web components](https://webui.stoicdreams.com).</webui-quote>
+<webui-quote theme="info" cite="Erik Gassler">
+
+This is a an example of webui-quote web compont. Visit [webui.StoicDreams.com for documentation on Stoic Dreams' Web UI web components](https://webui.stoicdreams.com).
+
+</webui-quote>
 
 ## Data Subscriptions
 
