@@ -44,6 +44,7 @@
                     if (el.nodeName.startsWith(wcPrefix)) {
                         processNode(el.nodeName);
                     }
+                    checkNodes(el.childNodes);
                 });
             });
         });

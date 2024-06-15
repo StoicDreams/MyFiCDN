@@ -46,15 +46,10 @@ color:inherit;
         }
         connectedCallback() {
             if (!this.version) {
-                this.setAttribute("version", "0.10.1");
+                this.setAttribute("version", "0.10.5");
             }
         }
         disconnectedCallback() { }
     }
     customElements.define('webui-poweredby', PoweredBy);
 }
-
-
-
-
-
