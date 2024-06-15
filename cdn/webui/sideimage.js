@@ -14,25 +14,29 @@
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
+            let t = this;
             if (newValue === null || newValue === undefined) {
                 delete this[property];
             } else {
-                this[property] = newValue;
+                t[property] = newValue;
             }
             switch (property) {
                 case 'src':
-                    this._sideImage.setAttribute('src', newValue);
+                    t._sideImage.setAttribute('src', newValue);
                     break;
                 case 'elevation':
                     let v = parseInt(newValue);
                     if (v > 0) {
-                        this.classList.add(`elevation-${v}`);
+                        t.classList.add(`elevation-${v}`);
                     } else if (v < 0) {
-                        this.classList.add(`elevation-n${v * -1}`);
+                        t.classList.add(`elevation-n${v * -1}`);
                     }
                     break;
                 case 'reverse':
-                    this.insertBefore(this._imgContainer, this._content);
+                    t.reverse = true;
+                    if (t._imgContainer.parentNode && t._content.parentNode) {
+                        t.insertBefore(t._imgContainer, t._content);
+                    }
                     break;
             }
         }
@@ -45,7 +49,11 @@
             t.appendChild(t._content);
             t._imgContainer.setAttribute('align', 'center');
             t._imgContainer.setAttribute('justify', 'center');
-            t.appendChild(t._imgContainer);
+            if (t.reverse) {
+                t.insertBefore(t._imgContainer, t._content);
+            } else {
+                t.appendChild(t._imgContainer);
+            }
             t._imgContainer.appendChild(t._sideImage);
             setTimeout(() => {
                 let r = [];

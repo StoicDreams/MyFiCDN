@@ -1,6 +1,6 @@
 <webui-data data-page-title="Stoic Dreams Content Delivery" data-page-subtitle=""></webui-data>
 
-<webui-sideimage src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg">
+<webui-sideimage reverse src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg">
 
 Welcome to Stoic Dreams' MyFi Content Delivery Network (CDN) website.
 
