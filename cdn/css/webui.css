@@ -1415,6 +1415,14 @@ webui-card>header {
     font-weight: 600;
 }
 
+webui-card header>section:first-child {
+    padding-left: var(--padding);
+}
+
+webui-card header>section:last-child {
+    padding-right: var(--padding);
+}
+
 webui-avatar>slot {
     height: 2em;
 }
