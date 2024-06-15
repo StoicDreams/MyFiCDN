@@ -408,6 +408,10 @@ a {
     align-items: center;
 }
 
+p>a {
+    display: inline;
+}
+
 a:link,
 a:visited,
 a:focus,
