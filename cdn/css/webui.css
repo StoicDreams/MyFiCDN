@@ -1448,6 +1448,9 @@ webui-cards,
     justify-content: center;
 }
 
+webui-side-by-side>svg,
+webui-side-by-side>img,
+webui-side-by-side>.image,
 .side-by-side>svg,
 .side-by-side>img,
 .side-by-side>.image,
@@ -1458,6 +1461,7 @@ webui-sideimage>webui-flex>.image {
 }
 
 webui-sideimage,
+webui-side-by-side,
 .side-by-side,
 .maxcontent-auto,
 .auto-maxcontent {
@@ -1467,6 +1471,7 @@ webui-sideimage,
     margin: var(--padding);
 }
 
+webui-side-by-side,
 webui-sideimage,
 .side-by-side {
     grid-template-columns: 1fr 1fr;
@@ -1518,6 +1523,7 @@ webui-sideimage,
 }
 
 webui-sideimage> :only-child,
+webui-side-by-side> :only-child,
 .side-by-side> :only-child,
 .maxcontent-auto> :only-child,
 .auto-maxcontent> :only-child {
@@ -1543,6 +1549,7 @@ webui-sideimage> :only-child,
 @media (max-width: 1200px) {
 
     webui-sideimage,
+    webui-side-by-side,
     .side-by-side,
     .maxcontent-auto,
     .auto-maxcontent {
@@ -1550,6 +1557,7 @@ webui-sideimage> :only-child,
     }
 
     webui-sideimage>:not(:first-child),
+    webui-side-by-side> :not(:first-child),
     .side-by-side> :not(:first-child),
     .maxcontent-auto> :not(:first-child),
     .auto-maxcontent> :not(:first-child) {
