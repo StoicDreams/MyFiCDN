@@ -337,6 +337,8 @@
         let elapsed = Date.now() - timerStart;
         if (elapsed < 300) {
             await transitionDelay(300 - elapsed);
+        } else {
+            await transitionDelay(100);
         }
         appSettings.app.main.classList.remove('transition');
     }
