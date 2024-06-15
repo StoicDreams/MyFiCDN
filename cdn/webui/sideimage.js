@@ -48,17 +48,16 @@
             let t = this;
             t.classList.add('side-by-side');
             setTimeout(() => {
-                console.log(t.childNodes);
-                for (let index = 0; index < t.childNodes.length; ++index) {
-                    let node = t.childNodes[index];
-                    console.log('Check child', node);
+                let r = [];
+                t.childNodes.forEach(node => {
                     if (node !== t._content && node !== t._imgContainer) {
-                        node.parentNode.removeChild(node);
-                        console.log('Append child', node);
-                        t._content.appendChild(node);
-                        --index;
+                        r.push(node);
                     }
-                }
+                });
+                r.forEach(node => {
+                    node.parentNode.removeChild(node);
+                    t._content.appendChild(node);
+                });
             }, 100);
         }
         disconnectedCallback() { }

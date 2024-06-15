@@ -1399,7 +1399,34 @@ webui-page-segment,
     margin: var(--padding);
 }
 
-webui-page-segment.cards,
+webui-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--corners);
+}
+
+webui-card>header {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    flex-wrap: nowrap;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+webui-avatar>slot {
+    height: 2em;
+}
+
+webui-card>header:empty {
+    display: none;
+}
+
+webui-card>section {
+    padding: var(--padding);
+}
+
+webui-cards,
 .page-segment-cards {
     display: flex;
     padding: calc(1.5 * var(--padding));
@@ -1408,6 +1435,16 @@ webui-page-segment.cards,
     justify-content: center;
 }
 
+.side-by-side>svg,
+.side-by-side>img,
+.side-by-side>.image,
+webui-sideimage>webui-flex>svg,
+webui-sideimage>webui-flex>img,
+webui-sideimage>webui-flex>.image {
+    max-width: 80%;
+}
+
+webui-sideimage,
 .side-by-side,
 .maxcontent-auto,
 .auto-maxcontent {
@@ -1417,6 +1454,7 @@ webui-page-segment.cards,
     margin: var(--padding);
 }
 
+webui-sideimage,
 .side-by-side {
     grid-template-columns: 1fr 1fr;
     grid-gap: calc(2 * var(--padding));
@@ -1466,6 +1504,7 @@ webui-page-segment.cards,
     grid-gap: calc(10 * var(--padding));
 }
 
+webui-sideimage> :only-child,
 .side-by-side> :only-child,
 .maxcontent-auto> :only-child,
 .auto-maxcontent> :only-child {
@@ -1490,12 +1529,14 @@ webui-page-segment.cards,
 
 @media (max-width: 1200px) {
 
+    webui-sideimage,
     .side-by-side,
     .maxcontent-auto,
     .auto-maxcontent {
         grid-template-columns: 1fr;
     }
 
+    webui-sideimage>:not(:first-child),
     .side-by-side> :not(:first-child),
     .maxcontent-auto> :not(:first-child),
     .auto-maxcontent> :not(:first-child) {
