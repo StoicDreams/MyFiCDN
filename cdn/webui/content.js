@@ -21,37 +21,41 @@
                 setTimeout(() => this.fetchContent(), 10);
                 return;
             }
-            let content = await fetch(this.src);
-            if (!content.ok) {
-                this.innerHTML = `Failed to load content from ${this.src}`;
-                return;
+            try {
+                let content = await fetch(this.src);
+                if (!content.ok) {
+                    this.innerHTML = `Failed to load content from ${this.src}`;
+                    return;
+                }
+                let body = await content.text();
+                console.log(body.startsWith('<!DOCTYPE'));
+                if (body.startsWith('<!DOCTYPE')) {
+                    this.innerHTML = `Source ${this.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by this component)`;
+                    return;
+                }
+                let temp = document.createElement('div');
+                temp.innerHTML = webuiApplyAppData(body);
+                let t = this;
+                let n = [];
+                let p = t.parentNode;
+                let b = t;
+                if (p.nodeName === 'P') {
+                    b = p;
+                    p = p.parentNode;
+                }
+                temp.childNodes.forEach(node => {
+                    n.push(node);
+                });
+                n.forEach(node => {
+                    p.insertBefore(node, b);
+                });
+                if (t.parentNode !== p) {
+                    b.remove();
+                }
+                t.remove();
+            } catch (ex) {
+                this.innerHTML = `Source ${this.src} failed to load:${ex}`;
             }
-            let body = await content.text();
-            console.log(body.startsWith('<!DOCTYPE'));
-            if (body.startsWith('<!DOCTYPE')) {
-                this.innerHTML = `Source ${this.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by this component)`;
-                return;
-            }
-            let temp = document.createElement('div');
-            temp.innerHTML = webuiApplyAppData(body);
-            let t = this;
-            let n = [];
-            let p = t.parentNode;
-            let b = t;
-            if (p.nodeName === 'P') {
-                b = p;
-                p = p.parentNode;
-            }
-            temp.childNodes.forEach(node => {
-                n.push(node);
-            });
-            n.forEach(node => {
-                p.insertBefore(node, b);
-            });
-            if (t.parentNode !== p) {
-                b.remove();
-            }
-            t.remove();
         }
         connectedCallback() {
             this.fetchContent();
