@@ -6,16 +6,8 @@
             super();
             let t = this;
             t._content = document.createElement('webui-flex');
-            t._content.setAttribute('column', true);
-            t._content.setAttribute('align', 'center');
-            t._content.setAttribute('justify', 'center');
-            t.appendChild(t._content);
             t._sideImage = document.createElement('img');
             t._imgContainer = document.createElement('webui-flex');
-            t._imgContainer.setAttribute('align', 'center');
-            t._imgContainer.setAttribute('justify', 'center');
-            t.appendChild(t._imgContainer);
-            t._imgContainer.appendChild(t._sideImage);
         }
         static get observedAttributes() {
             return ['elevation', 'reverse', 'src'];
@@ -47,6 +39,14 @@
         connectedCallback() {
             let t = this;
             t.classList.add('side-by-side');
+            t._content.setAttribute('column', true);
+            t._content.setAttribute('align', 'center');
+            t._content.setAttribute('justify', 'center');
+            t.appendChild(t._content);
+            t._imgContainer.setAttribute('align', 'center');
+            t._imgContainer.setAttribute('justify', 'center');
+            t.appendChild(t._imgContainer);
+            t._imgContainer.appendChild(t._sideImage);
             setTimeout(() => {
                 let r = [];
                 t.childNodes.forEach(node => {
