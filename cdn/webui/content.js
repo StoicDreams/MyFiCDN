@@ -27,8 +27,10 @@
                 return;
             }
             let body = await content.text();
+            console.log(body.startsWith('<!DOCTYPE'));
             if (body.startsWith('<!DOCTYPE')) {
                 this.innerHTML = `Source ${this.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by this component)`;
+                return;
             }
             let temp = document.createElement('div');
             temp.innerHTML = webuiApplyAppData(body);
