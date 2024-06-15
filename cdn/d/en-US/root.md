@@ -13,6 +13,24 @@ Please don't hesitate to share your <a data-click="feedback">questions, comments
 </webui-sideimage>
 
 
+<webui-cards elevation="n10">
+
+<webui-card name="Stoic Dreams" theme="tertiary" width="500" avatar="https://www.stoicdreams.com/Logo.svg" link="https://www.stoicdreams.com">
+
+The Stoic Dreams company portal.
+
+</webui-card>
+
+<webui-card name="Erik Gassler" theme="tertiary" width="500" avatar="https://www.erikgassler.com/Logo.svg" link="https://www.erikgassler.com">
+
+Bio website for Erik Gassler (Visit me on [YouTube](https://youtu.be/IVPHtC0H2fU)), owner of Stoic dreams, and author of [the book CASE: Continuous Agile Software Engineering](https://amzn.to/3QuGnQy).
+
+> As an Amazon Associate I earn from qualifying purchases.
+
+</webui-card>
+
+</webui-cards>
+
 <webui-page-segment>
 
 </webui-page-segment>

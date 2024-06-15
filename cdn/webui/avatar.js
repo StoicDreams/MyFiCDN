@@ -18,12 +18,6 @@ slot>img,
 slot>svg {
 height:1em;
 }
-slot>img {
-box-shadow:var(--link-shadow);
-}
-slot>svg {
-filter:drop-shadow(--link-shadow);
-}
 </style>
 <slot></slot>
 `;

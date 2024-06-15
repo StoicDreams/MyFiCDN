@@ -1646,7 +1646,9 @@ a[data-click] {
 }
 
 a[href] svg,
-a[data-click] svg {
+a[data-click] svg,
+a[href] webui-fa,
+a[data-click] webui-fa {
     filter: drop-shadow(var(--link-shadow))
 }
 
