@@ -6,7 +6,7 @@
             super();
         }
         static get observedAttributes() {
-            return ['elevation', 'reverse'];
+            return ['elevation'];
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
@@ -24,19 +24,9 @@
                         this.classList.add(`elevation-n${v * -1}`);
                     }
                     break;
-                case 'reverse':
-                    if (newValue) {
-                        this.classList.remove('auto-maxcontent');
-                        this.classList.add('maxcontent-auto');
-                    } else {
-                        this.classList.remove('maxcontent-auto');
-                        this.classList.add('auto-maxcontent');
-                    }
-                    break;
             }
         }
         connectedCallback() {
-            this.classList.add('auto-maxcontent');
         }
         disconnectedCallback() { }
     }
