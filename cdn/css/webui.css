@@ -1015,6 +1015,7 @@ aside.app-drawer.left {
 
 webui-paper,
 .paper {
+    text-align: left;
     border-radius: var(--corners);
 }
 
