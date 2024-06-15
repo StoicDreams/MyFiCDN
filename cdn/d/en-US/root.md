@@ -8,6 +8,8 @@ This website is home to many common files used across Stoid Dreams' websites and
 
 This website showcases the use of raw WebUI web components, without the use of any other frameworks or languages. In other words, this website only uses raw HTML, CSS, and Vanilla JavaScript. No Rust, Node, React, C#, or any other languages are powering this website's frontend interface.
 
+Please don't hesitate to share your <a data-click="feedback">questions, comments, or any other feedback</a>.
+
 </webui-sideimage>
 
 
@@ -47,11 +49,3 @@ This website showcases the use of raw WebUI web components, without the use of a
 <webui-fa icon="user" class=""></webui-fa>
 
 </webui-page-segment>
-
-<webui-cards>
-
-<webui-card name="Test" width="500" theme="tertiary" avatar="duotone star">
-
-</webui-card>
-
-</webui-cards>

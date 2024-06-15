@@ -117,6 +117,8 @@ justify-content:center;
             if (!this.getAttribute('preload')) {
                 this.setAttribute('preload', 'dialogs inputmessage alert alerts');
             }
+            this.setAttribute('data-subscribe', 'feedback');
+            this.setAttribute('data-set', 'click');
         }
         disconnectedCallback() { }
     }

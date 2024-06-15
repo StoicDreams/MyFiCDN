@@ -121,6 +121,13 @@
     }
     // Data signalling/transfers
     {
+        function handleDataClick(ev) {
+            let key = ev.dataset.click;
+            if (!key) { return; }
+            document.querySelectorAll(`[data-subscribe="${key}"][data-set="click"]`).forEach(sub => {
+                sub.click();
+            });
+        }
         function handleDataTrigger(ev) {
             let el = ev.srcElement || ev.target;
             let key = el.dataset.trigger;
@@ -196,6 +203,12 @@
             let target = ev.target;
             while (target !== document.body) {
                 let href = target.getAttribute('href');
+                if (target.dataset.click) {
+                    handleDataClick(target);
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    return false;
+                }
                 if (href && target.getAttribute('target') !== 'blank' && (href[0] === '/' || href.substr(0, 4) !== 'http')) {
                     changePage(href);
                     ev.stopPropagation();

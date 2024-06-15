@@ -1567,6 +1567,7 @@ a.btn:active,
     user-select: text;
 }
 
+a[data-click],
 .btn:not(.disabled:not(:disabled)),
 button:not(:disabled):not(.disabled),
 a[href]:not(:disabled):not(.disabled) {
@@ -1635,6 +1636,12 @@ main.page.transition.in img {
 
 a.navlink {
     cursor: pointer;
+}
+
+a[href],
+a[data-click] {
+    text-decoration: underline;
+    text-shadow: 0 0 5px #00c9ff;
 }
 
 webui-nav-group,
