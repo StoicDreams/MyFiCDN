@@ -729,7 +729,7 @@ ol {
 li {
     position: relative;
     line-height: 1.5em;
-    align-items: center;
+    text-align: left;
 }
 
 li>svg:first-child,
