@@ -12,13 +12,15 @@ display: flex;
 flex-direction: column;
 overflow: auto;
 z-index:100;
+}
+:host([id]) {
 transition: all 400ms;
 }
 :host([slot="bottom"]),
 :host([slot="top"]){
 flex-direction: row;
 }
-:host([fixed]) {
+:host(:not([docked])) {
 position: fixed;
 left: 0;
 top: 0;
@@ -26,31 +28,33 @@ width: fit-content;
 height: 100%;
 transform: translate(-105%, 0);
 }
-:host([fixed].open) {
+:host(:not([docked]).open) {
 transform: translate(0,0);
 }
-:host([fixed][slot="top"]) {
+:host(:not([docked])[slot="top"]) {
 width: 100%;
 height: fit-content;
 }
-:host([fixed][slot="top"]:not(.open)) {
+:host(:not([docked])[slot="top"]:not(.open)) {
 transform: translate(0,-105%);
 }
-:host([fixed][slot="right"]) {
+:host(:not([docked])[slot="right"]) {
 left: auto;
 right: 0;
 }
-:host([fixed][slot="right"]:not(.open)) {
+:host(:not([docked])[slot="right"]:not(.open)) {
 transform: translate(105%,0);
 }
-:host([fixed][slot="bottom"]) {
+:host(:not([docked])[slot="bottom"]) {
 top: auto;
 bottom: 0;
 width: 100%;
 height: fit-content;
 }
-:host([fixed][slot="bottom"]:not(.open)) {
+:host(:not([docked])[slot="bottom"]:not(.open)) {
 transform: translate(0,105%);
+}
+:host[docked]{
 }
 :host([slot="left"]) {
 }
@@ -86,7 +90,7 @@ cursor:pointer;
 <slot name="footer"></slot>
 `;
     const dockableTemplate = `
-<webui-toggle-icon data-toggleattr="[ID]|fixed" data-enabled="[ID]:not([fixed])" icon-on="send-backward" icon-off="bring-forward" title-on="Hide Navigation" title-off="Lock Navigation"></webui-toggle-icon>`;
+<webui-toggle-icon data-toggleattr="[ID]|docked" data-enabled="[ID][docked]" icon-on="send-backward" icon-off="bring-forward" title-on="Hide Navigation" title-off="Dock Navigation"></webui-toggle-icon>`;
     const moveableTempalte = `
 <button data-setattr="[ID]|slot|left" title="Set navigation to left" class="toggle-pos-left">
 <webui-fa icon="sidebar" family="regular"></webui-fa>
@@ -132,7 +136,7 @@ cursor:pointer;
             startObserving(t);
         }
         static get observedAttributes() {
-            return ["position", "fixed", "data-dockable", "data-moveable"];
+            return ["position", "docked", "data-dockable", "data-moveable"];
         }
         attributeChangedCallback(property, oldValue, newValue) {
             if (oldValue === newValue) return;
@@ -164,10 +168,14 @@ cursor:pointer;
             this.appendChild(fb);
         }
         connectedCallback() {
-            if (!this.getAttribute('preload')) {
-                this.setAttribute('preload', 'fa flex toggle-icon');
+            let t = this;
+            if (!t.getAttribute('preload')) {
+                t.setAttribute('preload', 'fa flex toggle-icon');
             }
-            this.setAttribute('id', this._id);
+            // delay setting id, which enables transitions, to avoid undocked drawers from displaying on page load.
+            setTimeout(() => {
+                t.setAttribute('id', t._id);
+            }, 100);
         }
         disconnectedCallback() { }
     }

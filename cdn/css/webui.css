@@ -109,6 +109,10 @@
     --typography-letterspacing: normal;
 }
 
+*:not(:defined) {
+    opacity: 0;
+}
+
 webui-app {
     animation: animation-fadein 400ms ease-out;
 }
@@ -3423,7 +3427,7 @@ webui-drawer[slot="left"] .toggle-pos-left {
     display: none;
 }
 
-webui-drawer.nav:not([fixed])~header [data-toggleclass=".nav|open"] {
+webui-drawer.nav[docked]~header [data-toggleclass=".nav|open"] {
     display: none;
 }
 

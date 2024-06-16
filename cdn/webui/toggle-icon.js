@@ -5,15 +5,14 @@
     template.setAttribute('shadowrootmode', true);
     template.innerHTML = `
 <style type="text/css">
-:host {
-}
 button {
-    background-color:transparent;
-    border:none;
-    box-shadow:none;
-    color:inherit;
-    margin:0;
-    padding:0;
+background-color:transparent;
+border:none;
+box-shadow:none;
+color:inherit;
+margin:0;
+padding:0;
+cursor:pointer;
 }
 </style>
 <button><webui-fa></webui-fa></button>
