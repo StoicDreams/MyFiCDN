@@ -436,6 +436,7 @@ box-sizing:border-box;
 height:var(--main-height);
 flex-grow:1;
 padding:var(--padding,1em);
+padding-bottom:3em;
 grid-row: 3;
 grid-column: 2;
 transition:
