@@ -46,6 +46,7 @@
             t._content.setAttribute('column', true);
             t._content.setAttribute('align', 'center');
             t._content.setAttribute('justify', 'center');
+            t._content.classList.add('readable-content');
             t.appendChild(t._content);
             t._imgContainer.setAttribute('align', 'center');
             t._imgContainer.setAttribute('justify', 'center');

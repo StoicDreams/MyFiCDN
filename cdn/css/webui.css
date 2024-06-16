@@ -3331,6 +3331,7 @@ body.w-4k .hide-at-4k {
     display: none;
 }
 
+webui-side-by-side>*>*,
 .readable-content>* {
     max-width: var(--readability-line-limit);
 }
