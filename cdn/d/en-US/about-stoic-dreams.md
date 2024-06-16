@@ -1,4 +1,4 @@
-<webui-data data-page-title="About Stoic Dreams"></webui-data>
+### About Stoic Dreams
 
 <webui-page-segment>
 
