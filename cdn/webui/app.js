@@ -446,6 +446,16 @@ main.transition {
 transform:rotateY(90deg);
 opacity:0;
 }
+::-webkit-scrollbar {
+width: 1em;
+height: 1em;
+}
+::-webkit-scrollbar-thumb {
+background: rgba(90, 90, 90, 0.2);
+}
+::-webkit-scrollbar-track {
+background: rgba(0, 0, 0, 0.2);
+}
 </style>
 <slot name="header"></slot>
 <main><slot></slot></main>
