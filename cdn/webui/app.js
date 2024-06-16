@@ -429,7 +429,8 @@ grid-column: 2;
 ::slotted(:not([slot])) {
 }
 main {
-display:block;
+display:flex;
+flex-direction:column;
 overflow:auto;
 box-sizing:border-box;
 height:var(--main-height);
