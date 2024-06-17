@@ -69,7 +69,6 @@ height:1em;
                         return;
                     }
                     t._slot.innerHTML = `<img src="${newValue}" />`;
-                    console.log('slot', t._slot);
                     break;
                 case 'theme':
                     let r = [];

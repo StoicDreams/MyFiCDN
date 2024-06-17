@@ -23,7 +23,6 @@
             let t = this;
             t._header.className = `theme-${t.theme || 'primary'}`;
             t._header.innerHTML = '';
-            console.log('bc', t.avatar);
             if (t.avatar) {
                 let a = document.createElement('webui-avatar');
                 a.setAttribute('src', t.avatar);
