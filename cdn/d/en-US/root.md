@@ -49,4 +49,10 @@ This is a an example of webui-quote web component. Visit [webui.StoicDreams.com 
 
 </webui-page-segment>
 
+## Current Web UI Projects
+
+Sample of our current projects to demonstrate our `webui-cards` and `webui-card` components.
+
+<webui-cards src="current-projects.json" card-width="500"></webui-cards>
+
 <webui-next-page name="About MyFi CDN" href="/about"></webui-next-page>

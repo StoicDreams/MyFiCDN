@@ -115,10 +115,11 @@
 
 webui-app {
     animation: animation-fadein 400ms ease-out;
+    min-width: 380px;
 }
 
-webui-app {
-    min-width: 380px;
+webui-app>p {
+    padding: var(--padding);
 }
 
 svg.logo text {
@@ -427,6 +428,7 @@ p {
     padding: 0;
     margin: 0;
     text-align: left;
+    box-sizing: content-box;
 }
 
 img,
