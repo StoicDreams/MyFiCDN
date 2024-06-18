@@ -449,6 +449,10 @@ blockquote>p:not(:first-child),
 blockquote>div:not(:first-child),
 webui-paper>p:not(:first-child),
 webui-paper>div:not(:first-child),
+section:not([class])>p:not(:first-child),
+section:not([class])>div:not(:first-child),
+webui-page-segment>p:not(:first-child),
+webui-page-segment>div:not(:first-child),
 .paper>p:not(:first-child),
 .paper>div:not(:first-child) {
     margin-top: calc(1.5 * var(--padding));
