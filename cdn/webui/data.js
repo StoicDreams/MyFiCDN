@@ -5,7 +5,17 @@
             super();
             const t = this;
             Object.keys(t.dataset).forEach(key => {
-                webuiSetData(key, t.dataset[key]);
+                switch (t.dataset[key]) {
+                    case 'innerText':
+                        webuiSetData(key, t.innerText);
+                        break;
+                    case 'innerHTML':
+                        webuiSetData(key, t.innerHTML);
+                        break;
+                    default:
+                        webuiSetData(key, t.dataset[key]);
+                        break;
+                }
             });
             t.remove();
         }

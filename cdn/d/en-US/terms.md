@@ -89,3 +89,5 @@ General Terms and Conditions applicable to Use of a Web Site.
 {COMPANY_POSSESSIVE} sites and software, including {APP_NAME} and {DOMAIN}, may contain user generated content. We may review content and periodically delete or alter content we believe to be inappropriate, offensive, or disrespectful. This is at our discretion, and we make no guarantees regarding the safety or accuracy of user generated content.
 
 </webui-page-segment>
+
+<webui-next-page name="Privacy Policy" href="/privacy"></webui-next-page>

@@ -141,10 +141,10 @@
             if (value === null || value === undefined) return;
             switch (toSet) {
                 case 'innerText':
-                    el.innerText = appData[key];
+                    el.innerText = webuiApplyAppData(appData[key]);
                     break;
                 case 'innerHTML':
-                    el.innerHTML = appData[key];
+                    el.innerHTML = webuiApplyAppData(appData[key]);
                     break;
                 default:
                     el.setAttribute(toSet, appData[key]);
@@ -202,17 +202,22 @@
         document.body.addEventListener('click', ev => {
             let target = ev.target;
             while (target !== document.body) {
-                let href = target.getAttribute('href');
-                if (target.dataset.click) {
-                    handleDataClick(target);
+                if (target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'true') {
                     ev.stopPropagation();
                     ev.preventDefault();
                     return false;
                 }
-                if (href && target.getAttribute('target') !== 'blank' && (href[0] === '/' || href.substr(0, 4) !== 'http')) {
-                    changePage(href);
+                if (target.dataset.click) {
                     ev.stopPropagation();
                     ev.preventDefault();
+                    handleDataClick(target);
+                    return false;
+                }
+                let href = target.getAttribute('href');
+                if (href && target.getAttribute('target') !== 'blank' && (href[0] === '/' || href.substr(0, 4) !== 'http')) {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    changePage(href);
                     return false;
                 }
                 if (target.hasAttribute('data-stopclick')) {

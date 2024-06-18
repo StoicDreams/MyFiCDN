@@ -47,8 +47,6 @@ This is a an example of webui-quote web component. Visit [webui.StoicDreams.com 
 
 <webui-flex class="ma-10"></webui-flex>
 
-<webui-fa icon="star" class=""></webui-fa>
-<webui-fa icon="fish" class="fa-bounce"></webui-fa>
-<webui-fa icon="user" class=""></webui-fa>
-
 </webui-page-segment>
+
+<webui-next-page name="About MyFi CDN" href="/about"></webui-next-page>
