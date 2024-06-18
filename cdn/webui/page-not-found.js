@@ -2,7 +2,7 @@
 {
     const template = `
 <section class="paper elevation-10 side-by-side">
-<section class="paper d-flex flex-column align-center justify-center readable-content">
+<section class="paper d-flex flex-column align-center justify-center readable-content" data-subscribe="not-found" data-set="innerHTML">
 <p>The page you are looking for was not found!</p>
 </section>
 <section class="paper image d-flex flex-column align-center justify-center readable-content">

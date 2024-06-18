@@ -272,14 +272,20 @@
             }
         });
 
+        function checkForSubscription(node) {
+            if (!node || !node.getAttribute) return;
+            let dataKey = node.getAttribute('data-subscribe');
+            if (dataKey) {
+                setDataToEl(node, dataKey);
+            }
+            node.childNodes.forEach(n => checkForSubscription(n));
+        }
+
         const observeDataSubscriptions = (domNode) => {
             const observer = new MutationObserver(mutations => {
                 mutations.forEach(function (mutation) {
                     Array.from(mutation.addedNodes).forEach(el => {
-                        if (!el || !el.getAttribute) return;
-                        let dataKey = el.getAttribute('data-subscribe');
-                        if (!dataKey) return;
-                        setDataToEl(el, dataKey);
+                        checkForSubscription(el);
                     });
                 });
             });

@@ -19,7 +19,13 @@
         connectedCallback() {
             let container = document.createElement('webui-sideimage');
             container.setAttribute('src', 'https://cdn.myfi.ws/v/Vecteezy/people-are-building-a-spaceship-rocket-cohesive-teamwork-in.svg');
-            container.innerHTML = `<p>This website <span data-subscribe="domain"></span> is under construction.</p>`;
+            container.innerHTML = webuiApplyAppData(`
+<webui-flex column data-subscribe="under-construction" data-set="innerHTML">
+
+<p>{APP_NAME} <span data-subscribe="domain"></span> is under construction.</p>
+
+</webui-flex>
+`);
             this.parentNode.insertBefore(container, this);
             this.remove();
         }

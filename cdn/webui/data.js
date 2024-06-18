@@ -1,5 +1,12 @@
 /* Component used for posting data to app from loaded html */
 {
+    function trimLinePreWhitespce(html) {
+        let lines = [];
+        html.split('\n').forEach(l => {
+            lines.push(l.trim());
+        });
+        return lines.join('\n');
+    }
     class Data extends HTMLElement {
         constructor() {
             super();
@@ -7,10 +14,10 @@
             Object.keys(t.dataset).forEach(key => {
                 switch (t.dataset[key]) {
                     case 'innerText':
-                        webuiSetData(key, t.innerText);
+                        webuiSetData(key, trimLinePreWhitespce(t.innerText));
                         break;
                     case 'innerHTML':
-                        webuiSetData(key, t.innerHTML);
+                        webuiSetData(key, trimLinePreWhitespce(t.innerHTML));
                         break;
                     default:
                         webuiSetData(key, t.dataset[key]);
