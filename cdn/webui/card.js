@@ -38,7 +38,7 @@ slot:not([name]) {
                 }
             }
 
-            t._header.className = `theme-${t.theme || 'primary'}`;
+            t._header.className = `theme-${t.theme || 'title'}`;
             t._header.innerHTML = '';
             if (t.avatar) {
                 let a = document.createElement('webui-avatar');
