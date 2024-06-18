@@ -24,7 +24,7 @@
                 if (cd.theme) { card.setAttribute('theme', cd.theme); }
                 if (cd.name) { card.setAttribute('name', cd.name); }
                 if (cd.width) { card.setAttribute('width', cd.width); }
-                else if (t.cardWidth) { card.setAttribute('width', cd.cardWidth); }
+                else if (t.cardWidth) { card.setAttribute('width', t.cardWidth); }
                 if (cd.avatar) { card.setAttribute('avatar', cd.avatar); }
                 if (cd.link) { card.setAttribute('link', cd.link); }
                 if (cd.elevation) { card.setAttribute('elevation', cd.elevation); }
