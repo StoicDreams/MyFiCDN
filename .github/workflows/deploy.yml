@@ -32,6 +32,7 @@ jobs:
       if: always()
   purge-storage-cache:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: copy-files
     steps:
     - name: Azure Login
