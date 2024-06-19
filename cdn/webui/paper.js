@@ -1,14 +1,25 @@
 /* Display paper element. */
 "use strict"
 {
+    function toCamel(property) {
+        return property.replace(/(-[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); });
+    }
     class Paper extends HTMLElement {
         constructor() {
             super();
         }
         static get observedAttributes() {
-            return ['elevation'];
+            return ['elevation', 'theme'];
+        }
+        removeClassPrefix(prefix) {
+            r = [];
+            this.classList.forEach(c => {
+                if (c.startsWith(prefix)) { r.push(c); }
+            });
+            r.forEach(c => this.classList.remove(c));
         }
         attributeChangedCallback(property, oldValue, newValue) {
+            property = toCamel(property);
             if (oldValue === newValue) return;
             if (newValue === null || newValue === undefined) {
                 delete this[property];
@@ -18,11 +29,16 @@
             switch (property) {
                 case 'elevation':
                     let v = parseInt(newValue);
+                    this.removeClassPrefix('elevation-');
                     if (v > 0) {
                         this.classList.add(`elevation-${v}`);
                     } else if (v < 0) {
                         this.classList.add(`elevation-n${v * -1}`);
                     }
+                    break;
+                case 'theme':
+                    this.removeClassPrefix('theme-');
+                    this.classList.add(`theme-${newValue}`);
                     break;
             }
         }

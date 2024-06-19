@@ -1,6 +1,9 @@
 /* Display side-by-side content where one side is an image */
 "use strict"
 {
+    function toCamel(property) {
+        return property.replace(/(-[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); });
+    }
     class SideImage extends HTMLElement {
         constructor() {
             super();
@@ -10,9 +13,17 @@
             t._imgContainer = document.createElement('webui-flex');
         }
         static get observedAttributes() {
-            return ['elevation', 'reverse', 'src'];
+            return ['elevation', 'reverse', 'src', 'theme'];
+        }
+        removeClassPrefix(prefix) {
+            r = [];
+            this.classList.forEach(c => {
+                if (c.startsWith(prefix)) { r.push(c); }
+            });
+            r.forEach(c => this.classList.remove(c));
         }
         attributeChangedCallback(property, oldValue, newValue) {
+            property = toCamel(property);
             if (oldValue === newValue) return;
             let t = this;
             if (newValue === null || newValue === undefined) {
@@ -26,11 +37,16 @@
                     break;
                 case 'elevation':
                     let v = parseInt(newValue);
+                    this.removeClassPrefix('elevation-');
                     if (v > 0) {
                         t.classList.add(`elevation-${v}`);
                     } else if (v < 0) {
                         t.classList.add(`elevation-n${v * -1}`);
                     }
+                    break;
+                case 'theme':
+                    this.removeClassPrefix('theme-');
+                    this.classList.add(`theme-${newValue}`);
                     break;
                 case 'reverse':
                     t.reverse = true;
