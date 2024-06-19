@@ -431,6 +431,10 @@ p {
     box-sizing: content-box;
 }
 
+p:empty {
+    display: none;
+}
+
 img,
 svg {
     vertical-align: middle;
