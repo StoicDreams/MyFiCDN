@@ -5,10 +5,10 @@
         constructor() {
             super();
             let t = this;
-            t._preContent = document.createElement("webui-flex")
+            t._preContent = document.createElement("webui-flex");
             t._link = document.createElement("webui-flex");
-            t._postContent = document.createElement("webui-flex")
-            if (t.parentNode.nodeName === 'P') {
+            t._postContent = document.createElement("webui-flex");
+            if (t.parentNode && t.parentNode.nodeName === 'P') {
                 let p = t.parentNode;
                 t.parentNode.parentNode.insertBefore(t, p);
             }

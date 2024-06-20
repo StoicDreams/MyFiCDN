@@ -8,14 +8,16 @@
         constructor() {
             super();
             const t = this;
-            if (t.parentNode.nodeName === 'P') {
+            if (t.parentNode && t.parentNode.nodeName === 'P') {
                 let p = t.parentNode;
                 t.parentNode.parentNode.insertBefore(t, t.parentNode);
                 if (p.innerHTML.trim() === '') {
                     p.remove();
                 }
             }
-            t._content = document.createElement('webui-flex');
+            t._cWrap = document.createElement('webui-flex');
+            t._content = document.createElement('webui-paper');
+            t._cWrap.appendChild(t._content);
             t._sideImage = document.createElement('img');
             t._imgContainer = document.createElement('webui-flex');
         }
@@ -57,8 +59,8 @@
                     break;
                 case 'reverse':
                     t.reverse = true;
-                    if (t._imgContainer.parentNode && t._content.parentNode) {
-                        t.insertBefore(t._imgContainer, t._content);
+                    if (t._imgContainer.parentNode && t._cWrap.parentNode) {
+                        t.insertBefore(t._imgContainer, t._cWrap);
                     }
                     break;
             }
@@ -66,15 +68,15 @@
         connectedCallback() {
             let t = this;
             t.classList.add('side-by-side');
-            t._content.setAttribute('column', true);
-            t._content.setAttribute('align', 'center');
-            t._content.setAttribute('justify', 'center');
+            t._cWrap.setAttribute('column', true);
+            t._cWrap.setAttribute('align', 'center');
+            t._cWrap.setAttribute('justify', 'center');
             t._content.classList.add('readable-content');
-            t.appendChild(t._content);
+            t.appendChild(t._cWrap);
             t._imgContainer.setAttribute('align', 'center');
             t._imgContainer.setAttribute('justify', 'center');
             if (t.reverse) {
-                t.insertBefore(t._imgContainer, t._content);
+                t.insertBefore(t._imgContainer, t._cWrap);
             } else {
                 t.appendChild(t._imgContainer);
             }
@@ -82,7 +84,7 @@
             setTimeout(() => {
                 let r = [];
                 t.childNodes.forEach(node => {
-                    if (node !== t._content && node !== t._imgContainer) {
+                    if (node !== t._cWrap && node !== t._imgContainer) {
                         r.push(node);
                     }
                 });
