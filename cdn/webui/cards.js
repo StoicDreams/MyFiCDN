@@ -17,7 +17,7 @@
             }
         }
         static get observedAttributes() {
-            return ['elevation', 'card-width', 'src'];
+            return ['elevation', 'card-width', 'src', 'theme'];
         }
         async buildContentFromSource() {
             let t = this;
@@ -29,6 +29,7 @@
             cards.forEach(cd => {
                 let card = document.createElement('webui-card');
                 if (cd.theme) { card.setAttribute('theme', cd.theme); }
+                else if (t.theme) { card.setAttribute('theme', t.theme); }
                 if (cd.name) { card.setAttribute('name', cd.name); }
                 if (cd.width) { card.setAttribute('width', cd.width); }
                 else if (t.cardWidth) { card.setAttribute('width', t.cardWidth); }

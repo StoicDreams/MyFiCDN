@@ -1,7 +1,9 @@
-/* Template for web components. */
+/* Template for open web components. */
 "use strict"
 {
-    // Start open Template
+    function toCamel(property) {
+        return property.replace(/(-[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); });
+    }
     class OpenTemplate extends HTMLElement {
         constructor() {
             super();
@@ -11,6 +13,7 @@
             return [];
         }
         attributeChangedCallback(property, oldValue, newValue) {
+            property = toCamel(property);
             if (oldValue === newValue) return;
             if (newValue === null || newValue === undefined) {
                 delete this[property];
@@ -21,10 +24,12 @@
         connectedCallback() { }
         disconnectedCallback() { }
     }
-    customElements.define('webui-template', OpenTemplate);
-    // End Open Template
+    customElements.define('app-open-template', OpenTemplate);
+}
 
-    // Start Shadow Template
+/* Template for open web components. */
+"use strict"
+{
     const template = document.createElement('template')
     template.setAttribute('shadowrootmode', true);
     template.innerHTML = `
@@ -35,6 +40,9 @@
 <slot></slot>
 <slot name="something"></slot>
 `;
+    function toCamel(property) {
+        return property.replace(/(-[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); });
+    }
     class ShadowTemplate extends HTMLElement {
         constructor() {
             super();
@@ -47,6 +55,7 @@
             return [];
         }
         attributeChangedCallback(property, oldValue, newValue) {
+            property = toCamel(property);
             if (oldValue === newValue) return;
             if (newValue === null || newValue === undefined) {
                 delete this[property];
@@ -57,6 +66,5 @@
         connectedCallback() { }
         disconnectedCallback() { }
     }
-    customElements.define('webui-template', ShadowTemplate);
-    // End Shadow Template
+    customElements.define('app-shadow-template', ShadowTemplate);
 }
