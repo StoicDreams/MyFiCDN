@@ -20,7 +20,7 @@
             return ['elevation', 'theme'];
         }
         removeClassPrefix(prefix) {
-            r = [];
+            let r = [];
             this.classList.forEach(c => {
                 if (c.startsWith(prefix)) { r.push(c); }
             });
