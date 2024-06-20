@@ -394,6 +394,15 @@ header[slot="header"] h6 {
     color: inherit;
 }
 
+p+h1,
+p+h2,
+p+h3,
+p+h4,
+p+h5,
+p+h6 {
+    margin-top: var(--padding);
+}
+
 webui-app>h1,
 webui-app>h2,
 webui-app>h3,
