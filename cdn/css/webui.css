@@ -347,9 +347,11 @@ h3,
 h4,
 h5,
 h6 {
+    display: flex;
+    flex-wrap: wrap;
     font-size: calc(var(--typography-size) * 1.75);
     margin: 0;
-    padding: 0;
+    padding: var(--padding);
     border-radius: var(--corners) var(--corners) 0 0;
 }
 
@@ -3402,6 +3404,16 @@ body.w-wqhd .hide-at-widequadhd {
 
 body.w-4k .hide-at-4k {
     display: none;
+}
+
+webui-side-by-side>h1,
+webui-side-by-side>h2,
+webui-side-by-side>h3,
+webui-side-by-side>h4,
+webui-side-by-side>h5,
+webui-side-by-side>h6 {
+    justify-content: center;
+    align-items: center;
 }
 
 webui-side-by-side>*>*,
