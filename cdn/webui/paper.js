@@ -7,6 +7,14 @@
     class Paper extends HTMLElement {
         constructor() {
             super();
+            const t = this;
+            if (t.parentNode.nodeName === 'P') {
+                let p = t.parentNode;
+                t.parentNode.parentNode.insertBefore(t, t.parentNode);
+                if (p.innerHTML.trim() === '') {
+                    p.remove();
+                }
+            }
         }
         static get observedAttributes() {
             return ['elevation', 'theme'];

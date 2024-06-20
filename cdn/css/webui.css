@@ -390,6 +390,8 @@ header[slot="header"] h4,
 header[slot="header"] h5,
 header[slot="header"] h6 {
     font-size: inherit;
+    background-color: inherit;
+    color: inherit;
 }
 
 webui-app>h1,

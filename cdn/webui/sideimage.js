@@ -7,7 +7,14 @@
     class SideImage extends HTMLElement {
         constructor() {
             super();
-            let t = this;
+            const t = this;
+            if (t.parentNode.nodeName === 'P') {
+                let p = t.parentNode;
+                t.parentNode.parentNode.insertBefore(t, t.parentNode);
+                if (p.innerHTML.trim() === '') {
+                    p.remove();
+                }
+            }
             t._content = document.createElement('webui-flex');
             t._sideImage = document.createElement('img');
             t._imgContainer = document.createElement('webui-flex');
