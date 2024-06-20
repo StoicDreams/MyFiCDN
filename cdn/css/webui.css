@@ -347,10 +347,49 @@ h3,
 h4,
 h5,
 h6 {
-    font-size: var(--typography-size);
+    font-size: calc(var(--typography-size) * 1.75);
     margin: 0;
     padding: 0;
     border-radius: var(--corners) var(--corners) 0 0;
+}
+
+h1 {
+    background-color: var(--color-title);
+    color: var(--color-title-offset);
+}
+
+h2 {
+    background-color: var(--color-primary);
+    color: var(--color-primary-offset);
+}
+
+h3 {
+    background-color: var(--color-secondary);
+    color: var(--color-secondary-offset);
+}
+
+h4 {
+    background-color: var(--color-tertiary);
+    color: var(--color-tertiary-offset);
+}
+
+h5 {
+    background-color: var(--color-info);
+    color: var(--color-info-offset);
+}
+
+h6 {
+    background-color: var(--color-success);
+    color: var(--color-success-offset);
+}
+
+header[slot="header"] h1,
+header[slot="header"] h2,
+header[slot="header"] h3,
+header[slot="header"] h4,
+header[slot="header"] h5,
+header[slot="header"] h6 {
+    font-size: inherit;
 }
 
 webui-app>h1,
