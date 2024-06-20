@@ -1728,6 +1728,13 @@ webui-nav-group>.navlink.show~webui-nav-group>*,
     margin-top: 0;
 }
 
+webui-nav-group>.navlink:not(.show)~webui-nav-link>*,
+webui-nav-group>.navlink:not(.show)~webui-nav-group>*,
+.nav-group>.navlink:not(.show)~section>* {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
 .nowrap,
 .navlink>span {
     white-space: nowrap;
