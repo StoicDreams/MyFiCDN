@@ -1,9 +1,47 @@
 /* Link Component */
 "use strict"
-{
-    const template = document.createElement('template')
-    template.setAttribute('shadowrootmode', true);
-    template.innerHTML = `
+webui.define('webui-link', {
+    constructor: (t) => {
+        t._startIcon = t.template.querySelector('slot[name="start-icon"]');
+        t._endIcon = t.template.querySelector('slot[name="end-icon"]');
+    },
+    attr: ['href', 'theme', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family'],
+    attrChanged: (t, property, value) => {
+        switch (property) {
+            case 'theme':
+                t.setTheme(value);
+                break;
+            case 'startIconFamily':
+            case 'startIcon':
+                {
+                    t.querySelectorAll('[slot="start-icon"]').forEach(n => n.remove());
+                    if (!t.startIcon) break;
+                    let ico = document.createElement('webui-fa');
+                    ico.setAttribute('slot', 'start-icon');
+                    ico.setAttribute('icon', t.startIcon);
+                    if (t.startIconFamily) {
+                        ico.setAttribute('family', t.startIconFamily);
+                    }
+                    t.appendChild(ico);
+                }
+                break;
+            case 'endIconFamily':
+            case 'endIcon':
+                {
+                    t.querySelectorAll('[slot="end-icon"]').forEach(n => n.remove());
+                    if (!t.endIcon) break;
+                    let ico = document.createElement('webui-fa');
+                    ico.setAttribute('slot', 'end-icon');
+                    ico.setAttribute('icon', t.endIcon);
+                    if (t.endIconFamily) {
+                        ico.setAttribute('family', t.endIconFamily);
+                    }
+                    t.appendChild(ico);
+                }
+                break;
+        }
+    },
+    shadowTemplate: `
 <style type="text/css">
 :host {
 display: inline-flex;
@@ -29,74 +67,5 @@ cursor:pointer;
 <slot name="start-icon"></slot>
 <slot></slot>
 <slot name="end-icon"></slot>
-    `;
-    class Link extends HTMLElement {
-        constructor() {
-            super();
-            const t = this;
-            const shadow = t.attachShadow({ mode: 'open' });
-            t.template = template.content.cloneNode(true);
-            shadow.appendChild(t.template);
-            t._startIcon = t.template.querySelector('slot[name="start-icon"]');
-            t._endIcon = t.template.querySelector('slot[name="end-icon"]');
-        }
-        static get observedAttributes() {
-            return ['href', 'theme', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family'];
-        }
-
-        attributeChangedCallback(property, oldValue, newValue) {
-            if (oldValue === newValue) return;
-            if (newValue === null || newValue === undefined) {
-                delete this[property];
-            } else {
-                this[property] = newValue;
-            }
-            let t = this;
-            switch (property) {
-                case 'theme':
-                    let r = [];
-
-                    t.classList.forEach(c => {
-                        if (c.startsWith('color-')) {
-                            r.push(c);
-                        }
-                    });
-                    r.forEach(c => t.classList.remove(c));
-                    t.classList.add(`color-${newValue}`);
-                    break;
-                case 'start-icon-family':
-                case 'start-icon':
-                    {
-                        t.querySelectorAll('[slot="start-icon"]').forEach(n => n.remove());
-                        if (!t['start-icon']) break;
-                        let ico = document.createElement('webui-fa');
-                        ico.setAttribute('slot', 'start-icon');
-                        ico.setAttribute('icon', t['start-icon']);
-                        if (t['start-icon-family']) {
-                            ico.setAttribute('family', t['start-icon-family']);
-                        }
-                        t.appendChild(ico);
-                    }
-                    break;
-                case 'end-icon-family':
-                case 'end-icon':
-                    {
-                        t.querySelectorAll('[slot="end-icon"]').forEach(n => n.remove());
-                        if (!t['end-icon']) break;
-                        let ico = document.createElement('webui-fa');
-                        ico.setAttribute('slot', 'end-icon');
-                        ico.setAttribute('icon', t['end-icon']);
-                        if (t['end-icon-family']) {
-                            ico.setAttribute('family', t['end-icon-family']);
-                        }
-                        t.appendChild(ico);
-                    }
-                    break;
-
-            }
-        }
-        connectedCallback() { }
-        disconnectedCallback() { }
-    }
-    customElements.define('webui-link', Link);
-}
+`
+});

@@ -1,10 +1,80 @@
 /* Drawer */
 "use strict"
 {
-    const template = document.createElement('template')
-    template.setAttribute('shadowrootmode', true);
-    template.innerHTML = `
-<style type="text/css">
+    const dockableTemplate = `
+<webui-toggle-icon data-toggleattr="[ID]|docked" data-enabled="[ID][docked]" icon-on="send-backward" icon-off="bring-forward" title-on="Hide Navigation" title-off="Dock Navigation"></webui-toggle-icon>`;
+    const moveableTempalte = `
+<button data-setattr="[ID]|slot|left" title="Set navigation to left" class="toggle-pos-left">
+<webui-fa icon="sidebar" family="regular"></webui-fa>
+</button>
+<button data-setattr="[ID]|slot|right" title="Set navigation to right" class="toggle-pos-right">
+<webui-fa icon="sidebar-flip" family="regular"></webui-fa>
+</button>
+<button data-setattr="[ID]|slot|top" title="Set navigation to top" class="toggle-pos-top">
+<webui-fa icon="window" family="regular"></webui-fa>
+</button>
+<button data-setattr="[ID]|slot|bottom" title="Set navigation to bottom" class="toggle-pos-bottom">
+<webui-fa icon="window-flip" family="regular" class="fa-rotate-180"></webui-fa>
+</button>`;
+    webui.define("webui-drawer", {
+        preload: 'fa flex toggle-icon',
+        constructor: (t) => {
+            t._id = `d${crypto.randomUUID()}`.split('-').join('');
+            t._idselector = `#${t._id}`;
+            t.headerSlot = t.template.querySelector('slot[name=header]');
+            t.footerSlot = t.template.querySelector('slot[name=footer]');
+            let cache = t.innerHTML;
+            const startObserving = (domNode) => {
+                const observer = new MutationObserver(mutations => {
+                    mutations.forEach(function (mutation) {
+                        if (cache !== t.innerHTML) {
+                            cache = t.innerHTML;
+                            t.buildFooterContent();
+                        }
+                    });
+                });
+                observer.observe(domNode, {
+                    childList: true,
+                    attributes: false,
+                    characterData: false,
+                    subtree: true,
+                });
+                return observer;
+            };
+            startObserving(t);
+        },
+        connected: (t) => {
+            // delay setting id, which enables transitions, to avoid undocked drawers from displaying on page load.
+            setTimeout(() => {
+                t.setAttribute('id', t._id);
+            }, 100);
+        },
+        attr: ['position', 'docked', 'data-dockable', 'data-moveable'],
+        attrChanged: (t, property, value) => {
+            switch (property) {
+                case 'dataDockable':
+                    t.dataDockable = true;
+                    t.buildFooterContent();
+                    break;
+                case 'dataMoveable':
+                    t.dataMoveable = true;
+                    t.buildFooterContent();
+                    break;
+            }
+        },
+        buildFooterContent: function () {
+            this.querySelectorAll('[slot="footer"]').forEach(el => el.remove());
+            let content = '';
+            let fb = document.createElement('webui-flex');
+            fb.setAttribute('justify', 'center');
+            fb.setAttribute('slot', 'footer');
+            if (this['data-moveable']) { content += moveableTempalte.split('[ID]').join(this._idselector); }
+            if (this['data-dockable']) { content += dockableTemplate.split('[ID]').join(this._idselector); }
+            fb.innerHTML = content;
+            this.appendChild(fb);
+        },
+        shadowTemplate: `
+    <style type="text/css">
 :host {
 background-color: var(--site-background-color, white);
 color: var(--site-background-offset, black);
@@ -88,96 +158,6 @@ cursor:pointer;
 <slot name="header"></slot>
 <slot></slot>
 <slot name="footer"></slot>
-`;
-    const dockableTemplate = `
-<webui-toggle-icon data-toggleattr="[ID]|docked" data-enabled="[ID][docked]" icon-on="send-backward" icon-off="bring-forward" title-on="Hide Navigation" title-off="Dock Navigation"></webui-toggle-icon>`;
-    const moveableTempalte = `
-<button data-setattr="[ID]|slot|left" title="Set navigation to left" class="toggle-pos-left">
-<webui-fa icon="sidebar" family="regular"></webui-fa>
-</button>
-<button data-setattr="[ID]|slot|right" title="Set navigation to right" class="toggle-pos-right">
-<webui-fa icon="sidebar-flip" family="regular"></webui-fa>
-</button>
-<button data-setattr="[ID]|slot|top" title="Set navigation to top" class="toggle-pos-top">
-<webui-fa icon="window" family="regular"></webui-fa>
-</button>
-<button data-setattr="[ID]|slot|bottom" title="Set navigation to bottom" class="toggle-pos-bottom">
-<webui-fa icon="window-flip" family="regular" class="fa-rotate-180"></webui-fa>
-</button>`;
-    class Drawer extends HTMLElement {
-        constructor() {
-            super();
-            let t = this;
-            t._id = `d${crypto.randomUUID()}`.split('-').join('');
-            t._idselector = `#${t._id}`;
-            const shadow = t.attachShadow({ mode: 'open' });
-            t.template = template.content.cloneNode(true);
-            t.headerSlot = t.template.querySelector('slot[name=header]');
-            t.footerSlot = t.template.querySelector('slot[name=footer]');
-            shadow.appendChild(t.template);
-            let cache = t.innerHTML;
-            const startObserving = (domNode) => {
-                const observer = new MutationObserver(mutations => {
-                    mutations.forEach(function (mutation) {
-                        if (cache !== t.innerHTML) {
-                            cache = t.innerHTML;
-                            t.buildFooterContent();
-                        }
-                    });
-                });
-                observer.observe(domNode, {
-                    childList: true,
-                    attributes: false,
-                    characterData: false,
-                    subtree: true,
-                });
-                return observer;
-            };
-            startObserving(t);
-        }
-        static get observedAttributes() {
-            return ["position", "docked", "data-dockable", "data-moveable"];
-        }
-        attributeChangedCallback(property, oldValue, newValue) {
-            if (oldValue === newValue) return;
-            if (newValue === null || newValue === undefined) {
-                delete this[property];
-            } else {
-                this[property] = newValue;
-            }
-            switch (property) {
-                case 'data-dockable':
-                    this[property] = true;
-                    this.buildFooterContent();
-                    break;
-                case 'data-moveable':
-                    this[property] = true;
-                    this.buildFooterContent();
-                    break;
-            }
-        }
-        buildFooterContent() {
-            this.querySelectorAll('[slot="footer"]').forEach(el => el.remove());
-            let content = '';
-            let fb = document.createElement('webui-flex');
-            fb.setAttribute('justify', 'center');
-            fb.setAttribute('slot', 'footer');
-            if (this['data-moveable']) { content += moveableTempalte.split('[ID]').join(this._idselector); }
-            if (this['data-dockable']) { content += dockableTemplate.split('[ID]').join(this._idselector); }
-            fb.innerHTML = content;
-            this.appendChild(fb);
-        }
-        connectedCallback() {
-            let t = this;
-            if (!t.getAttribute('preload')) {
-                t.setAttribute('preload', 'fa flex toggle-icon');
-            }
-            // delay setting id, which enables transitions, to avoid undocked drawers from displaying on page load.
-            setTimeout(() => {
-                t.setAttribute('id', t._id);
-            }, 100);
-        }
-        disconnectedCallback() { }
-    }
-    customElements.define('webui-drawer', Drawer);
+`
+    });
 }

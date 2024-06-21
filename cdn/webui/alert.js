@@ -1,9 +1,51 @@
 /* Display inline alert message */
 "use strict"
-{
-    const template = document.createElement('template')
-    template.setAttribute('shadowrootmode', true);
-    template.innerHTML = `
+webui.define("webui-alert", {
+    preload: 'fa',
+    constructor: (t) => {
+        t.icon = t.template.querySelector('#icon');
+        t.btnClose = t.template.querySelector('#close');
+        t.btnClose.addEventListener('click', _ev => {
+            t.userclosed = true;
+            t.removeAttribute('show');
+        });
+    },
+    attr: ['variant', 'show'],
+    attrChanged: (t, property, value) => {
+        switch (property) {
+            case 'variant':
+                t.setVariant(value);
+                break;
+            case 'show':
+                break;
+        }
+    },
+    connected: (t) => {
+        if (!t.variant) {
+            t.setVariant('warning');
+        }
+    },
+    setVariant: function (theme) {
+        this.setTheme(theme);
+        this.style.backgroundColor = `var(--color-${theme})`;
+        this.style.color = `var(--color-${theme}-offset)`;
+        switch (theme) {
+            case "danger":
+                this.icon.setAttribute('icon', 'hexagon-exclamation');
+                break;
+            case "success":
+                this.icon.setAttribute('icon', 'thumbs-up');
+                break;
+            case "info":
+                this.icon.setAttribute('icon', 'circle-exclamation');
+                break;
+            default:
+                this.icon.setAttribute('icon', 'triangle-exclamation');
+                break;
+        }
+
+    },
+    shadowTemplate: `
 <style type="text/css">
 :host {
 display:none;
@@ -35,7 +77,7 @@ transform:scaleY(0);
 button {
 display:inline-flex;
 cursor:pointer;
-padding:var(--button-padding, 0.5em 1em);
+padding:0.5em 0em;
 align-items:center;
 justify-content:center;
 border:none;
@@ -47,75 +89,5 @@ border-radius:var(--corners);
 <webui-fa id="icon" icon="" family="solid"></webui-fa>
 <div><slot></slot></div>
 <button id="close"><webui-fa icon="xmark" family="solid"></webui-fa></button>
-`;
-    class Alert extends HTMLElement {
-        constructor() {
-            super();
-            const shadow = this.attachShadow({ mode: 'open' });
-            const t = this;
-            t.template = template.content.cloneNode(true);
-            t.icon = t.template.querySelector('#icon');
-            t.btnClose = t.template.querySelector('#close');
-            t.btnClose.addEventListener('click', ev => {
-                t.userclosed = true;
-                t.removeAttribute('show');
-            });
-            shadow.appendChild(t.template);
-        }
-        static get observedAttributes() {
-            return ['variant', 'show'];
-        }
-        attributeChangedCallback(property, oldValue, newValue) {
-            if (oldValue === newValue) return;
-            if (newValue === null || newValue === undefined) {
-                delete this[property];
-            } else {
-                this[property] = newValue;
-            }
-            switch (property) {
-                case 'variant':
-                    this.setVariant(newValue);
-                    break;
-                case 'show':
-                    break;
-            }
-        }
-        clearThemes() {
-            this.classList.forEach(c => {
-                if (c.startsWith('theme-')) {
-                    this.classList.remove(c);
-                }
-            });
-        }
-        setVariant(variant) {
-            this.clearThemes();
-            this.style.backgroundColor = `var(--color-${variant})`;
-            this.style.color = `var(--color-${variant}-offset)`;
-            this.classList.add(`theme-${variant}`);
-            switch (variant) {
-                case "danger":
-                    this.icon.setAttribute('icon', 'hexagon-exclamation');
-                    break;
-                case "success":
-                    this.icon.setAttribute('icon', 'thumbs-up');
-                    break;
-                case "info":
-                    this.icon.setAttribute('icon', 'circle-exclamation');
-                    break;
-                default:
-                    this.icon.setAttribute('icon', 'triangle-exclamation');
-                    break;
-            }
-        }
-        connectedCallback() {
-            if (!this.variant) {
-                this.setVariant('warning');
-            }
-            if (!this.getAttribute('preload')) {
-                this.setAttribute('preload', 'fa');
-            }
-        }
-        disconnectedCallback() { }
-    }
-    customElements.define('webui-alert', Alert);
-}
+`
+});

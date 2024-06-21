@@ -1,22 +1,7 @@
 /* Displays Alert icon and enables webuiAlert(message:string|html, variant:string[success|warning|danger|info]) for displaying popup alerts. */
 "use strict"
 {
-    const template = document.createElement('template')
-    template.setAttribute('shadowrootmode', true);
-    template.innerHTML = `
-<style type="text/css">
-:host {
-display:inline-flex;
-cursor:pointer;
-padding:1px;
-align-items:center;
-justify-content:center;
-}
-</style>
-<webui-fa icon="bell" family="solid"></webui-fa>
-`;
     const alertList = [];
-
     const popup = document.createElement('section');
     popup.classList.add('webui-alerts-popup');
     popup.style.display = 'block';
@@ -85,13 +70,10 @@ justify-content:center;
         }, 100);
     }
 
-    class Alerts extends HTMLElement {
-        constructor() {
-            super();
-            const shadow = this.attachShadow({ mode: 'open' });
-            const t = this;
+    webui.define("webui-alerts", {
+        "preload": "fa alert dialogs",
+        constructor: (t) => {
             t.count = 0;
-            t.template = template.content.cloneNode(true);
             t.icon = t.template.querySelector('webui-fa');
             t.btnClose = t.template.querySelector('#close');
             if (!window.webuiAlert) {
@@ -116,7 +98,7 @@ justify-content:center;
                     }, popupTiming)
                 };
             }
-            t.addEventListener('click', ev => {
+            t.addEventListener('click', _ev => {
                 if (!t.drawer) {
                     showAlertsInDialog();
                 } else {
@@ -124,13 +106,26 @@ justify-content:center;
                 }
                 return true;
             });
-            shadow.appendChild(t.template);
-            setTimeout(() => this.checkCounts(), 1000);
-        }
-        static get observedAttributes() {
-            return ['data-toggleclass', 'data-title'];
-        }
-        checkCounts() {
+            setTimeout(() => t.checkCounts(), 1000);
+        },
+        attr: ['data-toggleclass', 'data-title'],
+        attrChanged: (t, property, value) => {
+            switch (property) {
+                case 'dataTitle':
+                    alertTitle = value;
+                    break;
+                case 'dataPopup':
+                    let timing = parseInt(value);
+                    if (timing) {
+                        popupTiming = timing;
+                    }
+                    break;
+                case 'dataToggleclass':
+                    t.drawer = value.split('|')[0];
+                    break;
+            }
+        },
+        checkCounts: function () {
             let newCount = 0;
             alertList.map(a => {
                 if (!a.userclosed) {
@@ -142,54 +137,18 @@ justify-content:center;
                 this.icon.setAttribute('count', newCount === 0 ? '' : newCount.toLocaleString());
             }
             setTimeout(() => this.checkCounts(), 1000);
-        }
-        attributeChangedCallback(property, oldValue, newValue) {
-            if (oldValue === newValue) return;
-            if (newValue === null || newValue === undefined) {
-                delete this[property];
-            } else {
-                this[property] = newValue;
-            }
-            switch (property) {
-                case 'data-title':
-                    alertTitle = newValue;
-                    break;
-                case 'data-popup':
-                    let timing = parseInt(newValue);
-                    if (timing) {
-                        popupTiming = timing;
-                    }
-                    break;
-                case 'data-toggleclass':
-                    this.drawer = newValue.split('|')[0];
-                    break;
-            }
-        }
-        setVariant(alert, variant) {
-            alert.style.backgroundColor = `var(--color-${variant})`;
-            alert.style.color = `var(--color-${variant}-offset)`;
-            alert.className = `theme-${variant}`;
-            switch (variant) {
-                case "danger":
-                    alert.icon.setAttribute('icon', 'hexagon-exclamation');
-                    break;
-                case "success":
-                    alert.icon.setAttribute('icon', 'thumbs-up');
-                    break;
-                case "info":
-                    alert.icon.setAttribute('icon', 'circle-exclamation');
-                    break;
-                default:
-                    alert.icon.setAttribute('icon', 'triangle-exclamation');
-                    break;
-            }
-        }
-        connectedCallback() {
-            if (!this.getAttribute('preload')) {
-                this.setAttribute('preload', 'fa alert dialogs');
-            }
-        }
-        disconnectedCallback() { }
-    }
-    customElements.define('webui-alerts', Alerts);
+        },
+        shadowTemplate: `
+<style type="text/css">
+:host {
+display:inline-flex;
+cursor:pointer;
+padding:1px;
+align-items:center;
+justify-content:center;
+}
+</style>
+<webui-fa icon="bell" family="solid"></webui-fa>
+`
+    });
 }

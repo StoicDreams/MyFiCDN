@@ -1,9 +1,111 @@
 /* Enables use of await webuiDialog(options) to call a dialog */
 "use strict"
 {
-    const template = document.createElement('template')
-    template.setAttribute('shadowrootmode', true);
-    template.innerHTML = `
+    const defaultData = { content: "Missing Content", confirm: "Ok" };
+    webui.define("webui-dialogs", {
+        preload: 'fa',
+        constructor: (t) => {
+            t.dialog = t.template.querySelector('dialog');
+            t.form = t.template.querySelector('form');
+            t.header = t.template.querySelector('form>header>section');
+            t.content = t.template.querySelector('form>section');
+            t.footer = t.template.querySelector('form>footer');
+            t.btnClose = t.template.querySelector('#dlg-close');
+            t.btnConfirm = t.template.querySelector('#dlg-confirm');
+            t.btnCancel = t.template.querySelector('#dlg-cancel');
+            let close = () => { };
+            document.body.addEventListener('keyup', ev => {
+                if (ev.key === 'Escape') {
+                    close(true);
+                }
+            });
+            t.dialog.addEventListener('click', ev => {
+                if (t._ignoreBackdropClick) return;
+                const rect = t.dialog.getBoundingClientRect();
+                const isInDialog = (
+                    rect.top <= ev.clientY &&
+                    ev.clientY <= rect.top + rect.height &&
+                    rect.left <= ev.clientX &&
+                    ev.clientX <= rect.left + rect.width
+                );
+                if (!isInDialog) {
+                    close(true);
+                }
+            });
+            if (!window.webuiDialog) {
+                window.webuiDialog = function (data) {
+                    return new Promise((resolve, reject) => {
+                        resetNodes();
+                        data = data || defaultData;
+                        t._ignoreBackdropClick = !!data.ignoreBackdropClick;
+                        t.dialog.style.minWidth = data.minWidth || '';
+                        setContent(t.content, data.content || defaultData.content);
+                        setContent(t.btnCancel, data.cancel || defaultData.cancel);
+                        setContent(t.btnConfirm, data.confirm || defaultData.confirm);
+                        setContent(t.header, data.title || '');
+                        if (data.hideclose) {
+                            t.dialog.setAttribute('data-hideclose', true);
+                        } else {
+                            t.dialog.removeAttribute('data-hideclose');
+                        }
+                        close = (canceled) => {
+                            if (data.onclose) { data.onclose(); }
+                            if (canceled) reject('canceled');
+                            t.dialog.close();
+                            close = () => { };
+                        };
+                        t.btnClose.addEventListener('click', () => close(true));
+                        t.btnCancel.addEventListener('click', () => close(true));
+                        t.btnConfirm.addEventListener('click', async (ev) => {
+                            ev.preventDefault();
+                            let formData = new FormData(t.form);
+                            if (data.onconfirm) {
+                                if (data.onconfirm.constructor && data.onconfirm.constructor.name === 'AsyncFunction') {
+                                    let result = await data.onconfirm(formData, t.content);
+                                    if (!result) {
+                                        return;
+                                    }
+                                } else {
+                                    let result = data.onconfirm(formData, t.content);
+                                    if (result.then) {
+                                        result = await result;
+                                        if (!result) {
+                                            return;
+                                        }
+                                    } else if (!result) {
+                                        return;
+                                    }
+                                }
+                            }
+                            resolve(formData, t.content);
+                            close(false);
+                        });
+                        t.dialog.showModal();
+                    });
+                };
+            }
+            function setContent(el, content) {
+                content = content || ``;
+                if (content.nodeType) {
+                    el.appendChild(content);
+                    return;
+                }
+                el.innerHTML = content;
+            }
+            function resetNodes() {
+                t.header = replaceNode(t.header);
+                t.content = replaceNode(t.content);
+                t.btnCancel = replaceNode(t.btnCancel);
+                t.btnConfirm = replaceNode(t.btnConfirm);
+            }
+            function replaceNode(node) {
+                let c = node.cloneNode();
+                node.parentNode.insertBefore(c, node);
+                node.remove();
+                return c;
+            }
+        },
+        shadowTemplate: `
 <style type="text/css">
 :host {
 }
@@ -116,138 +218,6 @@ color:var(--color-success-offset, #FFF);
 </footer>
 </form>
 </dialog>
-`;
-    function ce(n, cls) {
-        let el = document.createElement(n);
-        el.className = cls;
-        return el;
-    }
-    const defaultData = { content: "Missing Content", confirm: "Ok" };
-    class Dialog extends HTMLElement {
-        constructor() {
-            super();
-            const shadow = this.attachShadow({ mode: 'open' });
-            const t = this;
-            t.template = template.content.cloneNode(true);
-            t.dialog = t.template.querySelector('dialog');
-            t.form = t.template.querySelector('form');
-            t.header = t.template.querySelector('form>header>section');
-            t.content = t.template.querySelector('form>section');
-            t.footer = t.template.querySelector('form>footer');
-            t.btnClose = t.template.querySelector('#dlg-close');
-            t.btnConfirm = t.template.querySelector('#dlg-confirm');
-            t.btnCancel = t.template.querySelector('#dlg-cancel');
-            shadow.appendChild(t.template);
-            let close = () => { };
-            document.body.addEventListener('keyup', ev => {
-                if (ev.key === 'Escape') {
-                    close(true);
-                }
-            });
-            t.dialog.addEventListener('click', ev => {
-                if (t._ignoreBackdropClick) return;
-                const rect = t.dialog.getBoundingClientRect();
-                const isInDialog = (
-                    rect.top <= ev.clientY &&
-                    ev.clientY <= rect.top + rect.height &&
-                    rect.left <= ev.clientX &&
-                    ev.clientX <= rect.left + rect.width
-                );
-                if (!isInDialog) {
-                    close(true);
-                }
-            });
-            if (!window.webuiDialog) {
-                window.webuiDialog = function (data) {
-                    return new Promise((resolve, reject) => {
-                        resetNodes();
-                        data = data || defaultData;
-                        t._ignoreBackdropClick = !!data.ignoreBackdropClick;
-                        t.dialog.style.minWidth = data.minWidth || '';
-                        setContent(t.content, data.content || defaultData.content);
-                        setContent(t.btnCancel, data.cancel || defaultData.cancel);
-                        setContent(t.btnConfirm, data.confirm || defaultData.confirm);
-                        setContent(t.header, data.title || '');
-                        if (data.hideclose) {
-                            t.dialog.setAttribute('data-hideclose', true);
-                        } else {
-                            t.dialog.removeAttribute('data-hideclose');
-                        }
-                        close = (canceled) => {
-                            if (data.onclose) { data.onclose(); }
-                            if (canceled) reject('canceled');
-                            t.dialog.close();
-                            close = () => { };
-                        };
-                        t.btnClose.addEventListener('click', () => close(true));
-                        t.btnCancel.addEventListener('click', () => close(true));
-                        t.btnConfirm.addEventListener('click', async (ev) => {
-                            ev.preventDefault();
-                            let formData = new FormData(t.form);
-                            if (data.onconfirm) {
-                                if (data.onconfirm.constructor && data.onconfirm.constructor.name === 'AsyncFunction') {
-                                    let result = await data.onconfirm(formData, t.content);
-                                    if (!result) {
-                                        return;
-                                    }
-                                } else {
-                                    let result = data.onconfirm(formData, t.content);
-                                    if (result.then) {
-                                        result = await result;
-                                        if (!result) {
-                                            return;
-                                        }
-                                    } else if (!result) {
-                                        return;
-                                    }
-                                }
-                            }
-                            resolve(formData, t.content);
-                            close(false);
-                        });
-                        t.dialog.showModal();
-                    });
-                };
-            }
-            function setContent(el, content) {
-                content = content || ``;
-                if (content.nodeType) {
-                    el.appendChild(content);
-                    return;
-                }
-                el.innerHTML = content;
-            }
-            function resetNodes() {
-                t.header = replaceNode(t.header);
-                t.content = replaceNode(t.content);
-                t.btnCancel = replaceNode(t.btnCancel);
-                t.btnConfirm = replaceNode(t.btnConfirm);
-            }
-            function replaceNode(node) {
-                let c = node.cloneNode();
-                node.parentNode.insertBefore(c, node);
-                node.remove();
-                return c;
-            }
-        }
-        static get observedAttributes() {
-            return [];
-        }
-        attributeChangedCallback(property, oldValue, newValue) {
-            if (oldValue === newValue) return;
-            if (newValue === null || newValue === undefined) {
-                delete this[property];
-            } else {
-                this[property] = newValue;
-            }
-            this.updateElements();
-        }
-        connectedCallback() {
-            if (!this.getAttribute('preload')) {
-                this.setAttribute('preload', 'fa');
-            }
-        }
-        disconnectedCallback() { }
-    }
-    customElements.define('webui-dialogs', Dialog);
+`
+    });
 }

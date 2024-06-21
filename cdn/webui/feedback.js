@@ -1,32 +1,15 @@
 /* Display feedback button that opens dialog for feedback when clicked */
 "use strict"
 {
-    const template = document.createElement('template')
-    template.setAttribute('shadowrootmode', true);
-    template.innerHTML = `
-<style type="text/css">
-:host {
-display:inline-flex;
-cursor:pointer;
-padding:1px;
-align-items:center;
-justify-content:center;
-}
-</style>
-<webui-fa icon="comment" family="solid"></webui-fa>
-`;
     const content = `
 <webui-inputmessage autofocus></webui-inputmessage>
 <webui-alert id="alert"></webuialert>
 `;
-    class Feedback extends HTMLElement {
-        constructor() {
-            super();
-            const shadow = this.attachShadow({ mode: 'open' });
-            let extraContent = this.innerHTML;
-            const t = this;
-            t.template = template.content.cloneNode(true);
-            shadow.appendChild(t.template);
+
+    webui.define('webui-feedback', {
+        preload: 'dialogs inputmessage alert alerts',
+        constructor: (t) => {
+            let extraContent = t.innerHTML;
             t.addEventListener('click', async () => {
                 let options = {
                     title: `Give us your Feedback!`,
@@ -101,26 +84,23 @@ justify-content:center;
                     console.error('Unexpected error from feedback->webuiDialog()', ex);
                 }
             });
-        }
-        static get observedAttributes() {
-            return ['title', 'data-post'];
-        }
-        attributeChangedCallback(property, oldValue, newValue) {
-            if (oldValue === newValue) return;
-            if (newValue === null || newValue === undefined) {
-                delete this[property];
-            } else {
-                this[property] = newValue;
-            }
-        }
-        connectedCallback() {
-            if (!this.getAttribute('preload')) {
-                this.setAttribute('preload', 'dialogs inputmessage alert alerts');
-            }
-            this.setAttribute('data-subscribe', 'feedback');
-            this.setAttribute('data-set', 'click');
-        }
-        disconnectedCallback() { }
-    }
-    customElements.define('webui-feedback', Feedback);
+        },
+        attr: ['title', 'data-post'],
+        connected: (t) => {
+            t.setAttribute('data-subscribe', 'feedback');
+            t.setAttribute('data-set', 'click');
+        },
+        shadowTemplate: `
+<style type="text/css">
+:host {
+display:inline-flex;
+cursor:pointer;
+padding:1px;
+align-items:center;
+justify-content:center;
+}
+</style>
+<webui-fa icon="comment" family="solid"></webui-fa>
+`
+    });
 }

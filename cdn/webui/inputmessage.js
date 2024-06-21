@@ -1,27 +1,6 @@
 /* Display multi-line, auto-resizing text input field. */
 "use strict"
 {
-    const template = document.createElement('template')
-    template.setAttribute('shadowrootmode', true);
-    template.innerHTML = `
-<style type="text/css">
-::host {
-display:block;
-position:relative;
-min-height:3em;
-box-sizing:border-box;
-}
-textarea {
-display:block;
-position:relative;
-width:100%;
-min-height:3em;
-box-sizing:border-box;
-padding:var(--padding);
-}
-</style>
-<textarea></textarea>
-`;
     function autosizeTextArea(target) {
         if (target.nodeName !== 'TEXTAREA') { return; }
         setTimeout(() => {
@@ -55,15 +34,10 @@ padding:var(--padding);
     }
     const talist = [];
     window.addEventListener('resize', UpdateAllDisplayedTextareaSizes);
-    class InputMessage extends HTMLElement {
-        static formAssociated = true;
-        internals;
-        shadowRoot;
-        constructor() {
-            super();
-            this.internals = this.attachInternals();
-            const shadow = this.attachShadow({ mode: 'open' });
-            const t = this;
+
+    webui.define('webui-inputmessage', {
+        constructor: (t) => {
+            t.internals = t.attachInternals();
             t.autosize = () => {
                 if (t.field.value !== t.value) {
                     t.value = t.field.value;
@@ -71,45 +45,52 @@ padding:var(--padding);
                 }
                 autosizeTextArea(t.field);
             };
-            this._handleFormData = this.handleFormData.bind(this);
+            t._handleFormData = t.handleFormData.bind(t);
             talist.push(t);
-            t.template = template.content.cloneNode(true);
             t.field = t.template.querySelector('textarea');
             t.field.setAttribute('name', 'message');
             t.field.addEventListener('keydown', handleKeyDown);
             t.field.addEventListener('keyup', t.autosize);
             t.field.addEventListener('change', t.autosize);
-            shadow.appendChild(t.template);
-        }
-        static get observedAttributes() {
-            return ['title', 'name', 'autofocus', 'value'];
-        }
-        handleFormData({ formData }) {
+        },
+        attr: ['title', 'name', 'autofocus', 'value'],
+        attrChanged: (t, property, value) => {
+            switch (property) {
+                case 'name':
+                    t.field.setAttribute('name', value);
+                    break;
+                case 'autofocus':
+                    t.field.setAttribute('autofocus', value);
+                    break;
+                case 'value':
+                    t.field.value = value;
+                    break;
+            }
+        },
+        handleFormData: function ({ formData }) {
             if (!this.disabled) {
                 formData[this.name] = this.value;
             }
-        }
-        attributeChangedCallback(property, oldValue, newValue) {
-            if (oldValue === newValue) return;
-            if (newValue === null || newValue === undefined) {
-                delete this[property];
-            } else {
-                this[property] = newValue;
-            }
-            switch (property) {
-                case 'name':
-                    this.field.setAttribute('name', newValue);
-                    break;
-                case 'autofocus':
-                    this.field.setAttribute('autofocus', newValue);
-                    break;
-                case 'value':
-                    this.field.value = newValue;
-                    break;
-            }
-        }
-        connectedCallback() { }
-        disconnectedCallback() { }
-    }
-    customElements.define('webui-inputmessage', InputMessage);
+        },
+        shadowTemplate: `
+<style type="text/css">
+::host {
+display:block;
+position:relative;
+min-height:3em;
+box-sizing:border-box;
+}
+textarea {
+display:block;
+position:relative;
+width:100%;
+min-height:3em;
+box-sizing:border-box;
+padding:var(--padding);
+font:inherit;
+}
+</style>
+<textarea></textarea>
+`
+    });
 }

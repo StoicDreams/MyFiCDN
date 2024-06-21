@@ -1,90 +1,69 @@
 /* Display gallery images */
 "use strict"
-{
-    class Gallery extends HTMLElement {
-        constructor() {
-            super();
-            const t = this;
-            if (t.parentNode && t.parentNode.nodeName === 'P') {
-                let p = t.parentNode;
-                t.parentNode.parentNode.insertBefore(t, p);
-                p.remove();
-            }
-            t.flexImage = document.createElement('webui-flex');
-            t.flexName = document.createElement('webui-flex');
-            t.cards = document.createElement('webui-cards');
+webui.define("webui-gallery", {
+    constructor: (t) => {
+        t.flexImage = document.createElement('webui-flex');
+        t.flexName = document.createElement('webui-flex');
+        t.cards = document.createElement('webui-cards');
+    },
+    attr: ['src'],
+    attrChanged: (t, property, value) => {
+        switch (property) {
+            case 'src':
+                break;
         }
-        static get observedAttributes() {
-            return ['src'];
-        }
-        attributeChangedCallback(property, oldValue, newValue) {
-            if (oldValue === newValue) return;
-            if (newValue === null || newValue === undefined) {
-                delete this[property];
-            } else {
-                this[property] = newValue;
-            }
-            switch (property) {
-                case 'src':
-                    break;
-            }
-        }
-        async loadGallery() {
-            if (!this.src) { return; }
-            let result = await fetch(this.src);
-            if (!result.ok) { return; }
-            let images = await result.json();
-            if (!images.length) { return; }
-            let t = this;
-            t.parentNode.insertBefore(t.flexImage, t);
-            t.parentNode.insertBefore(t.flexName, t);
-            t.parentNode.insertBefore(t.cards, t);
+    },
+    loadGallery: async function (t) {
+        if (!t.src) { return; }
+        let result = await fetch(t.src);
+        if (!result.ok) { return; }
+        let images = await result.json();
+        if (!images.length) { return; }
+        t.parentNode.insertBefore(t.flexImage, t);
+        t.parentNode.insertBefore(t.flexName, t);
+        t.parentNode.insertBefore(t.cards, t);
 
-            t.currentImage = images[0];
-            t.flexImage.setAttribute('justify', 'center');
-            t.flexImage.setAttribute('align', 'center');
-            t.flexImage.setAttribute('column', 'true');
-            t.flexImage.classList.add('pa-2');
-            t.flexImage.style.height = 'calc(0.8 * var(--main-height))';
+        t.currentImage = images[0];
+        t.flexImage.setAttribute('justify', 'center');
+        t.flexImage.setAttribute('align', 'center');
+        t.flexImage.setAttribute('column', 'true');
+        t.flexImage.classList.add('pa-2');
+        t.flexImage.style.height = 'calc(0.8 * var(--main-height))';
 
-            let img = document.createElement('img');
-            img.setAttribute('data-subscribe', 'page-gallery-image');
-            img.setAttribute('data-set', 'src');
-            t.flexImage.appendChild(img);
+        let img = document.createElement('img');
+        img.setAttribute('data-subscribe', 'page-gallery-image');
+        img.setAttribute('data-set', 'src');
+        t.flexImage.appendChild(img);
 
-            t.flexName.setAttribute('justify', 'center');
-            t.flexName.classList.add('pa-1', 'ma-1');
-            let nm = document.createElement('p');
-            t.flexName.appendChild(nm);
-            nm.setAttribute('data-subscribe', 'page-gallery-image-name');
-            nm.setAttribute('data-set', 'innerHTML');
+        t.flexName.setAttribute('justify', 'center');
+        t.flexName.classList.add('pa-1', 'ma-1');
+        let nm = document.createElement('p');
+        t.flexName.appendChild(nm);
+        nm.setAttribute('data-subscribe', 'page-gallery-image-name');
+        nm.setAttribute('data-set', 'innerHTML');
 
-            t.cards.classList.add('mb-5');
+        t.cards.classList.add('mb-5');
 
-            let cardTemplate = document.createElement('webui-card');
-            images.forEach(image => {
-                let card = cardTemplate.cloneNode(false);
-                t.cards.appendChild(card);
-                card.setAttribute('title', image.name);
-                let ca = document.createElement('webui-avatar');
-                card.appendChild(ca);
-                card.style.cursor = 'pointer';
-                ca.setAttribute('src', image.src);
-                ca.style.fontSize = '4em';
-                card.addEventListener('click', _ev => {
-                    webuiSetData('page-gallery-image', image.src);
-                    webuiSetData('page-gallery-image-name', image.name);
-                });
+        let cardTemplate = document.createElement('webui-card');
+        images.forEach(image => {
+            let card = cardTemplate.cloneNode(false);
+            t.cards.appendChild(card);
+            card.setAttribute('title', image.name);
+            let ca = document.createElement('webui-avatar');
+            card.appendChild(ca);
+            card.style.cursor = 'pointer';
+            ca.setAttribute('src', image.src);
+            ca.style.fontSize = '4em';
+            card.addEventListener('click', _ev => {
+                webui.setData('page-gallery-image', image.src);
+                webui.setData('page-gallery-image-name', image.name);
             });
+        });
 
-            webuiSetData('page-gallery-image', t.currentImage.src);
-            webuiSetData('page-gallery-image-name', t.currentImage.name);
-        }
-        connectedCallback() {
-            let t = this;
-            this.loadGallery();
-        }
-        disconnectedCallback() { }
+        webui.setData('page-gallery-image', t.currentImage.src);
+        webui.setData('page-gallery-image-name', t.currentImage.name);
+    },
+    connected: (t) => {
+        t.loadGallery(t);
     }
-    customElements.define('webui-gallery', Gallery);
-}
+});

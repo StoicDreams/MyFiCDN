@@ -15,7 +15,8 @@
     <link rel="manifest" href="app.webmanifest">
 
     <link href="https://cdn.myfi.ws/fa/css/svg-with-js.min.css" rel="stylesheet" />
-    <link href="css/webui.css" rel="stylesheet" />
+    <link href="css/webui.min.css" rel="stylesheet" />
+    <script src="webui/loader.min.js" async></script>
 
     <meta name="theme-color" content="#FF2E46" />
 
@@ -64,17 +65,14 @@
         <webui-data data-company-singular="Stoic Dreams"></webui-data>
         <webui-data data-not-found="innerHTML">
             <p>This is custom 404 content set by a webui-data component in the index.html file.</p>
-            <h5><webui-link href="/">Return Home</webui-link></h5>
+            <p class="text-center"><webui-link href="/">Return Home</webui-link></p>
         </webui-data>
         <webui-data data-under-construction="innerHTML">
             <p>This is custom Under Construction content set by a webui-data component in the index.html file.</p>
-            <h5><webui-link href="/">Return Home</webui-link></h5>
+            <p class="text-center"><webui-link href="/">Return Home</webui-link></p>
         </webui-data>
         <webui-page-footer copyright=" 2022" company="Stoic Dreams"></webui-page-footer>
     </webui-app>
-    <script src="webui/loader.min.js" async></script>
-    <script src="app-loader.min.js" async></script>
-    <script src="js/marked.min.js" async></script>
     <script src="highlight/highlight.min.js" async></script>
     <script src="i/tooltips.min.js" async></script>
     <script type="text/javascript">

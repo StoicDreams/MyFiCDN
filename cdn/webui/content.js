@@ -1,65 +1,47 @@
 /* Placeholder page content for pages under construction */
 "use strict"
-{
-    class Content extends HTMLElement {
-        constructor() {
-            super();
+webui.define("webui-content", {
+    attr: ["src"],
+    connected: (t) => {
+        t.fetchContent(t);
+    },
+    fetchContent: async function (t) {
+        if (!t.src) {
+            setTimeout(() => t.fetchContent(), 10);
+            return;
         }
-        static get observedAttributes() {
-            return ['src'];
-        }
-        attributeChangedCallback(property, oldValue, newValue) {
-            if (oldValue === newValue) return;
-            if (newValue === null || newValue === undefined) {
-                delete this[property];
-            } else {
-                this[property] = newValue;
-            }
-        }
-        async fetchContent() {
-            if (!this.src) {
-                setTimeout(() => this.fetchContent(), 10);
+        try {
+            let content = await fetch(t.src);
+            if (!content.ok) {
+                t.innerHTML = `Failed to load content from ${t.src}`;
                 return;
             }
-            try {
-                let content = await fetch(this.src);
-                if (!content.ok) {
-                    this.innerHTML = `Failed to load content from ${this.src}`;
-                    return;
-                }
-                let body = await content.text();
-                if (body.startsWith('<!DOCTYPE')) {
-                    this.innerHTML = `Source ${this.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by this component)`;
-                    return;
-                }
-                let temp = document.createElement('div');
-                temp.innerHTML = webuiApplyAppData(body);
-                let t = this;
-                let n = [];
-                let p = t.parentNode;
-                let b = t;
-                if (p.nodeName === 'P') {
-                    b = p;
-                    p = p.parentNode;
-                }
-                temp.childNodes.forEach(node => {
-                    n.push(node);
-                });
-                n.forEach(node => {
-                    p.insertBefore(node, b);
-                });
-                if (t.parentNode !== p) {
-                    b.remove();
-                }
-                t.remove();
-            } catch (ex) {
-                this.innerHTML = `Source ${this.src} failed to load:${ex}`;
+            let body = await content.text();
+            if (body.startsWith('<!DOCTYPE')) {
+                t.innerHTML = `Source ${t.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by t component)`;
+                return;
             }
+            let temp = document.createElement('div');
+            temp.innerHTML = webui.applyAppDataToContent(body);
+            let n = [];
+            let p = t.parentNode;
+            let b = t;
+            if (p.nodeName === 'P') {
+                b = p;
+                p = p.parentNode;
+            }
+            temp.childNodes.forEach(node => {
+                n.push(node);
+            });
+            n.forEach(node => {
+                p.insertBefore(node, b);
+            });
+            if (t.parentNode !== p) {
+                b.remove();
+            }
+            t.remove();
+        } catch (ex) {
+            t.innerHTML = `Source ${t.src} failed to load:${ex}`;
         }
-        connectedCallback() {
-            this.fetchContent();
-        }
-        disconnectedCallback() { }
     }
-    customElements.define('webui-content', Content);
-}
+});
