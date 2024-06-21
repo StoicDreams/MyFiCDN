@@ -22,6 +22,13 @@ const webui = (() => {
         encryptPageContent: false,
         encryptPageData: 'base64'
     };
+    function runWhenBodyIsReady(setup) {
+        if (!document.body) {
+            setTimeout(() => runWhenBodyIsReady(setup), 1);
+            return;
+        }
+        setup();
+    }
     class WebUI {
         appSrc = '/wc';
         appMin = '.min'
@@ -279,11 +286,11 @@ const webui = (() => {
             });
             return observer;
         };
-        setTimeout(() => {
+        runWhenBodyIsReady(() => {
             observerDataStates(document.body);
             checkNodes(document.childNodes);
             applyDataHide();
-        }, 1);
+        });
     }
     // Data signalling/transfers
     function handleDataClick(ev) {
@@ -351,79 +358,82 @@ const webui = (() => {
             console.log("TODO: handle history updates", ev);
         }
     });
-    document.body.addEventListener('input', handleDataTrigger);
-    document.body.addEventListener('change', handleDataTrigger);
-    document.body.addEventListener('click', ev => {
-        let target = ev.target;
-        while (target !== document.body) {
-            if (target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'false' && !ev.ctrlKey) {
-                ev.stopPropagation();
-                ev.preventDefault();
-                return false;
-            }
-            if (target.dataset.click) {
-                ev.stopPropagation();
-                ev.preventDefault();
-                handleDataClick(target);
-                return false;
-            }
-            let href = target.getAttribute('href');
-            if (href && target.getAttribute('target') !== 'blank' && (href[0] === '/' || href.substr(0, 4) !== 'http')) {
-                ev.stopPropagation();
-                ev.preventDefault();
-                changePage(href);
-                return false;
-            }
-            if (target.hasAttribute('data-stopclick')) {
-                ev.stopPropagation();
-                ev.preventDefault();
-                return false;
-            }
-            if (target.dataset.setattr) {
-                let [val, attr, sel] = target.dataset.setattr.split('|').reverse();
-                if (sel) {
-                    document.querySelectorAll(sel).forEach(el => {
-                        setAttr(el, attr, val);
-                    });
-                } else {
-                    setAttr(target, attr, val);
+
+    runWhenBodyIsReady(() => {
+        document.body.addEventListener('input', handleDataTrigger);
+        document.body.addEventListener('change', handleDataTrigger);
+        document.body.addEventListener('click', ev => {
+            let target = ev.target;
+            while (target !== document.body) {
+                if (target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'false' && !ev.ctrlKey) {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    return false;
                 }
-                webui.applyDynamicStyles();
-                break;
-            }
-            if (target.dataset.toggleclass) {
-                let [cls, sel] = target.dataset.toggleclass.split('|').reverse();
-                if (sel) {
-                    document.querySelectorAll(sel).forEach(el => toggleClass(el, cls));
-                } else {
-                    toggleClass(target, cls);
+                if (target.dataset.click) {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    handleDataClick(target);
+                    return false;
                 }
-                webui.applyDynamicStyles();
-                break;
-            }
-            if (target.dataset.removeclass) {
-                target.dataset.removeclass.split(';').forEach(ds => {
-                    let [cls, sel] = ds.split('|').reverse();
+                let href = target.getAttribute('href');
+                if (href && target.getAttribute('target') !== 'blank' && (href[0] === '/' || href.substr(0, 4) !== 'http')) {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    changePage(href);
+                    return false;
+                }
+                if (target.hasAttribute('data-stopclick')) {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    return false;
+                }
+                if (target.dataset.setattr) {
+                    let [val, attr, sel] = target.dataset.setattr.split('|').reverse();
                     if (sel) {
-                        document.querySelectorAll(sel).forEach(el => removeClass(el, cls));
+                        document.querySelectorAll(sel).forEach(el => {
+                            setAttr(el, attr, val);
+                        });
                     } else {
-                        removeClass(target, cls);
+                        setAttr(target, attr, val);
                     }
-                });
-                webui.applyDynamicStyles();
-            }
-            if (target.dataset.toggleattr) {
-                let [attr, sel] = target.dataset.toggleattr.split('|').reverse();
-                if (sel) {
-                    document.querySelectorAll(sel).forEach(el => toggleAttr(el, attr));
-                } else {
-                    toggleAttr(target, attr);
+                    webui.applyDynamicStyles();
+                    break;
                 }
-                webui.applyDynamicStyles();
-                break;
+                if (target.dataset.toggleclass) {
+                    let [cls, sel] = target.dataset.toggleclass.split('|').reverse();
+                    if (sel) {
+                        document.querySelectorAll(sel).forEach(el => toggleClass(el, cls));
+                    } else {
+                        toggleClass(target, cls);
+                    }
+                    webui.applyDynamicStyles();
+                    break;
+                }
+                if (target.dataset.removeclass) {
+                    target.dataset.removeclass.split(';').forEach(ds => {
+                        let [cls, sel] = ds.split('|').reverse();
+                        if (sel) {
+                            document.querySelectorAll(sel).forEach(el => removeClass(el, cls));
+                        } else {
+                            removeClass(target, cls);
+                        }
+                    });
+                    webui.applyDynamicStyles();
+                }
+                if (target.dataset.toggleattr) {
+                    let [attr, sel] = target.dataset.toggleattr.split('|').reverse();
+                    if (sel) {
+                        document.querySelectorAll(sel).forEach(el => toggleAttr(el, attr));
+                    } else {
+                        toggleAttr(target, attr);
+                    }
+                    webui.applyDynamicStyles();
+                    break;
+                }
+                target = target.parentNode;
             }
-            target = target.parentNode;
-        }
+        });
     });
 
     function checkForSubscription(node) {
@@ -454,13 +464,13 @@ const webui = (() => {
         });
         return observer;
     };
-    setTimeout(() => {
+    runWhenBodyIsReady(() => {
         observeDataSubscriptions(document.body);
         document.querySelectorAll('[data-subscribe]').forEach(el => {
             let key = el.dataset.subscribe;
             setDataToEl(el, key);
         });
-    }, 1);
+    });
 
     function transitionDelay(ms) {
         return new Promise((resolve, _) => {
@@ -546,7 +556,7 @@ const webui = (() => {
     const wcLoaded = {};
     const appLoaded = {};
     const wcRoot = location.hostname === '127.0.0.1' ? '' : 'https://cdn.myfi.ws/';
-    const wcMin = wcRoot === '' ? '' : '.min';
+    const wcMin = '.min';
     function processNode(nodeName) {
         if (wcLoading[nodeName]) return;
         wcLoading[nodeName] = true;
@@ -619,11 +629,11 @@ const webui = (() => {
     };
 
     componentPreload(document.querySelector('webui-app'));
-    setTimeout(() => {
+    runWhenBodyIsReady(() => {
         startObserving(document.body);
         checkNodes(document.body.childNodes);
-        loadPage()
-    }, 1);
+        loadPage();
+    });
     window.addEventListener('resize', _ev => {
         webui.applyDynamicStyles();
     });
