@@ -1,9 +1,45 @@
 /* Toggle button that switches icons, title */
 "use strict"
-{
-    const template = document.createElement('template')
-    template.setAttribute('shadowrootmode', true);
-    template.innerHTML = `
+webui.define('webui-toggle-icon', {
+    constructor: (t) => {
+        t._button = t.template.querySelector('button');
+        t._icon = t._button.querySelector('webui-fa');
+        t.updateElements();
+        t.addEventListener('click', _ev => {
+            if (!t.dataset || !t.dataset.enabled) {
+                t.enabled = !t.enabled;
+                if (t.enabled) {
+                    t.removeAttribute('enabled');
+                } else {
+                    t.setAttribute('enabled', true);
+                }
+            }
+            setTimeout(() => { t.updateElements() }, 10);
+        });
+    },
+    attr: ['title', 'title-on', 'title-off', 'icon', 'icon-on', 'icon-off', 'icon-family', 'icon-family-on', 'icon-family-off', 'data-enabled', 'enabled'],
+    attrChanged: (t, _p, _v) => {
+        t.updateElements();
+    },
+    getIconOn: function () { return this.iconOn || this.icon || 'toggle-on'; },
+    getIconOff: function () { return this.iconOff || this.icon || 'toggle-off'; },
+    getIconFamilyOn: function () { return this.iconFamilyOn || this.iconFamily || 'regular'; },
+    getIconFamilyOff: function () { return this.iconFamilyOff || this.iconFamily || 'regular'; },
+    getTitleOn: function () { return this.titleOn || this.title || null; },
+    getTitleOff: function () { return this.titleOff || this.title || null; },
+    updateElements: function () {
+        let t = this;
+        if (t.dataset.enabled) {
+            t.enabled = !!document.querySelector(t.dataset.enabled);
+        }
+        t._icon.setAttribute('icon', t.enabled ? t.getIconOn() : t.getIconOff());
+        t._icon.setAttribute('family', t.enabled ? t.getIconFamilyOn() : t.getIconFamilyOff());
+        let title = t.enabled ? t.getTitleOn() : t.getTitleOff();
+        if (title) {
+            t.setAttribute('title', title);
+        }
+    },
+    shadowTemplate: `
 <style type="text/css">
 button {
 background-color:transparent;
@@ -16,59 +52,5 @@ cursor:pointer;
 }
 </style>
 <button><webui-fa></webui-fa></button>
-`;
-    class ToggleIcon extends HTMLElement {
-        constructor() {
-            super();
-            const shadow = this.attachShadow({ mode: 'open' });
-            this.template = template.content.cloneNode(true);
-            this.button = this.template.querySelector('button');
-            this.icon = this.button.querySelector('webui-fa');
-            shadow.appendChild(this.template);
-            this.updateElements();
-            this.addEventListener('click', ev => {
-                if (!this.dataset || !this.dataset.enabled) {
-                    this.enabled = !this.enabled;
-                    if (this.enabled) {
-                        this.removeAttribute('enabled');
-                    } else {
-                        this.setAttribute('enabled', true);
-                    }
-                }
-                setTimeout(() => { this.updateElements() }, 10);
-            });
-        }
-        static get observedAttributes() {
-            return ["title", "title-on", "title-off", "icon", "icon-on", "icon-off", "icon-family", "icon-family-on", "icon-family-off", "data-enabled", "enabled"];
-        }
-        attributeChangedCallback(property, oldValue, newValue) {
-            if (oldValue === newValue) return;
-            if (newValue === null || newValue === undefined) {
-                delete this[property];
-            } else {
-                this[property] = newValue;
-            }
-            this.updateElements();
-        }
-        connectedCallback() { }
-        disconnectedCallback() { }
-        getIconOn() { return this['icon-on'] || this['icon'] || 'toggle-on'; }
-        getIconOff() { return this['icon-off'] || this['icon'] || 'toggle-off'; }
-        getIconFamilyOn() { return this['icon-family-on'] || this['icon-family'] || 'regular'; }
-        getIconFamilyOff() { return this['icon-family-off'] || this['icon-family'] || 'regular'; }
-        getTitleOn() { return this['title-on'] || this['title'] || null; }
-        getTitleOff() { return this['title-off'] || this['title'] || null; }
-        updateElements() {
-            if (this.dataset.enabled) {
-                this.enabled = !!document.querySelector(this.dataset.enabled);
-            }
-            this.icon.setAttribute('icon', this.enabled ? this.getIconOn() : this.getIconOff());
-            this.icon.setAttribute('family', this.enabled ? this.getIconFamilyOn() : this.getIconFamilyOff());
-            let title = this.enabled ? this.getTitleOn() : this.getTitleOff();
-            if (title) {
-                this.setAttribute('title', title);
-            }
-        }
-    }
-    customElements.define('webui-toggle-icon', ToggleIcon);
-}
+`
+});

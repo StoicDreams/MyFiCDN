@@ -11,6 +11,7 @@ const webui = (() => {
         'company-possessive': `Company's`,
         'page-title': '',
         'page-subtitle': '',
+        'page-path': location.pathname,
         'domain': location.hostname.toLowerCase()
     };
     const appSettings = {
@@ -41,8 +42,13 @@ const webui = (() => {
             return this.parseMarkdown(content);
         }
         applyDynamicStyles() { }
-        create(name) {
+        create(name, attr) {
             let el = document.createElement(name);
+            if (attr) {
+                Object.keys(attr).forEach(key => {
+                    el.setAttribute(key, attr[key]);
+                });
+            }
             return el;
         }
         define(name, options) {
@@ -299,6 +305,10 @@ const webui = (() => {
         let value = appData[key];
         if (value === null || value === undefined) return;
         switch (toSet) {
+            case 'setter':
+                let field = webui.toCamel(`set-${key}`);
+                el[field](appData[key]);
+                break;
             case 'innerText':
                 el.innerText = webui.applyAppDataToContent(appData[key]);
                 break;
@@ -346,7 +356,7 @@ const webui = (() => {
     document.body.addEventListener('click', ev => {
         let target = ev.target;
         while (target !== document.body) {
-            if (target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'true') {
+            if (target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'false' && !ev.ctrlKey) {
                 ev.stopPropagation();
                 ev.preventDefault();
                 return false;
@@ -428,6 +438,9 @@ const webui = (() => {
     const observeDataSubscriptions = (domNode) => {
         const observer = new MutationObserver(mutations => {
             mutations.forEach(function (mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'data-subscribe') {
+                    checkForSubscription(mutation.target);
+                }
                 Array.from(mutation.addedNodes).forEach(el => {
                     checkForSubscription(el);
                 });
@@ -476,6 +489,7 @@ const webui = (() => {
                 webui.setData(key, '');
             }
         });
+        webui.setData('page-path', page);
         try {
             let contentResult = await fetchContent;
             if (!contentResult.ok) {

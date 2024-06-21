@@ -1,8 +1,8 @@
 /* Display group of navigation links */
-class NavGroup extends HTMLElement {
-    constructor() {
-        super();
-        const t = this;
+"use strict"
+webui.define('webui-nav-group', {
+    preload: 'fa',
+    constructor: (t) => {
         t._anchor = document.createElement('a');
         t._anchor.classList.add('navlink');
         t._display = document.createElement('span');
@@ -20,48 +20,35 @@ class NavGroup extends HTMLElement {
                 t._anchor.classList.remove('show');
             }
         });
-    }
-    static get observedAttributes() {
-        return ['icon', 'family', 'name'];
-    }
-    attributeChangedCallback(property, oldValue, newValue) {
-        if (oldValue === newValue) return;
-        if (newValue === null || newValue === undefined) {
-            delete this[property];
-        } else {
-            this[property] = newValue;
-        }
+    },
+    attr: ['icon', 'family', 'name'],
+    attrChanged: (t, property, value) => {
         switch (property) {
             case 'name':
-                this._display.innerHTML = newValue;
-                this._anchor.setAttribute('title', this._display.innerText);
+                t._display.innerHTML = value;
+                t._anchor.setAttribute('title', t._display.innerText);
                 break;
             case 'family':
-                if (!this._icon) {
-                    this._icon = document.createElement('webui-fa');
-                    this._anchor.insertBefore(this._icon, this._display);
+                if (!t._icon) {
+                    t._icon = document.createElement('webui-fa');
+                    t._anchor.insertBefore(t._icon, t._display);
                 }
-                this._icon.setAttribute('family', newValue);
+                t._icon.setAttribute('family', value);
                 break;
             case 'icon':
-                if (!this._icon) {
-                    this._icon = document.createElement('webui-fa');
-                    this._anchor.insertBefore(this._icon, this._display);
+                if (!t._icon) {
+                    t._icon = document.createElement('webui-fa');
+                    t._anchor.insertBefore(t._icon, t._display);
                 }
-                this._icon.setAttribute('icon', newValue);
+                t._icon.setAttribute('icon', value);
                 break;
         }
-    }
-    connectedCallback() {
-        if (!this.getAttribute('preload')) {
-            this.setAttribute('preload', 'fa');
-        }
-        if (this.childNodes[0]) {
-            this.insertBefore(this._anchor, this.childNodes[0]);
+    },
+    connected: (t) => {
+        if (t.childNodes[0]) {
+            t.insertBefore(t._anchor, t.childNodes[0]);
         } else {
-            this.appendChild(this._anchor);
+            t.appendChild(t._anchor);
         }
     }
-    disconnectedCallback() { }
-}
-customElements.define('webui-nav-group', NavGroup);
+});

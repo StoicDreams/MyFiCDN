@@ -3,7 +3,7 @@
 {
     const dockableTemplate = `
 <webui-toggle-icon data-toggleattr="[ID]|docked" data-enabled="[ID][docked]" icon-on="send-backward" icon-off="bring-forward" title-on="Hide Navigation" title-off="Dock Navigation"></webui-toggle-icon>`;
-    const moveableTempalte = `
+    const moveableTemplate = `
 <button data-setattr="[ID]|slot|left" title="Set navigation to left" class="toggle-pos-left">
 <webui-fa icon="sidebar" family="regular"></webui-fa>
 </button>
@@ -26,7 +26,7 @@
             let cache = t.innerHTML;
             const startObserving = (domNode) => {
                 const observer = new MutationObserver(mutations => {
-                    mutations.forEach(function (mutation) {
+                    mutations.forEach(function (_m) {
                         if (cache !== t.innerHTML) {
                             cache = t.innerHTML;
                             t.buildFooterContent();
@@ -50,7 +50,7 @@
             }, 100);
         },
         attr: ['position', 'docked', 'data-dockable', 'data-moveable'],
-        attrChanged: (t, property, value) => {
+        attrChanged: (t, property, _value) => {
             switch (property) {
                 case 'dataDockable':
                     t.dataDockable = true;
@@ -68,8 +68,8 @@
             let fb = document.createElement('webui-flex');
             fb.setAttribute('justify', 'center');
             fb.setAttribute('slot', 'footer');
-            if (this['data-moveable']) { content += moveableTempalte.split('[ID]').join(this._idselector); }
-            if (this['data-dockable']) { content += dockableTemplate.split('[ID]').join(this._idselector); }
+            if (this.dataMoveable) { content += moveableTemplate.split('[ID]').join(this._idselector); }
+            if (this.dataDockable) { content += dockableTemplate.split('[ID]').join(this._idselector); }
             fb.innerHTML = content;
             this.appendChild(fb);
         },

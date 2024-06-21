@@ -1,6 +1,9 @@
 /* Display social links for Stoic Dreams */
-{
-    const template = `
+"use strict"
+webui.define('webui-stoic-social-links', {
+    connected: (t) => {
+        if (!t.innerHTML) {
+            t.innerHTML = `
 <span class="flex-break show-at-mobile"></span>
 <span class="flex-grow show-at-mobile"></span>
 <webui-paper>
@@ -16,37 +19,8 @@
 <a class="pa-1" title="Link to Stoic Dreams on Instagram" href="https://www.instagram.com/stoicdreamsllc">
 <webui-fa icon="instagram" family="brands"></webui-fa>
 </a>
-</webui-paper>`;
-    class StoicSocialLinks extends HTMLElement {
-        constructor() {
-            super();
-            const t = this;
-            if (t.parentNode && t.parentNode.nodeName === 'P') {
-                let p = t.parentNode;
-                t.parentNode.parentNode.insertBefore(t, t.parentNode);
-                if (p.innerHTML.trim() === '') {
-                    p.remove();
-                }
-            }
+</webui-paper>
+`;
         }
-        static get observedAttributes() {
-            return [];
-        }
-        attributeChangedCallback(property, oldValue, newValue) {
-            if (oldValue === newValue) return;
-            if (newValue === null || newValue === undefined) {
-                delete this[property];
-            } else {
-                this[property] = newValue;
-            }
-        }
-        connectedCallback() {
-            if (!this.innerHTML) {
-                this.innerHTML = template;
-            }
-        }
-        disconnectedCallback() { }
     }
-    customElements.define('webui-stoic-social-links', StoicSocialLinks);
-}
-
+});
