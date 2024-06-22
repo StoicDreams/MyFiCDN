@@ -1478,6 +1478,7 @@ webui-page-segment,
 webui-card {
     display: grid;
     grid-template-columns: 1fr;
+    grid-auto-rows: min-content auto;
     border-radius: var(--corners);
 }
 
@@ -1488,6 +1489,7 @@ webui-card>header {
     flex-wrap: nowrap;
     font-size: 1.5em;
     font-weight: 600;
+    height: min-content;
 }
 
 webui-card header>section:first-child {

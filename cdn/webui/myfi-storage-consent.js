@@ -64,7 +64,11 @@ With this storage option, you only need to consent and login once. Your login wi
 
 </webui-paper>
 
-<webui-paper>{"Use this option when:"}</webui-paper>
+<webui-paper>
+
+Use this option when:
+
+</webui-paper>
 
 <webui-paper>
 
