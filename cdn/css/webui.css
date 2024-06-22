@@ -1476,8 +1476,8 @@ webui-page-segment,
 }
 
 webui-card {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
     border-radius: var(--corners);
 }
 
@@ -1512,10 +1512,10 @@ webui-card>section {
 
 webui-cards,
 .page-segment-cards {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(1em, 480px));
     padding: calc(1.5 * var(--padding));
     gap: calc(1.5 * var(--padding));
-    flex-wrap: wrap;
     justify-content: center;
 }
 

@@ -15,6 +15,8 @@ const webui = (() => {
         'domain': location.hostname.toLowerCase()
     };
     const appSettings = {
+        appType: 'website',
+        isDesktopApp: false,
         rootPage: 'root',
         contentExtension: '.md',
         pageContentEndpoint: '/d/en-US',
@@ -29,12 +31,88 @@ const webui = (() => {
         }
         setup();
     }
+    const memStorageCache = {};
+    const STORAGE_ACCEPTED_KEY = 'storage_accepted';
+    const REJECT_STORAGE_CACHING = '0';
+    const ACCEPT_SESSION_STORAGE = '1';
+    const ACCEPT_LOCAL_STORAGE = '2';
+    let acceptedStorage = REJECT_STORAGE_CACHING;
+    if (localStorage.key(STORAGE_ACCEPTED_KEY) && localStorage.getItem(STORAGE_ACCEPTED_KEY) === ACCEPT_LOCAL_STORAGE) {
+        acceptedStorage = ACCEPT_LOCAL_STORAGE;
+        Object.keys(localStorage).forEach(key => {
+            memStorageCache[key] = localStorage.getItem(key);
+        });
+        sessionStorage.clear();
+    } else if (sessionStorage.key(STORAGE_ACCEPTED_KEY) && sessionStorage.getItem(STORAGE_ACCEPTED_KEY) === ACCEPT_SESSION_STORAGE) {
+        acceptedStorage = ACCEPT_SESSION_STORAGE;
+        Object.keys(sessionStorage).forEach(key => {
+            memStorageCache[key] = sessionStorage.getItem(key);
+        });
+        localStorage.clear();
+    } else {
+        sessionStorage.clear();
+        localStorage.clear();
+    }
+    function getCache() {
+        return new Promise((resolve, reject) => {
+            if (localStorage.getItem(STORAGE_ACCEPTED_KEY)) {
+                resolve(localStorage);
+            } else if (sessionStorage.getItem(STORAGE_ACCEPTED_KEY)) {
+                resolve(sessionStorage);
+            } else {
+                reject('Caching not accepted');
+            }
+        });
+    }
+    class MemStorage {
+        STORAGE_ACCEPTED_KEY = STORAGE_ACCEPTED_KEY;
+        REJECT_STORAGE_CACHING = REJECT_STORAGE_CACHING;
+        ACCEPT_SESSION_STORAGE = ACCEPT_SESSION_STORAGE;
+        ACCEPT_LOCAL_STORAGE = ACCEPT_LOCAL_STORAGE;
+        key(key) {
+            return Object.keys(memStorageCache).filter(m => m == key).length > 0 ? key : null;
+        }
+        setItem(key, value) {
+            memStorageCache[key] = value;
+            getCache(key).then(cache => {
+                cache.setItem(key, value);
+            }).catch(r => {
+                console.log('get cache rejected', r);
+            });
+        }
+        getItem(key) {
+            return memStorageCache[key] ?? "";
+        }
+        acceptLocalStorage() {
+            acceptedStorage = ACCEPT_LOCAL_STORAGE;
+            this.setItem(STORAGE_ACCEPTED_KEY, acceptedStorage);
+            sessionStorage.clear();
+            Object.keys(memStorageCache).forEach(key => {
+                localStorage.setItem(key, memStorageCache[key]);
+            });
+        }
+        acceptSessionStorage() {
+            acceptedStorage = ACCEPT_SESSION_STORAGE;
+            this.setItem(STORAGE_ACCEPTED_KEY, acceptedStorage);
+            localStorage.clear();
+            Object.keys(memStorageCache).forEach(key => {
+                sessionStorage.setItem(key, memStorageCache[key]);
+            });
+        }
+        rejectCachedStorage() {
+            acceptedStorage = REJECT_STORAGE_CACHING;
+            this.setItem(STORAGE_ACCEPTED_KEY, acceptedStorage);
+            sessionStorage.clear();
+            localStorage.clear();
+        }
+    }
     class WebUI {
         appSrc = '/wc';
         appMin = '.min'
         constructor() {
             this.hello = "World";
             this._appSettings = appSettings;
+            this.storage = new MemStorage();
         }
         applyAppDataToContent(content) {
             Object.keys(appData).forEach(key => {
@@ -166,6 +244,10 @@ const webui = (() => {
         setApp(app) {
             appSettings.app = app;
         }
+        getData(key) {
+            key = webui.toSnake(key);
+            return appData[key];
+        }
         setData(key, value) {
             key = webui.toSnake(key);
             if (value === null || value === undefined) {
@@ -206,10 +288,6 @@ const webui = (() => {
 
     //storage_accepted
     {
-        function getStorage() {
-            if (localStorage.storage_accepted) return localStorage;
-            return sessionStorage;
-        }
         function getNodeKey(node) {
             let segments = [];
             segments.push(node.nodeName.toLowerCase());
@@ -225,7 +303,6 @@ const webui = (() => {
             return segments.join('_');
         }
         function saveState(node) {
-            let storage = getStorage();
             let key = getNodeKey(node);
             let state = {};
             node.dataset.state.split('|').forEach(attr => {
@@ -234,13 +311,13 @@ const webui = (() => {
                     state[attr] = val.value;
                 }
             });
-            storage[key] = JSON.stringify(state);
+            webui.storage.setItem(key, JSON.stringify(state));
         }
         function loadState(node) {
-            let storage = getStorage();
             let key = getNodeKey(node);
-            if (!storage[key]) return;
-            let state = JSON.parse(storage[key]);
+            let item = webui.storage.getItem(key);
+            if (!item) return;
+            let state = JSON.parse(item);
             node.dataset.state.split('|').forEach(attr => {
                 if (state[attr]) {
                     node.setAttribute(attr, state[attr]);
@@ -301,10 +378,10 @@ const webui = (() => {
         });
     }
     function handleDataTrigger(ev) {
-        let el = ev.srcElement || ev.target;
+        let el = ev.srcElement || ev.target || ev;
         let key = el.dataset.trigger;
         if (!key) return;
-        let value = el.value;
+        let value = el.dataset.value === undefined ? el.value : el.dataset.value;
         webui.setData(key, value);
     }
     function setDataToEl(el, key) {
@@ -323,7 +400,11 @@ const webui = (() => {
                 el.innerHTML = webui.applyAppDataToContent(appData[key]);
                 break;
             default:
-                el.setAttribute(toSet, appData[key]);
+                if (typeof el[toSet] === 'function') {
+                    el[toSet](appData[key]);
+                } else {
+                    el.setAttribute(toSet, appData[key]);
+                }
                 break;
         }
     }
@@ -364,7 +445,7 @@ const webui = (() => {
         document.body.addEventListener('change', handleDataTrigger);
         document.body.addEventListener('click', ev => {
             let target = ev.target;
-            while (target !== document.body) {
+            while (target !== document.body && target !== null && target !== undefined) {
                 if (target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'false' && !ev.ctrlKey) {
                     ev.stopPropagation();
                     ev.preventDefault();
@@ -375,6 +456,11 @@ const webui = (() => {
                     ev.preventDefault();
                     handleDataClick(target);
                     return false;
+                }
+                if (target.dataset.trigger && target.dataset.value !== undefined) {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    handleDataTrigger(target);
                 }
                 let href = target.getAttribute('href');
                 if (href && target.getAttribute('target') !== 'blank' && (href[0] === '/' || href.substr(0, 4) !== 'http')) {
