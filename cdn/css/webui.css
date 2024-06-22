@@ -1487,7 +1487,7 @@ webui-card>header {
     flex-direction: row;
     justify-content: start;
     flex-wrap: nowrap;
-    font-size: 1.5em;
+    font-size: 1.3em;
     font-weight: 600;
     height: min-content;
 }

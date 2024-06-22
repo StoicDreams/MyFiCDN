@@ -22,7 +22,7 @@
         }
         let options = [
             {
-                name: 'Memory-only Storage (default behavior - Maximum Security)',
+                name: 'Memory-only Storage (Maximum Security)',
                 theme: btnMemTheme,
                 body: `
 <webui-paper>
