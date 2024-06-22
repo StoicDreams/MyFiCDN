@@ -584,10 +584,10 @@ const webui = (() => {
         document.head.append(script);
     }
     function componentPreload(el) {
+        if (!el) return;
         if (el.nodeName.startsWith(wuiPrefix) || el.nodeName.startsWith(appPrefix)) {
             processNode(el.nodeName);
         }
-        if (!el) return;
         let pl = el.getAttribute('preload');
         if (pl) {
             pl.replace(';', ' ').replace(',', ' ').split(' ').forEach(loadWebUIComponent);
@@ -628,8 +628,8 @@ const webui = (() => {
         return observer;
     };
 
-    componentPreload(document.querySelector('webui-app'));
     runWhenBodyIsReady(() => {
+        componentPreload(document.querySelector('webui-app'));
         startObserving(document.body);
         checkNodes(document.body.childNodes);
         loadPage();
