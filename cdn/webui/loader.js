@@ -114,19 +114,11 @@ const webui = (() => {
             this._appSettings = appSettings;
             this.storage = new MemStorage();
         }
-        applyAppDataToContent(content) {
-            Object.keys(appData).forEach(key => {
-                let rkey = `{${key.replace(/-/g, '_').toUpperCase()}}`;
-                let val = appData[key];
-                let limit = 0;
-                while (content.indexOf(rkey) !== -1 && limit < 1000) {
-                    ++limit;
-                    content = content.replace(rkey, val);
-                }
-            });
-            return this.parseMarkdown(content);
+        applyAppDataToContent(content, preTrim) {
+            return this.parseMarkdown(this.replaceAppData(content), preTrim);
         }
         applyDynamicStyles() { }
+        applyProperties(t) { }
         create(name, attr) {
             let el = document.createElement(name);
             if (attr) {
@@ -214,14 +206,15 @@ const webui = (() => {
             }
             customElements.define(name, CustomElement);
         }
+        getData(key) {
+            key = webui.toSnake(key);
+            return appData[key];
+        }
         marked = { parse: () => { } };
-        toSnake(key) {
-            return key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
-        }
-        toCamel(key) {
-            return key.replace(/(-[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); });
-        }
-        parseMarkdown(md) {
+        parseMarkdown(md, preTrim) {
+            if (preTrim) {
+                md = this.trimLinePreWhitespce(md);
+            }
             return this.marked.parse(md, markdownOptions);
         }
         removeFromParentPTag(el) {
@@ -234,9 +227,6 @@ const webui = (() => {
             }
             return el;
         }
-        applyProperties(t) {
-
-        }
         removeClass(t, prefix) {
             let r = [];
             t.classList.forEach(c => {
@@ -244,12 +234,35 @@ const webui = (() => {
             });
             r.forEach(c => t.classList.remove(c));
         }
+        replaceAppData(text, data) {
+            if (data) {
+                text = this.replaceData(text, data);
+            }
+            Object.keys(appData).forEach(key => {
+                let rkey = `{${key.replace(/-/g, '_').toUpperCase()}}`;
+                let val = appData[key];
+                let limit = 0;
+                while (text.indexOf(rkey) !== -1 && limit < 1000) {
+                    ++limit;
+                    text = text.replace(rkey, val);
+                }
+            });
+            return text;
+        }
+        replaceData(text, data) {
+            Object.keys(data).forEach(key => {
+                let rkey = `{${key.replace(/-/g, '_').toUpperCase()}}`;
+                let val = appData[key];
+                let limit = 0;
+                while (text.indexOf(rkey) !== -1 && limit < 1000) {
+                    ++limit;
+                    text = text.replace(rkey, val);
+                }
+            });
+            return text;
+        }
         setApp(app) {
             appSettings.app = app;
-        }
-        getData(key) {
-            key = webui.toSnake(key);
-            return appData[key];
         }
         setData(key, value) {
             key = webui.toSnake(key);
@@ -278,6 +291,17 @@ const webui = (() => {
                     }
                     break;
             }
+        }
+        toSnake(key) {
+            return key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+        }
+        toCamel(key) {
+            return key.replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })
+                .replace(/^[A-Z]{1}/, a => { return a.toLowerCase(); });
+        }
+        toPascel(key) {
+            return key.replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })
+                .replace(/^[A-Z]{1}/, a => { return a.toUpperCase(); });
         }
         trimLinePreWhitespce(html) {
             let lines = [];
