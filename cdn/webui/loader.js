@@ -443,7 +443,7 @@ const webui = (() => {
                 switch (toSet) {
                     case 'setter':
                         let field = webui.toCamel(`set-${key}`);
-                        el[field](appData[key]);
+                        el[field](appData[key], key);
                         break;
                     case 'innerText':
                         el.innerText = webui.applyAppDataToContent(appData[key]);
