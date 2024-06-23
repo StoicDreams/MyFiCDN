@@ -434,32 +434,35 @@ const webui = (() => {
         webui.setData(key, value);
     }
     function setDataToEl(el, key) {
-        let toSet = el.dataset.set || key;
-        let value = appData[key];
-        if (value === null || value === undefined) return;
-        try {
-            switch (toSet) {
-                case 'setter':
-                    let field = webui.toCamel(`set-${key}`);
-                    el[field](appData[key]);
-                    break;
-                case 'innerText':
-                    el.innerText = webui.applyAppDataToContent(appData[key]);
-                    break;
-                case 'innerHTML':
-                    el.innerHTML = webui.applyAppDataToContent(appData[key]);
-                    break;
-                default:
-                    if (typeof el[toSet] === 'function') {
-                        el[toSet](appData[key]);
-                    } else {
-                        el.setAttribute(toSet, appData[key]);
-                    }
-                    break;
+        let toSet = el.dataset.set || 'setter';
+        key.split('|').forEach(key => {
+            key = key.trim();
+            let value = appData[key];
+            if (value === null || value === undefined) return;
+            try {
+                switch (toSet) {
+                    case 'setter':
+                        let field = webui.toCamel(`set-${key}`);
+                        el[field](appData[key]);
+                        break;
+                    case 'innerText':
+                        el.innerText = webui.applyAppDataToContent(appData[key]);
+                        break;
+                    case 'innerHTML':
+                        el.innerHTML = webui.applyAppDataToContent(appData[key]);
+                        break;
+                    default:
+                        if (typeof el[toSet] === 'function') {
+                            el[toSet](appData[key]);
+                        } else {
+                            el.setAttribute(toSet, appData[key]);
+                        }
+                        break;
+                }
+            } catch (ex) {
+                console.error(`Error setting data to ${el}`, ex);
             }
-        } catch (ex) {
-            console.error(`Error setting data to ${el}`, ex);
-        }
+        });
     }
     function toggleAttr(el, attr) {
         if (el.getAttribute(attr)) {
