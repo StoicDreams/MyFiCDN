@@ -3418,7 +3418,7 @@ webui-side-by-side>h6 {
     align-items: center;
 }
 
-webui-side-by-side>*>*,
+webui-side-by-side>*,
 .readable-content>* {
     max-width: var(--readability-line-limit);
 }

@@ -53,6 +53,6 @@ This is a an example of webui-quote web component. Visit [webui.StoicDreams.com 
 
 Sample of our current projects to demonstrate our `webui-cards` and `webui-card` components.
 
-<webui-cards src="current-projects.json" card-width="500"></webui-cards>
+<webui-cards src="https://webui.stoicdreams.com/cards/webui-powered-websites.json" card-width="500"></webui-cards>
 
 <webui-next-page name="About MyFi CDN" href="/about"></webui-next-page>
