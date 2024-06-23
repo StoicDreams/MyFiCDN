@@ -1,6 +1,6 @@
 /* Display multi-line, auto-resizing text input field. */
 "use strict"
-webui.define('webui-inputtext', {
+webui.define('webui-input-text', {
     constructor: (t) => {
         t.internals = t.attachInternals();
         t._handleFormData = t.handleFormData.bind(t);
@@ -66,6 +66,16 @@ width:100%;
 position:relative;
 box-sizing:border-box;
 }
+:host([vertical]),
+:host([compact]) {
+grid-template-columns:1fr;
+}
+:host([compact]) {
+gap:0.1em;
+}
+:host([compact])>label {
+font-size:0.8em;
+}
 :host(:disabled)>input,
 :host([readonly])>input {
 opacity: 0.5;
@@ -75,6 +85,7 @@ label {
 width:max-content;
 }
 input {
+height:max-content;
 display:block;
 position:relative;
 width:100%;

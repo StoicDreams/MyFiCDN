@@ -2,12 +2,12 @@
 "use strict"
 {
     const content = `
-<webui-inputmessage autofocus></webui-inputmessage>
+<webui-input-message autofocus></webui-input-message>
 <webui-alert id="alert"></webuialert>
 `;
 
     webui.define('webui-feedback', {
-        preload: 'dialogs inputmessage alert alerts',
+        preload: 'dialogs input-message alert alerts',
         constructor: (t) => {
             let extraContent = t.innerHTML;
             t.addEventListener('click', async () => {
@@ -20,7 +20,7 @@
                     options.onconfirm = (data, content) => {
                         return new Promise((resolve) => {
                             let alert = content.querySelector('#alert');
-                            let input = content.querySelector('webui-inputmessage');
+                            let input = content.querySelector('webui-input-message');
                             alert.removeAttribute('show');
                             let body = input.value;
                             let ct = 'text/plain';

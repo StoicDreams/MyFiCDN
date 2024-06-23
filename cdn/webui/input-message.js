@@ -35,7 +35,7 @@
     const talist = [];
     window.addEventListener('resize', UpdateAllDisplayedTextareaSizes);
 
-    webui.define('webui-inputmessage', {
+    webui.define('webui-input-message', {
         constructor: (t) => {
             t.internals = t.attachInternals();
             t.autosize = () => {

@@ -1688,6 +1688,7 @@ a[href]:not(:disabled):not(.disabled) {
 input[readonly],
 input:disabled {
     opacity: 0.5;
+    outline: none;
 }
 
 .avatar {

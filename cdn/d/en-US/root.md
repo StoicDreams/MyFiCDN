@@ -15,11 +15,12 @@
 
 <webui-page-segment class="elevation-10">
     <webui-flex>
-        <webui-inputtext label="Data Trigger From webui-inputtext" type="text" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-inputtext>
+        <webui-input-text label="Data Trigger From webui-input-text" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-input-text>
+        <webui-input-text compact label="Data Trigger From webui-input-text[compact]" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-input-text>
     </webui-flex>
     <webui-flex>
         <label for="test2" class="nowrap">Data Trigger From input</label>
-        <input id="test2" type="text" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-inputtext>
+        <input id="test2" type="text" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-input-text>
     </webui-flex>
     <webui-flex>
         <span>Subscribe InnerHTML:</span>
