@@ -204,6 +204,9 @@ const webui = (() => {
                     })
                     return node;
                 }
+                isFlagged(name) {
+                    return this[name] !== undefined && this[name] !== false;
+                }
                 setTheme(value) {
                     webui.removeClass(this, 'theme-');
                     this.classList.add(`theme-${value}`);
