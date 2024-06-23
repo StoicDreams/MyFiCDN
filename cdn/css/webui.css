@@ -503,6 +503,12 @@ img:not(:only-child) {
     height: 1em;
 }
 
+webui-paper,
+webui-table {
+    display: block;
+}
+
+
 blockquote>p:not(:first-child),
 blockquote>div:not(:first-child),
 webui-paper>p:not(:first-child),
