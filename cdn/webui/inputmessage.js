@@ -74,7 +74,7 @@
         },
         shadowTemplate: `
 <style type="text/css">
-::host {
+:host {
 display:block;
 position:relative;
 min-height:3em;

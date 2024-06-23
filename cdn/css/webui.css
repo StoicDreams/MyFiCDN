@@ -1685,6 +1685,11 @@ a[href]:not(:disabled):not(.disabled) {
     cursor: not-allowed;
 }
 
+input[readonly],
+input:disabled {
+    opacity: 0.5;
+}
+
 .avatar {
     display: flex;
     align-items: center;
