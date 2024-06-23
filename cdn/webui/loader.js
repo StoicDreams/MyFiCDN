@@ -77,7 +77,7 @@ const webui = (() => {
             getCache(key).then(cache => {
                 cache.setItem(key, value);
             }).catch(r => {
-                console.log('get cache rejected', r);
+                console.error('get cache rejected', r);
             });
         }
         getItem(key) {
@@ -212,9 +212,13 @@ const webui = (() => {
         }
         marked = { parse: () => { } };
         parseMarkdown(md, preTrim) {
+            md = md.replace(/(\r\n|\r)+/mg, '\n');
             if (preTrim) {
                 md = this.trimLinePreWhitespce(md);
+            } else {
+                md = this.trimLinePreTabs(md);
             }
+            md = md.replace(/(\n)/mg, '\n\n');
             return this.marked.parse(md, markdownOptions);
         }
         removeFromParentPTag(el) {
@@ -302,6 +306,24 @@ const webui = (() => {
         toPascel(key) {
             return key.replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })
                 .replace(/^[A-Z]{1}/, a => { return a.toUpperCase(); });
+        }
+        trimLinePreTabs(html) {
+            let lines = [], ls = 0;
+            html.split('\n').forEach(l => {
+                let isListItem = l.match(/^[ ]+-/);
+                if (isListItem && isListItem.length === 1) {
+                    if (isListItem[0].length > ls) {
+                        lines.push(l.substr(ls));
+                    } else {
+                        lines.push(l);
+                    }
+                } else {
+                    let nl = l.replace(/^([ ]{4}|\t)+/, a => { return ''; });
+                    ls = l.length - nl.length;
+                    lines.push(nl);
+                }
+            });
+            return lines.join('\n');
         }
         trimLinePreWhitespce(html) {
             let lines = [];
@@ -415,24 +437,28 @@ const webui = (() => {
         let toSet = el.dataset.set || key;
         let value = appData[key];
         if (value === null || value === undefined) return;
-        switch (toSet) {
-            case 'setter':
-                let field = webui.toCamel(`set-${key}`);
-                el[field](appData[key]);
-                break;
-            case 'innerText':
-                el.innerText = webui.applyAppDataToContent(appData[key]);
-                break;
-            case 'innerHTML':
-                el.innerHTML = webui.applyAppDataToContent(appData[key]);
-                break;
-            default:
-                if (typeof el[toSet] === 'function') {
-                    el[toSet](appData[key]);
-                } else {
-                    el.setAttribute(toSet, appData[key]);
-                }
-                break;
+        try {
+            switch (toSet) {
+                case 'setter':
+                    let field = webui.toCamel(`set-${key}`);
+                    el[field](appData[key]);
+                    break;
+                case 'innerText':
+                    el.innerText = webui.applyAppDataToContent(appData[key]);
+                    break;
+                case 'innerHTML':
+                    el.innerHTML = webui.applyAppDataToContent(appData[key]);
+                    break;
+                default:
+                    if (typeof el[toSet] === 'function') {
+                        el[toSet](appData[key]);
+                    } else {
+                        el.setAttribute(toSet, appData[key]);
+                    }
+                    break;
+            }
+        } catch (ex) {
+            console.error(`Error setting data to ${el}`, ex);
         }
     }
     function toggleAttr(el, attr) {
