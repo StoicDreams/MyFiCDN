@@ -443,7 +443,12 @@ const webui = (() => {
                 switch (toSet) {
                     case 'setter':
                         let field = webui.toCamel(`set-${key}`);
-                        el[field](appData[key], key);
+                        let setter = el[field];
+                        if (setter) {
+                            setter(appData[key], key);
+                        } else {
+                            console.error(`Element is missing expected setter ${field}`);
+                        }
                         break;
                     case 'innerText':
                         el.innerText = webui.applyAppDataToContent(appData[key]);
@@ -460,7 +465,7 @@ const webui = (() => {
                         break;
                 }
             } catch (ex) {
-                console.error(`Error setting data to ${el}`, ex);
+                console.error(`Error setting data to ${el.nodeName}`, el, ex, key);
             }
         });
     }
