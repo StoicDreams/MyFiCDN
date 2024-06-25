@@ -275,8 +275,12 @@ const webui = (() => {
             } else {
                 appData[key] = typeof value === 'string' ? value : JSON.stringify(value);
             }
-            document.querySelectorAll(`[data-subscribe="${key}"]`).forEach(sub => {
-                setDataToEl(sub, key);
+            document.querySelectorAll(`[data-subscribe]`).forEach(sub => {
+                sub.dataset.subscribe.split('|').forEach(k => {
+                    if (k === key) {
+                        setDataToEl(sub, key);
+                    }
+                });
             });
         }
         setProperty(t, property, value) {
@@ -443,11 +447,10 @@ const webui = (() => {
                 switch (toSet) {
                     case 'setter':
                         let field = webui.toCamel(`set-${key}`);
-                        let setter = el[field];
-                        if (setter) {
-                            setter(appData[key], key);
+                        if (typeof el[field] === 'function') {
+                            el[field](appData[key], key);
                         } else {
-                            console.error(`Element is missing expected setter ${field}`);
+                            console.error(`Element is missing expected setter ${field}`, typeof el[field], el);
                         }
                         break;
                     case 'innerText':
@@ -646,6 +649,7 @@ const webui = (() => {
                 webui.setData(key, '');
             }
         });
+
         webui.setData('page-path', page);
         try {
             let contentResult = await fetchContent;
