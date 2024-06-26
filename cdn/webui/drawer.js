@@ -4,16 +4,16 @@
     const dockableTemplate = `
 <webui-toggle-icon data-toggleattr="[ID]|docked" data-enabled="[ID][docked]" icon-on="send-backward" icon-off="bring-forward" title-on="Hide Navigation" title-off="Dock Navigation"></webui-toggle-icon>`;
     const moveableTemplate = `
-<button data-setattr="[ID]|slot|left" title="Set navigation to left" class="toggle-pos-left">
+<button data-setattr="[ID]|slot|left" aria-label="Set navigation to left" class="toggle-pos-left">
 <webui-fa icon="sidebar" family="regular"></webui-fa>
 </button>
-<button data-setattr="[ID]|slot|right" title="Set navigation to right" class="toggle-pos-right">
+<button data-setattr="[ID]|slot|right" aria-label="Set navigation to right" class="toggle-pos-right">
 <webui-fa icon="sidebar-flip" family="regular"></webui-fa>
 </button>
-<button data-setattr="[ID]|slot|top" title="Set navigation to top" class="toggle-pos-top">
+<button data-setattr="[ID]|slot|top" aria-label="Set navigation to top" class="toggle-pos-top">
 <webui-fa icon="window" family="regular"></webui-fa>
 </button>
-<button data-setattr="[ID]|slot|bottom" title="Set navigation to bottom" class="toggle-pos-bottom">
+<button data-setattr="[ID]|slot|bottom" aria-label="Set navigation to bottom" class="toggle-pos-bottom">
 <webui-fa icon="window-flip" family="regular" class="fa-rotate-180"></webui-fa>
 </button>`;
     webui.define("webui-drawer", {

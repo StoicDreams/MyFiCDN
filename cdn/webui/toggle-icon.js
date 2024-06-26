@@ -36,6 +36,7 @@ webui.define('webui-toggle-icon', {
         t._icon.setAttribute('family', t.enabled ? t.getIconFamilyOn() : t.getIconFamilyOff());
         let title = t.enabled ? t.getTitleOn() : t.getTitleOff();
         if (title) {
+            t._button.setAttribute('aria-label', title);
             t.setAttribute('title', title);
         }
     },

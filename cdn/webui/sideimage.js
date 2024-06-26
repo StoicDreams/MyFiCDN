@@ -2,17 +2,23 @@
 "use strict"
 webui.define("webui-sideimage", {
     constructor: (t) => {
-        t._cWrap = document.createElement('webui-flex');
-        t._content = document.createElement('webui-paper');
+        t._cWrap = webui.create('webui-flex');
+        t._content = webui.create('webui-paper');
         t._cWrap.appendChild(t._content);
-        t._sideImage = document.createElement('img');
-        t._imgContainer = document.createElement('webui-flex');
+        t._sideImage = webui.create('img');
+        t._imgContainer = webui.create('webui-flex');
     },
-    attr: ['elevation', 'reverse', 'src', 'theme'],
+    attr: ['elevation', 'reverse', 'src', 'theme', 'alt'],
     attrChanged: (t, property, value) => {
         switch (property) {
+            case 'alt':
+                t._sideImage.setAttribute('alt', value);
+                break;
             case 'src':
                 t._sideImage.setAttribute('src', value);
+                if (!t._sideImage.hasAttribute('alt')) {
+                    t._sideImage.setAttribute('alt', value.split('/').pop());
+                }
                 break;
             case 'theme':
                 t.setTheme(value);
