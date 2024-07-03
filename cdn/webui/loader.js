@@ -437,8 +437,9 @@ const webui = (() => {
         let value = el.dataset.value === undefined ? el.value : el.dataset.value;
         webui.setData(key, value);
     }
-    function setDataToEl(el, key) {
+    function setDataToEl(el, key, attempt) {
         let toSet = el.dataset.set || 'setter';
+        let a = attempt || 1;
         key.split('|').forEach(key => {
             key = key.trim();
             let value = appData[key];
@@ -451,8 +452,14 @@ const webui = (() => {
                         if (ef === 'function') {
                             el[field](appData[key], key);
                         } else {
-                            console.error(`Element is missing expected setter ${field}: typeof == ${ef}`, el);
-                            console.dir(el);
+                            if (a < 5) {
+                                setTimeout(() => {
+                                    setDataToEl(el, key, a + 1);
+                                }, Math.pow(10, a));
+                            } else {
+                                console.error(`Element is missing expected setter ${field}: typeof == ${ef}`, el, a);
+                                console.dir(el);
+                            }
                         }
                         break;
                     case 'innerText':
