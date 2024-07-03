@@ -77,7 +77,7 @@ const webui = (() => {
             getCache(key).then(cache => {
                 cache.setItem(key, value);
             }).catch(r => {
-                console.error('get cache rejected', r);
+                // Caching not accepted
             });
         }
         getItem(key) {
@@ -451,6 +451,7 @@ const webui = (() => {
                             el[field](appData[key], key);
                         } else {
                             console.error(`Element is missing expected setter ${field}`, typeof el[field], el);
+                            console.dir(el);
                         }
                         break;
                     case 'innerText':
