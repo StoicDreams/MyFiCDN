@@ -13,6 +13,9 @@ webui.define('webui-nav', {
                 break;
         }
     },
+    setNavRoutes: function (data) {
+        this.buildNav(data);
+    },
     loadRoutes: async function (url) {
         if (!url) return;
         let loaded = await fetch(url);
