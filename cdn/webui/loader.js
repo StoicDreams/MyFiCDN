@@ -447,10 +447,11 @@ const webui = (() => {
                 switch (toSet) {
                     case 'setter':
                         let field = webui.toCamel(`set-${key}`);
-                        if (typeof el[field] === 'function') {
+                        let ef = typeof el[field];
+                        if (ef === 'function') {
                             el[field](appData[key], key);
                         } else {
-                            console.error(`Element is missing expected setter ${field}`, typeof el[field], el);
+                            console.error(`Element is missing expected setter ${field}: typeof == ${ef}`, el);
                             console.dir(el);
                         }
                         break;
