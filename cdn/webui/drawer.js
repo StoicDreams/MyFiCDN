@@ -49,9 +49,12 @@
                 t.setAttribute('id', t._id);
             }, 100);
         },
-        attr: ['position', 'docked', 'data-dockable', 'data-moveable'],
-        attrChanged: (t, property, _value) => {
+        attr: ['position', 'docked', 'data-dockable', 'data-moveable', 'theme'],
+        attrChanged: (t, property, value) => {
             switch (property) {
+                case 'theme':
+                    t.setTheme(value);
+                    break;
                 case 'dataDockable':
                     t.dataDockable = true;
                     t.buildFooterContent();
