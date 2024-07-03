@@ -374,6 +374,8 @@ const webui = (() => {
             node.dataset.state.split('|').forEach(attr => {
                 if (state[attr]) {
                     node.setAttribute(attr, state[attr]);
+                } else {
+                    node.removeAttribute(attr);
                 }
             });
         }
@@ -398,7 +400,7 @@ const webui = (() => {
             const observer = new MutationObserver(mutations => {
                 mutations.forEach(function (mutation) {
                     if (mutation.target && mutation.target.dataset && mutation.target.dataset.state) {
-                        saveState(mutation.target);
+                        saveState(mutation.target, mutation.attributeName);
                     }
                     Array.from(mutation.addedNodes).forEach(el => {
                         if (el.dataset && el.dataset.state) {
