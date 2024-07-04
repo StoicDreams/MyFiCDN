@@ -93,19 +93,19 @@ webui.define("webui-app", {
         let mw = m.clientWidth;
         let mh = wh - (h.clientHeight + f.clientHeight + t.clientHeight + b.clientHeight);
         let value = `
-    :root {
-    --window-width: ${ww}px;
-    --window-height: ${wh}px;
-    --main-width: ${mw}px;
-    --main-height: ${mh}px;
-    --header-height: ${h.clientHeight}px;
-    --footer-height: ${f.clientHeight}px;
-    --drawer-left-width: ${l.clientWidth}px;
-    --drawer-right-width: ${r.clientWidth}px;
-    --drawer-top-height: ${t.clientHeight}px;
-    --drawer-bottom-height: ${b.clientHeight}px;
-    }
-    `;
+:root {
+--window-width: ${ww}px;
+--window-height: ${wh}px;
+--main-width: ${mw}px;
+--main-height: ${mh}px;
+--header-height: ${h.clientHeight}px;
+--footer-height: ${f.clientHeight}px;
+--drawer-left-width: ${l.clientWidth}px;
+--drawer-right-width: ${r.clientWidth}px;
+--drawer-top-height: ${t.clientHeight}px;
+--drawer-bottom-height: ${b.clientHeight}px;
+}
+`;
         if (this._adsrCache !== value) {
             this._adsrCache = value;
             this.dynstyles.innerHTML = value;
@@ -113,116 +113,116 @@ webui.define("webui-app", {
     },
     _adsrCache: {},
     shadowTemplate: `
-    <style type="text/css">
-    :host {
-    background-color: var(--site-background-color, white);
-    color: var(--site-background-offset, black);
-    display: grid;
-    grid-template-columns: min-content auto min-content;
-    grid-template-rows: min-content min-content auto min-content min-content;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
-    overflow: hidden;
-    }
-    ::slotted([slot="header"]) {
-    grid-row: 2;
-    grid-column: 2;
-    display: flex!important;
-    align-items: start;
-    justify-items: start;
-    font-size: 1.2rem;
-    gap:var(--padding, 1em);
-    padding:var(--padding,1em);
-    height:min-content;
-    max-height:min-content;
-    }
-    ::slotted([slot="footer"]) {
-    grid-row: 4;
-    grid-column: 2;
-    display: flex!important;
-    font-size: 0.8rem;
-    align-items:center;
-    padding:var(--padding, 1em);
-    vertical-align:middle;
-    gap:var(--padding, 1em);
-    height:min-content;
-    max-height:min-content;
-    }
-    ::slotted([slot="left"]) {
-    grid-column: 1;
-    z-index: 10;
-    }
-    ::slotted([slot="right"]) {
-    grid-column: 3;
-    z-index: 11;
-    }
-    ::slotted([slot="bottom"]) {
-    height:min-content;
-    grid-row: 5;
-    z-index: 12;
-    }
-    ::slotted([slot="top"]) {
-    height:min-content;
-    grid-row: 1;
-    z-index: 13;
-    }
-    ::slotted([slot="left"]),
-    ::slotted([slot="right"]) {
-    max-width: calc(0.5 * var(--window-width));
-    grid-row: 2/5;
-    display: flex!important;
-    flex-direction: column;
-    }
-    ::slotted([slot="top"]),
-    ::slotted([slot="bottom"]) {
-    max-height: calc(0.5 * var(--window-height));
-    grid-column: 2;
-    }
-    ::slotted(:not([slot])) {
-    }
-    main {
-    display:flex;
-    flex-direction:column;
-    overflow:auto;
-    box-sizing:border-box;
-    height:var(--main-height);
-    flex-grow:1;
-    padding:var(--padding,1em);
-    padding-bottom:3em;
-    grid-row: 3;
-    grid-column: 2;
-    transition:
-    opacity 0.4s ease-out,
-    transform 0.4s ease-out
-    ;
-    }
-    main.transition {
-    transform:rotateY(90deg);
-    opacity:0;
-    }
-    ::-webkit-scrollbar {
-    width: 1em;
-    height: 1em;
-    }
-    ::-webkit-scrollbar-thumb {
-    background: rgba(90, 90, 90, 0.2);
-    }
-    ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    }
-    </style>
-    <slot name="header"></slot>
-    <main><slot></slot></main>
-    <slot name="footer"></slot>
-    <slot name="left"></slot>
-    <slot name="right"></slot>
-    <slot name="top"></slot>
-    <slot name="bottom"></slot>
-    <webui-dialogs></webui-dialogs>
+<style type="text/css">
+:host {
+background-color: var(--site-background-color, white);
+color: var(--site-background-offset, black);
+display: grid;
+grid-template-columns: min-content auto min-content;
+grid-template-rows: min-content min-content auto min-content min-content;
+position: fixed;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+max-width: 100%;
+max-height: 100%;
+overflow: hidden;
+}
+::slotted([slot="header"]) {
+grid-row: 2;
+grid-column: 2;
+display: flex!important;
+align-items: start;
+justify-items: start;
+font-size: 1.2rem;
+gap:var(--padding, 1em);
+padding:var(--padding,1em);
+height:min-content;
+max-height:min-content;
+}
+::slotted([slot="footer"]) {
+grid-row: 4;
+grid-column: 2;
+display: flex!important;
+font-size: 0.8rem;
+align-items:center;
+padding:var(--padding, 1em);
+vertical-align:middle;
+gap:var(--padding, 1em);
+height:min-content;
+max-height:min-content;
+}
+::slotted([slot="left"]) {
+grid-column: 1;
+z-index: 10;
+}
+::slotted([slot="right"]) {
+grid-column: 3;
+z-index: 11;
+}
+::slotted([slot="bottom"]) {
+height:min-content;
+grid-row: 5;
+z-index: 12;
+}
+::slotted([slot="top"]) {
+height:min-content;
+grid-row: 1;
+z-index: 13;
+}
+::slotted([slot="left"]),
+::slotted([slot="right"]) {
+max-width: calc(0.5 * var(--window-width));
+grid-row: 2/5;
+display: flex!important;
+flex-direction: column;
+}
+::slotted([slot="top"]),
+::slotted([slot="bottom"]) {
+max-height: calc(0.5 * var(--window-height));
+grid-column: 2;
+}
+::slotted(:not([slot])) {
+}
+main {
+display:flex;
+flex-direction:column;
+overflow:auto;
+box-sizing:border-box;
+height:var(--main-height);
+flex-grow:1;
+padding:var(--padding,1em);
+padding-bottom:3em;
+grid-row: 3;
+grid-column: 2;
+transition:
+opacity 0.4s ease-out,
+transform 0.4s ease-out
+;
+}
+main.transition {
+transform:rotateY(90deg);
+opacity:0;
+}
+::-webkit-scrollbar {
+width: 1em;
+height: 1em;
+}
+::-webkit-scrollbar-thumb {
+background: rgba(90, 90, 90, 0.2);
+}
+::-webkit-scrollbar-track {
+background: rgba(0, 0, 0, 0.2);
+}
+</style>
+<slot name="header"></slot>
+<main><slot></slot></main>
+<slot name="footer"></slot>
+<slot name="left"></slot>
+<slot name="right"></slot>
+<slot name="top"></slot>
+<slot name="bottom"></slot>
+<webui-dialogs></webui-dialogs>
 `
 });
