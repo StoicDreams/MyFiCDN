@@ -102,5 +102,3 @@ Our websites and applications may contain links to other third-party websites. P
 From time-to-time we may request information via surveys. Participation in these surveys is completely voluntary, and you may choose whether or not to participate and therefore disclose this information. Any information obtained in these surveys will be aggregated and not linked directly to any individual person, except when an explicit opt-in is permitted to allow contact in response to survey.
 
 </webui-page-segment>
-
-<webui-next-page name="Terms of Service" href="/terms"></webui-next-page>

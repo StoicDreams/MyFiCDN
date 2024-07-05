@@ -6,5 +6,3 @@
         Or if you prefer you can also email us at [support@stoicdreams.com](mailto:support@stoicdreams.com) and someone will respond to you as soon as we can.
     </webui-page-segment>
 </webui-sideimage>
-
-<webui-next-page name="Home" href="/"></webui-next-page>
