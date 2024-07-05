@@ -24,6 +24,12 @@
         "url": "/terms"
     },
     {
+        "name": "Contact",
+        "icon": "messages",
+        "iconFamily": "duotone",
+        "url": "/contact"
+    },
+    {
         "name": "Test",
         "icon": "traffic-cone",
         "iconFamily": "duotone",
