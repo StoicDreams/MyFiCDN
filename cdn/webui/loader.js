@@ -538,6 +538,9 @@ const webui = (() => {
                     handleDataTrigger(target);
                 }
                 let href = target.getAttribute('href');
+                if (href && href.indexOf(':') !== -1 && href.substr(0, 4) !== 'http') {
+                    return true;
+                }
                 if (href && target.getAttribute('target') !== 'blank' && (href[0] === '/' || href.substr(0, 4) !== 'http')) {
                     ev.stopPropagation();
                     ev.preventDefault();
