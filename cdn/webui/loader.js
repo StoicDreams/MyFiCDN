@@ -72,11 +72,17 @@ const webui = (() => {
         key(key) {
             return Object.keys(memStorageCache).filter(m => m == key).length > 0 ? key : null;
         }
+        removeItem(key) {
+            delete memStorageCache[key];
+            getCache().then(cache => {
+                cache.removeItem(key);
+            }).catch(_ => { });
+        }
         setItem(key, value) {
             memStorageCache[key] = value;
-            getCache(key).then(cache => {
+            getCache().then(cache => {
                 cache.setItem(key, value);
-            }).catch(r => {
+            }).catch(_ => {
                 // Caching not accepted
             });
         }
