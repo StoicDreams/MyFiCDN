@@ -249,7 +249,7 @@ const webui = (() => {
                 text = this.replaceData(text, data);
             }
             Object.keys(appData).forEach(key => {
-                let rkey = `{${key.replace(/-/g, '_').toUpperCase()}}`;
+                let rkey = `{${this.toSnake(key).replace(/-/g, '_').toUpperCase()}}`;
                 let val = appData[key];
                 let limit = 0;
                 while (text.indexOf(rkey) !== -1 && limit < 1000) {
