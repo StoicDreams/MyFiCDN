@@ -455,10 +455,12 @@ const webui = (() => {
     }
     function setDataToEl(el, key, attempt) {
         let toSet = el.dataset.set || 'setter';
+        if (toSet === 'click') return;
         let a = attempt || 1;
         key.split('|').forEach(key => {
             key = key.trim();
             let value = appData[key];
+            let isNull = value === null || value === undefined;
             try {
                 switch (toSet) {
                     case 'setter':
@@ -478,16 +480,20 @@ const webui = (() => {
                         }
                         break;
                     case 'innerText':
-                        el.innerText = webui.applyAppDataToContent(value);
+                        el.innerText = isNull ? '' : webui.applyAppDataToContent(value);
                         break;
                     case 'innerHTML':
-                        el.innerHTML = webui.applyAppDataToContent(value);
+                        el.innerHTML = isNull ? '' : webui.applyAppDataToContent(value);
                         break;
                     default:
                         if (typeof el[toSet] === 'function') {
                             el[toSet](value);
                         } else {
-                            el.setAttribute(toSet, value);
+                            if (isNull) {
+                                el.removeAttribute(toSet);
+                            } else {
+                                el.setAttribute(toSet, value);
+                            }
                         }
                         break;
                 }

@@ -10,7 +10,7 @@
         preload: 'dialogs input-message alert alerts',
         constructor: (t) => {
             let extraContent = t.innerHTML;
-            t.addEventListener('click', async () => {
+            t.addEventListener('click', async _ => {
                 let options = {
                     title: `Give us your Feedback!`,
                     minWidth: '80%'

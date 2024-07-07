@@ -11,38 +11,38 @@ webui.define("webui-button", {
             case 'theme':
                 t.setTheme(value);
                 break;
-            case 'start-icon-family':
-            case 'start-icon-class':
-            case 'start-icon':
+            case 'startIconFamily':
+            case 'startIconClass':
+            case 'startIcon':
                 {
                     t.querySelectorAll('[slot="start-icon"]').forEach(n => n.remove());
-                    if (!t['start-icon']) break;
+                    if (!t.startIcon) break;
                     let ico = document.createElement('webui-fa');
                     ico.setAttribute('slot', 'start-icon');
-                    ico.setAttribute('icon', t['start-icon']);
-                    if (t['start-icon-family']) {
-                        ico.setAttribute('family', t['start-icon-family']);
+                    ico.setAttribute('icon', t.startIcon);
+                    if (t.startIconFamily) {
+                        ico.setAttribute('family', t.startIconFamily);
                     }
-                    if (t['start-icon-class']) {
-                        ico.className = t['start-icon-class'];
+                    if (t.startIconClass) {
+                        ico.className = t.startIconClass;
                     }
                     t.appendChild(ico);
                 }
                 break;
-            case 'end-icon-family':
-            case 'end-icon-class':
-            case 'end-icon':
+            case 'endIconFamily':
+            case 'endIconClass':
+            case 'endIcon':
                 {
                     t.querySelectorAll('[slot="end-icon"]').forEach(n => n.remove());
-                    if (!t['end-icon']) break;
+                    if (!t.endIcon) break;
                     let ico = document.createElement('webui-fa');
                     ico.setAttribute('slot', 'end-icon');
-                    ico.setAttribute('icon', t['end-icon']);
-                    if (t['end-icon-family']) {
-                        ico.setAttribute('family', t['end-icon-family']);
+                    ico.setAttribute('icon', t.endIcon);
+                    if (t.endIconFamily) {
+                        ico.setAttribute('family', t.endIconFamily);
                     }
-                    if (t['end-icon-class']) {
-                        ico.className = t['end-icon-class'];
+                    if (t.endIconClass) {
+                        ico.className = t.endIconClass;
                     }
                     t.appendChild(ico);
                 }

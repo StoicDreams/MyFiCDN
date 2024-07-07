@@ -33,22 +33,22 @@ webui.define("webui-app", {
     },
     attrChanged: (t, property, newValue) => {
         switch (property) {
-            case 'root-page':
+            case 'rootPage':
                 webui._appSettings.rootPage = newValue;
                 break;
-            case 'content-extension':
+            case 'contentExtension':
                 webui._appSettings.contentExtension = newValue;
                 break;
-            case 'page-content':
+            case 'pageContent':
                 appSettings.pageContentEndpoint = newValue;
                 break;
-            case 'page-data':
+            case 'pageData':
                 webui._appSettings.pageDataEndpoint = newValue;
                 break;
-            case 'page-data-encrypt':
+            case 'pageDataEncrypt':
                 webui._appSettings.encryptPageData = newValue;
                 break;
-            case 'page-content-encrypt':
+            case 'pageContentEncrypt':
                 webui._appSettings.encryptPageContent = newValue;
                 break;
         }

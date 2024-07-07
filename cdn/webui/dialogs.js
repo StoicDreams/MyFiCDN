@@ -1,5 +1,8 @@
 /* Enables use of await webuiDialog(options) to call a dialog */
 "use strict"
+const webuiDialog = function (data) {
+    return webuiDialog._handler(data);
+}
 {
     const defaultData = { content: "Missing Content", confirm: "Ok" };
     webui.define("webui-dialogs", {
@@ -32,8 +35,8 @@
                     close(true);
                 }
             });
-            if (!window.webuiDialog) {
-                window.webuiDialog = function (data) {
+            if (!webuiDialog._handler) {
+                webuiDialog._handler = function (data) {
                     return new Promise((resolve, reject) => {
                         resetNodes();
                         data = data || defaultData;
