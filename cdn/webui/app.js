@@ -173,7 +173,7 @@ z-index: 13;
 }
 ::slotted([slot="left"]),
 ::slotted([slot="right"]) {
-max-width: calc(0.5 * var(--window-width));
+max-width: calc(0.8 * var(--window-width));
 grid-row: 2/5;
 display: flex!important;
 flex-direction: column;
