@@ -241,6 +241,9 @@ const webui = (() => {
             return appData[key];
         }
         marked = { parse: () => { } };
+        navigateTo(href) {
+            changePage(href);
+        }
         parseMarkdown(md, preTrim) {
             md = md.replace(/(\r\n|\r)+/mg, '\n');
             if (preTrim) {
