@@ -1670,6 +1670,7 @@ a.btn:active,
 a[data-click],
 .btn:not(.disabled:not(:disabled)),
 button:not(:disabled):not(.disabled),
+webui-button:not(:disabled):not(.disabled),
 a[href]:not(:disabled):not(.disabled) {
     cursor: pointer;
 }
