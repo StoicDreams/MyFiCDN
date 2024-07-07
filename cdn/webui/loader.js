@@ -459,14 +459,13 @@ const webui = (() => {
         key.split('|').forEach(key => {
             key = key.trim();
             let value = appData[key];
-            if (value === null || value === undefined) return;
             try {
                 switch (toSet) {
                     case 'setter':
                         let field = webui.toCamel(`set-${key}`);
                         let ef = typeof el[field];
                         if (ef === 'function') {
-                            el[field](appData[key], key);
+                            el[field](value, key);
                         } else {
                             if (a < 5) {
                                 setTimeout(() => {
@@ -479,16 +478,16 @@ const webui = (() => {
                         }
                         break;
                     case 'innerText':
-                        el.innerText = webui.applyAppDataToContent(appData[key]);
+                        el.innerText = webui.applyAppDataToContent(value);
                         break;
                     case 'innerHTML':
-                        el.innerHTML = webui.applyAppDataToContent(appData[key]);
+                        el.innerHTML = webui.applyAppDataToContent(value);
                         break;
                     default:
                         if (typeof el[toSet] === 'function') {
-                            el[toSet](appData[key]);
+                            el[toSet](value);
                         } else {
-                            el.setAttribute(toSet, appData[key]);
+                            el.setAttribute(toSet, value);
                         }
                         break;
                 }
