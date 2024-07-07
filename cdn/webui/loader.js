@@ -12,7 +12,12 @@ const webui = (() => {
         'page-title': '',
         'page-subtitle': '',
         'page-path': location.pathname,
-        'domain': location.hostname.toLowerCase()
+        'domain': location.hostname.toLowerCase(),
+        'user-role': '0',
+        'username': 'Guest',
+        'full-name': 'Guest',
+        'first-name': 'Guest',
+        'last-name': ''
     };
     const appSettings = {
         appType: 'website',
