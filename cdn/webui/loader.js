@@ -137,7 +137,23 @@ const webui = (() => {
             let el = document.createElement(name);
             if (attr) {
                 Object.keys(attr).forEach(key => {
-                    el.setAttribute(key, attr[key]);
+                    switch (key) {
+                        case 'innerHTML':
+                        case 'html':
+                            el.innerHTML = attr[key];
+                            break;
+                        case 'innerText':
+                        case 'text':
+                            el.innerText = attr[key];
+                            break;
+                        default:
+                            if (typeof attr[key] === 'function') {
+                                el.addEventListener(key, attr[key]);
+                            } else {
+                                el.setAttribute(key, attr[key]);
+                            }
+                            break;
+                    }
                 });
             }
             return el;
