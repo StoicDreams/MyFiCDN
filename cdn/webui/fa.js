@@ -51,7 +51,7 @@
                 if (!svg.startsWith("<svg")) return;
                 faCache[family][name] = svg;
             }
-            t.svg = faCache[family][name];
+            t.svg = faCache[t.family][t.icon];
             t.iconSlot.innerHTML = `${t.svg}`;
         },
         shadowTemplate: `
