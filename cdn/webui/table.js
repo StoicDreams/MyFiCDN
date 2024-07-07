@@ -27,6 +27,7 @@ webui.define('webui-table', {
     },
     setData: function (data) {
         let t = this;
+        data = data || {};
         if (typeof data === 'string') {
             t._data = JSON.parse(data);
         } else {

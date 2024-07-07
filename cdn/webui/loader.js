@@ -732,6 +732,12 @@ const webui = (() => {
                 throw Error("Returned page data was not ok");
             }
             let data = await dataResult.json();
+            webui.setData('page-data', data);
+            if (!data.forEach) {
+                Object.keys(data).forEach(key => {
+                    webui.setData(key, data[key]);
+                });
+            }
         } catch (ex) {
             console.error('Failed loading page data', ex);
         }
