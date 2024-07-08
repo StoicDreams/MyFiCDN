@@ -1667,27 +1667,37 @@ a.btn:active,
     user-select: text;
 }
 
-a[data-click],
-.btn:not(.disabled:not(:disabled)),
-button:not(:disabled):not(.disabled),
-webui-button:not(:disabled):not(.disabled),
-a[href]:not(:disabled):not(.disabled) {
+a.navlink:not([disabled]):not(.disabled),
+a[data-click]:not([disabled]):not(.disabled):not(:disabled),
+.btn:not([disabled]):not(.disabled:not(:disabled)),
+button:not([disabled]):not(:disabled):not(.disabled),
+webui-button:not([disabled]):not(:disabled):not(.disabled),
+a[href]:not([disabled]):not(:disabled):not(.disabled) {
     cursor: pointer;
 }
 
 .disabled,
+[disabled],
 :disabled,
 .btn:disabled {
     background-color: var(--color-shade);
     color: var(--color-shade-offset);
 }
 
+a[disabled],
+a.disabled,
+a:disabled,
+webui-button[disabled],
+.btn[disabled],
+.btn.disabled,
 .btn:disabled {
     cursor: not-allowed;
 }
 
 input[readonly],
-input:disabled {
+input:disabled,
+input.disabled,
+input[disabled] {
     opacity: 0.5;
     outline: none;
 }
@@ -1741,12 +1751,8 @@ main.page.transition.in img {
     opacity: 1;
 }
 
-a.navlink {
-    cursor: pointer;
-}
-
-a[href],
-a[data-click] {
+a[href]:not([disabled]):not(:disabled):not(.disabled),
+a[data-click]:not([disabled]):not(:disabled):not(.disabled) {
     text-decoration: underline;
     text-shadow: var(--link-shadow);
 }
@@ -3507,7 +3513,6 @@ webui-side-by-side>*,
     align-items: center;
     width: 30px;
     height: 30px;
-    cursor: pointer;
 }
 
 .titlebar-button:hover {
