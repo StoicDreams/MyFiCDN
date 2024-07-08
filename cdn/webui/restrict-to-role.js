@@ -54,7 +54,9 @@
         hideContent: function () {
             let t = this;
             if (t.style.display === 'none') { return; }
-            t._cache = t.innerHTML;
+            if (t.innerHTML) {
+                t._cache = t.innerHTML;
+            }
             t.innerHTML = '';
             t.style.display = 'none';
         }
