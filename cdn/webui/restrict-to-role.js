@@ -1,10 +1,14 @@
 /* Restrict display of contents to a user role.
  - Auto-subscribes to user-role data.
  - Intended for use in .md or static html content. Do not use when dynamically creating or updating innerHTML content.
- */
+*/
 "use strict"
 {
     webui.define("webui-restrict-to-role", {
+        constructor: (t) => {
+            t._cache = t.innerHTML;
+            t.innerHTML = '';
+        },
         attr: ['role'],
         attrChanged: (t, _property, _value) => {
             t.checkRole();
