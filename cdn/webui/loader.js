@@ -262,9 +262,11 @@ const webui = (() => {
         removeFromParentPTag(el) {
             if (el.parentNode && el.parentNode.nodeName === 'P') {
                 let p = el.parentNode;
-                el.parentNode.parentNode.insertBefore(el, el.parentNode);
-                if (p.innerHTML.trim() === '') {
-                    p.remove();
+                if (p.parentNode) {
+                    p.parentNode.insertBefore(el, p);
+                    if (p.innerHTML.trim() === '') {
+                        p.remove();
+                    }
                 }
             }
             return el;

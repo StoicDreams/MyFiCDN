@@ -144,7 +144,7 @@ I confirm that I am using my personal device and that I understand the above sta
                     this.render();
                     break;
                 default:
-                    console.log('Unknown accepted key', value);
+                    // expected on page loading
                     break;
             }
         },
