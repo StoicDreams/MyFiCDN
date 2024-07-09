@@ -66,9 +66,10 @@ user-select: text;
 background-color: var(--color-button);
 color: var(--color-button-offset);
 }
-:host([href]:not(:disabled)),
-:host([data-trigger]:not(:disabled)),
-:host([onclick]:not(:disabled)) {
+:host([disabled]) {
+pointer-events:none;
+}
+:host(:not([disabled])) {
 cursor:pointer;
 }
 </style>
