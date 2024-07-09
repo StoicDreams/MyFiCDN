@@ -340,6 +340,10 @@ const webui = (() => {
                     break;
             }
         }
+        setTheme(el, value) {
+            webui.removeClass(el, 'theme-');
+            el.classList.add(`theme-${value}`);
+        }
         toSnake(key) {
             return key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
         }
