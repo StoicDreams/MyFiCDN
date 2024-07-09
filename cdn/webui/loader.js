@@ -376,6 +376,16 @@ const webui = (() => {
             });
             return lines.join('\n');
         }
+        uuid() {
+            try {
+                return crypto.randomUUID();
+            } catch (ex) {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+        }
     }
     const webui = new WebUI();
 
