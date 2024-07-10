@@ -1,4 +1,4 @@
-<webui-data data-page-title="Stoic Dreams Content Delivery" data-page-subtitle=""></webui-data>
+<webui-data data-page-title="{COMPANY_SINGULAR} Content Delivery" data-page-subtitle=""></webui-data>
 
 <webui-sideimage reverse src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg">
     <webui-page-segment elevation="10">
