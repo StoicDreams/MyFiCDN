@@ -506,8 +506,11 @@ const webui = (() => {
                     case 'setter':
                         let field = webui.toCamel(`set-${key}`);
                         let ef = typeof el[field];
+                        let fsetter = webui.toCamel(`set-${field}`);
                         if (ef === 'function') {
                             el[field](value, key);
+                        } else if (typeof el[fsetter] === 'function') {
+                            el[fsetter](value, key);
                         } else if (typeof el.setValue === 'function' && a === 2) {
                             el.setValue(value, key);
                         } else {
