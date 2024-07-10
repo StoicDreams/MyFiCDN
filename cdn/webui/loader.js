@@ -296,7 +296,7 @@ const webui = (() => {
         replaceData(text, data) {
             Object.keys(data).forEach(key => {
                 let rkey = `{${key.replace(/-/g, '_').toUpperCase()}}`;
-                let val = appData[key];
+                let val = data[key];
                 let limit = 0;
                 while (text.indexOf(rkey) !== -1 && limit < 1000) {
                     ++limit;
