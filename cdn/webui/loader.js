@@ -508,6 +508,8 @@ const webui = (() => {
                         let ef = typeof el[field];
                         if (ef === 'function') {
                             el[field](value, key);
+                        } else if (typeof el.setValue === 'function') {
+                            el.setValue(value, key);
                         } else {
                             if (a < 5) {
                                 setTimeout(() => {
