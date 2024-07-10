@@ -285,6 +285,9 @@ const webui = (() => {
             Object.keys(appData).forEach(key => {
                 let rkey = `{${this.toSnake(key).replace(/-/g, '_').toUpperCase()}}`;
                 let val = appData[key];
+                if (val === undefined || val === null) {
+                    val = '';
+                }
                 let limit = 0;
                 while (text.indexOf(rkey) !== -1 && limit < 1000) {
                     ++limit;
@@ -297,6 +300,9 @@ const webui = (() => {
             Object.keys(data).forEach(key => {
                 let rkey = `{${key.replace(/-/g, '_').toUpperCase()}}`;
                 let val = data[key];
+                if (val === undefined || val === null) {
+                    val = '';
+                }
                 let limit = 0;
                 while (text.indexOf(rkey) !== -1 && limit < 1000) {
                     ++limit;
