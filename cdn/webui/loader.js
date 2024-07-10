@@ -508,7 +508,7 @@ const webui = (() => {
                         let ef = typeof el[field];
                         if (ef === 'function') {
                             el[field](value, key);
-                        } else if (typeof el.setValue === 'function') {
+                        } else if (typeof el.setValue === 'function' && a === 2) {
                             el.setValue(value, key);
                         } else {
                             if (a < 5) {
