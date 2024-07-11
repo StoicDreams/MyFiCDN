@@ -298,7 +298,9 @@ const webui = (() => {
         }
         replaceData(text, data) {
             Object.keys(data).forEach(key => {
-                let rkey = `{${key.replace(/-/g, '_').toUpperCase()}}`;
+                let keyName = `${key.replace(/-/g, '_').toUpperCase()}`;
+                let rkey = `{${keyName}}`;
+                let tkey = `{TEMPLATE_${key.replace(/-/g, '_').toUpperCase()}}`
                 let val = data[key];
                 if (val === undefined || val === null) {
                     val = '';
@@ -307,6 +309,11 @@ const webui = (() => {
                 while (text.indexOf(rkey) !== -1 && limit < 1000) {
                     ++limit;
                     text = text.replace(rkey, val);
+                }
+                limit = 0;
+                while (text.indexOf(tkey) !== -1 && limit < 1000) {
+                    ++limit;
+                    text = text.replace(tkey, val);
                 }
             });
             return text;
