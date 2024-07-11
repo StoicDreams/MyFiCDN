@@ -3,7 +3,7 @@
     const appConfig = {};
     webui.define('webui-app-config', {
         constructor: (t) => {
-            t.appConfig = appConfig;
+            webui.appConfig = appConfig;
         },
         attr: ['src'],
         connected: (t) => {
