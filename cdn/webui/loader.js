@@ -517,14 +517,13 @@ const webui = (() => {
             try {
                 switch (toSet) {
                     case 'setter':
-                        let field = webui.toCamel(`set-${key}`);
-                        let ef = typeof el[field];
+                        let field = webui.toCamel(key);
                         let fsetter = webui.toCamel(`set-${field}`);
-                        if (ef === 'function') {
-                            el[field](value, key);
-                        } else if (typeof el[fsetter] === 'function') {
+                        if (typeof el[fsetter] === 'function') {
                             el[fsetter](value, key);
-                        } else if (typeof el.setValue === 'function' && a === 2) {
+                        } else if (typeof el[field] === 'function') {
+                            el[field](value, key);
+                        } else if (typeof el.setValue === 'function' && a > 1) {
                             el.setValue(value, key);
                         } else {
                             if (a < 5) {
@@ -532,7 +531,7 @@ const webui = (() => {
                                     setDataToEl(el, key, a + 1);
                                 }, Math.pow(10, a));
                             } else {
-                                console.error(`Element is missing expected setter ${field}: typeof == ${ef}`, el, a);
+                                console.error(`Element is missing expected setter ${field}: typeof == ${ef}`, el, a, typeof el.setValue);
                                 console.dir(el);
                             }
                         }
