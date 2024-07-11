@@ -210,15 +210,16 @@ const webui = (() => {
                     }
                 }
                 connectedCallback() {
+                    this.isConnected = true;
                     if (options.preload) {
                         this.setAttribute('preload', options.preload);
                     }
-                    if (options.connected) {
+                    if (typeof options.connected === 'function') {
                         options.connected(this);
                     }
                 }
                 disconnectedCallback() {
-                    if (options.disconnected) {
+                    if (typeof options.disconnected === 'function') {
                         options.disconnected(this);
                     }
                 }
