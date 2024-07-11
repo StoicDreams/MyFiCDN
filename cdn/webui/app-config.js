@@ -1,7 +1,10 @@
 "use strict"
-const webuiAppConfig = (() => {
+{
     const appConfig = {};
     webui.define('webui-app-config', {
+        constructor: (t) => {
+            t.appConfig = appConfig;
+        },
         attr: ['src'],
         connected: (t) => {
             for (const attr of t.attributes) {
@@ -24,5 +27,4 @@ const webuiAppConfig = (() => {
             }
         }
     });
-    return appConfig;
-})();
+}

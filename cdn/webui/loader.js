@@ -210,7 +210,6 @@ const webui = (() => {
                     }
                 }
                 connectedCallback() {
-                    this.isConnected = true;
                     if (options.preload) {
                         this.setAttribute('preload', options.preload);
                     }
