@@ -6,13 +6,9 @@
             let invalid = webui.create('div');
             let toContent = [];
             let toInvalid = [];
-            let toRemove = [];
             t.childNodes.forEach(node => {
                 if (node.hasAttribute && node.hasAttribute('slot') && node.getAttribute('slot') === 'invalid') {
-                    node.childNodes.forEach(cn => {
-                        toInvalid.push(cn);
-                    });
-                    toRemove.push(node);
+                    toInvalid.push(node);
                 } else {
                     toContent.push(node);
                 }
@@ -22,9 +18,6 @@
             });
             toInvalid.forEach(node => {
                 invalid.appendChild(node);
-            });
-            toRemove.forEach(node => {
-                node.remove();
             });
             t._cacheContent = content.innerHTML.trim();
             t._cacheInvalid = invalid.innerHTML.trim();

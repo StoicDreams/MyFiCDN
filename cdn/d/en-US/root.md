@@ -9,6 +9,9 @@
     </webui-page-segment>
 </webui-sideimage>
 
+<webui-loading-bar striped indeterminate height="6"></webui-loading-bar>
+<webui-loading-bar theme="success" percent="50" height="20"></webui-loading-bar>
+
 <webui-quote theme="info" cite="Erik Gassler">
     This is a an example of webui-quote web component. Visit [webui.StoicDreams.com for documentation on Stoic Dreams' Web UI web components](https://webui.stoicdreams.com).
 </webui-quote>

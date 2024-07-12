@@ -238,6 +238,16 @@ const webui = (() => {
                     this.style.backgroundColor = `var(--color-${value})`;
                     this.style.color = `var(--color-${value}-offset)`;
                 }
+                setHeight(value) {
+                    let num = parseFloat(value);
+                    if (num > 0 && (num == value || `${num}` === value)) {
+                        this.style.height = `${num}px`;
+                        this.style.minHeight = `${num}px`;
+                    } else {
+                        this.style.height = value;
+                        this.style.minHeight = value;
+                    }
+                }
             }
             customElements.define(name, CustomElement);
         }
