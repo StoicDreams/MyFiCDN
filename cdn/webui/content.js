@@ -21,25 +21,25 @@ webui.define("webui-content", {
                 t.innerHTML = `Source ${t.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by t component)`;
                 return;
             }
-            let temp = document.createElement('div');
-            temp.innerHTML = webui.applyAppDataToContent(body);
-            let n = [];
-            let p = t.parentNode;
-            let b = t;
-            if (p.nodeName === 'P') {
-                b = p;
-                p = p.parentNode;
+            if (t.hasAttribute('slot')) {
+                t.innerHTML = webui.applyAppDataToContent(body);
+            } else {
+                let temp = document.createElement('div');
+                temp.innerHTML = webui.applyAppDataToContent(body);
+                let n = [];
+                let p = t.parentNode;
+                let b = t;
+                temp.childNodes.forEach(node => {
+                    n.push(node);
+                });
+                n.forEach(node => {
+                    p.insertBefore(node, b);
+                });
+                if (t.parentNode !== p) {
+                    b.remove();
+                }
+                t.remove();
             }
-            temp.childNodes.forEach(node => {
-                n.push(node);
-            });
-            n.forEach(node => {
-                p.insertBefore(node, b);
-            });
-            if (t.parentNode !== p) {
-                b.remove();
-            }
-            t.remove();
         } catch (ex) {
             t.innerHTML = `Source ${t.src} failed to load:${ex}`;
         }
