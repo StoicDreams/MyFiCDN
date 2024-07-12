@@ -12,6 +12,13 @@
 <webui-loading-bar striped indeterminate height="6"></webui-loading-bar>
 <webui-loading-bar theme="success" percent="50" height="20"></webui-loading-bar>
 
+<webui-condition data-subscribe="page-loaded">
+    <webui-flex column>
+        Page is loaded
+    </webui-flex>
+    <webui-loading-bar slot="invalid" indeterminate theme="info" height="5"></webui-loading-bar>
+</webui-condition>
+<webui-data data-page-loaded="1"></webui-data>
 <webui-quote theme="info" cite="Erik Gassler">
     This is a an example of webui-quote web component. Visit [webui.StoicDreams.com for documentation on Stoic Dreams' Web UI web components](https://webui.stoicdreams.com).
 </webui-quote>
@@ -25,7 +32,7 @@
     </webui-flex>
     <webui-flex>
         <label for="test2" class="nowrap">Data Trigger From input</label>
-        <input id="test2" type="text" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-input-text>
+        <input id="test2" type="text" data-trigger="test1" data-subscribe="test1" data-set="value">
     </webui-flex>
     <webui-flex>
         <span>Subscribe InnerHTML:</span>
@@ -33,7 +40,7 @@
     </webui-flex>
     <webui-flex gap="5">
         <label class="nowrap">Subscribe value (readonly):</label>
-        <input type="text" readonly data-subscribe="test1" data-set="value"></textarea>
+        <input type="text" readonly data-subscribe="test1" data-set="value" />
     </webui-flex>
 </webui-page-segment>
 

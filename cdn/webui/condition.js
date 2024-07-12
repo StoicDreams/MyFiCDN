@@ -44,7 +44,7 @@
             let isGood = true;
             keys.split('|').forEach(key => {
                 let val = webui.getData(key);
-                if (!val || val === '[]' || val === '{}' || (val.forEach && val.length === 0)) {
+                if (!val || ['0', 'false', 'null', 'undefined', '[]', '{}'].indexOf(val) !== -1 || (val.forEach && val.length === 0)) {
                     isGood = false;
                 }
             });

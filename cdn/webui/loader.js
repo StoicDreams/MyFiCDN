@@ -259,7 +259,19 @@ const webui = (() => {
         navigateTo(href) {
             changePage(href);
         }
+        removeWrappingPTags(html, tagPattern) {
+            while (html.match(`<p><(${tagPattern})`)) {
+                let orig = html;
+                html = html.replace(new RegExp(`\<p\>(\<(${tagPattern}).+\<\/\\2\>)\<\/p\>`, 'g'), '$1');
+                if (html === orig) {
+                    console.log('unexpected break', tagPattern, html);
+                    break;
+                }
+            }
+            return html;
+        }
         parseMarkdown(md, preTrim) {
+            let t = this;
             md = md.replace(/(\r\n|\r)+/mg, '\n');
             if (preTrim) {
                 md = this.trimLinePreWhitespce(md);
@@ -267,7 +279,9 @@ const webui = (() => {
                 md = this.trimLinePreTabs(md);
             }
             md = md.replace(/(\n)/mg, '\n\n');
-            return this.marked.parse(md, markdownOptions);
+            let html = t.marked.parse(md, markdownOptions) || '';
+            html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|div|label|section|article|footer|header');
+            return html;
         }
         removeFromParentPTag(el) {
             if (el.parentNode && el.parentNode.nodeName === 'P') {
