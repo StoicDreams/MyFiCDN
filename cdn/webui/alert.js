@@ -16,19 +16,39 @@ webui.define("webui-alert", {
             case 'variant':
                 t.setVariant(value);
                 break;
-            case 'show':
-                break;
         }
     },
     connected: (t) => {
         if (!t.variant) {
             t.setVariant('warning');
         }
+        if (t.innerHTML === '') {
+            t.removeAttribute('show');
+        }
+    },
+    setValue: function (options) {
+        let t = this;
+        if (typeof options === 'string') {
+            options = JSON.parse(options);
+        }
+        if (!options) {
+            t.removeAttribute('show');
+            return;
+        }
+        if (options.theme) {
+            t.setVariant(options.theme);
+        } else if (options.variant) {
+            t.setVariant(options.variant);
+        }
+        if (options.text) {
+            t.innerText = options.text;
+        } else if (options.html) {
+            t.innerHTML = options.html;
+        }
+        t.setAttribute('show', true);
     },
     setVariant: function (theme) {
         this.setTheme(theme);
-        this.style.backgroundColor = `var(--color-${theme})`;
-        this.style.color = `var(--color-${theme}-offset)`;
         switch (theme) {
             case "danger":
                 this.icon.setAttribute('icon', 'hexagon-exclamation');
@@ -43,7 +63,6 @@ webui.define("webui-alert", {
                 this.icon.setAttribute('icon', 'triangle-exclamation');
                 break;
         }
-
     },
     shadowTemplate: `
 <style type="text/css">

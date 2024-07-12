@@ -18,6 +18,7 @@
     </webui-flex>
     <webui-loading-bar slot="invalid" indeterminate theme="info" height="5"></webui-loading-bar>
 </webui-condition>
+<webui-alert data-subscribe="page-alert"></webui-alert>
 <webui-data data-page-loaded="1"></webui-data>
 <webui-quote theme="info" cite="Erik Gassler">
     This is a an example of webui-quote web component. Visit [webui.StoicDreams.com for documentation on Stoic Dreams' Web UI web components](https://webui.stoicdreams.com).
