@@ -45,6 +45,7 @@
             });
             t._button.addEventListener('click', _ => {
                 t.classList.remove('selected');
+                t._input.value = null;
                 t.setValue([]);
             });
         },
