@@ -60,7 +60,7 @@ align-items: center;
 text-decoration: none;
 padding: calc(1 * var(--padding)) calc(2 * var(--padding));
 border-radius: var(--corners);
-min-height: 2em;
+min-height: 1em;
 -webkit-user-select: text;
 user-select: text;
 background-color: var(--color-button);
