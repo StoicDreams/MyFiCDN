@@ -44,6 +44,12 @@
     </webui-flex>
 </webui-page-segment>
 
+<span data-stopclick>
+<webui-dropdown label="Dropdown Test" value='[{"id":"1","name":"One"},{"id":"2","name":"Two"}]'>
+    <option slot="template">{TEMPLATE_NAME}</option>
+</webui-dropdown>
+</span>
+
 <webui-page-segment>
     This is a list.
     - One

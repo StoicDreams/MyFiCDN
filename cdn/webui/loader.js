@@ -264,7 +264,7 @@ const webui = (() => {
                 let orig = html;
                 html = html.replace(new RegExp(`\<p\>(\<(${tagPattern}).+\<\/\\2\>)\<\/p\>`, 'g'), '$1');
                 if (html === orig) {
-                    console.log('unexpected break', tagPattern, html);
+                    console.error('unexpected break', tagPattern, html);
                     break;
                 }
             }
@@ -280,7 +280,7 @@ const webui = (() => {
             }
             md = md.replace(/(\n)/mg, '\n\n');
             let html = t.marked.parse(md, markdownOptions) || '';
-            html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|div|label|section|article|footer|header');
+            html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
             return html;
         }
         removeFromParentPTag(el) {

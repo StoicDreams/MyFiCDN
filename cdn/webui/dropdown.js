@@ -13,10 +13,31 @@
             t._icon = t.template.querySelector('webui-fa');
             t._select.addEventListener('change', _ => {
                 t.value = t._select.value;
+                console.log('select changed');
                 t.dispatchEvent(new Event('change', { bubbles: true }));
             });
+            // Something is copying attributes from the parent webui-dropdown to the select element on the first click in Edge browser.
+            function removeBugAttributes() {
+                ['style', 'label', 'value', 'preload'].forEach(key => {
+                    t._select.removeAttribute(key);
+                });
+            }
+            t.addEventListener('click', ev => {
+                removeBugAttributes();
+            });
+            t._select.addEventListener('focus', ev => {
+                setTimeout(() => {
+                    removeBugAttributes();
+                }, 0);
+            });
+            t._select.addEventListener('blur', ev => {
+                removeBugAttributes();
+            });
+            t._select.addEventListener('click', ev => {
+                removeBugAttributes();
+            });
         },
-        attr: ['theme', 'icon', 'label', 'stack'],
+        attr: ['theme', 'icon', 'label', 'stack', 'value'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'theme':
@@ -26,6 +47,9 @@
                     t._label.innerHTML = value;
                     break;
                 case 'icon':
+                    break;
+                case 'value':
+                    t.setValue(value);
                     break;
             }
         },
@@ -40,7 +64,7 @@
         },
         setOptions: function (options) {
             let t = this;
-            let data = JSON.parse(options);
+            let data = options.forEach ? options : JSON.parse(options);
             if (!data.forEach) {
                 console.error('webui-dropdown data error: Invalid data loaded - Expecting an array of data.');
                 return;
@@ -63,8 +87,10 @@
         },
         setValue: function (value) {
             if (value === undefined || value === null) {
+                this.setOptions('[]')
                 return;
             }
+            this.setOptions(value);
         },
         shadowTemplate: `
 <style type="text/css">
