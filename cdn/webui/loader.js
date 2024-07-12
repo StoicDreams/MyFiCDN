@@ -235,8 +235,8 @@ const webui = (() => {
                     return this[name] !== undefined && this[name] !== false;
                 }
                 setTheme(value) {
-                    webui.removeClass(this, 'theme-');
-                    this.classList.add(`theme-${value}`);
+                    this.style.backgroundColor = `var(--color-${value})`;
+                    this.style.color = `var(--color-${value}-offset)`;
                 }
             }
             customElements.define(name, CustomElement);
