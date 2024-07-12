@@ -64,6 +64,9 @@
         },
         setOptions: function (options) {
             let t = this;
+            if (options === undefined || options === null) {
+                options = [];
+            }
             let data = options.forEach ? options : JSON.parse(options);
             if (!data.forEach) {
                 console.error('webui-dropdown data error: Invalid data loaded - Expecting an array of data.');
@@ -86,10 +89,6 @@
             });
         },
         setValue: function (value) {
-            if (value === undefined || value === null) {
-                this.setOptions('[]')
-                return;
-            }
             this.setOptions(value);
         },
         shadowTemplate: `
