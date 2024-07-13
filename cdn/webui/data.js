@@ -11,7 +11,11 @@ webui.define("webui-data", {
                     webui.setData(key, webui.trimLinePreWhitespce(t.innerHTML));
                     break;
                 default:
-                    webui.setData(key, t.dataset[key]);
+                    let value = t.dataset[key];
+                    try {
+                        value = JSON.parse(value);
+                    } catch (_) { }
+                    webui.setData(key, value);
                     break;
             }
         });

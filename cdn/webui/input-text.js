@@ -20,7 +20,7 @@ webui.define('webui-input-text', {
             t.setAttribute('value', t._field.value);
         });
     },
-    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'type'],
+    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'type', 'placeholder'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'id':
@@ -36,6 +36,9 @@ webui.define('webui-input-text', {
                 break;
             case 'autofocus':
                 t._field.setAttribute('autofocus', value);
+                break;
+            case 'placeholder':
+                t._field.setAttribute('placeholder', value);
                 break;
             case 'type':
                 t._field.setAttribute('type', value);

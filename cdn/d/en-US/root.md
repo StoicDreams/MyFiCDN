@@ -27,6 +27,8 @@
 ## Data Subscriptions
 
 <webui-page-segment class="elevation-10">
+    <webui-input-text label="App Struct Test" placeholder="Data entered here will persist through page navigations." data-trigger="test.name" data-subscribe="test.name" data-set="value"></webui-input-text>
+    <webui-input-text label="Page Struct Test" placeholder="Data entered here will be removed when page is changed" data-trigger="page-test.name" data-subscribe="page-test.name" data-set="value"></webui-input-text>
     <webui-flex>
         <webui-input-text label="Data Trigger From webui-input-text" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-input-text>
         <webui-input-text compact label="Data Trigger From webui-input-text[compact]" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-input-text>

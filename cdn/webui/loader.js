@@ -346,11 +346,36 @@ const webui = (() => {
             appSettings.app = app;
         }
         setData(key, value) {
-            key = webui.toSnake(key);
-            if (value === null || value === undefined) {
-                delete appData[key];
+            if (!key) return;
+            let sections = key.split('.');
+            if (sections.length === 1) {
+                key = webui.toSnake(key);
+                if (value === null || value === undefined) {
+                    delete appData[key];
+                } else {
+                    appData[key] = value;
+                }
             } else {
-                appData[key] = typeof value === 'string' ? value : JSON.stringify(value);
+                let skey = sections.shift();
+                skey = webui.toSnake(skey);
+                if (!appData[skey]) {
+                    appData[skey] = {};
+                }
+                let segment = appData[skey];
+                while (sections.length > 1) {
+                    skey = sections.shift();
+                    skey = webui.toSnake(skey);
+                    if (!segment[skey]) {
+                        segment[skey] = {};
+                    }
+                    segment = segment[skey];
+                }
+                skey = sections.shift();
+                if (value === null || value === undefined) {
+                    delete segment[skey];
+                } else {
+                    segment[skey] = value;
+                }
             }
             document.querySelectorAll(`[data-subscribe]`).forEach(sub => {
                 sub.dataset.subscribe.split('|').forEach(k => {
@@ -534,10 +559,25 @@ const webui = (() => {
         let toSet = el.dataset.set || 'setter';
         if (toSet === 'click') return;
         let a = attempt || 1;
+        let value = undefined;
+        let sections = key.split('.');
+        if (sections.length > 1) {
+            let skey = sections.shift();
+            let segment = appData[skey];
+            while (segment && sections.length > 0) {
+                skey = sections.shift();
+                segment = segment[skey];
+                if (sections.length === 0) {
+                    value = segment;
+                    break;
+                }
+            }
+        } else {
+            value = appData[key];
+        }
+        let isNull = value === null || value === undefined;
         key.split('|').forEach(key => {
             key = key.trim();
-            let value = appData[key];
-            let isNull = value === null || value === undefined;
             try {
                 switch (toSet) {
                     case 'setter':
