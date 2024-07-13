@@ -76,9 +76,9 @@
     <script type="text/javascript">
         (function checkHighlighting() {
             if (window.hljs) {
-                document.querySelectorAll('pre code:not([data-hl])').forEach((el) => {
-                    el.setAttribute('data-hl', true);
+                document.querySelectorAll('pre code:not([data-highlighted])').forEach((el) => {
                     window.hljs.highlightElement(el);
+                    el.dataset.highlighted = true;
                 });
             }
             setTimeout(checkHighlighting, 100);

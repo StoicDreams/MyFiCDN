@@ -1,4 +1,4 @@
-<webui-data data-page-title="{COMPANY_SINGULAR} Content Delivery" data-page-subtitle=""></webui-data>
+<webui-data data-page-title="{COMPANY_SINGULAR} Content Delivery" data-page-subtitle="" data-page-dropdown-test='[{"id":"1","name":"One"},{"id":"2","name":"Two"}]'></webui-data>
 
 <webui-sideimage reverse src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg">
     <webui-page-segment elevation="10">
@@ -27,11 +27,27 @@
 ## Data Subscriptions
 
 <webui-page-segment class="elevation-10">
-    <webui-input-text label="App Struct Test" placeholder="Data entered here will persist through page navigations." data-trigger="test.name" data-subscribe="test.name" data-set="value"></webui-input-text>
-    <webui-input-text label="Page Struct Test" placeholder="Data entered here will be removed when page is changed" data-trigger="page-test.name" data-subscribe="page-test.name" data-set="value"></webui-input-text>
-    <webui-flex>
+    <webui-side-by-side>
+        <section>
+            <webui-input-text label="App Struct Test - subscribed to test.name" compact theme="danger" placeholder="Data entered here will persist through page navigations." data-trigger="test.name" data-subscribe="test.name" data-set="value"></webui-input-text>
+        </section>
+        <section>
+            <webui-input-text label="Page Struct Test - subscribed to page-test.name" compact theme="success"   placeholder="Data entered here will be removed when page is changed" data-trigger="page-test.name" data-subscribe="page-test.name" data-set="value"></webui-input-text>
+        </section>
+    </webui-side-by-side>
+    <webui-side-by-side>
+        <webui-flex column>
+            <webui-input-text theme="info" label="App Test.One" placeholder="One" data-trigger="test.one" data-subscribe="test.one" data-set="value"></webui-input-text>
+            <webui-input-text theme="tertiary" label="App Test.Two" placeholder="Two" data-trigger="test.two" data-subscribe="test.two" data-set="value"></webui-input-text>
+            <webui-input-text theme="secondary" label="App Test.Three" placeholder="Three" data-trigger="test.three" data-subscribe="test.three" data-set="value"></webui-input-text>
+            <webui-dropdown icon="flask-vial" label="Dropdown Test" newlabel="Select an Option!" data-trigger="test.dropdown" data-subscribe="test.dropdown" data-options="page-dropdown-test">
+                <option slot="template">{TEMPLATE_NAME}</option>
+            </webui-dropdown>
+        </webui-flex>
+        <webui-code lang="json" data-subscribe="test"></webui-code>
+    </webui-side-by-side>
+    <webui-flex wrap>
         <webui-input-text label="Data Trigger From webui-input-text" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-input-text>
-        <webui-input-text compact label="Data Trigger From webui-input-text[compact]" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-input-text>
     </webui-flex>
     <webui-flex>
         <label for="test2" class="nowrap">Data Trigger From input</label>
@@ -46,12 +62,6 @@
         <input type="text" readonly data-subscribe="test1" data-set="value" />
     </webui-flex>
 </webui-page-segment>
-
-<span data-stopclick>
-<webui-dropdown label="Dropdown Test" value='[{"id":"1","name":"One"},{"id":"2","name":"Two"}]'>
-    <option slot="template">{TEMPLATE_NAME}</option>
-</webui-dropdown>
-</span>
 
 <webui-page-segment>
     This is a list.

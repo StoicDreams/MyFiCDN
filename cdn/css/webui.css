@@ -152,7 +152,6 @@ svg.logo .diamond {
     box-sizing: border-box;
 }
 
-p,
 code {
     min-height: 1em;
 }
@@ -558,26 +557,33 @@ hr {
 
 pre,
 .auto_message_box {
+    display: grid;
     position: relative;
     background-color: var(--color-black);
     color: var(--color-white);
+    min-height: 3em;
+}
+
+pre[languagetag] {
+    margin-top: 2rem;
 }
 
 pre[languagetag]:before {
     content: attr(languagetag);
     position: absolute;
     display: inline-block;
-    background-color: var(--color-primary);
-    color: var(--color-primary-offset);
+    background-image: linear-gradient(35deg, var(--color-black) 0%, var(--color-black) 15%, var(--color-info) 50%, var(--color-info) 100%);
+    color: var(--color-info-offset);
+    border-radius: var(--corners);
     top: 0;
-    left: 0;
-    width: 100%;
-    margin-right: 0;
-    margin-bottom: var(--padding);
-    padding: calc(0.5 * var(--padding));
-    font-size: 0.9em;
-    z-index: 0;
-    opacity: 0.7;
+    right: 0;
+    translate: 4px -4px;
+    padding: calc(0.5 * var(--padding)) calc(1.5 * var(--padding));
+    font-size: 0.85em;
+    font-weight: 600;
+    z-index: 2;
+    opacity: 1;
+    text-transform: uppercase;
     box-sizing: border-box;
 }
 
@@ -602,13 +608,9 @@ pre>code {
     position: relative;
     z-index: 1;
     padding: var(--padding);
-    background-color: transparent;
+    background-color: inherit;
     color: inherit;
     height: 100%;
-}
-
-pre[languagetag]>code {
-    padding-top: calc((2 * var(--padding)) + 0.9em);
 }
 
 table {
@@ -1137,6 +1139,7 @@ webui-paper,
     border-bottom-right-radius: var(--corners);
 }
 
+/*
 .auto_message_box {
     flex-grow: 1;
 }
@@ -1210,6 +1213,7 @@ webui-paper,
     word-break: break-all;
     z-index: 1;
 }
+*/
 
 webui-quote,
 blockquote,
@@ -1632,7 +1636,18 @@ webui-side-by-side> :only-child,
     .side-by-side,
     .maxcontent-auto,
     .auto-maxcontent {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: var(--padding);
+    }
+
+    webui-sideimage>*,
+    webui-side-by-side>*,
+    .side-by-side>*,
+    .maxcontent-auto>*,
+    .auto-maxcontent>* {
+        width: 100%;
     }
 
     webui-sideimage>:not(:first-child),

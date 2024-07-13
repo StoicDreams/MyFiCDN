@@ -20,9 +20,12 @@ webui.define('webui-input-text', {
             t.setAttribute('value', t._field.value);
         });
     },
-    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'type', 'placeholder'],
+    attr: ['id', 'label', 'theme', 'title', 'name', 'autofocus', 'value', 'type', 'placeholder'],
     attrChanged: (t, property, value) => {
         switch (property) {
+            case 'theme':
+                t.setTheme(value);
+                break;
             case 'id':
                 if (value) {
                     t.removeAttribute('id');
@@ -60,20 +63,25 @@ webui.define('webui-input-text', {
         }
     },
     shadowTemplate: `
+<label></label>
+<input></input>
 <style type="text/css">
 :host {
-display:grid;
-grid-template-columns:min-content auto;
+display:flex;
 gap:var(--padding);
 width:100%;
+max-width:100%;
 position:relative;
 box-sizing:border-box;
+align-items:center;
+overflow:auto;
 }
 :host([vertical]),
 :host([compact]) {
 grid-template-columns:1fr;
 }
 :host([compact]) {
+display:grid;
 gap:0.1em;
 }
 :host([compact])>label {
@@ -85,7 +93,12 @@ opacity: 0.5;
 outline:none;
 }
 label {
+overflow:hidden;
 width:max-content;
+max-width:50%;
+padding-left: var(--padding);
+white-space:nowrap;
+text-overflow: ellipsis;
 }
 input {
 height:max-content;
@@ -96,8 +109,12 @@ line-height:normal;
 box-sizing:border-box;
 font:inherit;
 }
+@container (max-width:400px) {
+:host {
+display:grid;
+gap:0.1em;
+}
+}
 </style>
-<label></label>
-<input></input>
 `
 });

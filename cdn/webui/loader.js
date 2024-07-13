@@ -188,13 +188,30 @@ const webui = (() => {
                         t[key] = options[key];
                     });
                     if (!options.isInline) {
-                        webui.removeFromParentPTag(this);
+                        webui.removeFromParentPTag(t);
                     }
                     if (options.constructor) {
-                        options.constructor(this);
+                        options.constructor(t);
                     }
                     if (shadowTemplate) {
                         const shadow = t.attachShadow({ mode: 'open' });
+                        // Something is copying attributes from the parent webui-dropdown to the input/select elements on the first click in Edge browser.
+                        function removeBugAttributes(el) {
+                            ['style', 'class', 'value', 'preload', 'data-options', 'data-trigger', 'data-subscribe'].forEach(key => {
+                                el.removeAttribute(key);
+                            });
+                        }
+                        ['input', 'select'].forEach(selector => {
+                            t.template.querySelectorAll(selector).forEach(el => {
+                                ['event', 'click', 'blur'].forEach(evname => {
+                                    el.addEventListener(evname, ev => {
+                                        setTimeout(() => {
+                                            removeBugAttributes(el);
+                                        }, 0);
+                                    });
+                                });
+                            });
+                        });
                         shadow.appendChild(t.template);
                     }
                 }
@@ -379,8 +396,14 @@ const webui = (() => {
             }
             document.querySelectorAll(`[data-subscribe]`).forEach(sub => {
                 sub.dataset.subscribe.split('|').forEach(k => {
-                    if (k === key) {
-                        setDataToEl(sub, key);
+                    let sections = key.split('.');
+                    let skeys = [];
+                    while (sections.length > 0) {
+                        skeys.push(sections.shift());
+                        let skey = skeys.join('.');
+                        if (k === skey) {
+                            setDataToEl(sub, skey);
+                        }
                     }
                 });
             });
@@ -403,8 +426,8 @@ const webui = (() => {
             }
         }
         setTheme(el, value) {
-            webui.removeClass(el, 'theme-');
-            el.classList.add(`theme-${value}`);
+            el.style.backgroundColor = `var(--color-${value})`;
+            el.style.color = `var(--color-${value}-offset)`;
         }
         toSnake(key) {
             return key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
@@ -555,72 +578,74 @@ const webui = (() => {
         let value = el.dataset.value === undefined ? el.value : el.dataset.value;
         webui.setData(key, value);
     }
-    function setDataToEl(el, key, attempt) {
+    function setDataToEl(el, key) {
         let toSet = el.dataset.set || 'setter';
         if (toSet === 'click') return;
-        let a = attempt || 1;
-        let value = undefined;
-        let sections = key.split('.');
-        if (sections.length > 1) {
-            let skey = sections.shift();
-            let segment = appData[skey];
-            while (segment && sections.length > 0) {
-                skey = sections.shift();
-                segment = segment[skey];
-                if (sections.length === 0) {
-                    value = segment;
-                    break;
-                }
-            }
-        } else {
-            value = appData[key];
-        }
-        let isNull = value === null || value === undefined;
         key.split('|').forEach(key => {
             key = key.trim();
-            try {
-                switch (toSet) {
-                    case 'setter':
-                        let field = webui.toCamel(key);
-                        let fsetter = webui.toCamel(`set-${field}`);
-                        if (typeof el[fsetter] === 'function') {
-                            el[fsetter](value, key);
-                        } else if (typeof el[field] === 'function') {
-                            el[field](value, key);
-                        } else if (typeof el.setValue === 'function' && a > 1) {
-                            el.setValue(value, key);
-                        } else {
-                            if (a < 5) {
-                                setTimeout(() => {
-                                    setDataToEl(el, key, a + 1);
-                                }, Math.pow(10, a));
-                            } else {
-                                console.error(`Element is missing expected setter ${field}: typeof == ${ef}`, el, a, typeof el.setValue);
-                                console.dir(el);
-                            }
-                        }
+            let value = undefined;
+            let sections = key.split('.');
+            if (sections.length > 1) {
+                let skey = sections.shift();
+                let segment = appData[skey];
+                while (segment && sections.length > 0) {
+                    skey = sections.shift();
+                    segment = segment[skey];
+                    if (sections.length === 0) {
+                        value = segment;
                         break;
-                    case 'innerText':
-                        el.innerText = isNull ? '' : webui.applyAppDataToContent(value);
-                        break;
-                    case 'innerHTML':
-                        el.innerHTML = isNull ? '' : webui.applyAppDataToContent(value);
-                        break;
-                    default:
-                        if (typeof el[toSet] === 'function') {
-                            el[toSet](value);
-                        } else {
-                            if (isNull) {
-                                el.removeAttribute(toSet);
-                            } else {
-                                el.setAttribute(toSet, value);
-                            }
-                        }
-                        break;
+                    }
                 }
-            } catch (ex) {
-                console.error(`Error setting data to ${el.nodeName}`, el, ex, key);
+            } else {
+                value = appData[key];
             }
+            let isNull = value === null || value === undefined;
+            let a = 1;
+            (function attempt() {
+                try {
+                    switch (toSet) {
+                        case 'setter':
+                            let field = webui.toCamel(key);
+                            let fsetter = webui.toCamel(`set-${field}`);
+                            if (typeof el[fsetter] === 'function') {
+                                el[fsetter](value, key);
+                            } else if (typeof el[field] === 'function') {
+                                el[field](value, key);
+                            } else if (typeof el.setValue === 'function' && a > 1) {
+                                el.setValue(value, key);
+                            } else {
+                                if (a++ < 5) {
+                                    setTimeout(() => {
+                                        attempt();
+                                    }, Math.pow(10, a));
+                                } else {
+                                    console.error(`Element is missing expected setter ${field}: typeof == ${ef}`, el, a, typeof el.setValue);
+                                    console.dir(el);
+                                }
+                            }
+                            break;
+                        case 'innerText':
+                            el.innerText = isNull ? '' : webui.applyAppDataToContent(value);
+                            break;
+                        case 'innerHTML':
+                            el.innerHTML = isNull ? '' : webui.applyAppDataToContent(value);
+                            break;
+                        default:
+                            if (typeof el[toSet] === 'function') {
+                                el[toSet](value);
+                            } else {
+                                if (isNull) {
+                                    el.removeAttribute(toSet);
+                                } else {
+                                    el.setAttribute(toSet, value);
+                                }
+                            }
+                            break;
+                    }
+                } catch (ex) {
+                    console.error(`Error setting data to ${el.nodeName}`, el, ex, key);
+                }
+            })();
         });
     }
     function toggleAttr(el, attr) {

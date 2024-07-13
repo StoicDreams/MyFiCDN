@@ -10,38 +10,31 @@
             }
             t.newid = '';
             t.newlabel = 'New';
-            t._label = t.template.querySelector('label');
+            t._forLabel = t.template.querySelector('label');
+            t._label = t.template.querySelector('slot[name="label"]');
             t._select = t.template.querySelector('select');
-            t._icon = t.template.querySelector('webui-fa');
+            t._startIcon = t.template.querySelector('webui-fa.start');
+            t._midIcon = t.template.querySelector('webui-fa.mid');
+            t._endIcon = t.template.querySelector('webui-fa.end');
+            t._datasub = webui.create('webui-data');
+            t.appendChild(t._datasub);
             t._select.addEventListener('change', _ => {
                 t.value = t._select.value;
-                console.log('select changed');
                 t.dispatchEvent(new Event('change', { bubbles: true }));
             });
-            // Something is copying attributes from the parent webui-dropdown to the select element on the first click in Edge browser.
-            function removeBugAttributes() {
-                ['style', 'label', 'value', 'preload'].forEach(key => {
-                    t._select.removeAttribute(key);
-                });
-            }
-            t.addEventListener('click', ev => {
-                removeBugAttributes();
-            });
-            t._select.addEventListener('focus', ev => {
-                setTimeout(() => {
-                    removeBugAttributes();
-                }, 0);
-            });
-            t._select.addEventListener('blur', ev => {
-                removeBugAttributes();
-            });
-            t._select.addEventListener('click', ev => {
-                removeBugAttributes();
-            });
         },
-        attr: ['theme', 'icon', 'label', 'stack', 'value', 'newid', 'newlabel'],
+        attr: ['theme', 'icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'data-options'],
         attrChanged: (t, property, value) => {
             switch (property) {
+                case 'dataOptions':
+                    t._datasub.setValue = (val) => {
+                        t.setOptions(val);
+                    };
+                    t._datasub.setAttribute('data-subscribe', value);
+                    break;
+                case 'options':
+                    t.setOptions(value);
+                    break;
                 case 'newid':
                     t._includeNew = true;
                     break;
@@ -54,7 +47,15 @@
                 case 'label':
                     t._label.innerHTML = value;
                     break;
+                case 'startIcon':
                 case 'icon':
+                    t._startIcon.setAttribute('icon', value);
+                    break;
+                case 'midIcon':
+                    t._midIcon.setAttribute('icon', value);
+                    break;
+                case 'endIcon':
+                    t._endIcon.setAttribute('icon', value);
                     break;
                 case 'value':
                     t.setValue(value);
@@ -64,7 +65,7 @@
         connected: (t) => {
             let id = webui.uuid();
             t.setTheme(t.theme || 'primary');
-            t._label.setAttribute('for', id);
+            t._forLabel.setAttribute('for', id);
             t._select.setAttribute('id', id);
         },
         options: function (options) {
@@ -72,7 +73,7 @@
         },
         setOptions: function (options) {
             let t = this;
-            if (options === undefined || options === null) {
+            if (options === undefined || options === null || options === '') {
                 options = [];
             }
             let data = options.forEach ? options : JSON.parse(options);
@@ -99,11 +100,41 @@
                 option.innerHTML = template ? webui.replaceAppData(template, item) : id;
                 t._select.appendChild(option);
             });
+            if (t.value !== undefined) {
+                let o = t._select.querySelector(`option[value="${t.value}"]`);
+                if (o) {
+                    o.selected = true;
+                }
+            } else {
+                let first = t._select.querySelector('option');
+                if (first) {
+                    t.value = first.value;
+                }
+            }
         },
         setValue: function (value) {
-            this.setOptions(value);
+            let t = this;
+            let o = t._select.querySelector(`option[value="${value}"]`);
+            if (!o) {
+                if (value !== undefined) {
+                    t.value = value;
+                }
+                return;
+            }
+            t.value = value;
+            o.selected = true;
         },
         shadowTemplate: `
+<label>
+<webui-fa class="start"></webui-fa>
+<slot name="label"></slot>
+<webui-fa class="mid"></webui-fa>
+</label>
+<div>
+<select><slot></slot></select>
+<webui-fa class="end"></webui-fa>
+</div>
+<slot name="template"></slot>
 <style type="text/css">
 :host {
 display:flex;
@@ -113,27 +144,34 @@ box-sizing:border-box;
 align-items: center;
 }
 :host([stack]) {
-flex-direction:column;
+display:grid;
+}
+div {
+display:flex;
+flex-grow:1;
 }
 select {
 display:block;
 flex-grow:1;
-padding: var(--padding,1rem);
+padding: var(--padding, 2px 5px);
 height:100%;
 }
 label:empty {display:none;}
 label {
+display:flex;
+align-items:center;
+gap:var(--padding);
 padding:var(--padding,1rem);
 }
+webui-fa:not([icon]),
 slot[name="template"] {display:none;}
+@container (max-width:400px) {
+:host {
+display:grid;
+gap:0.1em;
+}
+}
 </style>
-<label>
-<webui-fa></webui-fa>
-<slot name="label"></slot>
-<webui-fa></webui-fa>
-</label>
-<select><slot></slot></select>
-<slot name="template"></slot>
 `
     });
 }
