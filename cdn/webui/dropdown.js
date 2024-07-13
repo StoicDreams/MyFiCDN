@@ -8,6 +8,8 @@
             if (optionTemplate) {
                 t._optionTemplate = webui.trimLinePreWhitespce(optionTemplate.innerHTML);
             }
+            t.newid = '';
+            t.newlabel = 'New';
             t._label = t.template.querySelector('label');
             t._select = t.template.querySelector('select');
             t._icon = t.template.querySelector('webui-fa');
@@ -37,9 +39,15 @@
                 removeBugAttributes();
             });
         },
-        attr: ['theme', 'icon', 'label', 'stack', 'value'],
+        attr: ['theme', 'icon', 'label', 'stack', 'value', 'newid', 'newlabel'],
         attrChanged: (t, property, value) => {
             switch (property) {
+                case 'newid':
+                    t._includeNew = true;
+                    break;
+                case 'newlabel':
+                    t._includeNew = true;
+                    break;
                 case 'theme':
                     t.setTheme(value);
                     break;
@@ -74,6 +82,10 @@
             }
             let template = t._optionTemplate;
             t._select.innerHTML = '';
+            if (t._includeNew) {
+                let option = webui.create('option', { value: t.newid, html: t.newlabel });
+                t._select.appendChild(option);
+            }
             data.forEach(item => {
                 let id = t.dataset.id ? item[t.dataset.id] : item.id;
                 if (id === undefined && item.value !== undefined) {
