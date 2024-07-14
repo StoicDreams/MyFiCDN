@@ -45,7 +45,7 @@ webui.define("webui-avatar", {
 display:inline-flex;
 justify-content:center;
 align-items:center;
-margin:var(--padding);
+margin:auto;
 }
 slot {
 font-size: 1.2em;
