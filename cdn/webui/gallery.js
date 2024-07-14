@@ -48,8 +48,12 @@ webui.define("webui-gallery", {
             let card = cardTemplate.cloneNode(false);
             t.cards.appendChild(card);
             card.setAttribute('title', image.name);
+            let wrap = webui.create('div');
+            wrap.style.overflow = 'hidden';
+            wrap.style.maxWidth = '100%';
+            card.appendChild(wrap);
             let ca = webui.create('webui-avatar');
-            card.appendChild(ca);
+            wrap.appendChild(ca);
             card.style.cursor = 'pointer';
             ca.setAttribute('src', image.src);
             ca.style.fontSize = '4em';
