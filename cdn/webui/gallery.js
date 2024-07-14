@@ -3,9 +3,9 @@
 webui.define("webui-gallery", {
     preload: 'flex cards card avatar',
     constructor: (t) => {
-        t.flexImage = webui - create('webui-flex');
-        t.flexName = webui - create('webui-flex');
-        t.cards = webui - create('webui-cards');
+        t.flexImage = webui.create('webui-flex');
+        t.flexName = webui.create('webui-flex');
+        t.cards = webui.create('webui-cards');
         t.cache = {};
     },
     attr: ['src', 'card-width'],
@@ -26,14 +26,14 @@ webui.define("webui-gallery", {
         t.flexImage.classList.add('pa-2');
         t.flexImage.style.height = 'calc(0.8 * var(--main-height))';
 
-        let img = webui - create('img');
+        let img = webui.create('img');
         img.setAttribute('data-subscribe', 'page-gallery-image');
         img.setAttribute('data-set', 'src');
         t.flexImage.appendChild(img);
 
         t.flexName.setAttribute('justify', 'center');
         t.flexName.classList.add('pa-1', 'ma-1');
-        let nm = webui - create('p');
+        let nm = webui.create('p');
         t.flexName.appendChild(nm);
         nm.setAttribute('data-subscribe', 'page-gallery-image-name');
         nm.setAttribute('data-set', 'innerHTML');
@@ -43,12 +43,12 @@ webui.define("webui-gallery", {
             t.cards.setAttribute('card-width', t.cardWidth);
         }
 
-        let cardTemplate = webui - create('webui-card');
+        let cardTemplate = webui.create('webui-card');
         images.forEach(image => {
             let card = cardTemplate.cloneNode(false);
             t.cards.appendChild(card);
             card.setAttribute('title', image.name);
-            let ca = webui - create('webui-avatar');
+            let ca = webui.create('webui-avatar');
             card.appendChild(ca);
             card.style.cursor = 'pointer';
             ca.setAttribute('src', image.src);
