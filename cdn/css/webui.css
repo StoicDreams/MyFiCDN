@@ -549,6 +549,12 @@ webui-page-segment>div:not(:first-child),
     margin-top: calc(1.5 * var(--padding));
 }
 
+webui-paper>webui-flex,
+webui-flex>webui-paper {
+    width: 100%;
+    width: --webkit-fit-available;
+}
+
 button {
     display: inline-block;
     margin: 0;
@@ -3490,7 +3496,7 @@ webui-side-by-side>*>* {
     margin: auto;
 }
 
-.readable-content>* {
+.readable-content {
     max-width: var(--readability-line-limit);
 }
 
