@@ -28,6 +28,8 @@ webui.define('webui-flex', {
 :host {
 display: flex!important;
 container-type:inline-size;
+width:100%;
+width:-webkit-fill-available;
 }
 :host([grow]) {
 flex-grow:1;
