@@ -272,6 +272,10 @@ footer[slot="content-footer"] {
     gap: var(--padding);
 }
 
+footer[slot="content-footer"] webui-link:not(:first-child):before {
+    content: " | ";
+}
+
 footer>* {
     z-index: 1;
 }
@@ -3468,7 +3472,15 @@ webui-side-by-side>h6 {
     align-items: center;
 }
 
-webui-side-by-side>*,
+webui-side-by-side>* {
+    width: 100%;
+}
+
+webui-side-by-side>*>* {
+    max-width: var(--readability-line-limit);
+    margin: auto;
+}
+
 .readable-content>* {
     max-width: var(--readability-line-limit);
 }

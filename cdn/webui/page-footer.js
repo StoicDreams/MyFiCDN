@@ -12,8 +12,13 @@ webui.define('webui-page-footer', {
         let cf = t.innerHTML;
         if (cf) {
             t._contentFooter = webui.create('footer', { slot: 'content-footer' });
-            t._contentFooter.innerHTML = webui.applyAppDataToContent(cf);
+            t._contentFooter._template = cf;
+            t._contentFooter.setValue = (v) => {
+                t._contentFooter.innerHTML = webui.applyAppDataToContent(cf);
+            }
+            t._contentFooter.dataset.subscribe = t.dataset.subscribe || 'app-name';
             t.parentNode.appendChild(t._contentFooter);
+            t._contentFooter.innerHTML = webui.applyAppDataToContent(cf);
         }
     },
     attr: ['copyright', 'company'],
