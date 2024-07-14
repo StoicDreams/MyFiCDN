@@ -4,8 +4,6 @@ webui.define('webui-stoic-social-links', {
     connected: (t) => {
         if (!t.innerHTML) {
             t.innerHTML = webui.trimLinePreTabs(`
-            <span class="flex-break show-at-mobile"></span>
-            <span class="flex-grow show-at-mobile"></span>
             <webui-paper class="mx-a">
                 <a class="pa-1" title="Sponser us to help support development" href="https://github.com/sponsors/StoicDreams">
                 <webui-fa icon="badge-dollar" family="solid"></webui-fa>

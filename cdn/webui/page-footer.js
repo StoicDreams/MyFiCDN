@@ -12,7 +12,7 @@ webui.define('webui-page-footer', {
         let cf = t.innerHTML;
         if (cf) {
             t._contentFooter = webui.create('footer', { slot: 'content-footer' });
-            t._contentFooter.innerHTML = webui.trimLinePreTabs(cf);
+            t._contentFooter.innerHTML = webui.applyAppDataToContent(cf);
             t.parentNode.appendChild(t._contentFooter);
         }
     },
