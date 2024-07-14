@@ -1,3 +1,5 @@
+<webui-data data-page-next-page='{"name":"Home","href":"/"}'></webui-data>
+
 #### About Stoic Dreams
 
 <webui-page-segment>
