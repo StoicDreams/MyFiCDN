@@ -6,7 +6,6 @@ webui.define("webui-gallery", {
         t.flexImage = webui.create('webui-flex');
         t.flexName = webui.create('webui-flex');
         t.cards = webui.create('webui-cards');
-        t.cache = {};
     },
     attr: ['src', 'card-width'],
     loadGallery: async function (t) {
@@ -56,7 +55,6 @@ webui.define("webui-gallery", {
             img.style.backgroundSize = 'cover';
             img.style.backgroundPosition = 'center center';
             card.appendChild(img);
-            img.appendChild(ca);
             card.style.cursor = 'pointer';
             card.addEventListener('click', _ev => {
                 webui.setData('page-gallery-image', image.src);
