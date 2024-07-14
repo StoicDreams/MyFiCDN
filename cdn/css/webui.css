@@ -113,6 +113,11 @@
     opacity: 0;
 }
 
+webui-data,
+webui-data-loader {
+    display: none;
+}
+
 webui-app {
     animation: animation-fadein 400ms ease-out;
     min-width: 380px;
