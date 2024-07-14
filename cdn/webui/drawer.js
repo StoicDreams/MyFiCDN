@@ -129,7 +129,9 @@ transform: translate(0,105%);
 }
 :host[docked]{
 }
+:host([slot="left"]),
 :host([slot="left"]) {
+min-width: 15ch;
 }
 ::slotted([slot="header"]) {
 display: flex!important;
