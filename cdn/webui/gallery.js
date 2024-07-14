@@ -48,8 +48,17 @@ webui.define("webui-gallery", {
             t.cards.appendChild(card);
             card.setAttribute('title', image.name);
             let img = webui.create('div');
+            if (t.cardWidth) {
+                let dim = parseFloat(t.cardWidth);
+                if (`${dim}` === t.cardWidth) {
+                    img.style.height = `${dim}px`;
+                } else {
+                    img.style.height = t.cardWidth;
+                }
+            } else {
+                img.style.height = '100px';
+            }
             img.style.width = '100%';
-            img.style.height = '100%';
             img.style.backgroundImage = `url(${image.src})`;
             img.style.backgroundRepeat = 'no-repeat';
             img.style.backgroundSize = 'cover';
