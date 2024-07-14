@@ -49,37 +49,45 @@
         </webui-flex>
         <webui-code lang="json" data-subscribe="test"></webui-code>
     </webui-side-by-side>
-    <webui-flex wrap>
-        <webui-input-text label="Data Trigger From webui-input-text" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-input-text>
-    </webui-flex>
-    <webui-flex>
-        <label for="test2" class="nowrap">Data Trigger From input</label>
-        <input id="test2" type="text" data-trigger="test1" data-subscribe="test1" data-set="value">
-    </webui-flex>
-    <webui-flex>
-        <span>Subscribe InnerHTML:</span>
-        <span data-subscribe="test1" data-set="innerHTML"></span>
-    </webui-flex>
-    <webui-flex gap="5">
-        <label class="nowrap">Subscribe value (readonly):</label>
-        <input type="text" readonly data-subscribe="test1" data-set="value" />
-    </webui-flex>
+    <webui-side-by-side>
+        <webui-flex column>
+            <webui-input-text label="Data Trigger From webui-input-text" data-trigger="test1" data-subscribe="test1" data-set="value"></webui-input-text>
+            <webui-flex>
+                <label for="test2" class="nowrap">Data Trigger From input</label>
+                <input id="test2" type="text" data-trigger="test1" data-subscribe="test1" data-set="value">
+            </webui-flex>
+        </webui-flex>
+        <webui-flex column>
+            <webui-flex>
+                <span>Subscribe InnerHTML:</span>
+                <span data-subscribe="test1" data-set="innerHTML"></span>
+            </webui-flex>
+            <webui-flex gap="5">
+                <label class="nowrap">Subscribe value (readonly):</label>
+                <input type="text" readonly data-subscribe="test1" data-set="value" />
+            </webui-flex>
+        </webui-flex>
+    </webui-side-by-side>
 </webui-page-segment>
 
-<webui-page-segment>
-    This is a list.
-    - One
-    - Two
-    - Three
-      - Sub 1
-      - Sub 2
-        - Deep Sub 3
-        - Deep Sub 4
-</webui-page-segment>
-
-<webui-table theme="tertiary" columns="Id;Test One; Test Two ;" data-subscribe="page-report" data-set="setData" bordered class="my-3"></webui-table>
-
-<webui-data data-page-report='[{"id":1,"testOne":"hello","TestTwo":"World"}]'></webui-data>
+<webui-side-by-side>
+    <webui-page-segment>
+        ### Display Lists
+        This is a list.
+        - One
+        - Two
+        - Three
+        - Sub 1
+        - Sub 2
+            - Deep Sub 3
+            - Deep Sub 4
+    </webui-page-segment>
+    <webui-page-segment>
+        ### Display Tables / Reports
+        <webui-table theme="tertiary" columns="Id;Test One; Test Two ;" data-subscribe="page-report" data-set="setData" bordered class="my-3"></webui-table>
+        <webui-data data-page-report='[{"id":1,"testOne":"hello","TestTwo":"World"}]'></webui-data>
+    </webui-page-segment>
+</webui-side-by-side>
 
 ## Current Web UI Projects
 

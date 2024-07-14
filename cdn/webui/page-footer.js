@@ -4,7 +4,7 @@ webui.define('webui-page-footer', {
     constructor: (t) => {
         t._footer = webui.create('footer', { slot: 'footer' });
         t.parentNode.appendChild(t._footer);
-        t._copyright = webui.create('webui-paper');
+        t._copyright = webui.create('webui-paper', { class: 'nowrap' });
         t._footer.appendChild(webui.create('webui-flex', { grow: true }));
         t._footer.appendChild(t._copyright);
         t._footer.appendChild(webui.create('webui-flex', { grow: true }));

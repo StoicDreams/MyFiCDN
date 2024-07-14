@@ -633,10 +633,16 @@ const webui = (() => {
                             if (typeof el[toSet] === 'function') {
                                 el[toSet](value);
                             } else {
-                                if (isNull) {
-                                    el.removeAttribute(toSet);
+                                if (a++ < 5) {
+                                    setTimeout(() => {
+                                        attempt();
+                                    }, Math.pow(10, a));
                                 } else {
-                                    el.setAttribute(toSet, value);
+                                    if (isNull) {
+                                        el.removeAttribute(toSet);
+                                    } else {
+                                        el.setAttribute(toSet, value);
+                                    }
                                 }
                             }
                             break;

@@ -35,10 +35,12 @@ webui.define("webui-sideimage", {
         t.classList.add('side-by-side');
         t._cWrap.setAttribute('column', true);
         t._cWrap.setAttribute('justify', 'center');
+        t._cWrap.setAttribute('align', 'center');
         t._content.classList.add('readable-content');
         t.appendChild(t._cWrap);
         t._imgContainer.setAttribute('align', 'center');
         t._imgContainer.setAttribute('justify', 'center');
+        t._imgContainer.setAttribute('align', 'center');
         if (t.reverse) {
             t.insertBefore(t._imgContainer, t._cWrap);
         } else {

@@ -13,7 +13,6 @@ webui.define("webui-next-page", {
     attr: ['name', 'href', 'icon', 'family', 'theme'],
     setValue: function (value) {
         let t = this;
-        console.log('next page', value);
         if (!value) {
             value = {};
         }

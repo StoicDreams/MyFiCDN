@@ -23,6 +23,7 @@ webui.define('webui-poweredby', {
     shadowTemplate: `
 <style type="text/css">
 :host {
+white-space:nowrap;
 }
 a[href] {
 color:inherit;
