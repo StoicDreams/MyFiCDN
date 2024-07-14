@@ -1,18 +1,14 @@
 /* Display gallery images */
 "use strict"
 webui.define("webui-gallery", {
+    preload: 'flex cards card avatar',
     constructor: (t) => {
-        t.flexImage = document.createElement('webui-flex');
-        t.flexName = document.createElement('webui-flex');
-        t.cards = document.createElement('webui-cards');
+        t.flexImage = webui - create('webui-flex');
+        t.flexName = webui - create('webui-flex');
+        t.cards = webui - create('webui-cards');
+        t.cache = {};
     },
-    attr: ['src'],
-    attrChanged: (t, property, value) => {
-        switch (property) {
-            case 'src':
-                break;
-        }
-    },
+    attr: ['src', 'card-width'],
     loadGallery: async function (t) {
         if (!t.src) { return; }
         let result = await fetch(t.src);
@@ -30,26 +26,29 @@ webui.define("webui-gallery", {
         t.flexImage.classList.add('pa-2');
         t.flexImage.style.height = 'calc(0.8 * var(--main-height))';
 
-        let img = document.createElement('img');
+        let img = webui - create('img');
         img.setAttribute('data-subscribe', 'page-gallery-image');
         img.setAttribute('data-set', 'src');
         t.flexImage.appendChild(img);
 
         t.flexName.setAttribute('justify', 'center');
         t.flexName.classList.add('pa-1', 'ma-1');
-        let nm = document.createElement('p');
+        let nm = webui - create('p');
         t.flexName.appendChild(nm);
         nm.setAttribute('data-subscribe', 'page-gallery-image-name');
         nm.setAttribute('data-set', 'innerHTML');
 
         t.cards.classList.add('mb-5');
+        if (t.cardWidth) {
+            t.cards.setAttribute('card-width', t.cardWidth);
+        }
 
-        let cardTemplate = document.createElement('webui-card');
+        let cardTemplate = webui - create('webui-card');
         images.forEach(image => {
             let card = cardTemplate.cloneNode(false);
             t.cards.appendChild(card);
             card.setAttribute('title', image.name);
-            let ca = document.createElement('webui-avatar');
+            let ca = webui - create('webui-avatar');
             card.appendChild(ca);
             card.style.cursor = 'pointer';
             ca.setAttribute('src', image.src);
