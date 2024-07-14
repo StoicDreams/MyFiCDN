@@ -30,16 +30,18 @@
 ## Data Subscriptions
 
 <webui-page-segment class="elevation-10">
+    #### Test Page Data (Clears when navigating to new page)
     <webui-side-by-side>
-        <section>
-            <webui-input-text label="App Struct Test - subscribed to test.name" compact theme="danger" placeholder="Data entered here will persist through page navigations." data-trigger="test.name" data-subscribe="test.name" data-set="value"></webui-input-text>
-        </section>
         <section>
             <webui-input-text label="Page Struct Test - subscribed to page-test.name" compact theme="success"   placeholder="Data entered here will be removed when page is changed" data-trigger="page-test.name" data-subscribe="page-test.name" data-set="value"></webui-input-text>
         </section>
+        <section>
+        </section>
     </webui-side-by-side>
+    #### Test App Data (Persists until page reloaded or closed)
     <webui-side-by-side>
         <webui-flex column>
+            <webui-input-text label="App Struct Test - subscribed to test.name" compact theme="danger" placeholder="Data entered here will persist through page navigations." data-trigger="test.name" data-subscribe="test.name" data-set="value"></webui-input-text>
             <webui-input-text theme="info" label="App Test.One" placeholder="One" data-trigger="test.one" data-subscribe="test.one" data-set="value"></webui-input-text>
             <webui-input-text theme="tertiary" label="App Test.Two" placeholder="Two" data-trigger="test.two" data-subscribe="test.two" data-set="value"></webui-input-text>
             <webui-input-text theme="secondary" label="App Test.Three" placeholder="Three" data-trigger="test.three" data-subscribe="test.three" data-set="value"></webui-input-text>
@@ -47,7 +49,9 @@
                 <option slot="template">{TEMPLATE_NAME}</option>
             </webui-dropdown>
         </webui-flex>
-        <webui-code lang="json" data-subscribe="test"></webui-code>
+        <webui-paper>
+            <webui-code lang="json" data-subscribe="test"></webui-code>
+        </webui-paper>
     </webui-side-by-side>
     <webui-side-by-side>
         <webui-flex column>

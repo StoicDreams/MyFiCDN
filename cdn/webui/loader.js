@@ -227,6 +227,7 @@ const webui = (() => {
                     }
                 }
                 connectedCallback() {
+                    this._isConnected = true;
                     if (options.preload) {
                         this.setAttribute('preload', options.preload);
                     }
@@ -599,7 +600,7 @@ const webui = (() => {
                 value = appData[key];
             }
             let isNull = value === null || value === undefined;
-            let a = 1;
+            let a = 0;
             (function attempt() {
                 try {
                     switch (toSet) {
@@ -616,10 +617,10 @@ const webui = (() => {
                                 if (a++ < 5) {
                                     setTimeout(() => {
                                         attempt();
-                                    }, Math.pow(10, a));
+                                    }, Math.min(1000, Math.pow(2, a)));
                                 } else {
-                                    console.error(`Element is missing expected setter ${field}: typeof == ${ef}`, el, a, typeof el.setValue);
-                                    console.dir(el);
+                                    //console.error(`Element is missing expected setter (${field}|${fsetter}|setValue): typeof == (${typeof el[field]}|${typeof el[fsetter]}|${typeof el.setValue})`, a, el, el._isConnected, el.nodeName, el.parentNode);
+                                    //console.dir(el);
                                 }
                             }
                             break;
@@ -633,10 +634,10 @@ const webui = (() => {
                             if (typeof el[toSet] === 'function') {
                                 el[toSet](value);
                             } else {
-                                if (a++ < 5) {
+                                if (a++ < 4) {
                                     setTimeout(() => {
                                         attempt();
-                                    }, Math.pow(10, a));
+                                    }, Math.min(1000, Math.pow(2, a)));
                                 } else {
                                     if (isNull) {
                                         el.removeAttribute(toSet);

@@ -55,7 +55,6 @@ webui.define('webui-input-text', {
         if (!t.getAttribute('type')) {
             t._field.setAttribute('type', 'text');
         }
-
     },
     handleFormData: function ({ formData }) {
         if (!this.disabled) {
@@ -104,7 +103,7 @@ input {
 height:max-content;
 display:block;
 position:relative;
-width:100%;
+flex-grow:1;
 line-height:normal;
 box-sizing:border-box;
 font:inherit;
