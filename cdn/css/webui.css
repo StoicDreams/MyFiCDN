@@ -1525,7 +1525,7 @@ webui-card>section {
 webui-cards,
 .page-segment-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(1em, 480px));
+    grid-template-columns: repeat(auto-fit, minmax(40px, 100%));
     padding: calc(1.5 * var(--padding));
     gap: calc(1.5 * var(--padding));
     justify-content: center;
