@@ -188,7 +188,7 @@ const webui = (() => {
                         t[key] = options[key];
                     });
                     if (!options.isInline) {
-                        webui.removeFromParentPTag(t);
+                        //webui.removeFromParentPTag(t);
                     }
                     if (options.constructor) {
                         options.constructor(t);
