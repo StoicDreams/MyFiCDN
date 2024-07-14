@@ -6,6 +6,7 @@ webui.define("webui-app", {
         t.dynstyles = document.createElement('style');
         t.dynstyles.setAttribute('type', 'text/css');
         t.headerSlot = t.template.querySelector('slot[name=header]');
+        t.contentFooterSlot = t.template.querySelector('slot[name="content-footer"]');
         t.footerSlot = t.template.querySelector('slot[name=footer]');
         t.leftPanelSlot = t.template.querySelector('slot[name=left]');
         t.rightPanelSlot = t.template.querySelector('slot[name=right]');
@@ -185,6 +186,12 @@ grid-column: 2;
 }
 ::slotted(:not([slot])) {
 }
+slot[name="content-footer"] {
+display:grid;
+gap:var(--padding);
+margin-top:calc(5*var(--padding));
+padding:var(--padding);
+}
 main {
 display:flex;
 flex-direction:column;
@@ -193,7 +200,6 @@ box-sizing:border-box;
 height:var(--main-height);
 flex-grow:1;
 padding:var(--padding,1em);
-padding-bottom:3em;
 grid-row: 3;
 grid-column: 2;
 transition:
@@ -217,7 +223,7 @@ background: rgba(0, 0, 0, 0.2);
 }
 </style>
 <slot name="header"></slot>
-<main><slot></slot></main>
+<main><slot></slot><slot name="content-footer"></slot></main>
 <slot name="footer"></slot>
 <slot name="left"></slot>
 <slot name="right"></slot>

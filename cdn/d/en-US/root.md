@@ -1,4 +1,5 @@
 <webui-data data-page-title="{COMPANY_SINGULAR} Content Delivery" data-page-subtitle="" data-page-dropdown-test='[{"id":"1","name":"One"},{"id":"2","name":"Two"}]'></webui-data>
+<webui-data data-page-next-page='{"name":"About MyFi CDN","href":"/about"}'></webui-data>
 
 <webui-sideimage reverse src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg">
     <webui-page-segment elevation="10">
@@ -83,5 +84,3 @@
 Sample of our current projects to demonstrate our `webui-cards` and `webui-card` components.
 
 <webui-cards src="https://webui.stoicdreams.com/cards/webui-powered-websites.json" card-width="500"></webui-cards>
-
-<webui-next-page name="About MyFi CDN" href="/about"></webui-next-page>

@@ -235,6 +235,16 @@ header {
     box-shadow: 0px 4px 12px 1px rgba(0, 0, 0, 0.4);
 }
 
+webui-stoic-social-links {
+    display: flex;
+}
+
+webui-social-links,
+webui-next-page {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
 footer {
     position: relative;
     background-color: inherit;
@@ -251,10 +261,15 @@ footer::before {
     z-index: 0;
 }
 
-footer {
+footer:not([slot="content-footer"]) {
     background-color: var(--color-footer);
     color: var(--color-footer-offset);
     box-shadow: 0px 4px 12px 1px inset rgba(0, 0, 0, 0.4);
+}
+
+footer[slot="content-footer"] {
+    display: grid;
+    gap: var(--padding);
 }
 
 footer>* {

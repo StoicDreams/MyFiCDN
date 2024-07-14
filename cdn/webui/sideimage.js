@@ -34,7 +34,6 @@ webui.define("webui-sideimage", {
     connected: (t) => {
         t.classList.add('side-by-side');
         t._cWrap.setAttribute('column', true);
-        t._cWrap.setAttribute('align', 'center');
         t._cWrap.setAttribute('justify', 'center');
         t._content.classList.add('readable-content');
         t.appendChild(t._cWrap);

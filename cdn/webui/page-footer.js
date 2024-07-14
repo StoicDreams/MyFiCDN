@@ -2,14 +2,19 @@
 "use strict"
 webui.define('webui-page-footer', {
     constructor: (t) => {
-        t._footer = document.createElement('footer');
-        t._footer.setAttribute('slot', 'footer');
+        t._footer = webui.create('footer', { slot: 'footer' });
         t.parentNode.appendChild(t._footer);
-        t._copyright = document.createElement('webui-paper');
+        t._copyright = webui.create('webui-paper');
         t._footer.appendChild(webui.create('webui-flex', { grow: true }));
         t._footer.appendChild(t._copyright);
         t._footer.appendChild(webui.create('webui-flex', { grow: true }));
-        t._footer.appendChild(document.createElement('webui-poweredby'));
+        t._footer.appendChild(webui.create('webui-poweredby'));
+        let cf = t.innerHTML;
+        if (cf) {
+            t._contentFooter = webui.create('footer', { slot: 'content-footer' });
+            t._contentFooter.innerHTML = webui.trimLinePreTabs(cf);
+            t.parentNode.appendChild(t._contentFooter);
+        }
     },
     attr: ['copyright', 'company'],
     attrChanged: (t, property, _value) => {

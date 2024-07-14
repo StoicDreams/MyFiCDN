@@ -281,7 +281,6 @@ const webui = (() => {
                 let orig = html;
                 html = html.replace(new RegExp(`\<p\>(\<(${tagPattern}).+\<\/\\2\>)\<\/p\>`, 'g'), '$1');
                 if (html === orig) {
-                    console.error('unexpected break', tagPattern, html);
                     break;
                 }
             }
