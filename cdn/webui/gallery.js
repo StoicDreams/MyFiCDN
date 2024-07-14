@@ -1,7 +1,7 @@
 /* Display gallery images */
 "use strict"
 webui.define("webui-gallery", {
-    preload: 'flex cards card avatar',
+    preload: 'flex cards card',
     constructor: (t) => {
         t.flexImage = webui.create('webui-flex');
         t.flexName = webui.create('webui-flex');
@@ -48,15 +48,16 @@ webui.define("webui-gallery", {
             let card = cardTemplate.cloneNode(false);
             t.cards.appendChild(card);
             card.setAttribute('title', image.name);
-            let wrap = webui.create('div');
-            wrap.style.overflow = 'hidden';
-            wrap.style.maxWidth = '100%';
-            card.appendChild(wrap);
-            let ca = webui.create('webui-avatar');
-            wrap.appendChild(ca);
+            let img = webui.create('div');
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.backgroundImage = `url(${image.src})`;
+            img.style.backgroundRepeat = 'no-repeat';
+            img.style.backgroundSize = 'cover';
+            img.style.backgroundPosition = 'center center';
+            card.appendChild(img);
+            img.appendChild(ca);
             card.style.cursor = 'pointer';
-            ca.setAttribute('src', image.src);
-            ca.style.fontSize = '4em';
             card.addEventListener('click', _ev => {
                 webui.setData('page-gallery-image', image.src);
                 webui.setData('page-gallery-image-name', image.name);
