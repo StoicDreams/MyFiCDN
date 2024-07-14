@@ -550,7 +550,7 @@ webui-page-segment>div:not(:first-child),
 }
 
 webui-paper>webui-flex,
-webui-flex>webui-paper {
+webui-flex[column]>webui-paper {
     width: 100%;
     width: --webkit-fit-available;
 }
