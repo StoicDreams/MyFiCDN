@@ -40,7 +40,6 @@ webui.define("webui-next-page", {
         t._preContent.setAttribute('justify', 'center');
         t._preContent.setAttribute('data-subscribe', 'next-page-pre');
         t._preContent.setAttribute('data-set', 'innerHTML');
-        t._link.setAttribute('column', true);
         t._link.setAttribute('justify', 'center');
         t._postContent.classList.add('mt-a');
         t._postContent.setAttribute('column', true);

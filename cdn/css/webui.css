@@ -533,7 +533,7 @@ webui-table {
 
 webui-table>table {
     width: 100%;
-    width: --webkit-fill-available;
+    width: -webkit-fill-available;
 }
 
 blockquote>p:not(:first-child),
@@ -550,7 +550,9 @@ webui-page-segment>div:not(:first-child),
 }
 
 webui-paper>webui-flex,
-webui-flex[column]>webui-paper {
+webui-flex[column]>webui-paper,
+webui-flex[column]>webui-flex,
+webui-flex[column]>* {
     width: 100%;
     width: --webkit-fit-available;
 }

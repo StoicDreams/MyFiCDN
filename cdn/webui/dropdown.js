@@ -142,6 +142,8 @@ gap:var(--padding,1rem);
 position:relative;
 box-sizing:border-box;
 align-items: center;
+width:100%;
+width:-webui-fill-available;
 }
 :host([stack]) {
 display:grid;
