@@ -12,6 +12,7 @@ webui.define("webui-next-page", {
         t.appendChild(t._preContent);
         t.appendChild(t._link);
         t.appendChild(t._postContent);
+        console.log('constructed');
     },
     attr: ['name', 'href', 'icon', 'family', 'theme'],
     setValue: function (value) {
@@ -19,7 +20,7 @@ webui.define("webui-next-page", {
         if (!value) {
             value = {};
         }
-        t.name = value.name || 'Next Page';
+        t.name = value.name || undefined;
         t.href = value.href || '/';
         t.icon = value.icon || 'right';
         t.family = value.family || t.family;
@@ -32,13 +33,25 @@ webui.define("webui-next-page", {
         t._isRendering = true;
         let last = t._lastRender || (Date.now() - 1000);
         t._lastRender = Date.now();
+        const tw = 300;
+        let toWait = Math.min(tw, Math.max(0, tw - (Date.now() - last)));
+        if (toWait === 0) {
+            toWait = tw;
+        }
         setTimeout(() => {
             t._isRendering = false;
-            t._link.innerHTML = webui.applyAppDataToContent(`
-            <webui-button class="ma-a" href="${t.href}" theme="${t.theme}" end-icon="${t.icon}" end-icon-family="${t.family}">
-                Continue to ${t.name}
-            </webui-button>`);
-        }, Math.min(1000, Math.max(0, 300 - Date.now() - last)));
+            if (!t.name) {
+                t._link.innerHTML = '';
+                t.style.display = 'none';
+                return;
+            } else {
+                t._link.innerHTML = webui.applyAppDataToContent(`
+                <webui-button class="ma-a" href="${t.href}" theme="${t.theme}" end-icon="${t.icon}" end-icon-family="${t.family}">
+                    Continue to ${t.name}
+                </webui-button>`);
+                t.style.display = '';
+            }
+        }, toWait);
     },
     connected: (t) => {
         t._preContent.classList.add('mt-a', 'flex-grow');
