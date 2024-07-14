@@ -51,9 +51,9 @@ webui.define("webui-gallery", {
             if (t.cardWidth) {
                 let dim = parseFloat(t.cardWidth);
                 if (`${dim}` === t.cardWidth) {
-                    img.style.height = `${dim}px`;
+                    img.style.height = `calc(${dim}px - (2 * var(--padding)))`;
                 } else {
-                    img.style.height = t.cardWidth;
+                    img.style.height = `calc(${t.cardWidth} - (2 * var(--padding)))`;
                 }
             } else {
                 img.style.height = '100px';

@@ -277,7 +277,7 @@ const webui = (() => {
             changePage(href);
         }
         removeWrappingPTags(html, tagPattern) {
-            while (html.match(`<p><(${tagPattern})`)) {
+            while (html.match(`<p><(${tagPattern})[\> ]{1}`)) {
                 let orig = html;
                 html = html.replace(new RegExp(`\<p\>(\<(${tagPattern}).+\<\/\\2\>)\<\/p\>`, 'g'), '$1');
                 if (html === orig) {
