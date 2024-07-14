@@ -36,6 +36,7 @@
             <webui-input-text label="Page Struct Test - subscribed to page-test.name" compact theme="success"   placeholder="Data entered here will be removed when page is changed" data-trigger="page-test.name" data-subscribe="page-test.name" data-set="value"></webui-input-text>
         </section>
         <section>
+            <webui-code lang="json" data-subscribe="page-test"></webui-code>
         </section>
     </webui-side-by-side>
     #### Test App Data (Persists until page reloaded or closed)
