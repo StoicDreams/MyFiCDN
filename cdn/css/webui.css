@@ -1650,6 +1650,11 @@ webui-side-by-side> :only-child,
     grid-column: span 2;
 }
 
+webui-side-by-side>webui-flex[align="center"] {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .maxcontent-auto {
     grid-template-columns: max-content auto;
 }
