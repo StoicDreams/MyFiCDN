@@ -36,36 +36,53 @@
     window.addEventListener('resize', UpdateAllDisplayedTextareaSizes);
 
     webui.define('webui-input-message', {
+        preload: 'flex',
         constructor: (t) => {
             t.internals = t.attachInternals();
             t.autosize = () => {
-                if (t.field.value !== t.value) {
-                    t.value = t.field.value;
+                if (t._field.value !== t.value) {
+                    t.value = t._field.value;
                     t.internals.setFormValue(t.name, t.value);
                 }
-                autosizeTextArea(t.field);
+                autosizeTextArea(t._field);
             };
             t._handleFormData = t.handleFormData.bind(t);
             talist.push(t);
-            t.field = t.template.querySelector('textarea');
-            t.field.setAttribute('name', 'message');
-            t.field.addEventListener('keydown', handleKeyDown);
-            t.field.addEventListener('keyup', t.autosize);
-            t.field.addEventListener('change', t.autosize);
+            t._label = t.template.querySelector('label');
+            t._field = t.template.querySelector('textarea');
+            t._field.setAttribute('name', 'message');
+            t._field.addEventListener('keydown', handleKeyDown);
+            t._field.addEventListener('keyup', t.autosize);
+            t._field.addEventListener('change', t.autosize);
         },
-        attr: ['title', 'name', 'autofocus', 'value'],
+        attr: ['title', 'name', 'autofocus', 'value', 'label', 'theme', 'placeholder'],
         attrChanged: (t, property, value) => {
             switch (property) {
+                case 'placeholder':
+                    t._field.setAttribute('placeholder', value);
+                    break;
+                case 'label':
+                    t._label.innerHTML = value;
+                    break;
+                case 'theme':
+                    t.style.setProperty('--theme', `var(--color-${value})`);
+                    t.style.setProperty('--theme-offset', `var(--color-${value}-offset)`);
+                    break;
                 case 'name':
-                    t.field.setAttribute('name', value);
+                    t._field.setAttribute('name', value);
                     break;
                 case 'autofocus':
-                    t.field.setAttribute('autofocus', value);
+                    t._field.setAttribute('autofocus', value);
                     break;
                 case 'value':
-                    t.field.value = value;
+                    t._field.value = value;
                     break;
             }
+        },
+        connected: (t) => {
+            let id = webui.uuid();
+            t._label.setAttribute('for', id);
+            t._field.setAttribute('id', id);
         },
         handleFormData: function ({ formData }) {
             if (!this.disabled) {
@@ -79,6 +96,8 @@ display:block;
 position:relative;
 min-height:3em;
 box-sizing:border-box;
+--theme:var(--color-info);
+--theme-offset:var(--color-info-offset);
 }
 textarea {
 display:block;
@@ -88,9 +107,29 @@ min-height:3em;
 box-sizing:border-box;
 padding:var(--padding);
 font:inherit;
+resize: none;
+outline: none;
+border:none;
+}
+webui-flex {
+border: 1px solid var(--theme);
+background-color: var(--theme);
+}
+label {
+display:block;
+padding:var(--padding);
+margin:0;
+background-color:var(--theme);
+color:var(--theme-offset);
+}
+label:empty {
+display:none;
 }
 </style>
-<textarea></textarea>
+<webui-flex column gap="0">
+<label></label>
+<textarea spellcheck="true" autocomplete="off" autocorrect="off"></textarea>
+</webui-flex>
 `
     });
 }

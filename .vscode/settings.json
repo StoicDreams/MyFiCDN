@@ -1,3 +1,4 @@
 {
-    "livePreview.serverRoot": "cdn"
+    "livePreview.serverRoot": "cdn",
+    "livePreview.defaultPreviewPath": ""
 }
