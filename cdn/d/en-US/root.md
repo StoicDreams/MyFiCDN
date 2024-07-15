@@ -52,7 +52,8 @@
         </webui-flex>
         <webui-paper>
             <webui-code label="test" lang="json" data-subscribe="test"></webui-code>
-            <webui-code label="page-test-selected" lang="json" data-subscribe="page-test-selected"></webui-code>
+            <webui-code theme="tertiary" label="page-test-selected" lang="json" data-subscribe="page-test-selected"></webui-code>
+            <webui-code theme="primary" label="page-test-selected.name" lang="json" data-subscribe="page-test-selected.name"></webui-code>
         </webui-paper>
     </webui-side-by-side>
     <webui-side-by-side>

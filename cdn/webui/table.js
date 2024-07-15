@@ -63,5 +63,13 @@ webui.define('webui-table', {
     connected: (t) => {
         t.appendChild(t._table);
         t.render();
+        setTimeout(() => {
+            if (t.dataset.subscribe) {
+                let data = webui.getData(t.dataset.subscribe);
+                if (data !== t._data) {
+                    t.setData(data);
+                }
+            }
+        }, 1);
     }
 });

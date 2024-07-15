@@ -599,16 +599,40 @@ pre,
     color: var(--color-white);
 }
 
-pre[languagetag] {
-    margin-top: 2rem;
+webui-code {
+    display: block;
+    --theme: var(--color-info);
+    --theme-offset: var(--color-info-offset);
+}
+
+webui-code[lang]>label:empty+pre {
+    margin-top: calc(2 * var(--padding));
+}
+
+webui-code>label {
+    display: block;
+    background-color: var(--theme);
+    color: var(--theme-offset);
+    width: 100%;
+    border-radius: var(--corners) var(--corners) 0 0;
+    margin-top: var(--padding);
+    padding: calc(0.5 * var(--padding)) var(--padding);
+}
+
+webui-code>label:empty {
+    display: none;
+}
+
+webui-code>pre {
+    margin: 0;
 }
 
 pre[languagetag]:before {
     content: attr(languagetag);
     position: absolute;
     display: inline-block;
-    background-image: linear-gradient(35deg, var(--color-black) 0%, var(--color-black) 15%, var(--color-info) 50%, var(--color-info) 100%);
-    color: var(--color-info-offset);
+    background-image: linear-gradient(35deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 15%, var(--theme) 50%, var(--theme) 100%);
+    color: var(--theme-offset);
     border-radius: var(--corners);
     top: 0;
     right: 0;
@@ -630,10 +654,10 @@ main>.paper>pre {
 
 code {
     display: inline;
-    background-color: var(--color-info);
-    color: var(--color-info-offset);
+    background-color: var(--theme);
+    color: var(--theme-offset);
     border-radius: var(--corners);
-    outline: 1.5px solid var(--color-info);
+    outline: 1.5px solid var(--theme);
     white-space: pre-wrap;
     overflow: hidden;
 }

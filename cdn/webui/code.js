@@ -4,17 +4,22 @@
         constructor: (t) => {
             let code = t.innerHTML;
             t.innerHTML = webui.trimLinePreTabs(`
+            <label></label>
             <pre>
             <code></code>
             </pre>
             `);
+            t._label = t.querySelector('label');
             t._pre = t.querySelector('pre');
             t._code = t.querySelector('code');
             t._code.innerText = code;
         },
-        attr: ['language', 'lang'],
+        attr: ['language', 'lang', 'label', 'theme'],
         attrChanged: (t, property, value) => {
             switch (property) {
+                case 'label':
+                    t._label.innerHTML = value;
+                    break;
                 case 'language':
                 case 'lang':
                     webui.removeClass(t._code, 'language-');
@@ -22,6 +27,10 @@
                     if (!value) return;
                     t._pre.setAttribute('languagetag', value);
                     t._code.classList.add(`language-${webui.toSnake(value.replace(/[ ]+/g, '-'))}`);
+                    break;
+                case 'theme':
+                    t.style.setProperty('--theme', `var(--color-${value})`);
+                    t.style.setProperty('--theme-offset', `var(--color-${value}-offset)`);
                     break;
             }
         },

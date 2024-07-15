@@ -270,8 +270,19 @@ const webui = (() => {
             customElements.define(name, CustomElement);
         }
         getData(key) {
-            key = webui.toSnake(key);
-            return appData[key];
+            let segments = key.split('.');
+            if (segments.length === 1) {
+                key = webui.toSnake(key);
+                return appData[key];
+            }
+            let skey = webui.toSnake(segments.shift());
+            let data = appData[skey];
+            while (segments.length > 0) {
+                if (!data) return undefined;
+                skey = webui.toSnake(segments.shift());
+                data = data[skey];
+            }
+            return data;
         }
         marked = { parse: () => { } };
         navigateTo(href) {
@@ -365,6 +376,7 @@ const webui = (() => {
         setData(key, value) {
             if (!key) return;
             let sections = key.split('.');
+            let baseKey = sections[0];
             if (sections.length === 1) {
                 key = webui.toSnake(key);
                 if (value === null || value === undefined) {
@@ -394,9 +406,9 @@ const webui = (() => {
                     segment[skey] = value;
                 }
             }
-            document.querySelectorAll(`[data-subscribe]`).forEach(sub => {
+            document.querySelectorAll(`[data-subscribe*="${baseKey}"]`).forEach(sub => {
                 sub.dataset.subscribe.split('|').forEach(k => {
-                    let sections = key.split('.');
+                    let sections = k.split('.');
                     let skeys = [];
                     while (sections.length > 0) {
                         skeys.push(sections.shift());
@@ -583,22 +595,7 @@ const webui = (() => {
         if (toSet === 'click') return;
         key.split('|').forEach(key => {
             key = key.trim();
-            let value = undefined;
-            let sections = key.split('.');
-            if (sections.length > 1) {
-                let skey = sections.shift();
-                let segment = appData[skey];
-                while (segment && sections.length > 0) {
-                    skey = sections.shift();
-                    segment = segment[skey];
-                    if (sections.length === 0) {
-                        value = segment;
-                        break;
-                    }
-                }
-            } else {
-                value = appData[key];
-            }
+            let value = webui.getData(key);
             let isNull = value === null || value === undefined;
             let a = 0;
             (function attempt() {

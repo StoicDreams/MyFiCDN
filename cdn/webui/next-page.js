@@ -12,7 +12,6 @@ webui.define("webui-next-page", {
         t.appendChild(t._preContent);
         t.appendChild(t._link);
         t.appendChild(t._postContent);
-        console.log('constructed');
     },
     attr: ['name', 'href', 'icon', 'family', 'theme'],
     setValue: function (value) {
