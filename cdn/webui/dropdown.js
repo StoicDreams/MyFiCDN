@@ -21,6 +21,7 @@
             t._select.addEventListener('change', _ => {
                 t.value = t._select.value;
                 t.dispatchEvent(new Event('change', { bubbles: true }));
+                t.applyDataChange();
             });
         },
         attr: ['theme', 'icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'data-options'],
@@ -68,6 +69,26 @@
             t._forLabel.setAttribute('for', id);
             t._select.setAttribute('id', id);
         },
+        applyDataChange: function () {
+            let t = this;
+            let dn = t.dataset.name;
+            if (!dn) { return; }
+            if (t.hasAttribute('multiple')) {
+                let s = [];
+                t._select.querySelectorAll('option:checked').forEach(option => {
+                    let ds = option.dataset.data || '{}';
+                    s.push(JSON.parse(ds));
+                });
+                webui.setData(dn, s);
+            } else {
+                let s = t._select.querySelector('option:checked');
+                if (!s) {
+                    webui.setData(dn, {});
+                } else {
+                    webui.setData(dn, JSON.parse(s.dataset.data || '{}'));
+                }
+            }
+        },
         options: function (options) {
             this.setOptions(options);
         },
@@ -85,6 +106,7 @@
             t._select.innerHTML = '';
             if (t._includeNew) {
                 let option = webui.create('option', { value: t.newid, html: t.newlabel });
+                option.dataset.data = '{}';
                 t._select.appendChild(option);
             }
             data.forEach(item => {
@@ -97,6 +119,7 @@
                     return;
                 }
                 let option = webui.create('option', { value: id });
+                option.dataset.data = JSON.stringify(item);
                 option.innerHTML = template ? webui.replaceAppData(template, item) : id;
                 t._select.appendChild(option);
             });
@@ -111,6 +134,7 @@
                     t.value = first.value;
                 }
             }
+            t.applyDataChange();
         },
         setValue: function (value) {
             let t = this;
@@ -123,6 +147,7 @@
             }
             t.value = value;
             o.selected = true;
+            t.applyDataChange();
         },
         shadowTemplate: `
 <label>
