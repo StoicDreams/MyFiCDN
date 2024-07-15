@@ -597,7 +597,6 @@ pre,
     position: relative;
     background-color: var(--color-black);
     color: var(--color-white);
-    min-height: 3em;
 }
 
 pre[languagetag] {

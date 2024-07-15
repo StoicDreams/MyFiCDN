@@ -5,11 +5,12 @@
             let code = t.innerHTML;
             t.innerHTML = webui.trimLinePreTabs(`
             <pre>
-            <code>${code}</code>
+            <code></code>
             </pre>
             `);
             t._pre = t.querySelector('pre');
             t._code = t.querySelector('code');
+            t._code.innerText = code;
         },
         attr: ['language', 'lang'],
         attrChanged: (t, property, value) => {
@@ -32,7 +33,7 @@
             if (typeof value !== 'string') {
                 value = JSON.stringify(value, null, 2);
             }
-            t._code.innerHTML = value;
+            t._code.innerText = value;
             t._code.removeAttribute('data-hl');
             delete t._code.dataset.highlighted;
         },
