@@ -279,6 +279,14 @@ const webui = (() => {
             }
             return data;
         }
+        getDefined(...args) {
+            for (let index = 0; index < args.length; ++index) {
+                if (args[index] !== undefined && args[index] !== null) {
+                    return args[index];
+                }
+            }
+            return undefined;
+        }
         pxIfNumber(input) {
             let num = parseFloat(input);
             if (num === input || `${num}` === input) {

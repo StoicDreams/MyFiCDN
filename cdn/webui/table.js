@@ -42,7 +42,8 @@ webui.define('webui-table', {
         t._table.appendChild(h);
         t._columns.forEach(col => {
             let th = webui.create('th');
-            th.innerHTML = webui.replaceAppData(col);
+            let cd = col.split('|');
+            th.innerHTML = webui.replaceAppData(cd[0]);
             h.appendChild(th);
         });
         if (t._data && t._data.forEach) {
@@ -50,12 +51,17 @@ webui.define('webui-table', {
                 let tr = webui.create('tr');
                 t._table.appendChild(tr);
                 t._columns.forEach(col => {
-                    let cc = webui.toCamel(col);
-                    let pc = webui.toPascel(col);
+                    let cd = col.split('|');
+                    let cm = col;
+                    if (cd.length === 2) {
+                        cm = cd[1];
+                    }
+                    let cc = webui.toCamel(cm);
+                    let pc = webui.toPascel(cm);
                     let td = webui.create('td');
                     tr.appendChild(td);
-                    let cd = row[col] || row[cc] || row[pc] || '';
-                    td.innerHTML = webui.replaceAppData(`${cd}`);
+                    let data = webui.getDefined(row[cm], row[cc], row[pc], '');
+                    td.innerHTML = webui.replaceAppData(`${data}`);
                 });
             });
         }
