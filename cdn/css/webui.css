@@ -2080,6 +2080,26 @@ main>*>.d-flex>*[width] {
     text-align: center;
 }
 
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-start {
+    text-align: start;
+}
+
+.text-end {
+    text-align: end;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
 .justify-left {
     justify-content: left;
 }
