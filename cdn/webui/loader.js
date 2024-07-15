@@ -257,14 +257,9 @@ const webui = (() => {
                     this.style.color = `var(--color-${value}-offset)`;
                 }
                 setHeight(value) {
-                    let num = parseFloat(value);
-                    if (num > 0 && (num == value || `${num}` === value)) {
-                        this.style.height = `${num}px`;
-                        this.style.minHeight = `${num}px`;
-                    } else {
-                        this.style.height = value;
-                        this.style.minHeight = value;
-                    }
+                    let num = webui.pxIfNumber(value);
+                    this.style.height = num;
+                    this.style.minHeight = num;
                 }
             }
             customElements.define(name, CustomElement);
@@ -283,6 +278,13 @@ const webui = (() => {
                 data = data[skey];
             }
             return data;
+        }
+        pxIfNumber(input) {
+            let num = parseFloat(input);
+            if (num === input || `${num}` === input) {
+                return `${num}px`;
+            }
+            return input;
         }
         marked = { parse: () => { } };
         navigateTo(href) {

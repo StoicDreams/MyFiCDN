@@ -10,9 +10,7 @@ webui.define('webui-flex', {
     },
     getDim: function (value) {
         if (!value) return '';
-        let num = parseFloat(value);
-        if (num == value) return `${value}px`;
-        return value;
+        return webui.pxIfNumber(value);
     },
     setStyles: function () {
         let t = this;

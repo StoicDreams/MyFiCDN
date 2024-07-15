@@ -11,24 +11,12 @@
             switch (property) {
                 case 'pad':
                     {
-                        let num = parseFloat(value);
-                        if (`${num}` === value) {
-                            t.style.setProperty('--theme-padding', `${num}px`);
-                        }
-                        else {
-                            t.style.setProperty('--theme-padding', value);
-                        }
+                        t.style.setProperty('--theme-padding', webui.pxIfNumber(value));
                     }
                     break;
                 case 'transition-timing':
                     {
-                        let num = parseFloat(value);
-                        if (`${num}` === value) {
-                            t._slotContent.style.setProperty('transition-duration', `${num}ms`);
-                        }
-                        else {
-                            t._slotContent.style.setProperty('transition-duration', value);
-                        }
+                        t._slotContent.style.setProperty('transition-duration', webui.pxIfNumber(value));
                     }
                     break;
             }
