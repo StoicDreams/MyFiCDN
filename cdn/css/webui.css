@@ -646,6 +646,11 @@ pre[languagetag]:before {
     box-sizing: border-box;
 }
 
+webui-code>label:not(:empty)+pre[languagetag]:before {
+    translate: 0 -100%;
+    background-image: none;
+}
+
 webui-app>webui-paper>pre,
 main>.paper>pre {
     margin-left: var(--padding);
