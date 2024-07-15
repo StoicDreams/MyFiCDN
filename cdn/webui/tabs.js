@@ -6,7 +6,7 @@
             t._slotTabs = t.template.querySelector('slot[name="tabs"]');
             t._section = t.template.querySelector('section');
         },
-        attr: ['pad', 'transition-timing', 'index'],
+        attr: ['pad', 'transition-timing', 'index', 'data-suscribe'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'pad':
@@ -19,13 +19,19 @@
                         t._slotContent.style.setProperty('transition-duration', webui.pxIfNumber(value));
                     }
                     break;
+                case 'data-subscribe':
+                    t.setAttribute('data-set', 'setTab');
+                    break;
             }
         },
         connected: (t) => {
             t.render();
         },
         setTab: function (tabIndex) {
+            if (tabIndex === undefined || tabIndex === null) return;
             let t = this;
+            tabIndex = parseInt(tabIndex) || 0;
+            if (t._initiated && tabIndex === t.index) return;
             let index = 0;
             let foundIndex = false;
             t.querySelectorAll('[slot="tabs"]').forEach(tab => {
@@ -38,6 +44,7 @@
                 }
             });
             if (tabIndex > 0 && !foundIndex) {
+                console.error('did not find tab index', tabIndex);
                 t.setTab(0);
                 return;
             }
@@ -51,9 +58,15 @@
                 }
             });
             if (tabIndex > 0 && !foundIndex) {
+                console.error('did not find content index', tabIndex);
                 t.setTab(tabIndex - 1);
                 return;
             }
+            t.index = tabIndex;
+            if (t.dataset.subscribe) {
+                webui.setData(t.dataset.subscribe, t.index);
+            }
+            t._initiated = true;
         },
         render: function () {
             let t = this;
@@ -69,6 +82,13 @@
                     });
                 }
             });
+            if (t.dataset.subscribe) {
+                let cached = webui.getData(t.dataset.subscribe);
+                if (cached !== undefined) {
+                    t.setTab(cached);
+                    return;
+                }
+            }
             t.setTab(t.index || 0);
         },
         shadowTemplate: `

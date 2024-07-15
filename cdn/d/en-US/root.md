@@ -10,7 +10,7 @@
     </webui-page-segment>
 </webui-sideimage>
 
-<webui-tabs pad="var(--padding)">
+<webui-tabs pad="var(--padding)" data-subscribe="test-tab-index">
     <webui-button slot="tabs">Loading Bars</webui-button>
     <webui-content slot="content" src="/d/en-US/content/loading-bars.md"></webui-content>
     <webui-button slot="tabs">Condition</webui-button>
@@ -24,7 +24,7 @@
 
 ## Data Subscriptions
 
-<webui-tabs pad="var(--padding)">
+<webui-tabs pad="var(--padding)" index="1">
     <webui-button slot="tabs">Test Page Data</webui-button>
     <webui-content slot="content" src="/d/en-US/content/test-page-data.md"></webui-content>
     <webui-button slot="tabs">Test App Data</webui-button>
