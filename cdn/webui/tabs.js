@@ -6,7 +6,7 @@
             t._slotTabs = t.template.querySelector('slot[name="tabs"]');
             t._section = t.template.querySelector('section');
         },
-        attr: ['pad', 'transition-timing'],
+        attr: ['pad', 'transition-timing', 'index'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'pad':
@@ -39,20 +39,33 @@
         setTab: function (tabIndex) {
             let t = this;
             let index = 0;
+            let foundIndex = false;
             t.querySelectorAll('[slot="tabs"]').forEach(tab => {
                 if (tabIndex === index++) {
                     tab.classList.add('theme-active');
+                    t.index = index - 1;
+                    foundIndex = true;
                 } else {
                     tab.classList.remove('theme-active');
                 }
             });
+            if (tabIndex > 0 && !foundIndex) {
+                t.setTab(0);
+                return;
+            }
             index = 0;
-            t.querySelectorAll('[slot="content"]').forEach(tab => {
+            foundIndex = false;
+            t.querySelectorAll('[slot="content"]').forEach(_ => {
                 if (tabIndex === index++) {
                     let offset = tabIndex * 100;
                     t._slotContent.style.translate = `-${offset}% 0`;
+                    foundIndex = true;
                 }
             });
+            if (tabIndex > 0 && !foundIndex) {
+                t.setTab(tabIndex - 1);
+                return;
+            }
         },
         render: function () {
             let t = this;
@@ -68,7 +81,7 @@
                     });
                 }
             });
-            t.setTab(0);
+            t.setTab(t.index || 0);
         },
         shadowTemplate: `
 <style type="text/css">
