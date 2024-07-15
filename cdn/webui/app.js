@@ -193,19 +193,15 @@ margin-top:calc(5*var(--padding));
 padding:var(--padding);
 }
 main {
-display:flex;
-flex-direction:column;
+display:block;
 overflow:auto;
 box-sizing:border-box;
 height:var(--main-height);
-flex-grow:1;
 padding:var(--padding,1em);
 grid-row: 3;
 grid-column: 2;
-transition:
-opacity 0.4s ease-out,
-transform 0.4s ease-out
-;
+transition:opacity 0.4s ease-out,
+transform 0.4s ease-out;
 }
 main.transition {
 transform:rotateY(90deg);
