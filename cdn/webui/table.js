@@ -40,8 +40,8 @@
                     t.render();
                     break;
                 case 'theme':
-                    webui.removeClass(t._table, 'table-theme-');
-                    t._table.classList.add(`table-theme-${value}`);
+                    t.style.setProperty('--theme-color', `var(--color-${value})`);
+                    t.style.setProperty('--theme-color-offset', `var(--color-${value}-offset)`);
                     break;
             }
         },
