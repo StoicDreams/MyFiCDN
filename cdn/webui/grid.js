@@ -12,6 +12,7 @@
                     webui.setTheme(t, value);
                     break;
                 case 'columns':
+                    let num = parseInt(value);
                     if (num === t.columns || `${num}` === t.columns) {
                         t.style.setProperty('--columns', `repeat(${num}, minmax(var(--min), var(--max))`);
                     } else {
