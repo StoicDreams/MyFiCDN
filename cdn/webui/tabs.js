@@ -14,12 +14,12 @@
                         t.style.setProperty('--theme-padding', webui.pxIfNumber(value));
                     }
                     break;
-                case 'transition-timing':
+                case 'transitionTiming':
                     {
-                        t._slotContent.style.setProperty('transition-duration', webui.pxIfNumber(value));
+                        t._slotContent.style.setProperty('transition-duration', webui.msIfNumber(value));
                     }
                     break;
-                case 'data-subscribe':
+                case 'dataSubscribe':
                     t.setAttribute('data-set', 'setTab');
                     break;
             }
@@ -92,6 +92,10 @@
             t.setTab(t.index || 0);
         },
         shadowTemplate: `
+<slot name="tabs"></slot>
+<section>
+<slot name="content"></slot>
+</section>
 <style type="text/css">
 :host {
 display:block;
@@ -102,12 +106,19 @@ width:-webkit-fill-available;
 --tabs-offset:var(--color-title-offset);
 --theme-padding: 0px;
 }
+:host([vertical]) {
+display:grid;
+grid-template-columns:max-content auto;
+}
 slot[name="tabs"] {
 display:flex;
 background-color:var(--tabs);
 color:var(--tabs-offset);
 gap:var(--theme-padding);
 border-radius:var(--corners) var(--corners) 0 0;
+}
+:host([vertical]) slot[name="tabs"] {
+flex-direction:column;
 }
 slot[name="content"] {
 display:grid;
@@ -125,10 +136,6 @@ border-radius:0 0 var(--corners) var(--corners);
 border:1px solid var(--tabs);
 }
 </style>
-<slot name="tabs"></slot>
-<section>
-<slot name="content"></slot>
-</section>
 `
     });
 }

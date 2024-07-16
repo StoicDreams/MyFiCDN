@@ -287,12 +287,18 @@ const webui = (() => {
             }
             return undefined;
         }
-        pxIfNumber(input) {
+        unitIfNumber(input, unit) {
             let num = parseFloat(input);
             if (num === input || `${num}` === input) {
-                return `${num}px`;
+                return `${num}${unit}`;
             }
             return input;
+        }
+        pxIfNumber(input) {
+            return this.unitIfNumber(input, 'px');
+        }
+        msIfNumber(input) {
+            return this.unitIfNumber(input, 'ms');
         }
         marked = { parse: () => { } };
         navigateTo(href) {

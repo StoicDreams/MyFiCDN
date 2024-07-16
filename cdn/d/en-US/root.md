@@ -35,7 +35,7 @@
 
 ## Data Display
 
-<webui-tabs pad="var(--padding)" index="1">
+<webui-tabs pad="var(--padding)" index="1" vertical transition-timing="200">
     <webui-button slot="tabs">Data Lists</webui-button>
     <webui-content slot="content" src="/d/en-US/content/lists.md"></webui-content>
     <webui-button slot="tabs">Data Table</webui-button>
