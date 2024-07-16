@@ -40,6 +40,8 @@
     <webui-content slot="content" src="/d/en-US/content/lists.md"></webui-content>
     <webui-button slot="tabs">Data Table</webui-button>
     <webui-content slot="content" src="/d/en-US/content/table.md"></webui-content>
+    <webui-button slot="tabs">Grid</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/grid.md"></webui-content>
 </webui-tabs>
 
 ## Current Web UI Projects
