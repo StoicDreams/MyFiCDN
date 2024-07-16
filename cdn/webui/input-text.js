@@ -51,6 +51,10 @@ webui.define('webui-input-text', {
                 break;
         }
     },
+    setValue: function (value) {
+        let t = this;
+        t._field.value = value === undefined ? '' : value;
+    },
     connected: (t) => {
         if (!t.getAttribute('type')) {
             t._field.setAttribute('type', 'text');
@@ -107,6 +111,9 @@ flex-grow:1;
 line-height:normal;
 box-sizing:border-box;
 font:inherit;
+}
+label:empty {
+display:none;
 }
 @container (max-width:400px) {
 :host {

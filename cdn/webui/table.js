@@ -16,6 +16,12 @@
     webui.define('webui-table', {
         constructor: (t) => {
             t._table = webui.create('table');
+            t._columnTemplates = {};
+            webui.removeElements(t, '[slot="column"]', n => {
+                let key = n.dataset.name || n.dataset.key || n.getAttribute('name') || n.getAttribute('key');
+                if (key === undefined) return;
+                t._columnTemplates[key] = n.innerHTML;
+            });
         },
         attr: ['bordered', 'columns', 'theme'],
         attrChanged: (t, property, value) => {
@@ -63,6 +69,10 @@
             });
             if (t._data && t._data.forEach) {
                 t._data.forEach(row => {
+                    if (!row._rowId) {
+                        row._rowId = webui.toCamel(webui.uuid());
+                        webui.setData(`page-tr-${row._rowId}`, row);
+                    }
                     let tr = webui.create('tr');
                     t._table.appendChild(tr);
                     t._columns.forEach(col => {
@@ -76,8 +86,16 @@
                         let pc = webui.toPascel(cm);
                         let td = webui.create('td', { class: align });
                         tr.appendChild(td);
-                        let data = webui.getDefined(row[cm], row[cc], row[pc], '');
-                        td.innerHTML = webui.replaceAppData(`${data}`);
+                        if (t._columnTemplates[cm]) {
+                            td.innerHTML = webui.replaceAppData(t._columnTemplates[cm], row);
+                        } else if (t._columnTemplates[cc]) {
+                            td.innerHTML = webui.replaceAppData(t._columnTemplates[cc], row);
+                        } else if (t._columnTemplates[pc]) {
+                            td.innerHTML = webui.replaceAppData(t._columnTemplates[pc], row);
+                        } else {
+                            let data = webui.getDefined(row[cm], row[cc], row[pc], '');
+                            td.innerHTML = webui.replaceAppData(`${data}`);
+                        }
                     });
                 });
             }
@@ -93,6 +111,20 @@
                     }
                 }
             }, 1);
-        }
+        },
+        shadowTemplate: `
+<slot name="column"></slot>
+<slot></slot>
+<style type="text/javascript">
+:host {
+display:block;
+width:100%;
+width:-webkit-fill-available;
+}
+slot[name="column"] {
+display:none;
+}
+</style>
+`
     });
 }

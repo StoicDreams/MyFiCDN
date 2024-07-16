@@ -333,12 +333,40 @@ const webui = (() => {
             }
             return el;
         }
+        removeChildren(t, condition) {
+            let tr = [];
+            t.childNodes.forEach(ch => {
+                if (typeof condition === 'function') {
+                    if (condition(ch)) {
+                        tr.push(ch);
+                    }
+                } else {
+                    tr.push(ch);
+                }
+            });
+            tr.forEach(ch => {
+                ch.remove();
+            });
+            return tr;
+        }
         removeClass(t, prefix) {
             let r = [];
             t.classList.forEach(c => {
                 if (c.startsWith(prefix)) { r.push(c); }
             });
             r.forEach(c => t.classList.remove(c));
+        }
+        removeElements(parent, selector, action) {
+            let tr = [];
+            parent.querySelectorAll(selector).forEach(n => {
+                tr.push(n);
+                if (typeof action === 'function') {
+                    action(n);
+                }
+            });
+            tr.forEach(n => {
+                n.remove();
+            });
         }
         replaceAppData(text, data) {
             if (data) {
@@ -461,6 +489,15 @@ const webui = (() => {
         toPascel(key) {
             return key.replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })
                 .replace(/^[A-Z]{1}/, a => { return a.toUpperCase(); });
+        }
+        transferChildren(from, to) {
+            let nodes = [];
+            from.childNodes.forEach(ch => {
+                nodes.push(ch);
+            });
+            nodes.forEach(ch => {
+                to.appendChild(ch);
+            });
         }
         trimLinePreTabs(html) {
             let lines = [], ls = 0;

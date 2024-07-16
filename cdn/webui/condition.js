@@ -2,36 +2,62 @@
 {
     webui.define("webui-condition", {
         constructor: (t) => {
-            let content = webui.create('div');
-            let invalid = webui.create('div');
-            let toContent = [];
-            let toInvalid = [];
+            t._data = {};
+            t._slotValid = t.template.querySelector('slot[name="valid"]');
+            t._slotInvalid = t.template.querySelector('slot[name="invalid"]');
             t.childNodes.forEach(node => {
-                if (node.hasAttribute && node.hasAttribute('slot') && node.getAttribute('slot') === 'invalid') {
-                    toInvalid.push(node);
-                } else {
-                    toContent.push(node);
+                if (!node || !node.hasAttribute) return;
+                if (!node.hasAttribute('slot')) {
+                    if (node.nodeName === 'PRE') {
+                        node.setAttribute('slot', 'valid');
+                    } else {
+                        let pre = webui.create('pre', { slot: 'valid' });
+                        t.insertBefore(pre, node);
+                        pre.appendChild(node);
+                    }
+                } else if (node.nodeName !== 'PRE') {
+                    let pre = webui.create('pre', { slot: node.getAttribute('slot') });
+                    t.insertBefore(pre, node);
+                    pre.appendChild(node);
                 }
             });
-            toContent.forEach(node => {
-                content.appendChild(node);
-            });
-            toInvalid.forEach(node => {
-                invalid.appendChild(node);
-            });
-            t._cacheContent = content.innerHTML.trim();
-            t._cacheInvalid = invalid.innerHTML.trim();
         },
-        attr: ['data-subscribe'],
-        attrChanged: (t, _property, _value) => {
-            t.checkConditions();
+        attr: ['data-subscribe', 'value'],
+        attrChanged: (t, property, value) => {
+            switch (property) {
+                case 'dataSubscribe':
+                    t.checkConditions();
+                    break;
+                case 'value':
+                    if (t.valueIsGood(value)) {
+                        t.showContent();
+                    } else {
+                        t.showInvalid();
+                    }
+                    break;
+            }
         },
         connected: (t) => {
             t._isConnected = true;
+            let content = [], invalid = [];
+            t._slotValid.assignedElements().forEach(pre => {
+                content.push(pre.innerHTML);
+            });
+            t._slotInvalid.assignedElements().forEach(pre => {
+                invalid.push(pre.innerHTML);
+            });
+            t._cacheContent = content.join('\n');
+            t._cacheInvalid = content.join('\n');
             t.checkConditions();
         },
         setValue: function (_val, _key) {
             this.checkConditions();
+        },
+        valueIsGood: function (val) {
+            if (!val || ['0', 'false', 'null', 'undefined', '[]', '{}'].indexOf(val) !== -1 || (val.forEach && val.length === 0)) {
+                return false;
+            }
+            return true;
         },
         checkConditions: function () {
             let t = this;
@@ -44,7 +70,7 @@
             let isGood = true;
             keys.split('|').forEach(key => {
                 let val = webui.getData(key);
-                if (!val || ['0', 'false', 'null', 'undefined', '[]', '{}'].indexOf(val) !== -1 || (val.forEach && val.length === 0)) {
+                if (!t.valueIsGood(val)) {
                     isGood = false;
                 }
             });
@@ -54,28 +80,37 @@
                 t.showInvalid();
             }
         },
+
         showContent: function () {
             let t = this;
             if (t._isShowing !== 'content') {
                 t._isShowing = 'content';
-                t.innerHTML = t._cacheContent;
+                webui.transferChildren(webui.create('div', { html: t._cacheContent }), t);
             }
         },
         showInvalid: function () {
             let t = this;
             if (t._isShowing !== 'invalid') {
                 t._isShowing = 'invalid';
-                t.innerHTML = t._cacheInvalid;
+                webui.removeChildren(t, ch => {
+                    return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');
+                });
             }
         },
         shadowTemplate: `
+<slot></slot>
+<slot name="valid"></slot>
+<slot name="invalid"></slot>
 <style style="text/css">
 :host {
 display:block;
+width:100%;
+width:-webkit-fill-available;
+}
+slot[name] {
+display:none;
 }
 </style>
-<slot></slot>
-<slot name="invalid"></slot>
 `
     });
 }
