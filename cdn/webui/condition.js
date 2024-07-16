@@ -5,20 +5,11 @@
             t._data = {};
             t._slotValid = t.template.querySelector('slot[name="valid"]');
             t._slotInvalid = t.template.querySelector('slot[name="invalid"]');
+            // auto-assign unslotted pre elements to valid
             t.childNodes.forEach(node => {
                 if (!node || !node.hasAttribute) return;
-                if (!node.hasAttribute('slot')) {
-                    if (node.nodeName === 'PRE') {
-                        node.setAttribute('slot', 'valid');
-                    } else {
-                        let pre = webui.create('pre', { slot: 'valid' });
-                        t.insertBefore(pre, node);
-                        pre.appendChild(node);
-                    }
-                } else if (node.nodeName !== 'PRE') {
-                    let pre = webui.create('pre', { slot: node.getAttribute('slot') });
-                    t.insertBefore(pre, node);
-                    pre.appendChild(node);
+                if (node.nodeName === 'PRE' && !node.hasAttribute('slot')) {
+                    node.setAttribute('slot', 'valid');
                 }
             });
         },
@@ -47,10 +38,10 @@
                 invalid.push(pre.innerHTML);
             });
             t._cacheContent = content.join('\n');
-            t._cacheInvalid = content.join('\n');
+            t._cacheInvalid = invalid.join('\n');
             t.checkConditions();
         },
-        setValue: function (_val, _key) {
+        setValue: function (value, _key) {
             this.checkConditions();
         },
         valueIsGood: function (val) {
@@ -63,17 +54,52 @@
             let t = this;
             if (!t._isConnected) return;
             let keys = t.dataset.subscribe;
-            if (!keys) {
+            if (!keys && !t.dataset.value) {
                 t.showInvalid();
                 return;
             }
+            let mustEqual = t.dataset.equals;
+            let mustContain = t.dataset.contains;
+            let notEqual = t.dataset.unequals;
+            let ignoreCase = t.dataset.ignoreCase !== undefined;
+            let mustMatch = t.dataset.match;
             let isGood = true;
-            keys.split('|').forEach(key => {
-                let val = webui.getData(key);
-                if (!t.valueIsGood(val)) {
+            function checkValue(value) {
+                let vt = `${value}`;
+                if (ignoreCase) {
+                    vt = vt.toLowerCase();
+                }
+                if (mustMatch !== undefined) {
+                    let matches = new RegExp(mustMatch, 'g');
+                    if (!matches) {
+                        isGood = false;
+                    }
+                }
+                else if (notEqual !== undefined) {
+                    if (value === notEqual || vt === notEqual) {
+                        isGood = false;
+                    }
+                }
+                else if (!t.valueIsGood(value)) {
                     isGood = false;
                 }
-            });
+                if (mustEqual !== undefined && (value !== mustEqual && vt !== mustEqual)) {
+                    isGood = false;
+                }
+                if (mustContain !== undefined && vt.indexOf(mustContain) === -1) {
+                    isGood = false;
+                }
+            }
+            if (keys && keys.split) {
+                keys.split('|').forEach(key => {
+                    let val = webui.getData(key);
+                    checkValue(val);
+                });
+            }
+            if (t.dataset.value !== undefined) {
+                console.log('check value', t.dataset.value);
+                checkValue(t.dataset.value);
+            }
             if (isGood) {
                 t.showContent();
             } else {
@@ -85,6 +111,9 @@
             let t = this;
             if (t._isShowing !== 'content') {
                 t._isShowing = 'content';
+                webui.removeChildren(t, ch => {
+                    return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');
+                });
                 webui.transferChildren(webui.create('div', { html: t._cacheContent }), t);
             }
         },
@@ -103,7 +132,7 @@
 <slot name="invalid"></slot>
 <style style="text/css">
 :host {
-display:block;
+display:inline;
 width:100%;
 width:-webkit-fill-available;
 }
