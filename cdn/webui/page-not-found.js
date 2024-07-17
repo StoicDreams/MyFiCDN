@@ -6,7 +6,7 @@ webui.define('webui-page-not-found', {
             <webui-data data-page-title="Page Not Found" data-page-subtitle="{PAGE_PATH}"></webui-data>
             <webui-data data-page-next-page='{"name":"Home","href":"/"}'></webui-data>
             <webui-side-by-side elevation="10">
-                <webui-flex column justify="center" data-subscribe="not-found" data-set="innerHTML">
+                <webui-flex column justify="center" data-subscribe="not-found:innerHTML">
                     <p>The page you are looking for was not found!</p>
                 </webui-flex>
                 <webui-flex column justify="center">

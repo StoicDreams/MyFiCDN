@@ -134,7 +134,9 @@ const webui = (() => {
             this.storage = new MemStorage();
         }
         applyAppDataToContent(content, preTrim) {
-            return this.parseMarkdown(this.replaceAppData(content), preTrim);
+            let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
+            let pt = typeof preTrim == 'boolean' ? preTrim : undefined;
+            return this.parseMarkdown(this.replaceAppData(content, data), pt);
         }
         applyDynamicStyles() { }
         applyProperties(t) { }
@@ -166,6 +168,7 @@ const webui = (() => {
         define(name, options) {
             options = options || {};
             options.attr = options.attr || ['elevation', 'theme'];
+            options.flags = options.flags || [];
             ['elevation', 'theme'].forEach(req => {
                 if (options.attr.indexOf(req) === -1) {
                     options.attr.push(req);
@@ -226,13 +229,18 @@ const webui = (() => {
                 attributeChangedCallback(property, oldValue, newValue) {
                     if (oldValue === newValue) return;
                     property = webui.toCamel(property);
-                    webui.setProperty(this, property, newValue);
+                    if (options.flags.indexOf(property) !== -1) {
+                        webui.setFlag(this, property, newValue);
+                    } else {
+                        webui.setProperty(this, property, newValue);
+                    }
                     if (options.attrChanged) {
                         options.attrChanged(this, property, newValue);
                     }
                 }
                 connectedCallback() {
                     this._isConnected = true;
+                    //this._id = webui.uuid();
                     if (options.preload) {
                         this.setAttribute('preload', options.preload);
                     }
@@ -399,7 +407,7 @@ const webui = (() => {
             }
             Object.keys(appData).forEach(key => {
                 let rkey = `{${this.toSnake(key).replace(/-/g, '_').toUpperCase()}}`;
-                let val = appData[key];
+                let val = webui.getData(key);
                 if (val === undefined || val === null) {
                     val = '';
                 }
@@ -439,9 +447,12 @@ const webui = (() => {
         setData(key, value) {
             if (!key) return;
             let sections = key.split('.');
-            let baseKey = sections[0];
+            let baseKey = webui.toSnake(sections[0]);
             if (sections.length === 1) {
                 key = webui.toSnake(key);
+                if (JSON.stringify(appData[key]) === JSON.stringify(value)) {
+                    return;
+                }
                 if (value === null || value === undefined) {
                     delete appData[key];
                 } else {
@@ -463,6 +474,9 @@ const webui = (() => {
                     segment = segment[skey];
                 }
                 skey = sections.shift();
+                if (JSON.stringify(segment[skey]) === JSON.stringify(value)) {
+                    return;
+                }
                 if (value === null || value === undefined) {
                     delete segment[skey];
                 } else {
@@ -471,17 +485,28 @@ const webui = (() => {
             }
             document.querySelectorAll(`[data-subscribe*="${baseKey}"]`).forEach(sub => {
                 sub.dataset.subscribe.split('|').forEach(k => {
-                    let sections = k.split('.');
+                    let ts = k.split(':')
+                    let sections = ts[0].split('.');
                     let skeys = [];
+                    let mk = ts[0];
                     while (sections.length > 0) {
                         skeys.push(sections.shift());
                         let skey = skeys.join('.');
-                        if (k === skey) {
-                            setDataToEl(sub, skey);
+                        if (mk === skey) {
+                            setTimeout(() => {
+                                setDataToEl(sub, skey);
+                            }, 10);
                         }
                     }
                 });
             });
+        }
+        setFlag(t, property, value) {
+            if ([undefined, null, 0, false, 'false', 'null', 'undefined', '0'].indexOf(value) !== -1) {
+                t[property] = false;
+            } else {
+                t[property] = true;
+            }
         }
         setProperty(t, property, value) {
             if (value === null || value === undefined) {
@@ -654,9 +679,6 @@ const webui = (() => {
     function handleDataClick(ev) {
         let key = ev.dataset.click;
         if (!key) { return; }
-        document.querySelectorAll(`[data-subscribe="${key}"][data-set="click"]`).forEach(sub => {
-            sub.click();
-        });
         document.querySelectorAll(`[data-subscribe*="${key}:click"]`).forEach(sub => {
             sub.click();
         });
@@ -672,21 +694,27 @@ const webui = (() => {
         }
     }
     function setDataToEl(el, key) {
-        let toSet = el.dataset.set || 'setter';
-        if (toSet === 'click') return;
+        function getToSet(key) {
+            let toSet = 'setter';
+            el.dataset.subscribe.split('|').forEach(ds => {
+                let kts = ds.trim().split(':');
+                if (kts[0] !== key) return;
+                if (kts.length === 2) {
+                    toSet = kts[1];
+                    if (toSet === 'click') return;
+                }
+            });
+            return toSet;
+        }
         key.split('|').forEach(key => {
             key = key.trim();
-            let kts = key.split(':');
-            if (kts.length === 2) {
-                key = kts[0];
-                toSet = kts[1];
-                if (toSet === 'click') return;
-            }
-            let value = webui.getData(key);
-            let isNull = value === null || value === undefined;
             let a = 0;
             (function attempt() {
                 try {
+                    let toSet = getToSet(key);
+                    if (toSet === 'click') return;
+                    let value = webui.getData(key);
+                    let isNull = value === null || value === undefined;
                     switch (toSet) {
                         case 'setter':
                             let field = webui.toCamel(key);

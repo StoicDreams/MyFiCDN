@@ -14,7 +14,7 @@
             t._code = t.querySelector('code');
             t._code.innerText = code;
         },
-        attr: ['language', 'lang', 'label', 'theme', 'lines'],
+        attr: ['language', 'lang', 'label', 'lines'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'label':

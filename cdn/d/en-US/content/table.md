@@ -1,5 +1,10 @@
-
-<webui-table theme="tertiary" columns="Id|_rowId;:Name|name;:Usage Percentage:|usage_percentage;Custom;:Action:" data-subscribe="page-mock-report-current.languages" data-set="setData" bordered class="my-3">
+<webui-grid  theme="info" columns="auto max-content">
+    <webui-header data-subscribe="page-mock-report-current.year">
+        <pre slot="template">Year: <strong>{TEMPLATE_PAGE_MOCK_REPORT_CURRENT.YEAR}</strong></pre>
+    </webui-header>
+    <webui-pagination class="my-a" data-subscribe="mock-data-index:setValue|mock-report:setData" data-current="page-mock-report-current" loop max-pages="3"></webui-pagination>
+</webui-grid>
+<webui-table theme="tertiary" columns="Id|_rowId;:Name|name;:Usage Percentage:|usage_percentage;Custom;:Action:" data-subscribe="page-mock-report-current.languages:setData" bordered class="my-3">
     <pre slot="column" name="action">
         <webui-condition data-subscribe="page-tr-{_ROWID}.custom">
             <pre><webui-button theme="danger" data-trigger="page-tr-{_ROWID}.custom" data-value="" start-icon="ban" start-icon-family="duotone"></webui-button></pre>
@@ -18,4 +23,3 @@
         <webui-input-text theme="info" placeholder="Type music" data-trigger="page-tr-{_ROWID}.custom" data-subscribe="page-tr-{_ROWID}.custom"></webui-inpu-text>
     </pre>
 </webui-table>
-<webui-data data-page-report='[{"id":1,"one":"Hello","TestTwo":"World"},{"id":2,"one":"Goodbye","TestTwo":"Moonmen"}]'></webui-data>

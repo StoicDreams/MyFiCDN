@@ -152,23 +152,16 @@ I confirm that I am using my personal device and that I understand the above sta
             build_options();
             this.innerHTML = webui.applyAppDataToContent(`
 ## Storage Concent
-
 <webui-page-segment elevation="10">
-
-<webui-paper>
-
-This ${appType} has multiple levels of data storage available for you to choose from, which will determine how data is stored on your device for this ${appType}.
-
-</webui-paper>
-
-<webui-cards card-width="500" data-set="setCards" data-subscribe="page-storage-consent-options"></webui-cards>
-
+    <webui-paper>
+        This ${appType} has multiple levels of data storage available for you to choose from, which will determine how data is stored on your device for this ${appType}.
+    </webui-paper>
+    <webui-cards card-width="500" data-subscribe="page-storage-consent-options:setCards"></webui-cards>
 </webui-page-segment>
 `);
         },
         connected: (t) => {
-            t.setAttribute('data-set', 'setAcceptedKey');
-            t.setAttribute('data-subscribe', webui.storage.STORAGE_ACCEPTED_KEY);
+            t.setAttribute('data-subscribe', `${webui.storage.STORAGE_ACCEPTED_KEY}:${setAcceptedKey}`);
             t.render();
         }
     });

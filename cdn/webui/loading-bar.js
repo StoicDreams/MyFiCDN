@@ -4,7 +4,8 @@
         constructor: (t) => {
             t._box = t.template.querySelector('div:nth-child(2)');
         },
-        attr: ['indeterminate', 'striped', 'height', 'percent'],
+        flags: ['indeterminate', 'striped'],
+        attr: ['height', 'percent'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'height':

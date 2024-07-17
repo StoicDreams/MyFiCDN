@@ -1,7 +1,7 @@
 /* Component used for posting data to app from loaded html */
 "use strict"
 webui.define("webui-data", {
-    constructor: (t) => {
+    connected: (t) => {
         Object.keys(t.dataset).forEach(key => {
             switch (t.dataset[key]) {
                 case 'innerText':
@@ -14,7 +14,7 @@ webui.define("webui-data", {
                     let value = t.dataset[key];
                     try {
                         value = JSON.parse(value);
-                    } catch (_) { }
+                    } catch (ex) { }
                     webui.setData(key, value);
                     break;
             }

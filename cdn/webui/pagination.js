@@ -60,7 +60,7 @@
                     break;
                 case 'page':
                 case 'value':
-                    t.setValue(value);
+                    t.setValue(value || 1);
                     break;
                 case 'maxPages':
                     t.maxPages = parseInt(value) || 0;
@@ -110,6 +110,7 @@
                 }
                 return;
             }
+            t.page = t.page;
             t.pageCount = Math.ceil(t._data.length / t.perPage);
             t.setAttribute('page-count', t.pageCount);
             if (t.page > t.pageCount) {
@@ -127,17 +128,26 @@
             }
             t._currentData = current;
             webui.setData(t.dataCurrent, current);
-            if (t.page == 1) {
+            if (t.dataset.subscribe) {
+                t.dataset.subscribe.split('|').forEach(ds => {
+                    let dk = ds.split(':');
+                    if (dk.length === 1) return;
+                    if (dk[1] === 'setValue') {
+                        webui.setData(dk[0], t.page);
+                    }
+                });
+            }
+            if (t.page === 1) {
                 t._btnFirst.setAttribute('theme', 'active');
             } else {
                 t._btnFirst.removeAttribute('theme');
             }
-            if (t.page == t.pageCount) {
+            if (t.page === t.pageCount) {
                 t._btnLast.setAttribute('theme', 'active');
             } else {
                 t._btnLast.removeAttribute('theme');
             }
-            t._input.value = t.page;
+            t._input.value = t.page || 1;
             let cw = `${t.page}`.length + 5;
             t._input.style.width = `${cw}ch`;
             if (!t.hidePages && t.maxPages !== 0) {
@@ -173,19 +183,20 @@
                 }
             }
         },
-        setValue: function (value) {
+        setValue: function (value, key, toSet) {
             let t = this;
+            value = value || 1;
             if (value === undefined || value === undefined) return;
             if (typeof value === 'string') {
-                value = parseInt(value);
+                value = parseInt(value) || 1;
             }
             if (typeof value !== 'number') return;
             if (value < 1) {
-                t._index = 0;
-            } else {
-                t._index = value - 1;
+                value = 1;
             }
-            t.page = t._index + 1;
+            if (value === t.page) return;
+            t.page = value;
+            t._index = t.page - 1;
             t.value = t.page;
             t.process();
         },
@@ -211,6 +222,7 @@
             if (!value.forEach) {
                 value = [value];
             }
+            if (JSON.stringify(t._data) === JSON.stringify(value)) return;
             t._data = value;
             t.process();
         },
@@ -221,7 +233,7 @@
 <webui-button class="prev" start-icon="left"></webui-button>
 </div>
 <div class="pages">
-<input type="number" min="0" />
+<input type="number" value="1" min="1" />
 </div>
 <div class="next">
 <webui-button class="next" start-icon="right"></webui-button>
