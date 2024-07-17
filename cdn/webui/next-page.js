@@ -54,14 +54,12 @@ webui.define("webui-next-page", {
         t._preContent.classList.add('mt-a', 'flex-grow');
         t._preContent.setAttribute('column', true);
         t._preContent.setAttribute('justify', 'center');
-        t._preContent.setAttribute('data-subscribe', 'next-page-pre');
-        t._preContent.setAttribute('data-set', 'innerHTML');
+        t._preContent.setAttribute('data-subscribe', 'next-page-pre:innerHTML');
         t._link.setAttribute('justify', 'center');
         t._postContent.classList.add('mt-a');
         t._postContent.setAttribute('column', true);
         t._postContent.setAttribute('justify', 'center');
-        t._postContent.setAttribute('data-subscribe', 'next-page-post');
-        t._postContent.setAttribute('data-set', 'innerHTML');
+        t._postContent.setAttribute('data-subscribe', 'next-page-post:innerHTML');
         t.render();
     }
 });

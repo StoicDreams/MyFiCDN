@@ -49,7 +49,6 @@ webui.define('webui-nav-link', {
     },
     connected: (t) => {
         t.appendChild(t._anchor);
-        t.setAttribute('data-set', 'setter');
-        t.setAttribute('data-subscribe', 'page-path');
+        t.setAttribute('data-subscribe', 'page-path:setter');
     }
 });

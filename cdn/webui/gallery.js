@@ -26,16 +26,14 @@ webui.define("webui-gallery", {
         t.flexImage.style.height = 'calc(0.8 * var(--main-height))';
 
         let img = webui.create('img');
-        img.setAttribute('data-subscribe', 'page-gallery-image');
-        img.setAttribute('data-set', 'src');
+        img.setAttribute('data-subscribe', 'page-gallery-image:src');
         t.flexImage.appendChild(img);
 
         t.flexName.setAttribute('justify', 'center');
         t.flexName.classList.add('pa-1', 'ma-1');
         let nm = webui.create('p');
         t.flexName.appendChild(nm);
-        nm.setAttribute('data-subscribe', 'page-gallery-image-name');
-        nm.setAttribute('data-set', 'innerHTML');
+        nm.setAttribute('data-subscribe', 'page-gallery-image-name:innerHTML');
 
         t.cards.classList.add('mb-5');
         if (t.cardWidth) {

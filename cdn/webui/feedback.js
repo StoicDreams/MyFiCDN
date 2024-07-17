@@ -87,8 +87,7 @@
         },
         attr: ['title', 'data-post'],
         connected: (t) => {
-            t.setAttribute('data-subscribe', 'feedback');
-            t.setAttribute('data-set', 'click');
+            t.setAttribute('data-subscribe', 'feedback:click');
         },
         shadowTemplate: `
 <style type="text/css">

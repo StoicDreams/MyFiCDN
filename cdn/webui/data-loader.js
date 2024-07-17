@@ -98,7 +98,7 @@
                     t.dataset.trigger = undefined;
                     t.src = undefined;
                 } else {
-                    console.error('webui-data-loader failed: src must be used in conjunction with a data-setter to signify which data key to assign data to.');
+                    console.error('webui-data-loader failed: src must be used in conjunction with [data-trigger="variable-name"] to signify which data key to assign data to.');
                 }
             }
             Object.keys(t.dataset).forEach(key => {

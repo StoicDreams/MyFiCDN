@@ -20,7 +20,9 @@
                     }
                     break;
                 case 'dataSubscribe':
-                    t.setAttribute('data-set', 'setTab');
+                    if (value.endsWith(':setTab')) {
+                        t.setAttribute('data-subscribe', `${value}:setTab`);
+                    }
                     break;
             }
         },
