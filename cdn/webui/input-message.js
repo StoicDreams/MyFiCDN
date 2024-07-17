@@ -92,6 +92,7 @@ display:block;
 position:relative;
 min-height:3em;
 box-sizing:border-box;
+border:var(--theme-border-width) solid var(--theme-color);
 }
 textarea {
 display:block;

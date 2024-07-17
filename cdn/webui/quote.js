@@ -1,6 +1,6 @@
 /* Display themed quote */
 webui.define("webui-quote", {
-    attr: ['cite', 'theme', 'elevation'],
+    attr: ['cite', 'elevation'],
     connected: (t) => {
         let bc = document.createElement('blockquote');
         let r = [];
@@ -9,7 +9,7 @@ webui.define("webui-quote", {
         r.forEach(n => bc.appendChild(n));
         bc.classList.add('quote');
         if (t.theme) {
-            bc.classList.add(`highlight-theme-${t.theme}`);
+            bc.style.setProperty('--theme-color', `var(--color-${t.theme})`);
         }
         if (t.elevation >= 0) {
             bc.classList.add(`elevation-${t.elevation}`);

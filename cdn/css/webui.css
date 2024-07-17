@@ -111,6 +111,7 @@
     --theme-color: inherit;
     --theme-color-offset: inherit;
     --theme-padding: var(--padding);
+    --theme-border-width: 1px;
 }
 
 *:not(:defined) {
@@ -708,7 +709,7 @@ table td {
 table.bordered,
 table.bordered th,
 table.bordered td {
-    border-width: 1px;
+    border-width: var(--theme-border-width);
 }
 
 table th.left,
@@ -1153,7 +1154,7 @@ blockquote,
     display: block;
     margin: var(--padding);
     padding: var(--padding);
-    border-left: calc(2 * var(--padding)) solid var(--color-primary);
+    border-left: calc(2 * var(--padding)) solid var(--theme-color);
     box-shadow: var(--elevation-10);
     box-sizing: border-box;
 }
@@ -1165,140 +1166,10 @@ webui-quote>slot[name="cite"],
     width: max-content;
 }
 
-webui-quote[theme="white"],
-.quote.highlight-theme-white {
-    border-left-color: var(--color-white);
-}
-
-webui-quote[theme="black"],
-.quote.highlight-theme-black {
-    border-left-color: var(--color-black);
-}
-
-webui-quote[theme="title"],
-.quote.highlight-theme-title {
-    border-left-color: var(--color-title);
-}
-
-webui-quote[theme="primary"],
-.quote.highlight-theme-primary {
-    border-left-color: var(--color-primary);
-}
-
-webui-quote[theme="secondary"],
-.quote.highlight-theme-secondary {
-    border-left-color: var(--color-secondary);
-}
-
-webui-quote[theme="tertiary"],
-.quote.highlight-theme-tertiary {
-    border-left-color: var(--color-tertiary);
-}
-
-webui-quote[theme="info"],
-.quote.highlight-theme-info {
-    border-left-color: var(--color-info);
-}
-
-webui-quote[theme="success"],
-.quote.highlight-theme-success {
-    border-left-color: var(--color-success);
-}
-
-webui-quote[theme="warning"],
-.quote.highlight-theme-warning {
-    border-left-color: var(--color-warning);
-}
-
-webui-quote[theme="danger"],
-.quote.highlight-theme-danger {
-    border-left-color: var(--color-danger);
-}
-
-webui-quote[theme="shade"],
-.quote.highlight-theme-shade {
-    border-left-color: var(--color-shade);
-}
-
-webui-quote[theme="active"],
-.quote.highlight-theme-active {
-    border-left-color: var(--color-active);
-}
-
-webui-quote[theme="button"],
-.quote.highlight-theme-button {
-    border-left-color: var(--color-button);
-}
-
 webui-quote>slot[name="cite"]:before,
 .quote>cite:before {
     content: "— ";
-    color: var(--color-primary);
-}
-
-webui-quote[theme="white"]>slot[name="cite"]:before,
-.quote.highlight-theme-white>cite:before {
-    color: var(--color-white);
-}
-
-webui-quote[theme="black"]>slot[name="cite"]:before,
-.quote.highlight-theme-black>cite:before {
-    color: var(--color-black);
-}
-
-webui-quote[theme="title"]>slot[name="cite"]:before,
-.quote.highlight-theme-title>cite:before {
-    color: var(--color-title);
-}
-
-webui-quote[theme="primary"]>slot[name="cite"]:before,
-.quote.highlight-theme-primary>cite:before {
-    color: var(--color-primary);
-}
-
-webui-quote[theme="secondary"]>slot[name="cite"]:before,
-.quote.highlight-theme-secondary>cite:before {
-    color: var(--color-secondary);
-}
-
-webui-quote[theme="tertiary"]>slot[name="cite"]:before,
-.quote.highlight-theme-tertiary>cite:before {
-    color: var(--color-tertiary);
-}
-
-webui-quote[theme="info"]>slot[name="cite"]:before,
-.quote.highlight-theme-info>cite:before {
-    color: var(--color-info);
-}
-
-webui-quote[theme="success"]>slot[name="cite"]:before,
-.quote.highlight-theme-success>cite:before {
-    color: var(--color-success);
-}
-
-webui-quote[theme="warning"]>slot[name="cite"]:before,
-.quote.highlight-theme-warning>cite:before {
-    color: var(--color-warning);
-}
-
-webui-quote[theme="danger"]>slot[name="cite"]:before,
-.quote.highlight-theme-danger>cite:before {
-    color: var(--color-danger);
-}
-
-webui-quote[theme="shade"]>slot[name="cite"]:before,
-.quote.highlight-theme-shade>cite:before {
-    color: var(--color-shade);
-}
-
-webui-quote[theme="active"]>slot[name="cite"]:before,
-.quote.highlight-theme-active>cite:before {
-    color: var(--color-active);
-}
-
-webui-quote[theme="button"]>slot[name="cite"]:before,
-.quote.highlight-theme-button>cite:before {
-    color: var(--color-button);
+    color: var(--theme-color);
 }
 
 .loading {
@@ -3354,7 +3225,7 @@ body>div.tooltip {
     max-height: 50%;
     width: auto;
     height: auto;
-    border: 1px solid var(--color-primary);
+    border: var(--theme-border-width) solid var(--color-primary);
     border-radius: var(--corners);
     top: 50%;
     left: 50%;
@@ -3710,7 +3581,7 @@ webui-drawer.nav[docked]~header [data-toggleclass=".nav|open"] {
     color: var(--color-black);
     border-radius: var(--corners, 5px);
     z-index: 99999;
-    border: 2px solid var(--color-info);
+    border: var(--theme-border-width) solid var(--color-info);
 }
 
 .dropdown>.dropdown-menu>li {
