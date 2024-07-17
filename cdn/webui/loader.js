@@ -665,7 +665,7 @@ const webui = (() => {
         let el = ev.srcElement || ev.target || ev;
         let key = el.dataset.trigger;
         if (!key) return;
-        let value = webui.first(typeof el.getValue === 'function' ? el.getValue() : undefined, el.value, el.dataset.value);
+        let value = webui.getDefined(typeof el.getValue === 'function' ? el.getValue() : undefined, el.value, el.dataset.value);
         let oldData = webui.getData(key);
         if (oldData !== value) {
             webui.setData(key, value);
