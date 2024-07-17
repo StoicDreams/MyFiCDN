@@ -202,7 +202,7 @@ const webui = (() => {
                         const shadow = t.attachShadow({ mode: 'open' });
                         // Something is copying attributes from the parent webui-dropdown to the input/select elements on the first click in Edge browser.
                         function removeBugAttributes(el) {
-                            ['style', 'class', 'value', 'preload', 'data-options', 'data-trigger', 'data-subscribe'].forEach(key => {
+                            ['value', 'preload', 'data-options', 'data-trigger', 'data-subscribe'].forEach(key => {
                                 el.removeAttribute(key);
                             });
                         }

@@ -3,6 +3,7 @@
     webui.define('webui-pagination', {
         preload: "button",
         constructor: (t) => {
+            t._input = t.template.querySelector('input');
             t._slot = t.template.querySelector('slot');
             t._prev = t.template.querySelector('div.prev');
             t._pages = t.template.querySelector('div.pages');
@@ -15,6 +16,7 @@
             t.perPage = 1;
             t._index = 0;
             t.page = 1;
+            t._input.value = 1;
             t._btnFirst.addEventListener('click', _ => {
                 if (t.page === 1) return;
                 t.setValue(1);
@@ -37,8 +39,17 @@
                 if (t.page === t.pageCount) return;
                 t.setValue(t.pageCount);
             });
+            t._input.addEventListener('input', _ => {
+                let page = parseInt(t._input.value) || t.page;
+                if (page !== t.page) {
+                    t.setValue(page);
+                    if (t._input.value !== t.page) {
+                        t._input.value = t.page;
+                    }
+                }
+            });
         },
-        attr: ['data-current', 'data-subscribe', 'value', 'page', 'per-page', 'hide-prev-next-buttons', 'hide-pages', 'loop'],
+        attr: ['data-current', 'data-subscribe', 'value', 'page', 'per-page', 'hide-prev-next-buttons', 'hide-pages', 'loop', 'max-pages'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'perPage':
@@ -50,6 +61,9 @@
                 case 'page':
                 case 'value':
                     t.setValue(value);
+                    break;
+                case 'maxPages':
+                    t.maxPages = parseInt(value) || 0;
                     break;
             }
         },
@@ -88,7 +102,7 @@
         process: function () {
             let t = this;
             if (!t._data || !t._data.forEach) return;
-            let current = {};
+            let current = t._currentData || {};
             if (t._data.length === 0) {
                 t.pageCount = 0;
                 if (t.dataCurrent) {
@@ -96,10 +110,11 @@
                 }
                 return;
             }
-            if (t._index >= t._data.length) {
-                t._index = 0;
-                t.page = 1;
-                t.value = 1;
+            t.pageCount = Math.ceil(t._data.length / t.perPage);
+            if (t.page > t.pageCount) {
+                t.page = t.pageCount;
+                t._index = t.page - 1;
+                t.value = t.page;
             }
             if (t.perPage === 1) {
                 current = t._data[t._index];
@@ -109,9 +124,8 @@
                     current.push(t._data[index]);
                 }
             }
+            t._currentData = current;
             webui.setData(t.dataCurrent, current);
-            t.pageCount = Math.ceil(t._data.length / t.perPage);
-            t._pages.innerText = '';
             if (t.page == 1) {
                 t._btnFirst.setAttribute('theme', 'active');
             } else {
@@ -122,18 +136,39 @@
             } else {
                 t._btnLast.removeAttribute('theme');
             }
-            if (!t.hidePages) {
-                for (let pn = 1; pn <= t.pageCount; ++pn) {
-                    let page = webui.create('webui-button', { html: `${pn}` });
-                    let pageNumber = pn;
+            t._input.value = t.page;
+            let cw = `${t.page}`.length + 5;
+            t._input.style.width = `${cw}ch`;
+            if (!t.hidePages && t.maxPages !== 0) {
+                t._pages.querySelectorAll('webui-button').forEach(b => b.remove());
+                let mp = t.maxPages === undefined ? 10 : Math.abs(t.maxPages);
+                let pl = Math.floor(mp / 2);
+                let ps = t.page - pl;
+                if (ps < 1) {
+                    ps = 1;
+                }
+                let pr = ps + mp - 1;
+                if (pr > t.pageCount) {
+                    pr = t.pageCount;
+                    if (ps > 1) {
+                        ps = Math.max(1, pr - (mp - 1));
+                    }
+                }
+
+                for (let pn = ps; pn <= pr; ++pn) {
                     if (pn === t.page) {
-                        page.setAttribute('theme', 'active');
                     } else {
+                        let pageNumber = pn;
+                        let page = webui.create('webui-button', { html: `${pageNumber}` });
                         page.addEventListener('click', _ => {
                             t.setValue(pageNumber);
                         });
+                        if (pageNumber < t.page) {
+                            t._pages.insertBefore(page, t._input);
+                        } else {
+                            t._pages.appendChild(page);
+                        }
                     }
-                    t._pages.appendChild(page);
                 }
             }
         },
@@ -184,7 +219,9 @@
 <webui-button class="first" start-icon="left-to-line"></webui-button>
 <webui-button class="prev" start-icon="left"></webui-button>
 </div>
-<div class="pages"></div>
+<div class="pages">
+<input type="number" min="0" />
+</div>
 <div class="next">
 <webui-button class="next" start-icon="right"></webui-button>
 <webui-button class="last" start-icon="right-to-line"></webui-button>
@@ -205,6 +242,15 @@ gap:var(--padding);
 }
 pre {
 display:none;
+}
+input[type="number"] {
+background-color:color-mix(in srgb, var(--theme-color) 80%, white);
+color:var(--theme-color-offset);
+border:none;
+box-sizing:border-box;
+padding:var(--padding);
+text-align:center;
+border-radius:var(--corners);
 }
 </style>`
     });
