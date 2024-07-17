@@ -111,6 +111,7 @@
                 return;
             }
             t.pageCount = Math.ceil(t._data.length / t.perPage);
+            t.setAttribute('page-count', t.pageCount);
             if (t.page > t.pageCount) {
                 t.page = t.pageCount;
                 t._index = t.page - 1;
@@ -233,6 +234,10 @@
 display:grid;
 grid-template-columns:auto max-content max-content max-content 0;
 gap:var(--padding);
+}
+:host([page-count="0"]),
+:host(:not([page-count])) {
+display:none;
 }
 div.prev,
 div.pages,
