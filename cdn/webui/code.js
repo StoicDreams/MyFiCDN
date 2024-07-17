@@ -14,7 +14,7 @@
             t._code = t.querySelector('code');
             t._code.innerText = code;
         },
-        attr: ['language', 'lang', 'label', 'theme'],
+        attr: ['language', 'lang', 'label', 'theme', 'lines'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'label':
@@ -28,9 +28,9 @@
                     t._pre.setAttribute('languagetag', value);
                     t._code.classList.add(`language-${webui.toSnake(value.replace(/[ ]+/g, '-'))}`);
                     break;
-                case 'theme':
-                    t.style.setProperty('--theme', `var(--color-${value})`);
-                    t.style.setProperty('--theme-offset', `var(--color-${value}-offset)`);
+                case 'lines':
+                    t._code.style.height = `calc((${value} * var(--line-height)) + (2 * var(--padding)))`;
+                    t._code.style.maxHeight = `calc((${value} * var(--line-height)) + (2 * var(--padding)))`;
                     break;
             }
         },
@@ -48,5 +48,5 @@
         },
         connected: (t) => {
         }
-    })
+    });
 }

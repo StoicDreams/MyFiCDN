@@ -1,0 +1,211 @@
+"use strict"
+{
+    webui.define('webui-pagination', {
+        preload: "button",
+        constructor: (t) => {
+            t._slot = t.template.querySelector('slot');
+            t._prev = t.template.querySelector('div.prev');
+            t._pages = t.template.querySelector('div.pages');
+            t._next = t.template.querySelector('div.next');
+            t._btnFirst = t.template.querySelector('webui-button.first');
+            t._btnPrev = t.template.querySelector('webui-button.prev');
+            t._btnNext = t.template.querySelector('webui-button.next');
+            t._btnLast = t.template.querySelector('webui-button.last');
+            t._data = [];
+            t.perPage = 1;
+            t._index = 0;
+            t.page = 1;
+            t._btnFirst.addEventListener('click', _ => {
+                if (t.page === 1) return;
+                t.setValue(1);
+            });
+            t._btnPrev.addEventListener('click', _ => {
+                if (t.page > 1) {
+                    t.setValue(t.page - 1);
+                } else if (t.loop !== undefined) {
+                    t.setValue(t.pageCount);
+                }
+            });
+            t._btnNext.addEventListener('click', _ => {
+                if (t.page < t.pageCount) {
+                    t.setValue(t.page + 1);
+                } else if (t.loop !== undefined) {
+                    t.setValue(1);
+                }
+            });
+            t._btnLast.addEventListener('click', _ => {
+                if (t.page === t.pageCount) return;
+                t.setValue(t.pageCount);
+            });
+        },
+        attr: ['data-current', 'data-subscribe', 'value', 'page', 'per-page', 'hide-prev-next-buttons', 'hide-pages', 'loop'],
+        attrChanged: (t, property, value) => {
+            switch (property) {
+                case 'perPage':
+                    let num = parseInt(value);
+                    if (`${num}` === value) {
+                        t.perPage = num;
+                    }
+                    break;
+                case 'page':
+                case 'value':
+                    t.setValue(value);
+                    break;
+            }
+        },
+        connected: (t) => {
+            let data = '';
+            if (t._slot.assignedElements().length) {
+                let ch = [];
+                t._slot.assignedElements().forEach(node => {
+                    ch.push(node.innerText);
+                });
+                data = ch.join('\n');
+                t.setData(data);
+            }
+
+            let ds = t.dataset.subscribe;
+            if (!ds) return;
+            ds.split('|').forEach(ds => {
+                let kt = ds.split(':');
+                if (kt.length !== 2) return;
+                if (kt[1] === 'setData') {
+                    let attempts = 0;
+                    function tryGetData() {
+                        if (t._data && t._data.length) return;
+                        data = webui.getData(kt[0]);
+                        if (data) {
+                            t.setData(data);
+                        } else if (++attempts < 5) {
+                            setTimeout(() => tryGetData(), 100 * attempts);
+                        }
+                    }
+                    tryGetData();
+                }
+            });
+
+        },
+        process: function () {
+            let t = this;
+            if (!t._data || !t._data.forEach) return;
+            let current = {};
+            if (t._data.length === 0) {
+                t.pageCount = 0;
+                if (t.dataCurrent) {
+                    webui.setData(t.dataCurrent, current);
+                }
+                return;
+            }
+            if (t._index >= t._data.length) {
+                t._index = 0;
+                t.page = 1;
+                t.value = 1;
+            }
+            if (t.perPage === 1) {
+                current = t._data[t._index];
+            } else {
+                current = [];
+                for (let index = t._index; index < t._data.length; ++index) {
+                    current.push(t._data[index]);
+                }
+            }
+            webui.setData(t.dataCurrent, current);
+            t.pageCount = Math.ceil(t._data.length / t.perPage);
+            t._pages.innerText = '';
+            if (t.page == 1) {
+                t._btnFirst.setAttribute('theme', 'active');
+            } else {
+                t._btnFirst.removeAttribute('theme');
+            }
+            if (t.page == t.pageCount) {
+                t._btnLast.setAttribute('theme', 'active');
+            } else {
+                t._btnLast.removeAttribute('theme');
+            }
+            if (!t.hidePages) {
+                for (let pn = 1; pn <= t.pageCount; ++pn) {
+                    let page = webui.create('webui-button', { html: `${pn}` });
+                    let pageNumber = pn;
+                    if (pn === t.page) {
+                        page.setAttribute('theme', 'active');
+                    } else {
+                        page.addEventListener('click', _ => {
+                            t.setValue(pageNumber);
+                        });
+                    }
+                    t._pages.appendChild(page);
+                }
+            }
+        },
+        setValue: function (value) {
+            let t = this;
+            if (value === undefined || value === undefined) return;
+            if (typeof value === 'string') {
+                value = parseInt(value);
+            }
+            if (typeof value !== 'number') return;
+            if (value < 1) {
+                t._index = 0;
+            } else {
+                t._index = value - 1;
+            }
+            t.page = t._index + 1;
+            t.value = t.page;
+            t.process();
+        },
+        setData: function (value) {
+            let t = this;
+            if (typeof value === 'string') {
+                try {
+                    if (!value) {
+                        t._data = [];
+                    } else {
+                        value = JSON.parse(value);
+                    }
+                } catch (ex) {
+                    console.error('Failed parsing data', value);
+                    return;
+                }
+            }
+            if (value === undefined || value === null) {
+                t._data = [];
+                t.process();
+                return;
+            }
+            if (!value.forEach) {
+                value = [value];
+            }
+            t._data = value;
+            t.process();
+        },
+        shadowTemplate: `
+<div class="spacer-left"></div>
+<div class="prev">
+<webui-button class="first" start-icon="left-to-line"></webui-button>
+<webui-button class="prev" start-icon="left"></webui-button>
+</div>
+<div class="pages"></div>
+<div class="next">
+<webui-button class="next" start-icon="right"></webui-button>
+<webui-button class="last" start-icon="right-to-line"></webui-button>
+</div>
+<div class="spacer-right"></div>
+<pre><slot></slot></pre>
+<style type="text/css">
+:host {
+display:grid;
+grid-template-columns:auto max-content max-content max-content 0;
+gap:var(--padding);
+}
+div.prev,
+div.pages,
+div.next {
+display:flex;
+gap:var(--padding);
+}
+pre {
+display:none;
+}
+</style>`
+    });
+}

@@ -20,12 +20,9 @@ webui.define('webui-input-text', {
             t.setAttribute('value', t._field.value);
         });
     },
-    attr: ['id', 'label', 'theme', 'title', 'name', 'autofocus', 'value', 'type', 'placeholder'],
+    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'type', 'placeholder'],
     attrChanged: (t, property, value) => {
         switch (property) {
-            case 'theme':
-                t.setTheme(value);
-                break;
             case 'id':
                 if (value) {
                     t.removeAttribute('id');
@@ -78,6 +75,8 @@ position:relative;
 box-sizing:border-box;
 align-items:center;
 overflow:auto;
+background-color:var(--theme-color);
+color:var(--theme-color-offset);
 }
 :host([vertical]),
 :host([compact]) {

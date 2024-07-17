@@ -24,7 +24,7 @@
                 t.applyDataChange();
             });
         },
-        attr: ['theme', 'icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'data-options'],
+        attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'data-options'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'dataOptions':
@@ -41,9 +41,6 @@
                     break;
                 case 'newlabel':
                     t._includeNew = true;
-                    break;
-                case 'theme':
-                    t.setTheme(value);
                     break;
                 case 'label':
                     t._label.innerHTML = value;
@@ -65,7 +62,6 @@
         },
         connected: (t) => {
             let id = webui.uuid();
-            t.setTheme(t.theme || 'primary');
             t._forLabel.setAttribute('for', id);
             t._select.setAttribute('id', id);
         },
@@ -169,6 +165,8 @@ box-sizing:border-box;
 align-items: center;
 width:100%;
 width:-webui-fill-available;
+background-color:var(--theme-color);
+color:var(--theme-color-offset);
 }
 :host([stack]) {
 display:grid;

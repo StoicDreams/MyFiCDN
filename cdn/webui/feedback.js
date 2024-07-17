@@ -100,7 +100,7 @@ align-items:center;
 justify-content:center;
 }
 </style>
-<webui-fa icon="comment" family="solid"></webui-fa>
+<webui-fa icon="comment"></webui-fa>
 `
     });
 }

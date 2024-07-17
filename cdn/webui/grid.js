@@ -2,14 +2,11 @@
 {
     webui.define('webui-grid', {
         constructor: (t) => { },
-        attr: ['columns', 'min', 'max', 'theme', 'gap', 'width', 'height'],
+        attr: ['columns', 'min', 'max', 'gap', 'width', 'height'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'gap':
                     t.style.gap = webui.pxIfNumber(value);
-                    break;
-                case 'theme':
-                    webui.setTheme(t, value);
                     break;
                 case 'columns':
                     let num = parseInt(value);
@@ -44,6 +41,8 @@
 --height:auto;
 --columns:repeat(auto-fit, minmax(var(--min), var(--max)));
 display:grid;
+background-color:color-mix(in srgb, var(--theme-color) 90%, white);
+color:var(--theme-color-offset);
 grid-auto-rows: min-content auto;
 grid-template-columns: var(--columns);
 gap:var(--padding);

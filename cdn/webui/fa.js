@@ -6,13 +6,49 @@
             'triangle-exclamation': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M27.4 432L0 480H55.3 456.7 512l-27.4-48L283.6 80.4 256 32 228.4 80.4 27.4 432zm401.9 0H82.7L256 128.7 429.3 432zM232 296v24h48V296 208H232v88zm48 104V352H232v48h48z"/></svg>`
         }
     };
-
+    const faWait = {
+        'regular': {}
+    };
+    async function getIcon(family, name, handler) {
+        if (!name || !family) {
+            return '';
+        }
+        if (!faCache[family]) {
+            faCache[family] = {};
+            faWait[family] = {};
+        }
+        let svg = faCache[family][name];
+        if (svg) {
+            handler(svg);
+            return;
+        }
+        if (faWait[family][name]) {
+            faWait[family][name].push(handler);
+        } else {
+            faWait[family][name] = [];
+            try {
+                let result = await fetch(`https://cdn.myfi.ws/fa/svgs/${family}/${name}.svg`);
+                if (!result.ok) return;
+                svg = await result.text();
+                if (!svg.startsWith("<svg")) {
+                    svg = '';
+                }
+            } catch (ex) {
+                console.error('Failed loading fa icon file', family, name, ex);
+                svg = '';
+            }
+            faCache[family][name] = svg;
+            handler(svg);
+            setTimeout(() => {
+                faWait[family][name].forEach(h => h(svg));
+            }, 10);
+        }
+    }
     webui.define("webui-fa", {
         constructor: (t) => {
             t.loadid = 0;
             t.svg = document.createElement('svg');
             t.icon = "triangle-exclamation";
-            t.family = 'regular';
             t.iconSlot = t.template.querySelector('slot[name=icon]');
             t.countSlot = t.template.querySelector('slot[name=count]');
         },
@@ -37,22 +73,16 @@
             let t = this;
             let name = t.icon;
             let family = t.family;
-            if (!name || !family) {
-                t.svg = ``;
-                return;
+            if (!family) {
+                family = window.getComputedStyle(t).getPropertyValue('--fa-default-family');
             }
-            if (!faCache[family]) {
-                faCache[family] = {};
+            if (!family) {
+                family = 'regular';
             }
-            if (!faCache[family][name]) {
-                let result = await fetch(`https://cdn.myfi.ws/fa/svgs/${family}/${name}.svg`);
-                if (!result.ok) return;
-                let svg = await result.text();
-                if (!svg.startsWith("<svg")) return;
-                faCache[family][name] = svg;
-            }
-            t.svg = faCache[t.family][t.icon];
-            t.iconSlot.innerHTML = `${t.svg}`;
+            getIcon(family, name, svg => {
+                t.svg = svg;
+                t.iconSlot.innerHTML = `${t.svg}`;
+            });
         },
         shadowTemplate: `
 <style type="text/css">

@@ -5,12 +5,9 @@ webui.define('webui-link', {
         t._startIcon = t.template.querySelector('slot[name="start-icon"]');
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
     },
-    attr: ['href', 'theme', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family'],
+    attr: ['href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family'],
     attrChanged: (t, property, value) => {
         switch (property) {
-            case 'theme':
-                t.setTheme(value);
-                break;
             case 'startIconFamily':
             case 'startIcon':
                 {
@@ -56,7 +53,7 @@ font-size:inherit;
 font:inherit;
 -webkit-user-select: text;
 user-select: text;
-color: inherit;
+color:var(--theme-color, inherit);
 }
 :host([href]:not(:disabled)),
 :host([data-trigger]:not(:disabled)),

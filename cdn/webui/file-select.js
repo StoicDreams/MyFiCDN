@@ -64,13 +64,9 @@
             }
             t.dispatchEvent(new Event('change', { bubbles: true }));
         },
-        attr: ['theme', 'label', 'data-trigger', 'accept', 'multiple', 'content-type', 'label-limit'],
+        attr: ['label', 'data-trigger', 'accept', 'multiple', 'content-type', 'label-limit'],
         attrChanged: (t, property, value) => {
             switch (property) {
-                case 'theme':
-                    t._label.style.backgroundColor = `var(--color-${value})`;
-                    t._label.style.color = `var(--color-${value}-offset)`;
-                    break;
                 case 'label':
                     t._label.innerHTML = value;
                     break;
@@ -115,6 +111,8 @@ align-items:center;
 justify:center;
 padding:var(--padding,1rem);
 cursor:pointer;
+background-color:var(--theme-color);
+color:var(--theme-color-offset);
 }
 input[type="file"] {
 z-index:1;
@@ -131,7 +129,7 @@ cursor:pointer;
 </style>
 <label><slot></slot><span></span></label>
 <input type="file" accept="*" />
-<webui-button theme="danger"><webui-fa icon="xmark" family="solid"></webui-fa></webui-button>
+<webui-button theme="danger"><webui-fa icon="xmark"></webui-fa></webui-button>
 `
     });
 }

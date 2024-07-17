@@ -6,7 +6,7 @@
             t._slotTabs = t.template.querySelector('slot[name="tabs"]');
             t._section = t.template.querySelector('section');
         },
-        attr: ['pad', 'transition-timing', 'index', 'data-suscribe'],
+        attr: ['pad', 'transition-timing', 'index', 'data-suscribe', 'theme'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'pad':
@@ -102,8 +102,8 @@ display:block;
 overflow:hidden;
 width:100%;
 width:-webkit-fill-available;
---tabs:var(--color-title);
---tabs-offset:var(--color-title-offset);
+--theme-color:var(--color-title);
+--theme-color-offset:var(--color-title-offset);
 --theme-padding: 0px;
 }
 :host([vertical]) {
@@ -112,8 +112,8 @@ grid-template-columns:max-content auto;
 }
 slot[name="tabs"] {
 display:flex;
-background-color:var(--tabs);
-color:var(--tabs-offset);
+background-color:var(--theme-color);
+color:var(--theme-color-offset);
 gap:var(--theme-padding);
 border-radius:var(--corners) var(--corners) 0 0;
 }
@@ -133,7 +133,7 @@ display:block;
 overflow:hidden;
 box-sizing:border-box;
 border-radius:0 0 var(--corners) var(--corners);
-border:1px solid var(--tabs);
+border:1px solid var(--theme-color);
 }
 </style>
 `

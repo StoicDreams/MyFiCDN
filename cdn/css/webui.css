@@ -1,6 +1,7 @@
 @charset "UTF-8";
 
 :root {
+    --fa-default-family: regular;
     --color-black: #101010FF;
     --color-white: #FFFFFFFF;
     --site-background-color: #333333FF;
@@ -107,6 +108,9 @@
     --typography-weight: 400;
     --typography-lineheight: 1.33;
     --typography-letterspacing: normal;
+    --theme-color: inherit;
+    --theme-color-offset: inherit;
+    --theme-padding: var(--padding);
 }
 
 *:not(:defined) {
@@ -670,6 +674,9 @@ pre>code {
     background-color: inherit;
     color: inherit;
     height: 100%;
+    overflow: auto;
+    --line-height: 1.3em;
+    line-height: var(--line-height);
 }
 
 webui-table>table {
@@ -3101,6 +3108,17 @@ main>*>.d-flex>*[width] {
 
 .scrollable {
     overflow: auto;
+}
+
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+    background-color: color-mix(in srgb, var(--theme-color) 20%, transparent);
+    box-shadow: -4px 0 -4px rgba(255, 255, 255, 0.2) inset;
+}
+
+::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+    background-color: var(--theme-color);
 }
 
 .theme-active,

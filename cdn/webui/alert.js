@@ -13,6 +13,7 @@ webui.define("webui-alert", {
     attr: ['variant', 'show'],
     attrChanged: (t, property, value) => {
         switch (property) {
+            case 'theme':
             case 'variant':
                 t.setVariant(value);
                 break;
@@ -76,8 +77,8 @@ justify-content:start;
 opacity:0;
 transform:scaleY(0);
 transition:all 0.4s ease-out allow-discrete;
-background-color:inherit;
-color:inherit;
+background-color:var(--theme-color, inherit);
+color:var(--theme-color-offset, inherit);
 }
 :host>div {
 flex-grow:1;
@@ -105,8 +106,8 @@ color:inherit;
 border-radius:var(--corners);
 }
 </style>
-<webui-fa id="icon" icon="" family="solid"></webui-fa>
+<webui-fa id="icon" icon=""></webui-fa>
 <div><slot></slot></div>
-<button id="close"><webui-fa icon="xmark" family="solid"></webui-fa></button>
+<button id="close"><webui-fa icon="xmark"></webui-fa></button>
 `
 });

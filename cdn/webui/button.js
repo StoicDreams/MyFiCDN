@@ -5,12 +5,9 @@ webui.define("webui-button", {
         t._startIcon = t.template.querySelector('slot[name="start-icon"]');
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
     },
-    attr: ['href', 'theme', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family', 'start-icon-class', 'end-icon-class', 'elevation'],
-    attrChanged: (t, property, value) => {
+    attr: ['href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family', 'start-icon-class', 'end-icon-class', 'elevation'],
+    attrChanged: (t, property, _value) => {
         switch (property) {
-            case 'theme':
-                t.setTheme(value);
-                break;
             case 'startIconFamily':
             case 'startIconClass':
             case 'startIcon':
@@ -63,8 +60,11 @@ border-radius: var(--corners);
 min-height: 1em;
 -webkit-user-select: text;
 user-select: text;
-background-color: var(--color-button);
-color: var(--color-button-offset);
+background-color: color-mix(in srgb, var(--theme-color) 90%, black);
+color: var(--theme-color-offset);
+-webkit-user-select: none;
+-ms-user-select: none;
+user-select: none;
 }
 :host([disabled]) {
 pointer-events:none;

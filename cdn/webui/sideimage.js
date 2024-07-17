@@ -8,7 +8,7 @@ webui.define("webui-sideimage", {
         t._sideImage = webui.create('img');
         t._imgContainer = webui.create('webui-flex');
     },
-    attr: ['elevation', 'reverse', 'src', 'theme', 'alt'],
+    attr: ['reverse', 'src', 'alt'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'alt':
@@ -19,9 +19,6 @@ webui.define("webui-sideimage", {
                 if (!t._sideImage.hasAttribute('alt')) {
                     t._sideImage.setAttribute('alt', value.split('/').pop());
                 }
-                break;
-            case 'theme':
-                t.setTheme(value);
                 break;
             case 'reverse':
                 t.reverse = true;

@@ -1,5 +1,6 @@
 <webui-data data-page-title="{COMPANY_SINGULAR} Content Delivery" data-page-subtitle="" data-page-dropdown-test='[{"id":"1","name":"One"},{"id":"2","name":"Two"}]'></webui-data>
 <webui-data data-page-next-page='{"name":"About MyFi CDN","href":"/about"}'></webui-data>
+<webui-data-loader src="/mock-data.json" data-trigger="mock-report"></webui-data-loader>
 
 <webui-sideimage reverse src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg">
     <webui-page-segment elevation="10">
@@ -22,20 +23,22 @@
 <webui-alert data-subscribe="page-alert"></webui-alert>
 <webui-data data-page-loaded="1"></webui-data>
 
-## Data Subscriptions
+## Data Manipulation
 
-<webui-tabs pad="var(--padding)" index="1">
+<webui-tabs pad="var(--padding)" index="3">
     <webui-button slot="tabs">Test Page Data</webui-button>
     <webui-content slot="content" src="/d/en-US/content/test-page-data.md"></webui-content>
     <webui-button slot="tabs">Test App Data</webui-button>
     <webui-content slot="content" src="/d/en-US/content/test-app-data.md"></webui-content>
     <webui-button slot="tabs">Test Input Transfer</webui-button>
     <webui-content slot="content" src="/d/en-US/content/test-input.md"></webui-content>
+    <webui-button slot="tabs">Pagination</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/pagination.md"></webui-content>
 </webui-tabs>
 
 ## Data Display
 
-<webui-tabs pad="var(--padding)" index="1" vertical transition-timing="200">
+<webui-tabs theme="primary" pad="var(--padding)" index="1" vertical transition-timing="200">
     <webui-button slot="tabs">Data Lists</webui-button>
     <webui-content slot="content" src="/d/en-US/content/lists.md"></webui-content>
     <webui-button slot="tabs">Data Table</webui-button>

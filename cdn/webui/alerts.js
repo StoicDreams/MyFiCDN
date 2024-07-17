@@ -148,7 +148,7 @@ align-items:center;
 justify-content:center;
 }
 </style>
-<webui-fa icon="bell" family="solid"></webui-fa>
+<webui-fa icon="bell"></webui-fa>
 `
     });
 }

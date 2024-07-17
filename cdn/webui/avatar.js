@@ -4,7 +4,7 @@ webui.define("webui-avatar", {
     constructor: (t) => {
         t._slot = t.template.querySelector('slot');
     },
-    attr: ['src', 'theme'],
+    attr: ['src'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'src':
@@ -34,9 +34,6 @@ webui.define("webui-avatar", {
                 }
                 t._slot.innerHTML = `<img src="${value}" />`;
                 break;
-            case 'theme':
-                t.setTheme(value);
-                break;
         }
     },
     shadowTemplate: `
@@ -46,6 +43,8 @@ display:inline-flex;
 justify-content:center;
 align-items:center;
 margin:auto;
+background-color:var(--theme-color);
+color:var(--theme-color-offset);
 }
 slot {
 font-size: 1.2em;

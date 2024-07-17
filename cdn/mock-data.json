@@ -1,0 +1,427 @@
+[
+    {
+        "year": 2019,
+        "languages": [
+            {
+                "name": "JavaScript",
+                "usage_percentage": 67.8
+            },
+            {
+                "name": "Python",
+                "usage_percentage": 41.7
+            },
+            {
+                "name": "Java",
+                "usage_percentage": 40.2
+            },
+            {
+                "name": "C#",
+                "usage_percentage": 31.4
+            },
+            {
+                "name": "PHP",
+                "usage_percentage": 26.4
+            },
+            {
+                "name": "C++",
+                "usage_percentage": 23.9
+            },
+            {
+                "name": "TypeScript",
+                "usage_percentage": 21.2
+            },
+            {
+                "name": "Ruby",
+                "usage_percentage": 8.4
+            },
+            {
+                "name": "C",
+                "usage_percentage": 17.8
+            },
+            {
+                "name": "Swift",
+                "usage_percentage": 6.3
+            },
+            {
+                "name": "Objective-C",
+                "usage_percentage": 5.9
+            },
+            {
+                "name": "R",
+                "usage_percentage": 5.6
+            },
+            {
+                "name": "VBA",
+                "usage_percentage": 5.2
+            },
+            {
+                "name": "Matlab",
+                "usage_percentage": 4.6
+            },
+            {
+                "name": "Kotlin",
+                "usage_percentage": 4.5
+            },
+            {
+                "name": "Scala",
+                "usage_percentage": 3.2
+            },
+            {
+                "name": "Go",
+                "usage_percentage": 9.4
+            },
+            {
+                "name": "Rust",
+                "usage_percentage": 4.8
+            },
+            {
+                "name": "Perl",
+                "usage_percentage": 3.0
+            },
+            {
+                "name": "Dart",
+                "usage_percentage": 2.7
+            }
+        ]
+    },
+    {
+        "year": 2020,
+        "languages": [
+            {
+                "name": "JavaScript",
+                "usage_percentage": 67.7
+            },
+            {
+                "name": "Python",
+                "usage_percentage": 44.1
+            },
+            {
+                "name": "Java",
+                "usage_percentage": 38.7
+            },
+            {
+                "name": "C#",
+                "usage_percentage": 31.4
+            },
+            {
+                "name": "PHP",
+                "usage_percentage": 25.8
+            },
+            {
+                "name": "C++",
+                "usage_percentage": 23.5
+            },
+            {
+                "name": "TypeScript",
+                "usage_percentage": 25.4
+            },
+            {
+                "name": "Ruby",
+                "usage_percentage": 7.0
+            },
+            {
+                "name": "C",
+                "usage_percentage": 16.8
+            },
+            {
+                "name": "Swift",
+                "usage_percentage": 5.1
+            },
+            {
+                "name": "Objective-C",
+                "usage_percentage": 5.1
+            },
+            {
+                "name": "R",
+                "usage_percentage": 4.9
+            },
+            {
+                "name": "VBA",
+                "usage_percentage": 5.0
+            },
+            {
+                "name": "Matlab",
+                "usage_percentage": 4.4
+            },
+            {
+                "name": "Kotlin",
+                "usage_percentage": 4.8
+            },
+            {
+                "name": "Scala",
+                "usage_percentage": 3.0
+            },
+            {
+                "name": "Go",
+                "usage_percentage": 10.0
+            },
+            {
+                "name": "Rust",
+                "usage_percentage": 5.1
+            },
+            {
+                "name": "Perl",
+                "usage_percentage": 3.0
+            },
+            {
+                "name": "Dart",
+                "usage_percentage": 2.3
+            }
+        ]
+    },
+    {
+        "year": 2021,
+        "languages": [
+            {
+                "name": "JavaScript",
+                "usage_percentage": 64.96
+            },
+            {
+                "name": "Python",
+                "usage_percentage": 48.24
+            },
+            {
+                "name": "Java",
+                "usage_percentage": 35.35
+            },
+            {
+                "name": "C#",
+                "usage_percentage": 31.04
+            },
+            {
+                "name": "PHP",
+                "usage_percentage": 21.98
+            },
+            {
+                "name": "C++",
+                "usage_percentage": 24.31
+            },
+            {
+                "name": "TypeScript",
+                "usage_percentage": 31.19
+            },
+            {
+                "name": "Ruby",
+                "usage_percentage": 7.04
+            },
+            {
+                "name": "C",
+                "usage_percentage": 21.01
+            },
+            {
+                "name": "Swift",
+                "usage_percentage": 5.79
+            },
+            {
+                "name": "Objective-C",
+                "usage_percentage": 4.23
+            },
+            {
+                "name": "R",
+                "usage_percentage": 5.49
+            },
+            {
+                "name": "VBA",
+                "usage_percentage": 3.44
+            },
+            {
+                "name": "Matlab",
+                "usage_percentage": 2.97
+            },
+            {
+                "name": "Kotlin",
+                "usage_percentage": 5.38
+            },
+            {
+                "name": "Scala",
+                "usage_percentage": 2.16
+            },
+            {
+                "name": "Go",
+                "usage_percentage": 10.54
+            },
+            {
+                "name": "Rust",
+                "usage_percentage": 5.79
+            },
+            {
+                "name": "Perl",
+                "usage_percentage": 1.57
+            },
+            {
+                "name": "Dart",
+                "usage_percentage": 3.39
+            }
+        ]
+    },
+    {
+        "year": 2022,
+        "languages": [
+            {
+                "name": "JavaScript",
+                "usage_percentage": 68.62
+            },
+            {
+                "name": "Python",
+                "usage_percentage": 48.24
+            },
+            {
+                "name": "Java",
+                "usage_percentage": 33.27
+            },
+            {
+                "name": "C#",
+                "usage_percentage": 27.86
+            },
+            {
+                "name": "PHP",
+                "usage_percentage": 21.98
+            },
+            {
+                "name": "C++",
+                "usage_percentage": 22.55
+            },
+            {
+                "name": "TypeScript",
+                "usage_percentage": 34.83
+            },
+            {
+                "name": "Ruby",
+                "usage_percentage": 9.15
+            },
+            {
+                "name": "C",
+                "usage_percentage": 14.64
+            },
+            {
+                "name": "Swift",
+                "usage_percentage": 5.93
+            },
+            {
+                "name": "Objective-C",
+                "usage_percentage": 2.63
+            },
+            {
+                "name": "R",
+                "usage_percentage": 4.19
+            },
+            {
+                "name": "VBA",
+                "usage_percentage": 3.93
+            },
+            {
+                "name": "Matlab",
+                "usage_percentage": 2.49
+            },
+            {
+                "name": "Kotlin",
+                "usage_percentage": 3.72
+            },
+            {
+                "name": "Scala",
+                "usage_percentage": 2.19
+            },
+            {
+                "name": "Go",
+                "usage_percentage": 10.77
+            },
+            {
+                "name": "Rust",
+                "usage_percentage": 8.8
+            },
+            {
+                "name": "Perl",
+                "usage_percentage": 1.36
+            },
+            {
+                "name": "Dart",
+                "usage_percentage": 3.13
+            }
+        ]
+    },
+    {
+        "year": 2023,
+        "languages": [
+            {
+                "name": "JavaScript",
+                "usage_percentage": 63.61
+            },
+            {
+                "name": "Python",
+                "usage_percentage": 49.39
+            },
+            {
+                "name": "Java",
+                "usage_percentage": 26.59
+            },
+            {
+                "name": "C#",
+                "usage_percentage": 24.88
+            },
+            {
+                "name": "PHP",
+                "usage_percentage": 21.68
+            },
+            {
+                "name": "C++",
+                "usage_percentage": 22.55
+            },
+            {
+                "name": "TypeScript",
+                "usage_percentage": 27.84
+            },
+            {
+                "name": "Ruby",
+                "usage_percentage": 6.69
+            },
+            {
+                "name": "C",
+                "usage_percentage": 13.13
+            },
+            {
+                "name": "Swift",
+                "usage_percentage": 4.91
+            },
+            {
+                "name": "Objective-C",
+                "usage_percentage": 2.03
+            },
+            {
+                "name": "R",
+                "usage_percentage": 4.63
+            },
+            {
+                "name": "VBA",
+                "usage_percentage": 2.33
+            },
+            {
+                "name": "Matlab",
+                "usage_percentage": 1.62
+            },
+            {
+                "name": "Kotlin",
+                "usage_percentage": 4.34
+            },
+            {
+                "name": "Scala",
+                "usage_percentage": 1.99
+            },
+            {
+                "name": "Go",
+                "usage_percentage": 9.63
+            },
+            {
+                "name": "Rust",
+                "usage_percentage": 8.09
+            },
+            {
+                "name": "Perl",
+                "usage_percentage": 0.81
+            },
+            {
+                "name": "Dart",
+                "usage_percentage": 1.77
+            }
+        ]
+    }
+]

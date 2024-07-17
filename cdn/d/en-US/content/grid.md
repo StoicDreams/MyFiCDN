@@ -1,5 +1,5 @@
 
-<webui-grid width="100px" height="100">
+<webui-grid theme="inherit" width="100px" height="100">
     <webui-avatar src="duotone star" theme="primary"></webui-avatar>
     <webui-avatar src="duotone star" theme="secondary"></webui-avatar>
     <webui-avatar src="duotone star" theme="tertiary"></webui-avatar>

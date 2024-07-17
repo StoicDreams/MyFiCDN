@@ -23,7 +23,7 @@
                 t._columnTemplates[key] = n.innerHTML;
             });
         },
-        attr: ['bordered', 'columns', 'theme'],
+        attr: ['bordered', 'columns'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'bordered':
@@ -38,10 +38,6 @@
                         }
                     });
                     t.render();
-                    break;
-                case 'theme':
-                    t.style.setProperty('--theme-color', `var(--color-${value})`);
-                    t.style.setProperty('--theme-color-offset', `var(--color-${value}-offset)`);
                     break;
             }
         },

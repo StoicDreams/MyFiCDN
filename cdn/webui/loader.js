@@ -166,6 +166,11 @@ const webui = (() => {
         define(name, options) {
             options = options || {};
             options.attr = options.attr || ['elevation', 'theme'];
+            ['elevation', 'theme'].forEach(req => {
+                if (options.attr.indexOf(req) === -1) {
+                    options.attr.push(req);
+                }
+            });
             let shadowTemplate = 0;
             if (options.shadowTemplate) {
                 shadowTemplate = document.createElement('template');
@@ -253,8 +258,22 @@ const webui = (() => {
                     return this[name] !== undefined && this[name] !== false;
                 }
                 setTheme(value) {
-                    this.style.backgroundColor = `var(--color-${value})`;
-                    this.style.color = `var(--color-${value}-offset)`;
+                    if (value === null || value === undefined) {
+                        if (!this.nodeName.startsWith('WEBUI-')) {
+                            this.style.backgroundColor = ``;
+                            this.style.color = ``;
+                        }
+                        this.style.removeProperty('--theme-color');
+                        this.style.removeProperty('--theme-color-offset');
+
+                        return;
+                    }
+                    if (!this.nodeName.startsWith('WEBUI-')) {
+                        this.style.backgroundColor = `var(--color-${value})`;
+                        this.style.color = `var(--color-${value}-offset)`;
+                    }
+                    this.style.setProperty('--theme-color', `var(--color-${value})`);
+                    this.style.setProperty('--theme-color-offset', `var(--color-${value}-offset)`);
                 }
                 setHeight(value) {
                     let num = webui.pxIfNumber(value);
@@ -479,11 +498,14 @@ const webui = (() => {
                         t.classList.add(`elevation-n${(value * -1)}`);
                     }
                     break;
+                case 'theme':
+                    t.setTheme(value);
+                    break;
             }
         }
         setTheme(el, value) {
-            el.style.backgroundColor = `var(--color-${value})`;
-            el.style.color = `var(--color-${value}-offset)`;
+            el.style.setProperty('--theme-color', `var(--color-${value})`);
+            el.style.setProperty('--theme-color-offset', `var(--color-${value}-offset)`);
         }
         toSnake(key) {
             return key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
@@ -635,6 +657,9 @@ const webui = (() => {
         document.querySelectorAll(`[data-subscribe="${key}"][data-set="click"]`).forEach(sub => {
             sub.click();
         });
+        document.querySelectorAll(`[data-subscribe*="${key}:click"]`).forEach(sub => {
+            sub.click();
+        });
     }
     function handleDataTrigger(ev) {
         let el = ev.srcElement || ev.target || ev;
@@ -648,6 +673,12 @@ const webui = (() => {
         if (toSet === 'click') return;
         key.split('|').forEach(key => {
             key = key.trim();
+            let kts = key.split(':');
+            if (kts.length === 2) {
+                key = kts[0];
+                toSet = kts[1];
+                if (toSet === 'click') return;
+            }
             let value = webui.getData(key);
             let isNull = value === null || value === undefined;
             let a = 0;

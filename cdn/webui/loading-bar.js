@@ -4,14 +4,11 @@
         constructor: (t) => {
             t._box = t.template.querySelector('div:nth-child(2)');
         },
-        attr: ['indeterminate', 'striped', 'height', 'theme', 'percent'],
+        attr: ['indeterminate', 'striped', 'height', 'percent'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'height':
                     t.setHeight(value);
-                    break;
-                case 'theme':
-                    t.style.setProperty('--input-theme', `var(--color-${value})`);
                     break;
                 case 'percent':
                     let num = parseFloat(value) || 0;
@@ -39,9 +36,9 @@ overflow:hidden;
 box-sizing:border-box;
 flex-grow:1;
 position:relative;
---input-theme: var(--color-title);
---my-theme: rgba(from var(--input-theme) R G B / 0.25);
---my-background: rgba(from var(--input-theme) R G B / 0.50);
+--theme-color: var(--color-title);
+--my-theme: rgba(from var(--theme-color) R G B / 0.25);
+--my-background: rgba(from var(--theme-color) R G B / 0.50);
 }
 :host(:not([height])) {
 min-height:1px;
@@ -79,13 +76,13 @@ background-color: var(--my-background);
 }
 :host([indeterminate]) > div:nth-child(1)::before,
 :host([indeterminate]) > div:nth-child(3)::before {
-background: linear-gradient(to right, rgba(0,0,0,0) 3%, rgba(0,0,0,0) 5%, var(--my-background) 30%, var(--input-theme) 40%, var(--input-theme) 50%, var(--my-background) 60%, rgba(0,0,0,0) 95%, rgba(0,0,0,0) 97%);
+background: linear-gradient(to right, rgba(0,0,0,0) 3%, rgba(0,0,0,0) 5%, var(--my-background) 30%, var(--theme-color) 40%, var(--theme-color) 50%, var(--my-background) 60%, rgba(0,0,0,0) 95%, rgba(0,0,0,0) 97%);
 }
 :host([indeterminate]) > div {
 transition-duration: 0s;
 }
 :host(:not([indeterminate])) > div:nth-child(2) {
-background-color: var(--input-theme);
+background-color: var(--theme-color);
 }
 :host([indeterminate][striped]) > div {
 animation: 50s 0s linear infinite reverse linear-striped-loading;

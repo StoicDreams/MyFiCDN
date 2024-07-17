@@ -5,16 +5,16 @@
 <webui-toggle-icon data-toggleattr="[ID]|docked" data-enabled="[ID][docked]" icon-on="send-backward" icon-off="bring-forward" title-on="Hide Navigation" title-off="Dock Navigation"></webui-toggle-icon>`;
     const moveableTemplate = `
 <button data-setattr="[ID]|slot|left" aria-label="Set navigation to left" class="toggle-pos-left">
-<webui-fa icon="sidebar" family="regular"></webui-fa>
+<webui-fa icon="sidebar"></webui-fa>
 </button>
 <button data-setattr="[ID]|slot|right" aria-label="Set navigation to right" class="toggle-pos-right">
-<webui-fa icon="sidebar-flip" family="regular"></webui-fa>
+<webui-fa icon="sidebar-flip"></webui-fa>
 </button>
 <button data-setattr="[ID]|slot|top" aria-label="Set navigation to top" class="toggle-pos-top">
-<webui-fa icon="window" family="regular"></webui-fa>
+<webui-fa icon="window"></webui-fa>
 </button>
 <button data-setattr="[ID]|slot|bottom" aria-label="Set navigation to bottom" class="toggle-pos-bottom">
-<webui-fa icon="window-flip" family="regular" class="fa-rotate-180"></webui-fa>
+<webui-fa icon="window-flip" class="fa-rotate-180"></webui-fa>
 </button>`;
     webui.define("webui-drawer", {
         preload: 'fa flex toggle-icon',
@@ -49,12 +49,9 @@
                 t.setAttribute('id', t._id);
             }, 100);
         },
-        attr: ['position', 'docked', 'data-dockable', 'data-moveable', 'theme'],
+        attr: ['position', 'docked', 'data-dockable', 'data-moveable'],
         attrChanged: (t, property, value) => {
             switch (property) {
-                case 'theme':
-                    t.setTheme(value);
-                    break;
                 case 'dataDockable':
                     t.dataDockable = true;
                     t.buildFooterContent();
@@ -79,8 +76,8 @@
         shadowTemplate: `
     <style type="text/css">
 :host {
-background-color: var(--site-background-color, white);
-color: var(--site-background-offset, black);
+background-color: var(--theme-color, var(--site-background-color, white));
+color: var(--theme-color-offset, var(--site-background-offset, black));
 display: flex;
 flex-direction: column;
 overflow: auto;
@@ -143,13 +140,11 @@ padding:var(--padding,1em);
 display: flex!important;
 gap:var(--padding, 1em);
 padding:var(--padding,1em);
+background-color:rgba(0,0,0,0.1);
 }
 slot:not([name]) {
 display:block;
 flex-grow:1;
-}
-.footer {
-padding: var(--padding, 1em);
 }
 #actions:empty {display:none;}
 button {

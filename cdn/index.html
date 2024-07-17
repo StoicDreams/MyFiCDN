@@ -33,6 +33,11 @@
     <meta name="twitter:site" content="@stoicdreamsllc">
     <meta name="twitter:description" content="MyFi CDN is in early development.">
     <meta name="twitter:image" content="https://cdn.myfi.ws/Logo.svg">
+    <style type="text/css">
+        :root {
+            --fa-default-family: duotone;
+        }
+    </style>
 </head>
 
 <body>
@@ -41,13 +46,13 @@
         <webui-data data-page-next-page='{"name":"Home","href":"/"}'></webui-data>
         <webui-flex grow></webui-flex>
         <p>This is custom 404 content set by a webui-data component in the index.html file.</p>
-        <p class="text-center"><webui-link href="/">Return Home</webui-link></p>
+        <p class="text-center"><webui-link theme="info" href="/">Return Home</webui-link></p>
         <webui-flex grow></webui-flex>
     </webui-data>
     <webui-data data-under-construction="innerHTML">
         <webui-data data-page-next-page='{"name":"Home","href":"/"}'></webui-data>
         <p>This is custom Under Construction content set by a webui-data component in the index.html file.</p>
-        <p class="text-center"><webui-link href="/">Return Home</webui-link></p>
+        <p class="text-center"><webui-link theme="success" href="/">Return Home</webui-link></p>
     </webui-data>
     <webui-app data-removeclass=".nav|open;.shared|open">
         <webui-drawer slot="left" class="nav elevation-20" docked="true" data-state="slot|docked" data-moveable data-dockable>

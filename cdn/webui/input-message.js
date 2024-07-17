@@ -55,7 +55,7 @@
             t._field.addEventListener('keyup', t.autosize);
             t._field.addEventListener('change', t.autosize);
         },
-        attr: ['title', 'name', 'autofocus', 'value', 'label', 'theme', 'placeholder'],
+        attr: ['title', 'name', 'autofocus', 'value', 'label', 'placeholder'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'placeholder':
@@ -63,10 +63,6 @@
                     break;
                 case 'label':
                     t._label.innerHTML = value;
-                    break;
-                case 'theme':
-                    t.style.setProperty('--theme', `var(--color-${value})`);
-                    t.style.setProperty('--theme-offset', `var(--color-${value}-offset)`);
                     break;
                 case 'name':
                     t._field.setAttribute('name', value);
@@ -96,8 +92,6 @@ display:block;
 position:relative;
 min-height:3em;
 box-sizing:border-box;
---theme:var(--color-info);
---theme-offset:var(--color-info-offset);
 }
 textarea {
 display:block;
@@ -119,8 +113,8 @@ label {
 display:block;
 padding:var(--padding);
 margin:0;
-background-color:var(--theme);
-color:var(--theme-offset);
+background-color:var(--theme-color);
+color:var(--theme-color-offset);
 }
 label:empty {
 display:none;
