@@ -247,6 +247,14 @@ display:grid;
 grid-template-columns:auto max-content max-content max-content 0;
 gap:var(--padding);
 }
+:host([page-count="2"]) .first,
+:host([page-count="2"]) .last,
+:host([page-count="3"]) .first,
+:host([page-count="3"]) .last,
+:host([page-count="4"]) .first,
+:host([page-count="4"]) .last,
+:host([page-count="1"]) .prev,
+:host([page-count="1"]) .next,
 :host([page-count="0"]),
 :host(:not([page-count])) {
 display:none;
@@ -268,6 +276,10 @@ box-sizing:border-box;
 padding:var(--padding);
 text-align:center;
 border-radius:var(--corners);
+}
+:host([page-count="1"]) input[type="number"] {
+cursor:default;
+pointer-events:none;
 }
 </style>`
     });
