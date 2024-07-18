@@ -1,7 +1,5 @@
 <webui-grid  theme="info" columns="auto max-content">
-    <webui-header data-subscribe="page-mock-report-current.year">
-        <pre slot="template">Year: <strong>{TEMPLATE_PAGE_MOCK_REPORT_CURRENT.YEAR}</strong></pre>
-    </webui-header>
+    <h2>Year: <strong class="ml-1" data-subscribe="page-mock-report-current.year:text"></strong></h2>
     <webui-pagination class="my-a" data-subscribe="mock-data-index:setValue|mock-report:setData" data-current="page-mock-report-current" loop max-pages="3"></webui-pagination>
 </webui-grid>
 <webui-table theme="tertiary" columns="Id|_rowId;:Name|name;:Usage Percentage:|usage_percentage;Custom;:Action:" data-subscribe="page-mock-report-current.languages:setData" bordered class="my-3">

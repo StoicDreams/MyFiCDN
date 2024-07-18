@@ -343,6 +343,7 @@ const webui = (() => {
         }
         parseMarkdown(md, preTrim) {
             let t = this;
+            if (typeof md !== 'string') return md;
             md = md.replace(/(\r\n|\r)+/mg, '\n');
             if (preTrim) {
                 md = this.trimLinePreWhitespce(md);
@@ -402,6 +403,7 @@ const webui = (() => {
             });
         }
         replaceAppData(text, data) {
+            if (typeof text !== 'string') return text;
             if (data) {
                 text = this.replaceData(text, data);
             }
@@ -412,10 +414,12 @@ const webui = (() => {
                     val = '';
                 }
                 let limit = 0;
-                while (text.indexOf(rkey) !== -1 && limit < 1000) {
-                    ++limit;
-                    text = text.replace(rkey, val);
-                }
+                try {
+                    while (text.indexOf(rkey) !== -1 && limit < 1000) {
+                        ++limit;
+                        text = text.replace(rkey, val);
+                    }
+                } catch (ex) { console.error('text', text, ex); }
             });
             return text;
         }
@@ -736,9 +740,11 @@ const webui = (() => {
                                 }
                             }
                             break;
+                        case 'text':
                         case 'innerText':
                             el.innerText = isNull ? '' : webui.applyAppDataToContent(value);
                             break;
+                        case 'html':
                         case 'innerHTML':
                             el.innerHTML = isNull ? '' : webui.applyAppDataToContent(value);
                             break;
