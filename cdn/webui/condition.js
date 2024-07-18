@@ -97,7 +97,6 @@
                 });
             }
             if (t.dataset.value !== undefined) {
-                console.log('check value', t.dataset.value);
                 checkValue(t.dataset.value);
             }
             if (isGood) {

@@ -66,7 +66,7 @@
             if (t._data && t._data.forEach) {
                 t._data.forEach(row => {
                     if (!row._rowId) {
-                        row._rowId = webui.toCamel(webui.uuid());
+                        row._rowId = webui.toCamel(webui.uuid()).toLowerCase();
                         webui.setData(`page-tr-${row._rowId}`, row);
                     }
                     let tr = webui.create('tr');

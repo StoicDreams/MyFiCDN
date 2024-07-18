@@ -18,6 +18,6 @@
         </webui-condition>
     </pre>
     <pre slot="column" name="custom">
-        <webui-input-text theme="info" placeholder="Type music" data-trigger="page-tr-{_ROWID}.custom" data-subscribe="page-tr-{_ROWID}.custom"></webui-inpu-text>
+        <webui-input-text theme="info" placeholder="Type music" data-trigger="page-tr-{_ROWID}.custom" data-subscribe="page-tr-{_ROWID}.custom:value"></webui-inpu-text>
     </pre>
 </webui-table>
