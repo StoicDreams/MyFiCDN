@@ -50,6 +50,7 @@ webui.define("webui-button", {
     shadowTemplate: `
 <style type="text/css">
 :host {
+--box-shadow-blur: 2px;
 display: inline-flex;
 flex-flow: row;
 gap: 0.5em;
@@ -65,9 +66,13 @@ color: var(--theme-color-offset);
 -webkit-user-select: none;
 -ms-user-select: none;
 user-select: none;
+box-shadow:inset 1px 1px var(--box-shadow-blur) rgba(255,255,255,0.5), inset -1px -1px var(--box-shadow-blur) rgba(0,0,0,0.5);
 }
 :host([disabled]) {
 pointer-events:none;
+background-color: color-mix(in srgb, var(--theme-color) 50%, #888888);
+color: color-mix(in srgb, var(--theme-color-offset) 50%, #888888);
+box-shadow:inset -1px -1px var(--box-shadow-blur) rgba(255,255,255,0.5), inset 1px 1px var(--box-shadow-blur) rgba(0,0,0,0.5);
 }
 :host(:not([disabled])) {
 cursor:pointer;

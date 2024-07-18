@@ -138,14 +138,14 @@
                 });
             }
             if (t.page === 1) {
-                t._btnFirst.setAttribute('theme', 'active');
+                t._btnFirst.setAttribute('disabled', 'true');
             } else {
-                t._btnFirst.removeAttribute('theme');
+                t._btnFirst.removeAttribute('disabled');
             }
             if (t.page === t.pageCount) {
-                t._btnLast.setAttribute('theme', 'active');
+                t._btnLast.setAttribute('disabled', 'true');
             } else {
-                t._btnLast.removeAttribute('theme');
+                t._btnLast.removeAttribute('disabled');
             }
             t._input.value = t.page || 1;
             let cw = `${t.page}`.length + 5;
