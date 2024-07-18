@@ -31,6 +31,7 @@
     --color-footer: var(--color-shade);
     --color-footer-offset: var(--color-shade-offset);
 
+    --box-shadow-blur: 2px;
     --link-shadow: 0 0 5px #00C9FF;
     --main-transition: 200ms;
     --readability-line-limit: 66ch;
