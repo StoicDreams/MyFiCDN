@@ -413,7 +413,7 @@ h5 {
 
 h6 {
     background-color: var(--theme-color, var(--color-success));
-    color: var(--theme-color, var(--color-success-offset));
+    color: var(--theme-color-offset, var(--color-success-offset));
 }
 
 header[slot="header"] h1,

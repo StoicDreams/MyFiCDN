@@ -57,6 +57,8 @@ webui.define("webui-card", {
     shadowTemplate: `
 <style type="text/css">
 :host {
+background-color:color-mix(in srgb, var(--theme-color, inherit) 50%, black);
+color:var(--theme-color-offset, inherit);
 }
 slot:not([name]) {
 display:flex;

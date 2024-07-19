@@ -11,18 +11,11 @@
 </webui-data>
 <webui-data-loader src="/mock-data.json" data-trigger="mock-report"></webui-data-loader>
 
-<webui-sideimage reverse src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg">
-    <webui-page-segment elevation="10">
-        Welcome to Stoic Dreams' MyFi Content Delivery Network (CDN) website.
-        This website is home to many common files used across Stoid Dreams' websites and software applications. As well as a CDN provider for users subscribed to Stoid Dreams' MyFi services, users using Stoic Dreams' WebUI framework, or users using Stoic Dreams' WebUI component library.
-        This website showcases the use of raw WebUI web components, without the use of any other frameworks or languages. In other words, this website only uses raw HTML, CSS, and Vanilla JavaScript. No Rust, Node, React, C#, or any other languages are powering this website's frontend interface.
-        Please don't hesitate to share your <a data-click="feedback">questions, comments, or any other feedback</a>.
-    </webui-page-segment>
-</webui-sideimage>
-
 <webui-alert data-subscribe="page-alert"></webui-alert>
 
 <webui-tabs pad="var(--padding)" vertical data-subscribe="session-home-tab-index:setTab">
+    <webui-button slot="tabs">Welcome</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/welcome.md"></webui-content>
     <webui-button slot="tabs">Loading Bars</webui-button>
     <webui-content slot="content" src="/d/en-US/content/loading-bars.md"></webui-content>
     <webui-button slot="tabs">Condition</webui-button>

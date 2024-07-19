@@ -25,65 +25,37 @@
                 name: 'Memory-only Storage (Maximum Security)',
                 theme: btnMemTheme,
                 body: `
-<webui-paper>
-
-With this storage option, any login, settings, or other persistable information will only be retained in memory, and will be gone when the ${appType} is either closed or refreshed.
-
+<webui-paper class="pa-1">
+    With this storage option, any login, settings, or other persistable information will only be retained in memory, and will be gone when the ${appType} is either closed or refreshed.
 </webui-paper>
-
-<webui-paper>
-
-Use this option when:
-
-</webui-paper>
-
-<webui-paper>
-
+###### Use this option when:
+<webui-paper class="pa-1">
 - You are on a public computer, or some other device that is not yours.
 - You do not want any personal data stored in any storage that will persist beyond a page refresh.
 - You want to make sure you are required to login everytime you access this ${appType}, even when you simply reload the page.
 - You have opted-in to storing your data on this computer. Selecting this option now will result in clearing any data saved from storage.
-
 </webui-paper>
-
 <webui-flex grow></webui-flex>
-
-<webui-button theme="${btnMemTheme}" data-trigger="${webui.storage.STORAGE_ACCEPTED_KEY}" data-value="${webui.storage.REJECT_STORAGE_CACHING}">
-
-I confirm this is not my personal device or I simply want to assure a login is required everytime I access this ${appType}.
-
+<webui-button wrap theme="${btnMemTheme}" data-trigger="${webui.storage.STORAGE_ACCEPTED_KEY}" data-value="${webui.storage.REJECT_STORAGE_CACHING}">
+    I confirm this is not my personal device or I simply want to assure a login is required everytime I access this ${appType}.
 </webui-button>
 `
             }, {
                 name: 'Long-term Storage (Lowest Security)',
                 theme: btnLocTheme,
                 body: `
-<webui-paper>
-
-With this storage option, you only need to consent and login once. Your login will persist even after closing and reopening this ${appType}.
-
+<webui-paper class="pa-1">
+    With this storage option, you only need to consent and login once. Your login will persist even after closing and reopening this ${appType}.
 </webui-paper>
-
-<webui-paper>
-
-Use this option when:
-
-</webui-paper>
-
-<webui-paper>
-
+###### Use this option when:
+<webui-paper class="pa-1">
 - You are on your personal device.
 - Your device is secure from other people accessing it.
 - You want to remain logged in until you explicitely logout.
-
 </webui-paper>
-
 <webui-flex grow></webui-flex>
-
-<webui-button theme="${btnLocTheme}" data-trigger="${webui.storage.STORAGE_ACCEPTED_KEY}" data-value="${webui.storage.ACCEPT_LOCAL_STORAGE}">
-
+<webui-button wrap theme="${btnLocTheme}" data-trigger="${webui.storage.STORAGE_ACCEPTED_KEY}" data-value="${webui.storage.ACCEPT_LOCAL_STORAGE}">
 I confirm that I am using my personal device and that I understand the above statements and I accept the use of storing my data in the ${hostType} so my login and other data will be remembered any time I access this ${appType}.
-
 </webui-button>
 `
             }
@@ -93,32 +65,18 @@ I confirm that I am using my personal device and that I understand the above sta
                 name: 'Single Session/Tab Storage (Medium Security)',
                 theme: btnSesTheme,
                 body: `
-<webui-paper>
-
+<webui-paper class="pa-1">
 With this storage option, any time you open a new tab and visit this ${appType}, you will need to consent to storage and login in order to access your account features.
-
 </webui-paper>
-
-<webui-paper>
-
-Use this option when:
-
-</webui-paper>
-
-<webui-paper>
-
+###### Use this option when:
+<webui-paper class="pa-1">
 - You are on your personal device.
 - You will logout before leaving your device accessible to others.
 - You want to stay logged in if you refresh the page, but be logged out once you close your ${hostType} or if visiting this ${appType} in a new tab or window.
-
 </webui-paper>
-
 <webui-flex grow></webui-flex>
-
-<webui-button theme="${btnSesTheme}" data-trigger="${webui.storage.STORAGE_ACCEPTED_KEY}" data-value="${webui.storage.ACCEPT_SESSION_STORAGE}">
-
-I confirm that I am using my personal device and that I understand the above statements and I accept the use of storing my data in the ${hostType} so my login and other data will be remembered until the I close the ${hostType}.
-
+<webui-button wrap theme="${btnSesTheme}" data-trigger="${webui.storage.STORAGE_ACCEPTED_KEY}" data-value="${webui.storage.ACCEPT_SESSION_STORAGE}">
+    I confirm that I am using my personal device and that I understand the above statements and I accept the use of storing my data in the ${hostType} so my login and other data will be remembered until the I close the ${hostType}.
 </webui-button>
 `
             });
@@ -161,7 +119,7 @@ I confirm that I am using my personal device and that I understand the above sta
 `);
         },
         connected: (t) => {
-            t.setAttribute('data-subscribe', `${webui.storage.STORAGE_ACCEPTED_KEY}:${setAcceptedKey}`);
+            t.setAttribute('data-subscribe', `${webui.storage.STORAGE_ACCEPTED_KEY}:setAcceptedKey`);
             t.render();
         }
     });
