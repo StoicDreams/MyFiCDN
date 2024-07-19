@@ -36,6 +36,7 @@ const webui = (() => {
         }
         setup();
     }
+    let debug = false;
     const memStorageCache = {};
     const STORAGE_ACCEPTED_KEY = 'storage_accepted';
     const REJECT_STORAGE_CACHING = '0';
@@ -695,10 +696,9 @@ const webui = (() => {
             let toSet = 'setter';
             el.dataset.subscribe.split('|').forEach(ds => {
                 let kts = ds.trim().split(':');
-                if (kts[0] !== key) return;
+                if (!(key === ds || kts[0] === key)) return;
                 if (kts.length === 2) {
                     toSet = kts[1];
-                    if (toSet === 'click') return;
                 }
             });
             return toSet;
@@ -709,6 +709,9 @@ const webui = (() => {
             (function attempt() {
                 try {
                     let toSet = getToSet(key);
+                    if (key.indexOf(':') !== -1) {
+                        key = key.split(':')[0];
+                    }
                     if (toSet === 'click') return;
                     let value = webui.getData(key);
                     let isNull = value === null || value === undefined;
@@ -909,7 +912,7 @@ const webui = (() => {
     function applyAttributeSettings(target, attr) {
         if (!attr) {
             if (target && typeof target.getAttribute === 'function') {
-                ['elevation', 'theme'].forEach(attr => {
+                ['elevation', 'theme', 'data-subscribe'].forEach(attr => {
                     if (target.hasAttribute(attr)) {
                         applyAttributeSettings(target, attr);
                     }
@@ -919,6 +922,9 @@ const webui = (() => {
         }
         let value = target.getAttribute(attr);
         switch (attr) {
+            case 'data-subscribe':
+                checkForSubscription(target);
+                break;
             case 'elevation':
                 webui.removeClass(target, 'elevation-');
                 value = parseInt(value) || 0;
