@@ -1163,7 +1163,9 @@ const webui = (() => {
     };
 
     runWhenBodyIsReady(() => {
-        componentPreload(document.querySelector('webui-app'));
+        ['app-config', 'app', 'data'].forEach(preload => {
+            componentPreload(document.querySelector(`webui-${preload}`));
+        });
         startObserving(document.body);
         loadPage();
     });

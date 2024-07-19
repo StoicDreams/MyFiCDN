@@ -1,5 +1,11 @@
-<webui-data data-page-title="{APP_NAME} Privacy Policy"></webui-data>
-<webui-data data-page-next-page='{"name":"Terms & Conditions","href":"/terms"}'></webui-data>
+<webui-data data-page-title="{APP_NAME} Privacy Policy">
+    <template slot="json" name="page-next-page">
+        {
+            "name":"Terms & Conditions",
+            "href":"/terms"
+        }
+    </template>
+</webui-data>
 
 <webui-quote theme="primary">
 

@@ -5,11 +5,22 @@
             t._data = {};
             t._slotValid = t.template.querySelector('slot[name="valid"]');
             t._slotInvalid = t.template.querySelector('slot[name="invalid"]');
-            // auto-assign unslotted pre elements to valid
+            // auto-assign unslotted template elements to valid
             t.childNodes.forEach(node => {
                 if (!node || !node.hasAttribute) return;
-                if (node.nodeName === 'PRE' && !node.hasAttribute('slot')) {
+                if (node.nodeName === 'TEMPLATE' && !node.hasAttribute('slot')) {
                     node.setAttribute('slot', 'valid');
+                }
+            });
+            t.querySelectorAll('p > template').forEach(template => {
+                if (!template.hasAttribute('slot')) {
+                    template.setAttribute('slot', 'valid');
+                }
+                t.appendChild(template);
+            });
+            t.querySelectorAll('p').forEach(p => {
+                if (p.innerHTML.trim() === '') {
+                    p.remove();
                 }
             });
         },
@@ -31,11 +42,11 @@
         connected: (t) => {
             t._isConnected = true;
             let content = [], invalid = [];
-            t._slotValid.assignedElements().forEach(pre => {
-                content.push(pre.innerHTML);
+            t._slotValid.assignedElements().forEach(template => {
+                content.push(template.innerHTML);
             });
-            t._slotInvalid.assignedElements().forEach(pre => {
-                invalid.push(pre.innerHTML);
+            t._slotInvalid.assignedElements().forEach(template => {
+                invalid.push(template.innerHTML);
             });
             t._cacheContent = content.join('\n');
             t._cacheInvalid = invalid.join('\n');

@@ -42,15 +42,17 @@
 
 <body>
     <webui-app-config src="appConfig.json"></webui-app-config>
-    <webui-data data-not-found="innerHTML">
-        <webui-flex grow></webui-flex>
-        <p>This is custom 404 content set by a webui-data component in the index.html file.</p>
-        <p class="text-center"><webui-link theme="info" href="/">Return Home</webui-link></p>
-        <webui-flex grow></webui-flex>
-    </webui-data>
-    <webui-data data-under-construction="innerHTML">
-        <p>This is custom Under Construction content set by a webui-data component in the index.html file.</p>
-        <p class="text-center"><webui-link theme="success" href="/">Return Home</webui-link></p>
+    <webui-data>
+        <template slot="html" name="not-found">
+            <webui-flex grow></webui-flex>
+            <p>This is custom 404 content set by a webui-data component in the index.html file.</p>
+            <p class="text-center"><webui-link theme="info" href="/">Return Home</webui-link></p>
+            <webui-flex grow></webui-flex>
+        </template>
+        <template slot="html" name="under-construction">
+            <p>This is custom Under Construction content set by a webui-data component in the index.html file.</p>
+            <p class="text-center"><webui-link theme="success" href="/">Return Home</webui-link></p>
+        </template>
     </webui-data>
     <webui-app data-removeclass=".nav|open;.shared|open">
         <webui-drawer slot="left" class="nav elevation-20" docked="true" data-state="slot|docked" data-moveable data-dockable>

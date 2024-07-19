@@ -210,7 +210,6 @@
                         value = JSON.parse(value);
                     }
                 } catch (ex) {
-                    console.error('Failed parsing data', value);
                     return;
                 }
             }
@@ -265,9 +264,6 @@ div.next {
 display:flex;
 gap:var(--padding);
 }
-pre {
-display:none;
-}
 input[type="number"] {
 background-color:color-mix(in srgb, var(--theme-color) 80%, white);
 color:var(--theme-color-offset);
@@ -281,6 +277,7 @@ border-radius:var(--corners);
 cursor:default;
 pointer-events:none;
 }
+pre {display:none;}
 </style>`
     });
 }

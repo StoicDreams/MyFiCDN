@@ -1,5 +1,11 @@
-<webui-data data-page-title="About {APP_NAME}" data-page-subtitle=""></webui-data>
-<webui-data data-page-next-page='{"name":"Home","href":"/"}'></webui-data>
+<webui-data data-page-title="About {APP_NAME}" data-page-subtitle="">
+    <template slot="json" name="page-next-page">
+        {
+            "name":"Home",
+            "href":"/"
+        }
+    </template>
+</webui-data>
 
 > More information coming soon.
 

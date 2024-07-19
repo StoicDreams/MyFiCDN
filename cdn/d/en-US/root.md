@@ -1,5 +1,14 @@
-<webui-data data-page-title="{COMPANY_SINGULAR} Content Delivery" data-page-subtitle="" data-page-dropdown-test='[{"id":"1","name":"One"},{"id":"2","name":"Two"}]'></webui-data>
-<webui-data data-page-next-page='{"name":"About MyFi CDN","href":"/about"}'></webui-data>
+<webui-data data-page-title="{COMPANY_SINGULAR} Content Delivery" data-page-subtitle="">
+    <template slot="json" name="page-next-page">
+        {
+            "name":"About MyFi CDN",
+            "href":"/about"
+        }
+    </template>
+    <template slot="json" name="page-dropdown-test">
+        [{"id":"1","name":"One"},{"id":"2","name":"Two"}]
+    </template>
+</webui-data>
 <webui-data-loader src="/mock-data.json" data-trigger="mock-report"></webui-data-loader>
 
 <webui-sideimage reverse src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg">
@@ -49,15 +58,7 @@
 
 ### Dynamic Tabs
 
-<webui-flex>
-    <webui-input-text label="New Tab Name" placeholder="Enter a name for a new tab" data-trigger="page-new-tab-input" maxlength="10"></webui-input-text>
-    <webui-button theme="action" data-subscribe="page-new-tab-input:value" data-trigger="page-new-tab-input-create:value">Add Tab</webui-button>
-</webui-flex>
-<webui-tabs theme="secondary" index="1" transition-timing="200" data-subsribe="page-dynamic-tabs:setData">
-    <pre slot="template">
-        <webui-button start-icon="trash-can" theme="danger"></webui-button>
-    </pre>
-</webui-tabs>
+<webui-content class="mb-3" src="/d/en-US/content/dynamic-tabs.md"></webui-content>
 
 ## Current Web UI Projects
 

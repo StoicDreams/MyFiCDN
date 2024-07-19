@@ -1,5 +1,11 @@
-<webui-data data-page-title="Contact {COMPANY_SINGULAR}"></webui-data>
-<webui-data data-page-next-page='{"name":"Home","href":"/"}'></webui-data>
+<webui-data data-page-title="Contact {COMPANY_SINGULAR}">
+    <template slot="json" name="page-next-page">
+        {
+            "name":"Home",
+            "href":"/"
+        }
+    </template>
+</webui-data>
 
 <webui-sideimage src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg">
     <webui-page-segment elevation="10">

@@ -1,4 +1,11 @@
-<webui-data data-page-next-page='{"name":"Home","href":"/"}'></webui-data>
+<webui-data>
+    <template slot="json" name="page-next-page">
+        {
+            "name":"Home",
+            "href":"/"
+        }
+    </template>
+</webui-data>
 
 #### About Stoic Dreams
 

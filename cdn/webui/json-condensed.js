@@ -59,12 +59,9 @@
             }
         },
         shadowTemplate: `
-<pre><slot></slot></pre>
+<slot name="template"></slot>
 <style type="text/css">
 :host {
-display:none;
-}
-slot {
 display:none;
 }
 </style>`
