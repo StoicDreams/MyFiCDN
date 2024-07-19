@@ -2,9 +2,10 @@
 {
     webui.define('webui-tabs', {
         constructor: (t) => {
+            t._index = 0;
             t._slotContent = t.template.querySelector('slot[name="content"]');
             t._slotTabs = t.template.querySelector('slot[name="tabs"]');
-            t._slotTabs = t.template.querySelector('slot[name="template"]');
+            t._slotTemplates = t.template.querySelector('slot[name="template"]');
             t._section = t.template.querySelector('section');
         },
         attr: ['pad', 'transition-timing', 'index', 'theme'],
@@ -25,20 +26,56 @@
         connected: (t) => {
             t.render();
         },
-        setData: function (data) {
-            console.log('set tab data', data);
+        setData: function (data, key) {
+            let t = this;
+            if (!data || !data.forEach) return;
+            let templateLabel = '';
+            let templateContent = '';
+            t._slotTemplates.assignedElements().forEach(template => {
+                switch (template.getAttribute('name')) {
+                    case 'label':
+                        templateLabel = template.innerHTML;
+                        break;
+                    case 'content':
+                        templateContent = template.innerHTML;
+                        break;
+                }
+            });
+            webui.removeElements(t, '[data-dynamic]');
+            let index = 0;
+            data.forEach(item => {
+                let displayItem = webui.setDefaultData(item, { label: 'Missing Label', content: 'Missing Content' });
+                displayItem['tab-index'] = index++;
+                displayItem['tab-page'] = index;
+                let btn = webui.create('webui-button', { slot: 'tabs', 'data-dynamic': '1' });
+                let content = webui.create('webui-page-segment', { slot: 'content', 'data-dynamic': '1' });
+                if (templateLabel) {
+                    btn.innerHTML = webui.applyAppDataToContent(templateLabel, displayItem);
+                } else {
+                    btn.innerHTML = displayItem.label;
+                }
+                if (templateContent) {
+                    content.innerHTML = webui.applyAppDataToContent(templateContent, displayItem);
+                } else {
+                    content.innerHTML = displayItem.content;
+                }
+                t.appendChild(btn);
+                t.appendChild(content);
+            });
+            t._initiated = false;
+            t.render();
         },
         setTab: function (tabIndex) {
-            if (tabIndex === undefined || tabIndex === null) return;
             let t = this;
+            if (tabIndex === undefined || tabIndex === null) return;
             tabIndex = parseInt(tabIndex) || 0;
-            if (t._initiated && tabIndex === t.index) return;
+            if (t._initiated && tabIndex === t._index) return;
             let index = 0;
             let foundIndex = false;
             t.querySelectorAll('[slot="tabs"]').forEach(tab => {
                 if (tabIndex === index++) {
                     tab.classList.add('theme-active');
-                    t.index = index - 1;
+                    t._index = index - 1;
                     foundIndex = true;
                 } else {
                     tab.classList.remove('theme-active');
@@ -63,9 +100,16 @@
                 t.setTab(tabIndex - 1);
                 return;
             }
-            t.index = tabIndex;
+            t._index = tabIndex;
             if (t.dataset.subscribe) {
-                webui.setData(t.dataset.subscribe, t.index);
+                t.dataset.subscribe.split('|').forEach(ds => {
+                    let dss = ds.split(':');
+                    if (dss[1] !== 'setTab') return;
+                    let curTab = webui.getData(dss[0]);
+                    if (curTab !== t._index) {
+                        webui.setData(dss[0], t._index);
+                    }
+                });
             }
             t._initiated = true;
         },
@@ -84,13 +128,19 @@
                 }
             });
             if (t.dataset.subscribe) {
-                let cached = webui.getData(t.dataset.subscribe);
-                if (cached !== undefined) {
-                    t.setTab(cached);
-                    return;
-                }
+                let tabIsSet = false;
+                t.dataset.subscribe.split('|').forEach(ds => {
+                    let dss = ds.split(':');
+                    if (dss.length !== 2 || dss[1] !== 'setTab') return;
+                    let cached = webui.getData(dss[0]);
+                    if (cached !== undefined) {
+                        t.setTab(cached);
+                        tabIsSet = true;
+                    }
+                });
+                if (tabIsSet) return;
             }
-            t.setTab(t.index || 0);
+            t.setTab(t._index || 0);
         },
         shadowTemplate: `
 <slot name="tabs"></slot>

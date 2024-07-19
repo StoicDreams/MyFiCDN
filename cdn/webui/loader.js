@@ -283,11 +283,12 @@ const webui = (() => {
             customElements.define(name, CustomElement);
         }
         getData(key) {
+            key = key.split(':')[0];
             let dataContainer = webui.toSnake(key).startsWith('session-') ? sessionData : appData;
             let segments = key.split('.');
             if (segments.length === 1) {
                 key = webui.toSnake(key);
-                return dataContainer[key];
+                return structuredClone(dataContainer[key]);
             }
             let skey = webui.toSnake(segments.shift());
             let data = dataContainer[skey];
@@ -296,7 +297,7 @@ const webui = (() => {
                 skey = webui.toSnake(segments.shift());
                 data = data[skey];
             }
-            return data;
+            return structuredClone(data);
         }
         getDefined(...args) {
             for (let index = 0; index < args.length; ++index) {
@@ -452,9 +453,11 @@ const webui = (() => {
         }
         setData(key, value) {
             if (!key) return;
+            value = structuredClone(value);
+            key = key.split(':')[0];
             let sections = key.split('.');
             let baseKey = webui.toSnake(sections[0]);
-            let dataContainer = baseKey.startsWith('session-') ? sessionData : appData;
+            let dataContainer = key.startsWith('session-') ? sessionData : appData;
             if (sections.length === 1) {
                 key = webui.toSnake(key);
                 if (JSON.stringify(dataContainer[key]) === JSON.stringify(value)) {
@@ -507,6 +510,16 @@ const webui = (() => {
                     }
                 });
             });
+        }
+        setDefaultData(data, defaultData) {
+            if (!data || !defaultData) return data;
+            defaultData = JSON.parse(JSON.stringify(defaultData));
+            Object.keys(defaultData).forEach(key => {
+                if ([undefined, null].indexOf(data[key]) !== -1) {
+                    data[key] = defaultData[key];
+                }
+            });
+            return data;
         }
         setFlag(t, property, value) {
             if ([undefined, null, 0, false, 'false', 'null', 'undefined', '0'].indexOf(value) !== -1) {
@@ -766,7 +779,7 @@ const webui = (() => {
                             break;
                         default:
                             if (typeof el[toSet] === 'function') {
-                                el[toSet](value);
+                                el[toSet](value, key);
                             } else {
                                 if (a++ < 4) {
                                     setTimeout(() => {
@@ -788,11 +801,6 @@ const webui = (() => {
                                                 el.dataset[toSet] = value;
                                             }
                                             break;
-                                    }
-                                    if (toSet === 'value') {
-
-                                    } else {
-
                                     }
                                 }
                             }
@@ -860,7 +868,7 @@ const webui = (() => {
                     stop();
                     handleDataClick(target);
                 }
-                if (target.dataset.trigger) {
+                if (target.dataset.trigger && ['A', 'BUTTON', 'WEBUI-BUTTON'].indexOf(target.nodeName) !== -1) {
                     stop();
                     handleDataTrigger(target);
                 }
@@ -948,7 +956,7 @@ const webui = (() => {
     function applyAttributeSettings(target, attr) {
         if (!attr) {
             if (target && typeof target.getAttribute === 'function') {
-                ['elevation', 'theme', 'data-subscribe'].forEach(attr => {
+                ['elevation', 'theme', 'data-subscribe', 'top', 'right', 'bottom', 'left'].forEach(attr => {
                     if (target.hasAttribute(attr)) {
                         applyAttributeSettings(target, attr);
                     }
@@ -958,6 +966,18 @@ const webui = (() => {
         }
         let value = target.getAttribute(attr);
         switch (attr) {
+            case 'top':
+                target.style.top = webui.pxIfNumber(value);
+                break;
+            case 'right':
+                target.style.right = webui.pxIfNumber(value);
+                break;
+            case 'bottom':
+                target.style.bottom = webui.pxIfNumber(value);
+                break;
+            case 'left':
+                target.style.left = webui.pxIfNumber(value);
+                break;
             case 'data-subscribe':
                 checkForSubscription(target);
                 break;

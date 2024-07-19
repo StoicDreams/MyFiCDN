@@ -4,6 +4,36 @@ webui.define("webui-button", {
     constructor: (t) => {
         t._startIcon = t.template.querySelector('slot[name="start-icon"]');
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
+        t.addEventListener('click', _ => {
+            if (t.dataset.transfer) {
+                t.dataset.transfer.split('|').forEach(ft => {
+                    let fts = t.dataset.transfer.split(':');
+                    let data = webui.getData(fts[0]);
+                    if (fts.length === 2) {
+                        webui.setData(fts[1], data);
+                        return;
+                    }
+                    webui.setData(fts[0], t.dataset.value);
+                });
+            }
+            if (t.dataset.clear) {
+                t.dataset.clear.split('|').forEach(tc => {
+                    webui.setData(tc, undefined);
+                });
+            }
+            if (t.dataset.removeItem) {
+                let ds = t.dataset.removeItem.split(':');
+                if (ds.length === 2) {
+                    let data = webui.getData(ds[0]);
+                    if (typeof data.splice === 'function') {
+                        data.splice(ds[1]);
+                    } else if (data[ds[1]] !== undefined) {
+                        delete data[ds[1]];
+                    }
+                    webui.setData(ds[0], data);
+                }
+            }
+        });
     },
     attr: ['href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family', 'start-icon-class', 'end-icon-class', 'elevation'],
     attrChanged: (t, property, _value) => {

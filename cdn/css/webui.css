@@ -541,6 +541,7 @@ webui-table {
 
 webui-paper,
 webui-page-segment {
+    position: relative;
     background-color: color-mix(in srgb, var(--theme-color, inherit) 60%, #888888);
     color: var(--theme-color-offset, inherit);
 }
@@ -1700,6 +1701,10 @@ webui-nav-group>.navlink:not(.show)~webui-nav-group>*,
     grid-template-columns: repeat(auto-fit, minmax(1em, 400px))
 }
 
+.d-float {
+    display: float;
+}
+
 .d-flex {
     display: flex;
     gap: var(--padding);
@@ -1723,6 +1728,24 @@ webui-nav-group>.navlink:not(.show)~webui-nav-group>*,
 
 .d-inlineflexbox {
     display: inline-flexbox;
+}
+
+.p-abs,
+.p-absolute {
+    position: absolute;
+}
+
+.p-rel,
+.p-relative {
+    position: relative;
+}
+
+.p-sticky {
+    position: sticky;
+}
+
+.p-static {
+    position: static;
 }
 
 main>*>.d-flex:not(.flex-column):not(.flex-columnreverse)>*:not([width]):not(:only-child) {
