@@ -65,7 +65,12 @@
             }
             switch (property) {
                 case 'count':
-                    t.countSlot.innerHTML = `${value}`;
+                    let num = parseInt(value) || 0;
+                    if (num > 0) {
+                        t.countSlot.innerHTML = num.toLocaleString();
+                    } else {
+                        t.countSlot.innerHTML = value;
+                    }
                     break;
             }
         },
@@ -100,15 +105,18 @@ line-height: 2ch;
 vertical-align: middle;
 }
 slot[name="count"] {
-display:block;
+display:flex;
+align-content:center;
 position:absolute;
 border-radius:1em;
 background-color:var(--color-info);
 color:var(--color-info-offset);
 bottom:50%;
-left:50%;
-padding:1px;
+right:-5%;
+padding:1px 5px;
 font-size:0.6em;
+min-width:1rem;
+text-align:center;
 }
 slot[name="count"]:empty {
 display:none;
