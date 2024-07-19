@@ -470,7 +470,6 @@ const webui = (() => {
                 }
             }
             document.querySelectorAll(`[data-subscribe*="${baseKey}"]`).forEach(sub => {
-                console.log('found subscriber', sub);
                 sub.dataset.subscribe.split('|').forEach(k => {
                     let ts = k.split(':')
                     let sections = ts[0].split('.');
@@ -481,7 +480,6 @@ const webui = (() => {
                         let skey = skeys.join('.');
                         if (mk === skey) {
                             setTimeout(() => {
-                                console.log('set data to el', sub, skey);
                                 setDataToEl(sub, skey);
                             }, 10);
                         }
@@ -673,7 +671,6 @@ const webui = (() => {
         let el = ev.srcElement || ev.target || ev;
         let key = el.dataset.trigger;
         if (!key) return;
-        console.log('data trigger', key, el);
         key.split('|').forEach(key => {
             let oldData = webui.getData(key);
             if (key.indexOf(':') !== -1) {
@@ -682,13 +679,11 @@ const webui = (() => {
                 let getter = kp[1];
                 let field = el[getter];
                 let value = typeof el[getter] === 'function' ? el[field]() : webui.getDefined(el[getter], el.dataset[getter]);
-                console.log('set data from explicit', getter, value, oldData);
                 if (oldData !== value) {
                     webui.setData(key, value);
                 }
             } else {
                 let value = webui.getDefined(typeof el.getValue === 'function' ? el.getValue() : undefined, el.value, el.dataset.value);
-                console.log('set data from implied', value, oldData);
                 if (oldData !== value) {
                     webui.setData(key, value);
                 }
@@ -717,8 +712,6 @@ const webui = (() => {
                     if (toSet === 'click') return;
                     let value = webui.getData(key);
                     let isNull = value === null || value === undefined;
-                    console.log('setting toset', toSet);
-                    console.log('setting value', value);
                     switch (toSet) {
                         case 'setter':
                             let field = webui.toCamel(key);
