@@ -28,6 +28,8 @@
     --color-active-offset: var(--color-white);
     --color-button: var(--color-info);
     --color-button-offset: var(--color-info-offset);
+    --color-action: color-mix(in srgb, var(--color-success) 90%, black);
+    --color-action-offset: var(--color-success-offset);
     --color-footer: var(--color-shade);
     --color-footer-offset: var(--color-shade-offset);
 
@@ -385,33 +387,33 @@ h6 {
 }
 
 h1 {
-    background-color: var(--color-title);
-    color: var(--color-title-offset);
+    background-color: var(--theme-color, var(--color-title));
+    color: var(--theme-color-offset, var(--color-title-offset));
 }
 
 h2 {
-    background-color: var(--color-primary);
-    color: var(--color-primary-offset);
+    background-color: var(--theme-color, var(--color-primary));
+    color: var(--theme-color-offset, var(--color-primary-offset));
 }
 
 h3 {
-    background-color: var(--color-secondary);
-    color: var(--color-secondary-offset);
+    background-color: var(--theme-color, var(--color-secondary));
+    color: var(--theme-color-offset, var(--color-secondary-offset));
 }
 
 h4 {
-    background-color: var(--color-tertiary);
-    color: var(--color-tertiary-offset);
+    background-color: var(--theme-color, var(--color-tertiary));
+    color: var(--theme-color-offset, var(--color-tertiary-offset));
 }
 
 h5 {
-    background-color: var(--color-info);
-    color: var(--color-info-offset);
+    background-color: var(--theme-color, var(--color-info));
+    color: var(--theme-color-offset, var(--color-info-offset));
 }
 
 h6 {
-    background-color: var(--color-success);
-    color: var(--color-success-offset);
+    background-color: var(--theme-color, var(--color-success));
+    color: var(--theme-color, var(--color-success-offset));
 }
 
 header[slot="header"] h1,
@@ -535,6 +537,12 @@ img:not(:only-child) {
 webui-paper,
 webui-table {
     display: block;
+}
+
+webui-paper,
+webui-page-segment {
+    background-color: color-mix(in srgb, var(--theme-color, inherit) 60%, #888888);
+    color: var(--theme-color-offset, inherit);
 }
 
 blockquote>p:not(:first-child),

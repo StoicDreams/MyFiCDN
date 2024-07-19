@@ -67,6 +67,7 @@ color: var(--theme-color-offset);
 -ms-user-select: none;
 user-select: none;
 box-shadow:inset 1px 1px var(--theme-shadow-blur) rgba(255,255,255,0.5), inset -1px -1px var(--theme-shadow-blur) rgba(0,0,0,0.5), 1px 1px var(--theme-shadow-blur) rgba(0,0,0,0.5);
+white-space:nowrap;
 }
 :host([disabled]) {
 pointer-events:none;

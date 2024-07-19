@@ -11,7 +11,7 @@
     </webui-page-segment>
 </webui-sideimage>
 
-<webui-tabs pad="var(--padding)" data-subscribe="test-tab-index">
+<webui-tabs pad="var(--padding)" data-subscribe="test-tab-index:setTab">
     <webui-button slot="tabs">Loading Bars</webui-button>
     <webui-content slot="content" src="/d/en-US/content/loading-bars.md"></webui-content>
     <webui-button slot="tabs">Condition</webui-button>
@@ -45,6 +45,18 @@
     <webui-content slot="content" src="/d/en-US/content/table.md"></webui-content>
     <webui-button slot="tabs">Grid</webui-button>
     <webui-content slot="content" src="/d/en-US/content/grid.md"></webui-content>
+</webui-tabs>
+
+### Dynamic Tabs
+
+<webui-flex>
+    <webui-input-text label="New Tab Name" placeholder="Enter a name for a new tab" data-trigger="page-new-tab-input" maxlength="10"></webui-input-text>
+    <webui-button theme="action" data-subscribe="page-new-tab-input:value" data-trigger="page-new-tab-input-create:value">Add Tab</webui-button>
+</webui-flex>
+<webui-tabs theme="secondary" index="1" transition-timing="200" data-subsribe="page-dynamic-tabs:setData">
+    <pre slot="template">
+        <webui-button start-icon="trash-can" theme="danger"></webui-button>
+    </pre>
 </webui-tabs>
 
 ## Current Web UI Projects

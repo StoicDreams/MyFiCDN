@@ -4,9 +4,10 @@
         constructor: (t) => {
             t._slotContent = t.template.querySelector('slot[name="content"]');
             t._slotTabs = t.template.querySelector('slot[name="tabs"]');
+            t._slotTabs = t.template.querySelector('slot[name="template"]');
             t._section = t.template.querySelector('section');
         },
-        attr: ['pad', 'transition-timing', 'index', 'data-suscribe', 'theme'],
+        attr: ['pad', 'transition-timing', 'index', 'theme'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'pad':
@@ -19,15 +20,13 @@
                         t._slotContent.style.setProperty('transition-duration', webui.msIfNumber(value));
                     }
                     break;
-                case 'dataSubscribe':
-                    if (value.endsWith(':setTab')) {
-                        t.setAttribute('data-subscribe', `${value}:setTab`);
-                    }
-                    break;
             }
         },
         connected: (t) => {
             t.render();
+        },
+        setData: function (data) {
+            console.log('set tab data', data);
         },
         setTab: function (tabIndex) {
             if (tabIndex === undefined || tabIndex === null) return;
@@ -98,6 +97,7 @@
 <section>
 <slot name="content"></slot>
 </section>
+<slot name="template"></slot>
 <style type="text/css">
 :host {
 display:block;
@@ -112,6 +112,7 @@ width:-webkit-fill-available;
 display:grid;
 grid-template-columns:max-content auto;
 }
+slot[name="template"] {display:none;}
 slot[name="tabs"] {
 display:flex;
 background-color:var(--theme-color);

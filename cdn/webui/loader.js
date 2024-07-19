@@ -167,13 +167,8 @@ const webui = (() => {
         }
         define(name, options) {
             options = options || {};
-            options.attr = options.attr || ['elevation', 'theme'];
+            options.attr = options.attr || [];
             options.flags = options.flags || [];
-            ['elevation', 'theme'].forEach(req => {
-                if (options.attr.indexOf(req) === -1) {
-                    options.attr.push(req);
-                }
-            });
             let shadowTemplate = 0;
             if (options.shadowTemplate) {
                 shadowTemplate = document.createElement('template');
@@ -240,7 +235,8 @@ const webui = (() => {
                 }
                 connectedCallback() {
                     this._isConnected = true;
-                    //this._id = webui.uuid();
+                    this._id = webui.uuid();
+                    checkAddedNode(this);
                     if (options.preload) {
                         this.setAttribute('preload', options.preload);
                     }
@@ -266,20 +262,6 @@ const webui = (() => {
                     return this[name] !== undefined && this[name] !== false;
                 }
                 setTheme(value) {
-                    if (value === null || value === undefined) {
-                        if (!this.nodeName.startsWith('WEBUI-')) {
-                            this.style.backgroundColor = ``;
-                            this.style.color = ``;
-                        }
-                        this.style.removeProperty('--theme-color');
-                        this.style.removeProperty('--theme-color-offset');
-
-                        return;
-                    }
-                    if (!this.nodeName.startsWith('WEBUI-')) {
-                        this.style.backgroundColor = `var(--color-${value})`;
-                        this.style.color = `var(--color-${value}-offset)`;
-                    }
                     this.style.setProperty('--theme-color', `var(--color-${value})`);
                     this.style.setProperty('--theme-color-offset', `var(--color-${value}-offset)`);
                 }
@@ -488,6 +470,7 @@ const webui = (() => {
                 }
             }
             document.querySelectorAll(`[data-subscribe*="${baseKey}"]`).forEach(sub => {
+                console.log('found subscriber', sub);
                 sub.dataset.subscribe.split('|').forEach(k => {
                     let ts = k.split(':')
                     let sections = ts[0].split('.');
@@ -498,6 +481,7 @@ const webui = (() => {
                         let skey = skeys.join('.');
                         if (mk === skey) {
                             setTimeout(() => {
+                                console.log('set data to el', sub, skey);
                                 setDataToEl(sub, skey);
                             }, 10);
                         }
@@ -526,9 +510,6 @@ const webui = (() => {
                     } else if (value < 0) {
                         t.classList.add(`elevation-n${(value * -1)}`);
                     }
-                    break;
-                case 'theme':
-                    t.setTheme(value);
                     break;
             }
         }
@@ -634,6 +615,7 @@ const webui = (() => {
                 }
             });
         }
+
         function checkNodes(nodes) {
             if (nodes.length === 0) return;
             nodes.forEach(node => {
@@ -691,11 +673,27 @@ const webui = (() => {
         let el = ev.srcElement || ev.target || ev;
         let key = el.dataset.trigger;
         if (!key) return;
-        let value = webui.getDefined(typeof el.getValue === 'function' ? el.getValue() : undefined, el.value, el.dataset.value);
-        let oldData = webui.getData(key);
-        if (oldData !== value) {
-            webui.setData(key, value);
-        }
+        console.log('data trigger', key, el);
+        key.split('|').forEach(key => {
+            let oldData = webui.getData(key);
+            if (key.indexOf(':') !== -1) {
+                let kp = key.split(':');
+                key = kp[0];
+                let getter = kp[1];
+                let field = el[getter];
+                let value = typeof el[getter] === 'function' ? el[field]() : webui.getDefined(el[getter], el.dataset[getter]);
+                console.log('set data from explicit', getter, value, oldData);
+                if (oldData !== value) {
+                    webui.setData(key, value);
+                }
+            } else {
+                let value = webui.getDefined(typeof el.getValue === 'function' ? el.getValue() : undefined, el.value, el.dataset.value);
+                console.log('set data from implied', value, oldData);
+                if (oldData !== value) {
+                    webui.setData(key, value);
+                }
+            }
+        });
     }
     function setDataToEl(el, key) {
         function getToSet(key) {
@@ -719,6 +717,8 @@ const webui = (() => {
                     if (toSet === 'click') return;
                     let value = webui.getData(key);
                     let isNull = value === null || value === undefined;
+                    console.log('setting toset', toSet);
+                    console.log('setting value', value);
                     switch (toSet) {
                         case 'setter':
                             let field = webui.toCamel(key);
@@ -758,9 +758,9 @@ const webui = (() => {
                                     }, Math.min(1000, Math.pow(2, a)));
                                 } else {
                                     if (isNull) {
-                                        el.removeAttribute(toSet);
+                                        delete el.dataset[toSet];
                                     } else {
-                                        el.setAttribute(toSet, value);
+                                        el.dataset[toSet] = value;
                                     }
                                 }
                             }
@@ -809,21 +809,27 @@ const webui = (() => {
         document.body.addEventListener('change', handleDataTrigger);
         document.body.addEventListener('click', ev => {
             let target = ev.target;
-            while (target !== document.body && target !== null && target !== undefined) {
+            let retValue = true;
+            let breakAtEnd = false;
+            let applyDynStyles = false;
+            function stop() {
+                ev.stopPropagation();
+                ev.preventDefault();
+                retValue = false;
+                breakAtEnd = true;
+            }
+            while (!breakAtEnd && target !== document.body && target !== null && target !== undefined) {
                 if (target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'false' && !ev.ctrlKey) {
                     ev.stopPropagation();
                     ev.preventDefault();
                     return false;
                 }
                 if (target.dataset.click) {
-                    ev.stopPropagation();
-                    ev.preventDefault();
+                    stop();
                     handleDataClick(target);
-                    return false;
                 }
-                if (target.dataset.trigger && target.dataset.value !== undefined) {
-                    ev.stopPropagation();
-                    ev.preventDefault();
+                if (target.dataset.trigger) {
+                    stop();
                     handleDataTrigger(target);
                 }
                 let href = target.getAttribute('href');
@@ -831,15 +837,11 @@ const webui = (() => {
                     return true;
                 }
                 if (href && target.getAttribute('target') !== 'blank' && (href[0] === '/' || href.substr(0, 4) !== 'http')) {
-                    ev.stopPropagation();
-                    ev.preventDefault();
+                    stop();
                     changePage(href);
-                    return false;
                 }
                 if (target.hasAttribute('data-stopclick')) {
-                    ev.stopPropagation();
-                    ev.preventDefault();
-                    return false;
+                    stop();
                 }
                 if (target.dataset.setattr) {
                     let [val, attr, sel] = target.dataset.setattr.split('|').reverse();
@@ -850,7 +852,7 @@ const webui = (() => {
                     } else {
                         setAttr(target, attr, val);
                     }
-                    webui.applyDynamicStyles();
+                    applyDynStyles = true;
                     break;
                 }
                 if (target.dataset.toggleclass) {
@@ -860,7 +862,7 @@ const webui = (() => {
                     } else {
                         toggleClass(target, cls);
                     }
-                    webui.applyDynamicStyles();
+                    applyDynStyles = true;
                     break;
                 }
                 if (target.dataset.removeclass) {
@@ -872,7 +874,7 @@ const webui = (() => {
                             removeClass(target, cls);
                         }
                     });
-                    webui.applyDynamicStyles();
+                    applyDynStyles = true;
                 }
                 if (target.dataset.toggleattr) {
                     let [attr, sel] = target.dataset.toggleattr.split('|').reverse();
@@ -881,11 +883,16 @@ const webui = (() => {
                     } else {
                         toggleAttr(target, attr);
                     }
+                    applyDynStyles = true;
+                }
+                if (applyDynStyles) {
                     webui.applyDynamicStyles();
+                    stop();
                     break;
                 }
                 target = target.parentNode;
             }
+            return retValue;
         });
     });
 
@@ -895,16 +902,60 @@ const webui = (() => {
         if (dataKey) {
             setDataToEl(node, dataKey);
         }
-        node.childNodes.forEach(n => checkForSubscription(n));
+        node.childNodes.forEach(n => {
+            checkForSubscription(n);
+        });
+    }
+
+    function checkAttributeMutations(mutation) {
+        if (mutation.type !== 'attributes') return;
+        let t = mutation.target;
+        applyAttributeSettings(t, mutation.attributeName);
+    }
+
+    function applyAttributeSettings(target, attr) {
+        if (!attr) {
+            if (target && typeof target.getAttribute === 'function') {
+                ['elevation', 'theme'].forEach(attr => {
+                    if (target.hasAttribute(attr)) {
+                        applyAttributeSettings(target, attr);
+                    }
+                });
+            }
+            return;
+        }
+        let value = target.getAttribute(attr);
+        switch (attr) {
+            case 'elevation':
+                webui.removeClass(target, 'elevation-');
+                value = parseInt(value) || 0;
+                if (value > 0) {
+                    target.classList.add(`elevation-${value}`);
+                } else if (value < 0) {
+                    target.classList.add(`elevation-n${(value * -1)}`);
+                }
+                break;
+            case 'theme':
+                if (value) {
+                    target.style.setProperty('--theme-color', `var(--color-${value})`);
+                    target.style.setProperty('--theme-color-offset', `var(--color-${value}-offset)`);
+                } else {
+                    target.style.removeProperty('--theme-color');
+                    target.style.removeProperty('--theme-color-offset');
+                }
+                break;
+        }
     }
 
     const observeDataSubscriptions = (domNode) => {
         const observer = new MutationObserver(mutations => {
             mutations.forEach(function (mutation) {
+                checkAttributeMutations(mutation);
                 if (mutation.type === 'attributes' && mutation.attributeName === 'data-subscribe') {
                     checkForSubscription(mutation.target);
                 }
                 Array.from(mutation.addedNodes).forEach(el => {
+                    applyAttributeSettings(el);
                     checkForSubscription(el);
                 });
             });
@@ -922,6 +973,12 @@ const webui = (() => {
         document.querySelectorAll('[data-subscribe]').forEach(el => {
             let key = el.dataset.subscribe;
             setDataToEl(el, key);
+        });
+        document.querySelectorAll('[theme]').forEach(el => {
+            applyAttributeSettings(el, 'theme');
+        });
+        document.querySelectorAll('[elevation]').forEach(el => {
+            applyAttributeSettings(el, 'elevation');
         });
     });
 
@@ -969,6 +1026,9 @@ const webui = (() => {
             }
             let content = webui.applyAppDataToContent(body);
             appSettings.app.setPageContent(content, appData, fullContentUrl);
+            setTimeout(() => {
+                checkNodes(document.body.childNodes);
+            }, 100);
         } catch (ex) {
             console.error('Failed loading page content', ex);
             let elapsed = Date.now() - timerStart;
@@ -1053,30 +1113,45 @@ const webui = (() => {
             pl.replace(';', ' ').replace(',', ' ').split(' ').forEach(loadWebUIComponent);
         }
     }
+
+    function checkMutation(mutation) {
+        checkAttributeMutations(mutation);
+        let nodeName = mutation.target.nodeName;
+        if ((nodeName.startsWith(wuiPrefix) || nodeName.startsWith(appPrefix))
+            && mutation.type === 'attributes'
+            && mutation.attributeName === 'preload') {
+            componentPreload(mutation.target);
+        }
+        Array.from(mutation.addedNodes).forEach(el => {
+            checkAddedNode(el);
+        });
+    }
+
+    function checkAddedNode(el) {
+        applyAttributeSettings(el);
+        if (el.shadowRoot) {
+            if (!el._isObserved) {
+                el._isObserved = 1;
+                startObserving(el.shadowRoot);
+            }
+            checkNodes(el.shadowRoot.childNodes);
+        }
+        if (el.nodeName && el.nodeName.startsWith(wuiPrefix) || el.nodeName.startsWith(appPrefix)) {
+            processNode(el.nodeName);
+        }
+        checkNodes(el.childNodes);
+    }
+
     function checkNodes(nodes) {
         if (nodes.length === 0) return;
         nodes.forEach(node => {
-            if (node.nodeName.startsWith(wuiPrefix) || node.nodeName.startsWith(appPrefix)) {
-                processNode(node.nodeName);
-            }
-            checkNodes(node.childNodes);
+            checkAddedNode(node);
         });
     }
     const startObserving = (domNode) => {
         const observer = new MutationObserver(mutations => {
             mutations.forEach(function (mutation) {
-                let nodeName = mutation.target.nodeName;
-                if ((nodeName.startsWith(wuiPrefix) || nodeName.startsWith(appPrefix))
-                    && mutation.type === 'attributes'
-                    && mutation.attributeName === 'preload') {
-                    componentPreload(mutation.target);
-                }
-                Array.from(mutation.addedNodes).forEach(el => {
-                    if (el.nodeName.startsWith(wuiPrefix) || el.nodeName.startsWith(appPrefix)) {
-                        processNode(el.nodeName);
-                    }
-                    checkNodes(el.childNodes);
-                });
+                checkMutation(mutation);
             });
         });
         observer.observe(domNode, {
@@ -1091,7 +1166,6 @@ const webui = (() => {
     runWhenBodyIsReady(() => {
         componentPreload(document.querySelector('webui-app'));
         startObserving(document.body);
-        checkNodes(document.body.childNodes);
         loadPage();
     });
     window.addEventListener('resize', _ev => {
