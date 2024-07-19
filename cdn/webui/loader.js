@@ -773,9 +773,6 @@ const webui = (() => {
                                         attempt();
                                     }, Math.min(1000, Math.pow(2, a)));
                                 } else {
-                                    if (key.startsWith('session-')) {
-                                        console.log(el, key, typeof el[toSet]);
-                                    }
                                     switch (toSet) {
                                         case 'value':
                                             if (isNull) {
