@@ -101,6 +101,7 @@
         shadowTemplate: `
 <style type="text/css">
 :host {
+--theme-shadow-blur:var(--box-shadow-blur, 2px);
 display:flex;
 position:relative;
 box-sizing:border-box;
@@ -113,6 +114,11 @@ padding:var(--padding,1rem);
 cursor:pointer;
 background-color:var(--theme-color);
 color:var(--theme-color-offset);
+box-shadow:inset 1px 1px var(--theme-shadow-blur) rgba(255,255,255,0.5), inset -1px -1px var(--theme-shadow-blur) rgba(0,0,0,0.5), 1px 1px var(--theme-shadow-blur) rgba(0,0,0,0.5);
+white-space:nowrap;
+}
+:host(.selected) label {
+box-shadow:inset -1px -1px var(--box-shadow-blur) rgba(255,255,255,0.5), inset 1px 1px var(--box-shadow-blur) rgba(0,0,0,0.5);
 }
 input[type="file"] {
 z-index:1;
