@@ -106,14 +106,14 @@ vertical-align: middle;
 }
 slot[name="count"] {
 display:flex;
-align-content:center;
+justify-content:center;
 position:absolute;
 border-radius:1em;
 background-color:var(--theme-color-offset, var(--color-info-offset));
 color:var(--theme-color, var(--color-info));
 bottom:50%;
 right:-5%;
-padding:1px 5px;
+padding:1px;
 font-size:0.6em;
 min-width:1rem;
 text-align:center;
