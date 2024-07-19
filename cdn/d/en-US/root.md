@@ -13,7 +13,7 @@
 
 <webui-alert data-subscribe="page-alert"></webui-alert>
 
-<webui-tabs pad="var(--padding)" vertical data-subscribe="session-home-tab-index:setTab">
+<webui-tabs pad="var(--padding)" vertical transition-duration="200" data-subscribe="session-home-tab-index:setTab">
     <webui-button slot="tabs">Welcome</webui-button>
     <webui-content slot="content" src="/d/en-US/content/welcome.md"></webui-content>
     <webui-button slot="tabs">Loading Bars</webui-button>
@@ -26,6 +26,8 @@
     <webui-content slot="content" src="/d/en-US/content/test-page-data.md"></webui-content>
     <webui-button slot="tabs">Test App Data</webui-button>
     <webui-content slot="content" src="/d/en-US/content/test-app-data.md"></webui-content>
+    <webui-button slot="tabs">Test Session Data</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/test-session-data.md"></webui-content>
     <webui-button slot="tabs">Test Input Transfer</webui-button>
     <webui-content slot="content" src="/d/en-US/content/test-input.md"></webui-content>
     <webui-button slot="tabs">Pagination</webui-button>

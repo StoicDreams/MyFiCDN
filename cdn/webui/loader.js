@@ -7,17 +7,17 @@ const webui = (() => {
     };
     const appData = {
         'app-name': 'App',
-        'company-singular': 'Company',
-        'company-possessive': `Company's`,
+        'app-company-singular': 'Company',
+        'app-company-possessive': `Company's`,
         'page-title': '',
         'page-subtitle': '',
         'page-path': location.pathname,
-        'domain': location.hostname.toLowerCase(),
-        'user-role': '0',
-        'username': 'Guest',
-        'full-name': 'Guest',
-        'first-name': 'Guest',
-        'last-name': ''
+        'app-domain': location.hostname.toLowerCase(),
+        'session-user-role': '0',
+        'session-username': 'Guest',
+        'session-full-name': 'Guest',
+        'session-first-name': 'Guest',
+        'session-last-name': ''
     };
     let sessionData = {};
     const appSettings = {
@@ -401,18 +401,26 @@ const webui = (() => {
             }
             [appData, sessionData].forEach(dataContainer => {
                 Object.keys(dataContainer).forEach(key => {
-                    let rkey = `{${this.toSnake(key).replace(/-/g, '_').toUpperCase()}}`;
+                    let keys = [];
+                    keys.push(`{${this.toSnake(key).replace(/-/g, '_').toUpperCase()}}`);
+                    if (key.startsWith('session-')) {
+                        keys.push(`{${this.toSnake(key.substring(8)).replace(/-/g, '_').toUpperCase()}}`);
+                    } else if (key.startsWith('app-')) {
+                        keys.push(`{${this.toSnake(key.substring(4)).replace(/-/g, '_').toUpperCase()}}`);
+                    }
                     let val = webui.getData(key);
                     if (val === undefined || val === null) {
                         val = '';
                     }
-                    let limit = 0;
-                    try {
-                        while (text.indexOf(rkey) !== -1 && limit < 1000) {
-                            ++limit;
-                            text = text.replace(rkey, val);
-                        }
-                    } catch (ex) { console.error('text', text, ex); }
+                    keys.forEach(rkey => {
+                        let limit = 0;
+                        try {
+                            while (text.indexOf(rkey) !== -1 && limit < 1000) {
+                                ++limit;
+                                text = text.replace(rkey, val);
+                            }
+                        } catch (ex) { console.error('text', text, ex); }
+                    });
                 });
             });
             return text;
@@ -765,10 +773,29 @@ const webui = (() => {
                                         attempt();
                                     }, Math.min(1000, Math.pow(2, a)));
                                 } else {
-                                    if (isNull) {
-                                        delete el.dataset[toSet];
+                                    if (key.startsWith('session-')) {
+                                        console.log(el, key, typeof el[toSet]);
+                                    }
+                                    switch (toSet) {
+                                        case 'value':
+                                            if (isNull) {
+                                                el.removeAttribute('value');
+                                            } else {
+                                                el.setAttribute('value', value);
+                                            }
+                                            break;
+                                        default:
+                                            if (isNull) {
+                                                delete el.dataset[toSet];
+                                            } else {
+                                                el.dataset[toSet] = value;
+                                            }
+                                            break;
+                                    }
+                                    if (toSet === 'value') {
+
                                     } else {
-                                        el.dataset[toSet] = value;
+
                                     }
                                 }
                             }
@@ -1016,7 +1043,8 @@ const webui = (() => {
         let timerStart = Date.now();
         // Clear page data
         Object.keys(appData).forEach(key => {
-            if (key.startsWith('page-')) {
+            let keepKey = key.startsWith('app-') || key.startsWith('session-');
+            if (!keepKey) {
                 webui.setData(key, '');
             }
         });
