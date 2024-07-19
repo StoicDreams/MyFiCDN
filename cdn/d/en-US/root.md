@@ -20,21 +20,15 @@
     </webui-page-segment>
 </webui-sideimage>
 
-<webui-tabs pad="var(--padding)" data-subscribe="test-tab-index:setTab">
+<webui-alert data-subscribe="page-alert"></webui-alert>
+
+<webui-tabs pad="var(--padding)" vertical data-subscribe="session-home-tab-index:setTab">
     <webui-button slot="tabs">Loading Bars</webui-button>
     <webui-content slot="content" src="/d/en-US/content/loading-bars.md"></webui-content>
     <webui-button slot="tabs">Condition</webui-button>
     <webui-content slot="content" src="/d/en-US/content/condition.md"></webui-content>
     <webui-button slot="tabs">Quote</webui-button>
     <webui-content slot="content" src="/d/en-US/content/quote.md"></webui-content>
-</webui-tabs>
-
-<webui-alert data-subscribe="page-alert"></webui-alert>
-<webui-data data-page-loaded="1"></webui-data>
-
-## Data Manipulation
-
-<webui-tabs pad="var(--padding)" index="3">
     <webui-button slot="tabs">Test Page Data</webui-button>
     <webui-content slot="content" src="/d/en-US/content/test-page-data.md"></webui-content>
     <webui-button slot="tabs">Test App Data</webui-button>
@@ -43,22 +37,17 @@
     <webui-content slot="content" src="/d/en-US/content/test-input.md"></webui-content>
     <webui-button slot="tabs">Pagination</webui-button>
     <webui-content slot="content" src="/d/en-US/content/pagination.md"></webui-content>
-</webui-tabs>
-
-## Data Display
-
-<webui-tabs theme="primary" pad="var(--padding)" index="1" vertical transition-timing="200">
     <webui-button slot="tabs">Data Lists</webui-button>
     <webui-content slot="content" src="/d/en-US/content/lists.md"></webui-content>
     <webui-button slot="tabs">Data Table</webui-button>
     <webui-content slot="content" src="/d/en-US/content/table.md"></webui-content>
     <webui-button slot="tabs">Grid</webui-button>
     <webui-content slot="content" src="/d/en-US/content/grid.md"></webui-content>
+    <webui-button slot="tabs">Dynamic Tabs</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/dynamic-tabs.md"></webui-content>
 </webui-tabs>
 
-### Dynamic Tabs
-
-<webui-content class="mb-3" src="/d/en-US/content/dynamic-tabs.md"></webui-content>
+<webui-data data-page-loaded="1"></webui-data>
 
 ## Current Web UI Projects
 

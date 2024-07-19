@@ -19,6 +19,7 @@ const webui = (() => {
         'first-name': 'Guest',
         'last-name': ''
     };
+    let sessionData = {};
     const appSettings = {
         appType: 'website',
         isDesktopApp: false,
@@ -133,6 +134,13 @@ const webui = (() => {
             this.hello = "World";
             this._appSettings = appSettings;
             this.storage = new MemStorage();
+            sessionData = this.storage.getItem('session-data') || {};
+            if (typeof sessionData === 'string') {
+                sessionData = JSON.parse(sessionData);
+            }
+            window.addEventListener('unload', _ => {
+                this.storage.setItem('session-data', JSON.stringify(sessionData));
+            });
         }
         applyAppDataToContent(content, preTrim) {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
@@ -275,13 +283,14 @@ const webui = (() => {
             customElements.define(name, CustomElement);
         }
         getData(key) {
+            let dataContainer = webui.toSnake(key).startsWith('session-') ? sessionData : appData;
             let segments = key.split('.');
             if (segments.length === 1) {
                 key = webui.toSnake(key);
-                return appData[key];
+                return dataContainer[key];
             }
             let skey = webui.toSnake(segments.shift());
-            let data = appData[skey];
+            let data = dataContainer[skey];
             while (segments.length > 0) {
                 if (!data) return undefined;
                 skey = webui.toSnake(segments.shift());
@@ -390,19 +399,21 @@ const webui = (() => {
             if (data) {
                 text = this.replaceData(text, data);
             }
-            Object.keys(appData).forEach(key => {
-                let rkey = `{${this.toSnake(key).replace(/-/g, '_').toUpperCase()}}`;
-                let val = webui.getData(key);
-                if (val === undefined || val === null) {
-                    val = '';
-                }
-                let limit = 0;
-                try {
-                    while (text.indexOf(rkey) !== -1 && limit < 1000) {
-                        ++limit;
-                        text = text.replace(rkey, val);
+            [appData, sessionData].forEach(dataContainer => {
+                Object.keys(dataContainer).forEach(key => {
+                    let rkey = `{${this.toSnake(key).replace(/-/g, '_').toUpperCase()}}`;
+                    let val = webui.getData(key);
+                    if (val === undefined || val === null) {
+                        val = '';
                     }
-                } catch (ex) { console.error('text', text, ex); }
+                    let limit = 0;
+                    try {
+                        while (text.indexOf(rkey) !== -1 && limit < 1000) {
+                            ++limit;
+                            text = text.replace(rkey, val);
+                        }
+                    } catch (ex) { console.error('text', text, ex); }
+                });
             });
             return text;
         }
@@ -435,23 +446,24 @@ const webui = (() => {
             if (!key) return;
             let sections = key.split('.');
             let baseKey = webui.toSnake(sections[0]);
+            let dataContainer = baseKey.startsWith('session-') ? sessionData : appData;
             if (sections.length === 1) {
                 key = webui.toSnake(key);
-                if (JSON.stringify(appData[key]) === JSON.stringify(value)) {
+                if (JSON.stringify(dataContainer[key]) === JSON.stringify(value)) {
                     return;
                 }
                 if (value === null || value === undefined) {
-                    delete appData[key];
+                    delete dataContainer[key];
                 } else {
-                    appData[key] = value;
+                    dataContainer[key] = value;
                 }
             } else {
                 let skey = sections.shift();
                 skey = webui.toSnake(skey);
-                if (!appData[skey]) {
-                    appData[skey] = {};
+                if (!dataContainer[skey]) {
+                    dataContainer[skey] = {};
                 }
-                let segment = appData[skey];
+                let segment = dataContainer[skey];
                 while (sections.length > 1) {
                     skey = sections.shift();
                     skey = webui.toSnake(skey);
