@@ -9,7 +9,7 @@
 
 <webui-quote theme="primary">
 
-This privacy notice discloses the privacy practices for this application {APP_NAME}, its domain {DOMAIN}, and all of {COMPANY_POSSESSIVE} platforms, including software products, services, and websites. This notice includes the following:
+This privacy notice discloses the privacy practices for this application {APP_NAME}, its domain {APP_DOMAIN}, and all of {APP_COMPANY_POSSESSIVE} platforms, including software products, services, and websites. This notice includes the following:
 
 - What personally identifiable information is collected from you through our websites or applications, how it is used, and with whom it may be shared.
 - What choices are available to you regarding the use of your data.
@@ -58,7 +58,7 @@ When you explicitely opt-in, we may contact you via email, sms, or notification 
 
 <webui-page-segment>
 
-At {COMPANY_SINGULAR}, we take precautions to protect your information. When you submit sensitive information via {APP_NAME}, your information is protected both online and offline.
+At {APP_COMPANY_SINGULAR}, we take precautions to protect your information. When you submit sensitive information via {APP_NAME}, your information is protected both online and offline.
 
 When we collect or transfer information, that information is encrypted and transmitted to us in a secure way. You can verify this by looking for a lock icon in the address bar and looking for "https" at the beginning of the address of the web page.
 
@@ -70,7 +70,7 @@ While we use encryption to protect information transmitted online, we also prote
 
 <webui-page-segment>
 
-Some of our features and services may require registration. Registration requires certain information, such as name and email address. This information is used to securily identify you and potentially contact you about the products or services on {APP_NAME} or other {COMPANY_SINGULAR} platforms in which you have expressed interest. At your option, you may also provide other information about yourself, but it is not required for reqistration.
+Some of our features and services may require registration. Registration requires certain information, such as name and email address. This information is used to securily identify you and potentially contact you about the products or services on {APP_NAME} or other {APP_COMPANY_SINGULAR} platforms in which you have expressed interest. At your option, you may also provide other information about yourself, but it is not required for reqistration.
 
 </webui-page-segment>
 

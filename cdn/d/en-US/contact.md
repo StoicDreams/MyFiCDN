@@ -1,4 +1,4 @@
-<webui-data data-page-title="Contact {COMPANY_SINGULAR}">
+<webui-data data-page-title="Contact {APP_COMPANY_SINGULAR}">
     <template slot="json" name="page-next-page">
         {
             "name":"Home",
