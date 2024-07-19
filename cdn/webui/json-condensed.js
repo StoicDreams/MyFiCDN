@@ -3,7 +3,7 @@
     function condense(data, maxLength) {
         switch (typeof data) {
             case 'string':
-                if (data.length >= maxLength) return data;
+                if (data.length <= maxLength) return data;
                 return `${data.substring(0, maxLength)}...`;
             case 'number':
                 return data;
