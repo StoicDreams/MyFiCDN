@@ -192,6 +192,7 @@ const webui = (() => {
                 constructor() {
                     super();
                     let t = this;
+                    t._id = `d${crypto.randomUUID()}`.split('-').join('').toLowerCase();
                     t.options = options;
                     if (shadowTemplate) {
                         t.template = shadowTemplate.content.cloneNode(true);
@@ -244,7 +245,6 @@ const webui = (() => {
                 }
                 connectedCallback() {
                     this._isConnected = true;
-                    this._id = webui.uuid();
                     checkAddedNode(this);
                     if (options.preload) {
                         this.setAttribute('preload', options.preload);
@@ -787,7 +787,20 @@ const webui = (() => {
                                     }, Math.min(1000, Math.pow(2, a)));
                                 } else {
                                     switch (toSet) {
+                                        case 'class':
+                                            if (isNull) {
+                                                el.classList.remove(value);
+                                            } else {
+                                                el.classList.add(value);
+                                            }
+                                            break;
+                                        case 'src':
+                                        case 'href':
                                         case 'value':
+                                        case 'style':
+                                        case 'theme':
+                                        case 'elevation':
+                                        case 'slot':
                                             if (isNull) {
                                                 el.removeAttribute('value');
                                             } else {
@@ -885,6 +898,7 @@ const webui = (() => {
                 }
                 if (target.dataset.setattr) {
                     let [val, attr, sel] = target.dataset.setattr.split('|').reverse();
+                    console.log('set attr', attr, val, sel);
                     if (sel) {
                         document.querySelectorAll(sel).forEach(el => {
                             setAttr(el, attr, val);

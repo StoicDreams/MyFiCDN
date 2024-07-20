@@ -19,7 +19,6 @@
     webui.define("webui-drawer", {
         preload: 'fa flex toggle-icon',
         constructor: (t) => {
-            t._id = `d${crypto.randomUUID()}`.split('-').join('');
             t._idselector = `#${t._id}`;
             t.headerSlot = t.template.querySelector('slot[name=header]');
             t.footerSlot = t.template.querySelector('slot[name=footer]');
@@ -74,7 +73,10 @@
             this.appendChild(fb);
         },
         shadowTemplate: `
-    <style type="text/css">
+<slot name="header"></slot>
+<slot></slot>
+<slot name="footer"></slot>
+<style type="text/css">
 :host {
 background-color: var(--theme-color, var(--site-background-color, white));
 color: var(--theme-color-offset, var(--site-background-offset, black));
@@ -85,10 +87,6 @@ z-index:100;
 }
 :host([id]) {
 transition: all 400ms;
-}
-:host([slot="bottom"]),
-:host([slot="top"]){
-flex-direction: row;
 }
 :host(:not([docked])) {
 position: fixed;
@@ -131,13 +129,13 @@ transform: translate(0,105%);
 min-width: 15ch;
 }
 ::slotted([slot="header"]) {
-display: flex!important;
+display: flex;
 font-size: 1.2rem;
 gap:var(--padding, 1em);
 padding:var(--padding,1em);
 }
 ::slotted([slot="footer"]) {
-display: flex!important;
+display: flex;
 gap:var(--padding, 1em);
 padding:var(--padding,1em);
 background-color:rgba(0,0,0,0.1);
@@ -154,10 +152,24 @@ padding:--padding);
 border:none;
 cursor:pointer;
 }
+:host([slot="bottom"]),
+:host([slot="top"]){
+flex-direction:row;
+align-items:center;
+}
+:host([slot="bottom"]) ::slotted([slot="header"]),
+:host([slot="top"]) ::slotted([slot="header"]) {
+min-width:3rem;
+}
+:host([slot="bottom"]) ::slotted(:not([name])),
+:host([slot="top"]) ::slotted(:not([name])) {
+position:relative;
+}
+:host([slot="bottom"]) ::slotted([slot="footer"]),
+:host([slot="top"]) ::slotted([slot="footer"]) {
+min-width:8rem;
+}
 </style>
-<slot name="header"></slot>
-<slot></slot>
-<slot name="footer"></slot>
 `
     });
 }

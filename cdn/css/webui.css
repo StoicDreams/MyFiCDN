@@ -6,6 +6,8 @@
     --color-white: #FFFFFFFF;
     --site-background-color: #333333FF;
     --site-background-offset: var(--color-white);
+    --color-site: var(--background-color);
+    --color-site-offset: var(--background-color-offset);
     --color-title: #1878af;
     --color-title-offset: var(--color-white);
     --color-primary: #5e0592;
@@ -542,6 +544,8 @@ webui-table {
 webui-paper,
 webui-page-segment {
     position: relative;
+    --theme-color: inherit;
+    --theme-color-offset: inherit;
     background-color: color-mix(in srgb, var(--theme-color, inherit) 60%, #888888);
     color: var(--theme-color-offset, inherit);
 }
@@ -3465,6 +3469,20 @@ webui-drawer[slot="left"] .toggle-pos-left {
 
 webui-drawer.nav[docked]~header [data-toggleclass=".nav|open"] {
     display: none;
+}
+
+webui-drawer[slot="top"] webui-nav,
+webui-drawer[slot="bottom"] webui-nav {
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    flex-wrap: wrap;
+    flex-grow: 1;
+}
+
+webui-drawer[slot="top"] webui-stoic-dreams-logo,
+webui-drawer[slot="bottom"] webui-stoic-dreams-logo {
+    height: 2rem;
 }
 
 .webui-alerts-popup {
