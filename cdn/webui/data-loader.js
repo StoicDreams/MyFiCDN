@@ -51,7 +51,12 @@
                         return;
                     }
                     let payload = await result.text();
-                    webui.setData(webui.toSnake(dataKey), payload);
+                    try {
+                        payload = JSON.parse(payload);
+                        webui.setData(webui.toSnake(dataKey), payload);
+                    } catch (ex) {
+                        webui.setData(webui.toSnake(dataKey), payload);
+                    }
                 } catch (ex) {
                     console.error('webui-data-loader failed loading data:', ex);
                     return;
