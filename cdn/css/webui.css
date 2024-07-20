@@ -546,8 +546,8 @@ webui-page-segment {
     position: relative;
     --theme-color: inherit;
     --theme-color-offset: inherit;
-    background-color: color-mix(in srgb, var(--theme-color, inherit) 60%, #888888);
-    color: var(--theme-color-offset, inherit);
+    background-color: var(--theme-color);
+    color: var(--theme-color-offset);
 }
 
 blockquote>p:not(:first-child),
