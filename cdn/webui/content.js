@@ -80,9 +80,24 @@ webui.define("webui-content", {
     shadowTemplate: `
 <slot></slot>
 <style type="text/css">
+:host {
+--scroll-color: color-mix(in srgb, var(--theme-color) 20%, transparent);
+--scroll-shadow: -4px 0 -4px rgba(255, 255, 255, 0.2) inset;
+}
 :host(:not(.loaded)) slot,
 :host(:not([visible])) slot {
 display:none;
+}
+slot {
+display:block;
+min-width:100%;
+min-height:100%;
+overflow:auto;
+}
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+background-color: var(--scroll-color);
+box-shadow: var(--scroll-shadow);
 }
 :host(:not(.loaded)) {
 display:flex;
