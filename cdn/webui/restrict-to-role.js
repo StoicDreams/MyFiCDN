@@ -14,7 +14,7 @@
             t.checkRole();
         },
         connected: (t) => {
-            t.setAttribute('data-subscribe', 'app-user-role');
+            t.setAttribute('data-subscribe', 'session-user-role');
             t.checkRole();
         },
         setAppUserRole: function (userRole) {
