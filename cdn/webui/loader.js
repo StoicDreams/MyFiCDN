@@ -336,9 +336,9 @@ const webui = (() => {
             return undefined;
         }
         getHtmlFromTemplate(template, data) {
-            if (!template || typeof template.forEach !== 'function') return '';
+            if (!template || typeof template.assignedElements !== 'function') return '';
             let html = [];
-            template.forEach(t => {
+            template.assignedElements().forEach(t => {
                 let v = t.innerHTML;
                 if (v) {
                     html.push(v);

@@ -28,38 +28,38 @@
         checkRole: function () {
             let t = this;
             if (t.userRole === undefined || t.role === undefined) {
-                t.hideContent();
+                t.showInvalid();
                 return;
             }
             let role = parseInt(t.role);
             let userRole = parseInt(t.userRole);
             if (role === 0) {
                 if (userRole === 0) {
-                    t.showContent();
+                    t.showValid();
                 } else {
-                    t.hideContent();
+                    t.showInvalid();
                 }
             } else {
                 if (userRole & role > 0) {
-                    t.showContent();
+                    t.showValid();
                 } else {
-                    t.hideContent();
+                    t.showInvalid();
                 }
             }
         },
-        showContent: function () {
+        showValid: function () {
             let t = this;
             if (t._showing === 'content') return;
             t._showing = 'content';
-            webui.removeChildren(t, ch => !ch.hasAttribute('slot'));
+            webui.removeChildren(t, ch => !ch.hasAttribute || !ch.hasAttribute('slot'));
             let html = webui.getHtmlFromTemplate(t._slotValid);
             webui.transferChildren(webui.create('div', { html: html }), t);
         },
-        hideContent: function () {
+        showInvalid: function () {
             let t = this;
             if (t._showing === 'invalid') return;
             t._showing = 'invalid';
-            webui.removeChildren(t, ch => !ch.hasAttribute('slot'));
+            webui.removeChildren(t, ch => !ch.hasAttribute || !ch.hasAttribute('slot'));
             let html = webui.getHtmlFromTemplate(t._slotInvalid);
             webui.transferChildren(webui.create('div', { html: html }), t);
         },
