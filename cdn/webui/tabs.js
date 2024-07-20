@@ -83,7 +83,7 @@
             });
             if (tabIndex > 0 && !foundIndex) {
                 console.error('did not find tab index', tabIndex);
-                t.setTab(0);
+                t.setTab(tabIndex - 1);
                 return;
             }
             index = 0;

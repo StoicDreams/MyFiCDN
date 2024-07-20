@@ -26,7 +26,7 @@ webui.define("webui-button", {
                 if (ds.length === 2) {
                     let data = webui.getData(ds[0]);
                     if (typeof data.splice === 'function') {
-                        data.splice(ds[1]);
+                        data.splice(ds[1], 1);
                     } else if (data[ds[1]] !== undefined) {
                         delete data[ds[1]];
                     }
