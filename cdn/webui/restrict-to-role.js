@@ -15,7 +15,7 @@
         },
         connected: (t) => {
             t.hideContent();
-            t.setAttribute('data-subscribe', 'user-role');
+            t.setAttribute('data-subscribe', 'app-user-role');
         },
         setUserRole: function (userRole) {
             let t = this;

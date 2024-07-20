@@ -180,6 +180,10 @@ gap: calc(2 * var(--theme-padding));
 width:100%;
 box-sizing:border-box;
 transition-duration:0;
+min-height:100%;
+}
+::slotted([slot="content"]) {
+min-height:100%;
 }
 section {
 display:block;

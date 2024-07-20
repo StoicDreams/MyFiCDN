@@ -1,15 +1,46 @@
 /* Placeholder page content for pages under construction */
 "use strict"
 webui.define("webui-content", {
-    attr: ["src"],
-    connected: (t) => {
-        t.fetchContent(t);
+    watchVisibility: true,
+    constructor: (t) => {
+        t.loadDelay = 300;
     },
-    fetchContent: async function (t) {
+    attr: ["src", 'preload', 'load-delay'],
+    attrChanged: (t, property, value) => {
+        switch (property) {
+            case 'loadDelay':
+                t.loadDelay = parseInt(value) || 0;
+                break;
+            case 'visible':
+                t.updateContent();
+                break;
+        }
+    },
+    connected: (t) => {
+        setTimeout(() => t.updateContent(), 10);
+    },
+    updateContent: function () {
+        let t = this;
+        if (t.preload) {
+            t.fetchContent();
+            return;
+        }
+        if (t.visible) {
+            setTimeout(() => t.fetchContent(), t.loadDelay);
+        } else {
+
+        }
+    },
+    fetchContent: async function () {
+        let t = this;
+        if (!t.preload && !t.visible) return;
+        if (t._contentLoaded) return;
         if (!t.src) {
             setTimeout(() => t.fetchContent(), 10);
             return;
         }
+        t.classList.add('loading');
+        t._contentLoaded = true;
         try {
             let content = await fetch(t.src);
             if (!content.ok) {
@@ -43,5 +74,40 @@ webui.define("webui-content", {
         } catch (ex) {
             t.innerHTML = `Source ${t.src} failed to load:${ex}`;
         }
-    }
+        t.classList.remove('loading');
+        t.classList.add('loaded');
+    },
+    shadowTemplate: `
+<slot></slot>
+<style type="text/css">
+:host(:not(.loaded)) slot,
+:host(:not([visible])) slot {
+display:none;
+}
+:host(:not(.loaded)) {
+display:flex;
+flex-direction:column;
+gap: var(--padding);
+align-items: center;
+justify-content: center;
+}
+:host(:not(.loaded)):before {
+content: " ";
+animation: spin 1s infinite linear;
+border: 2px solid rgba(30, 30, 30, 0.5);
+border-left: 4px solid #fff;
+border-radius: 50%;
+height: 50px;
+margin-bottom: 10px;
+width: 50px;
+}
+:host(:not(.loaded).loading):after {
+content: 'Loading';
+animation: load 2s linear infinite;
+}
+:host([visible].loaded) {
+animation: animation-fadein 300ms ease-in;
+}
+</style>
+`
 });

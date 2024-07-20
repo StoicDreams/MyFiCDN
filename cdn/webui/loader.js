@@ -185,10 +185,14 @@ const webui = (() => {
                 shadowTemplate.innerHTML = options.shadowTemplate;
                 delete options.shadowTemplate;
             }
+            if (options.watchVisibility && options.attr.indexOf('visible') === -1) {
+                options.attr.push('visible');
+            }
             let isInput = options.isInput || name.indexOf('input') !== -1;
             class CustomElement extends HTMLElement {
                 static formAssociated = isInput;
                 internals;
+                disconnectHandlers = [];
                 constructor() {
                     super();
                     let t = this;
@@ -205,6 +209,27 @@ const webui = (() => {
                     }
                     if (options.constructor) {
                         options.constructor(t);
+                    }
+                    if (options.watchVisibility) {
+                        let observer = new IntersectionObserver(onIntersection, {
+                            root: null,   // default is the viewport
+                            threshold: .1 // percentage of target's visible area. Triggers "onIntersection"
+                        });
+
+                        // callback is called on intersection change
+                        function onIntersection(entries, _opts) {
+                            entries.forEach(entry => {
+                                if (entry.isIntersecting) {
+                                    entry.target.setAttribute('visible', 1);
+                                } else {
+                                    entry.target.removeAttribute('visible');
+                                }
+                            });
+                        }
+                        observer.observe(t);
+                        this.disconnectHandlers.push(() => {
+                            observer.unobserve(t);
+                        });
                     }
                     if (shadowTemplate) {
                         const shadow = t.attachShadow({ mode: 'open' });
@@ -257,6 +282,9 @@ const webui = (() => {
                     if (typeof options.disconnected === 'function') {
                         options.disconnected(this);
                     }
+                    this.disconnectHandlers.forEach(h => {
+                        h();
+                    });
                 }
                 getSlot(name) {
                     let node = null;
