@@ -12,7 +12,7 @@ webui.define('webui-page-not-found', {
                 </template>
             </webui-data>
             <webui-side-by-side elevation="10">
-                <webui-flex column justify="center" data-subscribe="not-found:html">
+                <webui-flex column justify="center" data-subscribe="app-not-found:html">
                     <p>The page you are looking for was not found!</p>
                 </webui-flex>
                 <webui-flex column justify="center">
