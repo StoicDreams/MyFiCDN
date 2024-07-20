@@ -802,9 +802,9 @@ const webui = (() => {
                                         case 'elevation':
                                         case 'slot':
                                             if (isNull) {
-                                                el.removeAttribute('value');
+                                                el.removeAttribute(toSet);
                                             } else {
-                                                el.setAttribute('value', value);
+                                                el.setAttribute(toSet, value);
                                             }
                                             break;
                                         default:
