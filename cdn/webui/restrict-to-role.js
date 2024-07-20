@@ -6,16 +6,19 @@
 {
     webui.define("webui-restrict-to-role", {
         constructor: (t) => {
-            t._cache = t.innerHTML;
-            t.innerHTML = '';
+            t._slotValid = t.template.querySelector('slot[name="valid"]');
+            t._slotInvalid = t.template.querySelector('slot[name="invalid"]');
         },
         attr: ['role'],
         attrChanged: (t, _property, _value) => {
             t.checkRole();
         },
         connected: (t) => {
-            t.hideContent();
             t.setAttribute('data-subscribe', 'app-user-role');
+            t.checkRole();
+        },
+        setAppUserRole: function (userRole) {
+            this.setUserRole(userRole);
         },
         setUserRole: function (userRole) {
             let t = this;
@@ -46,19 +49,27 @@
         },
         showContent: function () {
             let t = this;
-            if (t._cache) {
-                t.innerHTML = t._cache;
-            }
-            t.style.display = '';
+            if (t._showing === 'content') return;
+            t._showing = 'content';
+            webui.removeChildren(t, ch => !ch.hasAttribute('slot'));
+            let html = webui.getHtmlFromTemplate(t._slotValid);
+            webui.transferChildren(webui.create('div', { html: html }), t);
         },
         hideContent: function () {
             let t = this;
-            if (t.style.display === 'none') { return; }
-            if (t.innerHTML) {
-                t._cache = t.innerHTML;
-            }
-            t.innerHTML = '';
-            t.style.display = 'none';
-        }
+            if (t._showing === 'invalid') return;
+            t._showing = 'invalid';
+            webui.removeChildren(t, ch => !ch.hasAttribute('slot'));
+            let html = webui.getHtmlFromTemplate(t._slotInvalid);
+            webui.transferChildren(webui.create('div', { html: html }), t);
+        },
+        shadowTemplate: `
+<slot name="valid"></slot>
+<slot name="invalid"></slot>
+<slot></slot>
+<style type="text/css">
+slot[name] {display:none;}
+</style>
+`
     });
 }

@@ -335,6 +335,17 @@ const webui = (() => {
             }
             return undefined;
         }
+        getHtmlFromTemplate(template, data) {
+            if (!template || typeof template.forEach !== 'function') return '';
+            let html = [];
+            template.forEach(t => {
+                let v = t.innerHTML;
+                if (v) {
+                    html.push(v);
+                }
+            });
+            return this.applyAppDataToContent(html.join('\n'), data);
+        }
         unitIfNumber(input, unit) {
             let num = parseFloat(input);
             if (num === input || `${num}` === input) {
