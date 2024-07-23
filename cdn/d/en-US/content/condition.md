@@ -1,7 +1,6 @@
 
 <webui-restrict-to-role role="1">
     <template slot="valid">
-        <webui-data data-page-title="Welcome {APP_FIRST_NAME}"></webui-data>
         <webui-quote theme="success">
             You are currently signed in!
         </webui-quote>
