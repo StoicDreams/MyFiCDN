@@ -165,6 +165,7 @@ grid-template-columns:max-content auto;
 slot[name="template"] {display:none;}
 slot[name="tabs"] {
 display:flex;
+flex-wrap:wrap;
 background-color:var(--theme-color);
 color:var(--theme-color-offset);
 gap:var(--theme-padding);
