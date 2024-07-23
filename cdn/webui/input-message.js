@@ -50,10 +50,21 @@
             talist.push(t);
             t._label = t.template.querySelector('label');
             t._field = t.template.querySelector('textarea');
+            function onKeyDown(ev) {
+                handleKeyDown(ev);
+            }
+            function onInput(ev) {
+                if (t.value !== t._field.value) {
+                    t.value = t._field.value;
+                    t.autosize();
+                }
+                console.log('Input', t.value);
+            }
             t._field.setAttribute('name', 'message');
-            t._field.addEventListener('keydown', handleKeyDown);
-            t._field.addEventListener('keyup', t.autosize);
-            t._field.addEventListener('change', t.autosize);
+            t._field.addEventListener('keydown', onKeyDown);
+            t._field.addEventListener('keyup', onInput);
+            t._field.addEventListener('change', onInput);
+            t._field.addEventListener('input', onInput);
         },
         attr: ['title', 'name', 'autofocus', 'value', 'label', 'placeholder'],
         attrChanged: (t, property, value) => {
@@ -74,6 +85,10 @@
                     t._field.value = value;
                     break;
             }
+        },
+        setValue:function(value) {
+            let t=this;
+            t._field.value = webui.getDefined(value, '');
         },
         connected: (t) => {
             let id = webui.uuid();

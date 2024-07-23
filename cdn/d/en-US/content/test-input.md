@@ -16,5 +16,6 @@
             <label class="nowrap">Subscribe value (readonly):</label>
             <input type="text" readonly data-subscribe="test1:value" />
         </webui-flex>
+        <webui-input-message label="Message Box" data-trigger="test1" data-subscribe="test1"></webui-input-message>
     </webui-flex>
 </webui-side-by-side>
