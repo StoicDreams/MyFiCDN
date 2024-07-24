@@ -937,7 +937,6 @@ const webui = (() => {
                 }
                 if (target.dataset.setattr) {
                     let [val, attr, sel] = target.dataset.setattr.split('|').reverse();
-                    console.log('set attr', attr, val, sel);
                     if (sel) {
                         document.querySelectorAll(sel).forEach(el => {
                             setAttr(el, attr, val);
@@ -980,7 +979,6 @@ const webui = (() => {
                 }
                 if (applyDynStyles) {
                     webui.applyDynamicStyles();
-                    stop();
                     break;
                 }
                 target = target.parentNode;

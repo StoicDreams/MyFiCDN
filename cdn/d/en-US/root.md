@@ -18,6 +18,8 @@
     <webui-content slot="content" src="/d/en-US/content/welcome.md"></webui-content>
     <webui-button slot="tabs">Loading Bars</webui-button>
     <webui-content slot="content" src="/d/en-US/content/loading-bars.md"></webui-content>
+    <webui-button slot="tabs">File Loading</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/file-select.md"></webui-content>
     <webui-button slot="tabs">Condition</webui-button>
     <webui-content slot="content" src="/d/en-US/content/condition.md"></webui-content>
     <webui-button slot="tabs">Quote</webui-button>
