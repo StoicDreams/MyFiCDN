@@ -1164,7 +1164,6 @@ webui-paper,
 }
 */
 
-webui-quote,
 blockquote,
 .quote {
     display: block;
@@ -1175,14 +1174,12 @@ blockquote,
     box-sizing: border-box;
 }
 
-webui-quote>slot[name="cite"],
 .quote>cite {
     margin: 0 0 0 auto;
     display: block;
     width: max-content;
 }
 
-webui-quote>slot[name="cite"]:before,
 .quote>cite:before {
     content: "— ";
     color: var(--theme-color);

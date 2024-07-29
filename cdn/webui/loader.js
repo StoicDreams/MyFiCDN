@@ -182,6 +182,7 @@ const webui = (() => {
             options = options || {};
             options.attr = options.attr || [];
             options.flags = options.flags || [];
+            let defineOptions = {};
             let shadowTemplate = 0;
             if (options.shadowTemplate) {
                 shadowTemplate = document.createElement('template');
@@ -312,7 +313,7 @@ const webui = (() => {
                     this.style.minHeight = num;
                 }
             }
-            customElements.define(name, CustomElement);
+            customElements.define(name, CustomElement, defineOptions);
         }
         getData(key) {
             key = key.split(':')[0];

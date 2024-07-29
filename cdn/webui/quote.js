@@ -1,26 +1,35 @@
 /* Display themed quote */
 webui.define("webui-quote", {
-    attr: ['cite', 'elevation'],
+    constructor: (t) => {
+        t._cite = t.template.querySelector('cite');
+    },
+    attr: ['cite', 'elevation', 'theme'],
     connected: (t) => {
-        let bc = document.createElement('blockquote');
-        let r = [];
-        t.parentNode.insertBefore(bc, t);
-        t.childNodes.forEach(n => r.push(n));
-        r.forEach(n => bc.appendChild(n));
-        bc.classList.add('quote');
-        if (t.theme) {
-            bc.style.setProperty('--theme-color', `var(--color-${t.theme})`);
-        }
-        if (t.elevation >= 0) {
-            bc.classList.add(`elevation-${t.elevation}`);
-        } else if (t.elevation < 0) {
-            bc.classList.add(`elevation-n${t.elevation * -1}`);
-        }
         if (t.cite) {
-            let c = document.createElement('cite');
-            c.innerHTML = t.cite;
-            bc.appendChild(c);
+            t._cite.innerHTML = t.cite;
         }
-        t.remove();
-    }
+    },
+    shadowTemplate: `
+<slot></slot>
+<cite></cite>
+<style type="text/css">
+:host {
+display: block;
+margin: var(--padding);
+padding: var(--padding);
+border-left: calc(2 * var(--padding)) solid var(--theme-color);
+box-shadow: var(--elevation-10);
+box-sizing: border-box;
+}
+cite {
+margin: 0 0 0 auto;
+display: block;
+width: max-content;
+}
+cite:before {
+content: "— ";
+color: var(--theme-color);
+}
+cite:empty {display:none;}
+</style>`
 });

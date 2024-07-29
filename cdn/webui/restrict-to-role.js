@@ -61,6 +61,7 @@
             t._showing = 'invalid';
             webui.removeChildren(t, ch => !ch.hasAttribute || !ch.hasAttribute('slot'));
             let html = webui.getHtmlFromTemplate(t._slotInvalid);
+            console.log('html', html);
             webui.transferChildren(webui.create('div', { html: html }), t);
         },
         shadowTemplate: `
