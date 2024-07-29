@@ -14,10 +14,10 @@
             t.checkRole();
         },
         connected: (t) => {
-            t.setAttribute('data-subscribe', 'session-user-role');
+            t.setAttribute('data-subscribe', 'session-user-role:setUserRole');
             t.checkRole();
         },
-        setAppUserRole: function (userRole) {
+        setSessionUserRole: function (userRole) {
             this.setUserRole(userRole);
         },
         setUserRole: function (userRole) {
@@ -61,7 +61,6 @@
             t._showing = 'invalid';
             webui.removeChildren(t, ch => !ch.hasAttribute || !ch.hasAttribute('slot'));
             let html = webui.getHtmlFromTemplate(t._slotInvalid);
-            console.log('html', html);
             webui.transferChildren(webui.create('div', { html: html }), t);
         },
         shadowTemplate: `
