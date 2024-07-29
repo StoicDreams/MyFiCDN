@@ -74,11 +74,11 @@
             let foundIndex = false;
             t.querySelectorAll('[slot="tabs"]').forEach(tab => {
                 if (tabIndex === index++) {
-                    tab.classList.add('theme-active');
+                    tab.setAttribute('theme', 'active');
                     t._index = index - 1;
                     foundIndex = true;
                 } else {
-                    tab.classList.remove('theme-active');
+                    tab.removeAttribute('theme');
                 }
             });
             if (tabIndex > 0 && !foundIndex) {
