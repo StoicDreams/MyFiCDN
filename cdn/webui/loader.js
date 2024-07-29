@@ -12,14 +12,15 @@ const webui = (() => {
         'page-title': '',
         'page-subtitle': '',
         'page-path': location.pathname,
-        'app-domain': location.hostname.toLowerCase(),
-        'session-user-role': '0',
+        'app-domain': location.hostname.toLowerCase()
+    };
+    let sessionData = {
+        'session-user-role': 0,
         'session-username': 'Guest',
         'session-full-name': 'Guest',
         'session-first-name': 'Guest',
         'session-last-name': ''
     };
-    let sessionData = {};
     const appSettings = {
         appType: 'website',
         isDesktopApp: false,
@@ -134,10 +135,13 @@ const webui = (() => {
             this.hello = "World";
             this._appSettings = appSettings;
             this.storage = new MemStorage();
-            sessionData = this.storage.getItem('session-data') || {};
-            if (typeof sessionData === 'string') {
-                sessionData = JSON.parse(sessionData);
+            let cachedSessionData = this.storage.getItem('session-data') || {};
+            if (typeof cachedSessionData === 'string') {
+                cachedSessionData = JSON.parse(cachedSessionData);
             }
+            Object.keys(cachedSessionData).forEach(key => {
+                sessionData[key] = cachedSessionData[key];
+            });
             window.addEventListener('unload', _ => {
                 this.storage.setItem('session-data', JSON.stringify(sessionData));
             });
