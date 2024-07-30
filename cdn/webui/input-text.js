@@ -55,8 +55,7 @@ webui.define('webui-input-text', {
         }
     },
     setValue: function (value) {
-        let t = this;
-        t._field.value = value === undefined ? '' : value;
+        this.value = value;
     },
     connected: (t) => {
         if (!t.getAttribute('type')) {

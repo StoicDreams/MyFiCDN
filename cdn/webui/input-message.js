@@ -93,8 +93,7 @@
             }
         },
         setValue: function (value) {
-            let t = this;
-            t._field.value = webui.getDefined(value, '');
+            this.value = value;
         },
         connected: (t) => {
             let id = webui.uuid();
