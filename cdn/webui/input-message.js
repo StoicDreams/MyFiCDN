@@ -86,8 +86,14 @@
                     break;
             }
         },
-        setValue:function(value) {
-            let t=this;
+        props: {
+            'value': {
+                get() { return webui.getDefined(this._field.value, ''); },
+                set(v) { this._field.value = webui.getDefined(v, ''); this.dispatchEvent(new Event('change', { bubbles: true })); }
+            }
+        },
+        setValue: function (value) {
+            let t = this;
             t._field.value = webui.getDefined(value, '');
         },
         connected: (t) => {

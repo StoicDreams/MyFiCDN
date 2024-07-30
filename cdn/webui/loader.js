@@ -201,6 +201,11 @@ const webui = (() => {
                 constructor() {
                     super();
                     let t = this;
+                    if (options.props) {
+                        Object.keys(options.props).forEach(key => {
+                            Object.defineProperty(t, key, options.props[key]);
+                        });
+                    }
                     t._id = `d${crypto.randomUUID()}`.split('-').join('').toLowerCase();
                     t.options = options;
                     if (shadowTemplate) {
