@@ -598,6 +598,33 @@ const webui = (() => {
             el.style.setProperty('--theme-color', `var(--color-${value})`);
             el.style.setProperty('--theme-color-offset', `var(--color-${value}-offset)`);
         }
+        targetMatchesCheck(parent, target, check, onSuccess) {
+            while (true) {
+                if (!target) return false;
+                if (parent === target) return false;
+                switch (typeof check) {
+                    case 'function':
+                        if (check(target)) {
+                            if (typeof onSuccess === 'function') {
+                                onSuccess(target);
+                            }
+                            return true;
+                        }
+                        break;
+                    case 'string':
+                        if (target.nodeName === check) {
+                            if (typeof onSuccess === 'function') {
+                                onSuccess(target);
+                            }
+                            return true;
+                        }
+                        break;
+                    default:
+                        return false;
+                }
+                target = target.parentNode;
+            }
+        }
         toSnake(key) {
             return key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
         }
