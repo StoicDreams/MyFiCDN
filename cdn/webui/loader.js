@@ -578,7 +578,7 @@ const webui = (() => {
             }
         }
         setProperty(t, property, value) {
-            if (value === null || value === undefined) {
+            if (property !== 'value' && (value === null || value === undefined)) {
                 delete t[property];
             } else {
                 t[property] = value;
