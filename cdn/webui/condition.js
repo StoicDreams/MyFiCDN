@@ -59,6 +59,7 @@
             if (!val || ['0', 'false', 'null', 'undefined', '[]', '{}'].indexOf(val) !== -1 || (val.forEach && val.length === 0)) {
                 return false;
             }
+            if (typeof val === 'string' && val.startsWith('{TEMPLATE_')) return false;
             return true;
         },
         checkConditions: function () {
