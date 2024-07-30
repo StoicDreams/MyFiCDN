@@ -31,11 +31,8 @@
                     t.checkConditions();
                     break;
                 case 'value':
-                    if (t.valueIsGood(value)) {
-                        t.showContent();
-                    } else {
-                        t.showInvalid();
-                    }
+                    t.dataset.value = value;
+                    t.checkConditions();
                     break;
             }
         },
@@ -52,8 +49,15 @@
             t._cacheInvalid = invalid.join('\n');
             t.checkConditions();
         },
-        setValue: function (value, _key) {
-            this.checkConditions();
+        setValue: function (value, key) {
+            let t = this;
+            switch (key) {
+                case 'value':
+                    t.dataset.value = value;
+                    break;
+            }
+            t._data[key] = value === undefined ? '' : value;
+            t.checkConditions();
         },
         valueIsGood: function (val) {
             if (!val || ['0', 'false', 'null', 'undefined', '[]', '{}'].indexOf(val) !== -1 || (val.forEach && val.length === 0)) {
@@ -76,10 +80,17 @@
             let ignoreCase = t.dataset.ignoreCase !== undefined;
             let mustMatch = t.dataset.match;
             let isGood = true;
+            let isGeneralCheck = mustEqual === undefined && mustContain === undefined && notEqual === undefined && mustMatch === undefined;
             function checkValue(value) {
                 let vt = `${value}`;
                 if (ignoreCase) {
                     vt = vt.toLowerCase();
+                }
+                if (isGeneralCheck) {
+                    if (!t.valueIsGood(value)) {
+                        isGood = false;
+                    }
+                    return;
                 }
                 if (mustMatch !== undefined) {
                     let matches = new RegExp(mustMatch, 'g');
@@ -91,9 +102,6 @@
                     if (value === notEqual || vt === notEqual) {
                         isGood = false;
                     }
-                }
-                else if (!t.valueIsGood(value)) {
-                    isGood = false;
                 }
                 if (mustEqual !== undefined && (value !== mustEqual && vt !== mustEqual)) {
                     isGood = false;
@@ -120,21 +128,20 @@
 
         showContent: function () {
             let t = this;
-            if (t._isShowing !== 'content') {
-                t._isShowing = 'content';
-                webui.removeChildren(t, ch => {
-                    return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');
-                });
-                webui.transferChildren(webui.create('div', { html: t._cacheContent }), t);
+            webui.removeChildren(t, ch => {
+                return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');
+            });
+            if (t._cacheContent) {
+                webui.transferChildren(webui.create('div', { html: webui.applyAppDataToContent(t._cacheContent, t._data) }), t);
             }
         },
         showInvalid: function () {
             let t = this;
-            if (t._isShowing !== 'invalid') {
-                t._isShowing = 'invalid';
-                webui.removeChildren(t, ch => {
-                    return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');
-                });
+            webui.removeChildren(t, ch => {
+                return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');
+            });
+            if (t._cacheInvalid) {
+                webui.transferChildren(webui.create('div', { html: webui.applyAppDataToContent(t._cacheInvalid, t._data) }), t);
             }
         },
         shadowTemplate: `
