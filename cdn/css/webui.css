@@ -125,6 +125,8 @@
     opacity: 0;
 }
 
+webui-condition:not(:has(*:not([slot]))),
+webui-page-requires,
 webui-data,
 webui-data-loader {
     display: none;

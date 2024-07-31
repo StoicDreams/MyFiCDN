@@ -17,6 +17,10 @@
     <template slot="invalid"><webui-loading-bar indeterminate theme="info" height="5"></webui-loading-bar></template>
 </webui-condition>
 
+<webui-condition data-subscribe="page-loaded">
+    <template slot="invalid"><webui-loading-bar indeterminate theme="info" height="5"></webui-loading-bar></template>
+</webui-condition>
+
 <webui-flex gap="10" class="mt-2">
     <webui-input-text label="Test Input is Valid" data-trigger="condition-check"></webui-input-text>
     <webui-condition data-subscribe="condition-check:setValue" debug>
