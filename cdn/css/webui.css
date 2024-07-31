@@ -698,6 +698,7 @@ pre>code {
     line-height: var(--line-height);
 }
 
+.fill,
 webui-table>table {
     width: 100%;
     width: -webkit-fill-available;
