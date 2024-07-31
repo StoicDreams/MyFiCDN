@@ -5,9 +5,15 @@ webui.define("webui-content", {
     constructor: (t) => {
         t.loadDelay = 300;
     },
-    attr: ["src", 'preload', 'load-delay'],
+    attr: ["src", 'preload', 'load-delay', 'height', 'width'],
     attrChanged: (t, property, value) => {
         switch (property) {
+            case 'height':
+                t.style.height = webui.pxIfNumber(value);
+                break;
+            case 'width':
+                t.style.width = webui.pxIfNumber(value);
+                break;
             case 'loadDelay':
                 t.loadDelay = parseInt(value) || 0;
                 break;
