@@ -8,7 +8,7 @@
             t._slotTemplates = t.template.querySelector('slot[name="template"]');
             t._section = t.template.querySelector('section');
         },
-        attr: ['pad', 'transition-timing', 'index', 'theme'],
+        attr: ['pad', 'transition-timing', 'index', 'theme', 'content-theme'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'pad':
@@ -48,7 +48,7 @@
                 displayItem['tab-index'] = index++;
                 displayItem['tab-page'] = index;
                 let btn = webui.create('webui-button', { slot: 'tabs', 'data-dynamic': '1' });
-                let content = webui.create('webui-page-segment', { slot: 'content', 'data-dynamic': '1' });
+                let content = webui.create('webui-page-segment', { slot: 'content', 'data-dynamic': '1', 'theme': t.contentTheme || 'inherit' });
                 if (templateLabel) {
                     btn.innerHTML = webui.applyAppDataToContent(templateLabel, displayItem);
                 } else {
