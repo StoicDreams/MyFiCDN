@@ -2,24 +2,20 @@
     {
         "name": "Home",
         "icon": "house",
-        "iconFamily": "duotone",
         "url": "/"
     },
     {
         "name": "Test",
         "icon": "traffic-cone",
-        "iconFamily": "duotone",
         "children": [
             {
                 "name": "404 Not Found",
                 "icon": "compass",
-                "iconFamily": "duotone",
                 "url": "/test"
             },
             {
                 "name": "Under Construction",
                 "icon": "helmet-safety",
-                "iconFamily": "duotone",
                 "url": "/under-construction"
             }
         ]
