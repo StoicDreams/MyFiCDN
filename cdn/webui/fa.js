@@ -27,7 +27,7 @@
         } else {
             faWait[family][name] = [];
             try {
-                let result = await fetch(`https://cdn.myfi.ws/fa/svgs/${family}/${name}.svg`);
+                let result = await fetch(`https://fa.myfi.ws/svgs/${family}/${name}.svg`);
                 if (!result.ok) return;
                 svg = await result.text();
                 if (!svg.startsWith("<svg")) {
