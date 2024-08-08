@@ -40,8 +40,8 @@
         constructor: (t) => {
             t.internals = t.attachInternals();
             t.autosize = () => {
-                if (t._field.value !== t.value) {
-                    t.value = t._field.value;
+                if (t._lav !== t.value) {
+                    t._lav = t.value;
                     t.internals.setFormValue(t.name, t.value);
                 }
                 autosizeTextArea(t._field);
@@ -54,11 +54,7 @@
                 handleKeyDown(ev);
             }
             function onInput(ev) {
-                if (t.value !== t._field.value) {
-                    t.value = t._field.value;
-                    t.autosize();
-                }
-                console.log('Input', t.value);
+                t.autosize();
             }
             t._field.setAttribute('name', 'message');
             t._field.addEventListener('keydown', onKeyDown);
@@ -89,11 +85,13 @@
         props: {
             'value': {
                 get() { return webui.getDefined(this._field.value, ''); },
-                set(v) { this._field.value = webui.getDefined(v, ''); this.dispatchEvent(new Event('change', { bubbles: true })); }
+                set(v) { this.setValue(webui.getDefined(v, '')); }
             }
         },
         setValue: function (value) {
-            this.value = value;
+            let t = this;
+            t._field.value = value;
+            t._field.dispatchEvent(new Event('change', { bubbles: true }));
         },
         connected: (t) => {
             let id = webui.uuid();

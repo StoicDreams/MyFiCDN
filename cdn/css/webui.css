@@ -2,10 +2,15 @@
 
 :root {
     --fa-default-family: regular;
+    --icon-transition-duration: 600ms;
     --color-black: #101010FF;
     --color-white: #FFFFFFFF;
+    --color-black-offset: var(--color-white);
+    --color-white-offset: var(--color-black);
     --site-background-color: #333333FF;
     --site-background-offset: var(--color-white);
+    --color-site: var(--background-color);
+    --color-site-offset: var(--background-color-offset);
     --color-site: var(--background-color);
     --color-site-offset: var(--background-color-offset);
     --color-title: #1878af;
