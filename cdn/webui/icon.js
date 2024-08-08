@@ -157,17 +157,19 @@ Stroke line joins: miter|round|bevel
 <style type="text/css">
 :host {
 --ico-primary-color: currentColor;
---ico-secondary-color: color-mix (in srgb, var(--ico-primary-color) 66%, transparent);
---ico-tertiary-color: color-mix (in srgb, var(--ico-primary-color) 33%, transparent);
+--ico-secondary-color: var(--ico-primary-color);
+--ico-tertiary-color: var(--ico-primary-color);
 --ico-stroke-width: 20;
+--ico-height: var(--icon-height, 3ch);
 --ico-transition-duration: var(--icon-transition-duration, 400ms);
 display: inline-flex;
 position: relative;
+aspect-ratio:1;
 align-items: center;
 justify-items: center;
 height: auto;
 width: auto;
-min-height: 1em;
+min-height: var(--ico-height);
 margin:auto;
 padding:0;
 }
@@ -181,13 +183,26 @@ transition: all var(--ico-transition-duration) ease-in-out;
 path {
 transition: all var(--ico-transition-duration) ease-in-out;
 fill:none;
-stroke:currentColor;
+stroke:var(--ico-primary-color);
 stroke-width:var(--ico-stroke-width);
 stroke-linecap:round;
 stroke-linejoin: round;
 }
+path:nth-of-type(3n+2) {
+stroke:var(--ico-secondary-color);
+}
+path:nth-of-type(3n+3) {
+stroke:var(--ico-tertiary-color);
+}
 :host([thin]) {
 --ico-stroke-width: 15;
+}
+:host([duo]) {
+--ico-secondary-color: color-mix(in srgb, var(--ico-primary-color) 66%, #888);
+}
+:host([tri]) {
+--ico-secondary-color: color-mix(in srgb, var(--ico-primary-color) 66%, #888);
+--ico-tertiary-color: color-mix(in srgb, var(--ico-primary-color) 33%, #888);
 }
 </style>`
     });
