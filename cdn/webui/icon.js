@@ -36,7 +36,7 @@ Stroke line joins: miter|round|bevel
         } else {
             waiter[name] = [];
             try {
-                let result = await fetch(`${srcRoot}${name}.svgdef`);
+                let result = await fetch(`${srcRoot}${name}.webui`);
                 if (!result.ok) return;
                 iconDef = await result.text();
                 if (!iconDef.startsWith("WEBUI-ICON-")) {
