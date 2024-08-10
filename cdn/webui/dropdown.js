@@ -116,7 +116,7 @@
                 }
                 let option = webui.create('option', { value: id });
                 option.dataset.data = JSON.stringify(item);
-                option.innerHTML = template ? webui.replaceAppData(template, item) : id;
+                option.innerHTML = template ? webui.replaceAppData(template, item) : item.display || id;
                 t._select.appendChild(option);
             });
             if (t.value !== undefined) {

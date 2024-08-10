@@ -1079,7 +1079,10 @@ const webui = (() => {
                 }
                 break;
             case 'theme':
-                if (value) {
+                if (typeof target.setTheme === 'function') {
+                    target.setTheme(value);
+                }
+                else if (value) {
                     target.style.setProperty('--theme-color', `var(--color-${value})`);
                     target.style.setProperty('--theme-color-offset', `var(--color-${value}-offset)`);
                 } else {

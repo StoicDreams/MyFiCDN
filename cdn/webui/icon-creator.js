@@ -2,7 +2,7 @@
 {
     const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     webui.define('webui-icon-creator', {
-        preload: "icon",
+        preload: "icon dropdown",
         constructor: (t) => {
             t._topGrid = webui.create('webui-grid', { columns: '1fr 1fr', gap: '1' });
             t._leftGrid = webui.create('webui-grid', { gap: '1', theme: 'black', width: '100', height: '100' });
@@ -12,8 +12,12 @@
             let icons = [];
             [{ l: 'Regular', d: {} },
             { l: 'Inverted', d: { inverted: '' } },
-            { l: 'Sharp', d: { sharp: '' } },
             { l: 'Thin', d: { thin: '' } },
+            { l: 'Thick', d: { thick: '' } },
+            { l: 'Square', d: { square: '' } },
+            { l: 'Circle', d: { circle: '' } },
+            { l: 'Bordered Square', d: { square: '', bordered: '' } },
+            { l: 'Bordered Circle', d: { circle: '', bordered: '' } },
             { l: 'Duo-Tone', d: { duo: '' } },
             { l: 'Tri-Tone', d: { tri: '' } }].forEach(def => {
                 let attributes = def.d;
@@ -31,6 +35,17 @@
                 t._rightGrid.appendChild(right);
                 right.appendChild(iconRight);
                 right.appendChild(webui.create('label', { text: def.l, class: 'text-center' }));
+            });
+            t._color = webui.create('webui-dropdown', { 'label': 'Icon Theme' });
+            t._color.addEventListener('change', _ => {
+                let theme = t._color.value;
+                t._topGrid.querySelectorAll('webui-icon').forEach(icon => {
+                    if (!theme) {
+                        icon.removeAttribute('theme');
+                    } else {
+                        icon.setAttribute('theme', theme);
+                    }
+                });
             });
             t._input = webui.create('webui-input-message', { 'label': `Definition`, value: 'WEBUI-ICON-DEF\n', placeholder: "WEBUI-ICON-NAME" });
             t._input.addEventListener('input', _ => {
@@ -50,9 +65,30 @@
             t.style.flexDirection = 'column';
             t.style.flexGap = 'var(--padding)';
             t.appendChild(t._topGrid);
+            t.appendChild(t._color);
             t.appendChild(t._input);
             t.appendChild(t._bottomGrid);
             t.loadIcons();
+            let options = JSON.stringify([
+                { value: '', display: 'None' },
+                { value: 'black', display: 'Black' },
+                { value: 'white', display: 'White' },
+                { value: 'site', display: 'Site' },
+                { value: 'title', display: 'Title' },
+                { value: 'primary', display: 'Primary' },
+                { value: 'secondary', display: 'Secondary' },
+                { value: 'tertiary', display: 'Tertiary' },
+                { value: 'info', display: 'info' },
+                { value: 'success', display: 'success' },
+                { value: 'warning', display: 'warning' },
+                { value: 'danger', display: 'danger' },
+                { value: 'shade', display: 'Shade' },
+                { value: 'active', display: 'Active' },
+                { value: 'button', display: 'Button' },
+                { value: 'action', display: 'Action' },
+                { value: 'footer', display: 'Footer' }
+            ]);
+            t._color.setAttribute('options', options);
         },
         loadFromDefinition: function (iconDef) {
             let t = this;

@@ -120,8 +120,8 @@
     --typography-weight: 400;
     --typography-lineheight: 1.33;
     --typography-letterspacing: normal;
-    --theme-color: inherit;
-    --theme-color-offset: inherit;
+    --theme-color: var(--site-background-color);
+    --theme-color-offset: var(--site-background-offset);
     --theme-padding: var(--padding);
     --theme-border-width: 1px;
 }
