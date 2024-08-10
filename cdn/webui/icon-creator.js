@@ -100,6 +100,7 @@
                 let result = await fetch(`${srcRoot}all.json`);
                 if (!result.ok) return;
                 let icons = await result.json();
+                let isFirst = true;
                 icons.forEach(icon => {
                     let container = webui.create('a', { style: 'flex-direction:column;' });
                     t._bottomGrid.appendChild(container);
@@ -111,6 +112,13 @@
                         t._input.value = el._definition;
                         t._input.dispatchEvent(new Event('input', { bubbles: true }));
                     });
+                    if (isFirst) {
+                        isFirst = false;
+                        setTimeout(() => {
+                            t._input.value = el._definition;
+                            t._input.dispatchEvent(new Event('input', { bubbles: true }));
+                        }, 100);
+                    }
                 });
             } catch (ex) {
                 console.error('Failed loading icons list', ex);
