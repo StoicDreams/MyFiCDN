@@ -338,8 +338,6 @@
             { l: 'Thick', d: { thick: '' } },
             { l: 'Square', d: { square: '' } },
             { l: 'Circle', d: { circle: '' } },
-            { l: 'Bordered Square', d: { square: '', bordered: '' } },
-            { l: 'Bordered Circle', d: { circle: '', bordered: '' } },
             { l: 'Duo-Tone', d: { duo: '' } },
             { l: 'Tri-Tone', d: { tri: '' } },
             { l: 'Inverted', d: { inverted: '' } }].forEach(def => {
@@ -385,6 +383,8 @@
             setupToggleIcon('_backingToggle', 'Backing', 'backing');
             setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
             setupToggleIcon('_fillToggle', 'Fill', 'fill');
+            setupToggleIcon('_borderToggle', 'Bordered', 'bordered');
+            setupToggleIcon('_circleToggle', 'Circle', 'circle');
             let inputsColumn = webui.create('webui.flex', { column: '' });
             t._input = webui.create('webui-input-message', { 'label': `Definition`, value: 'WEBUI-ICON-DEF\n', placeholder: "WEBUI-ICON-NAME" });
             t._inputs.appendChild(inputsColumn);
@@ -415,6 +415,8 @@
             t._iconOptions.appendChild(t._backingToggle);
             t._iconOptions.appendChild(t._sharpToggle);
             t._iconOptions.appendChild(t._fillToggle);
+            t._iconOptions.appendChild(t._borderToggle);
+            t._iconOptions.appendChild(t._circleToggle);
             t.appendChild(t._inputs);
             t.appendChild(t._bottomGrid);
             t.loadIcons();

@@ -1,15 +1,14 @@
 /* Display group of navigation links */
 "use strict"
 webui.define('webui-nav-group', {
-    preload: 'fa',
+    preload: 'icon',
     constructor: (t) => {
         t._anchor = document.createElement('a');
         t._anchor.classList.add('navlink');
         t._display = document.createElement('span');
         t._anchor.appendChild(t._display);
-        t._caret = document.createElement('webui-fa');
+        t._caret = document.createElement('webui-icon');
         t._caret.setAttribute('icon', 'caret-down');
-        t._caret.setAttribute('family', 'solid');
         t._anchor.appendChild(t._caret);
         t._anchor.addEventListener('click', _ev => {
             t.open = !t.open;
@@ -21,23 +20,16 @@ webui.define('webui-nav-group', {
             }
         });
     },
-    attr: ['icon', 'family', 'name'],
+    attr: ['icon', 'name'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'name':
                 t._display.innerHTML = value;
                 t._anchor.setAttribute('title', t._display.innerText);
                 break;
-            case 'family':
-                if (!t._icon) {
-                    t._icon = document.createElement('webui-fa');
-                    t._anchor.insertBefore(t._icon, t._display);
-                }
-                t._icon.setAttribute('family', value);
-                break;
             case 'icon':
                 if (!t._icon) {
-                    t._icon = document.createElement('webui-fa');
+                    t._icon = document.createElement('webui-icon');
                     t._anchor.insertBefore(t._icon, t._display);
                 }
                 t._icon.setAttribute('icon', value);

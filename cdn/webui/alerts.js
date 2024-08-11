@@ -74,7 +74,7 @@
         "preload": "fa alert dialogs",
         constructor: (t) => {
             t.count = 0;
-            t.icon = t.template.querySelector('webui-fa');
+            t.icon = t.template.querySelector('webui-icon');
             t.btnClose = t.template.querySelector('#close');
             if (!window.webuiAlert) {
                 window.webuiAlert = (message, variant) => {
@@ -148,7 +148,7 @@ align-items:center;
 justify-content:center;
 }
 </style>
-<webui-fa icon="bell"></webui-fa>
+<webui-icon icon="bell"></webui-icon>
 `
     });
 }

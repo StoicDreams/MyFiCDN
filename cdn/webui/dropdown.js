@@ -13,9 +13,9 @@
             t._forLabel = t.template.querySelector('label');
             t._label = t.template.querySelector('slot[name="label"]');
             t._select = t.template.querySelector('select');
-            t._startIcon = t.template.querySelector('webui-fa.start');
-            t._midIcon = t.template.querySelector('webui-fa.mid');
-            t._endIcon = t.template.querySelector('webui-fa.end');
+            t._startIcon = t.template.querySelector('webui-icon.start');
+            t._midIcon = t.template.querySelector('webui-icon.mid');
+            t._endIcon = t.template.querySelector('webui-icon.end');
             t._datasub = webui.create('webui-data');
             t.appendChild(t._datasub);
             t._select.addEventListener('change', _ => {
@@ -150,13 +150,13 @@
         },
         shadowTemplate: `
 <label>
-<webui-fa class="start"></webui-fa>
+<webui-icon class="start"></webui-icon>
 <slot name="label"></slot>
-<webui-fa class="mid"></webui-fa>
+<webui-icon class="mid"></webui-icon>
 </label>
 <div>
 <select><slot></slot></select>
-<webui-fa class="end"></webui-fa>
+<webui-icon class="end"></webui-icon>
 </div>
 <slot name="template"></slot>
 <style type="text/css">
@@ -191,7 +191,7 @@ align-items:center;
 gap:var(--padding);
 padding:var(--padding,1rem);
 }
-webui-fa:not([icon]),
+webui-icon:not([icon]),
 slot[name="template"] {display:none;}
 @container (max-width:400px) {
 :host {

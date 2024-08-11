@@ -1,14 +1,14 @@
 /* Display navigation link */
 "use strict"
 webui.define('webui-nav-link', {
-    preload: 'fa',
+    preload: 'icon',
     constructor: (t) => {
         t._anchor = document.createElement('a');
         t._anchor.classList.add('navlink');
         t._display = document.createElement('span');
         t._anchor.appendChild(t._display);
     },
-    attr: ['icon', 'family', 'name', 'url'],
+    attr: ['icon', 'name', 'url'],
     setPagePath: function (value) {
         let t = this;
         if (value === '' || value === '/root') {
@@ -31,16 +31,9 @@ webui.define('webui-nav-link', {
                 t._display.innerHTML = value;
                 t._anchor.setAttribute('title', t._display.innerText);
                 break;
-            case 'family':
-                if (!t._icon) {
-                    t._icon = document.createElement('webui-fa');
-                    t._anchor.insertBefore(t._icon, t._display);
-                }
-                t._icon.setAttribute('family', value);
-                break;
             case 'icon':
                 if (!t._icon) {
-                    t._icon = document.createElement('webui-fa');
+                    t._icon = document.createElement('webui-icon');
                     t._anchor.insertBefore(t._icon, t._display);
                 }
                 t._icon.setAttribute('icon', value);

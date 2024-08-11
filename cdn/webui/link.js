@@ -8,31 +8,23 @@ webui.define('webui-link', {
     attr: ['href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family'],
     attrChanged: (t, property, value) => {
         switch (property) {
-            case 'startIconFamily':
             case 'startIcon':
                 {
                     t.querySelectorAll('[slot="start-icon"]').forEach(n => n.remove());
                     if (!t.startIcon) break;
-                    let ico = document.createElement('webui-fa');
+                    let ico = document.createElement('webui-icon');
                     ico.setAttribute('slot', 'start-icon');
                     ico.setAttribute('icon', t.startIcon);
-                    if (t.startIconFamily) {
-                        ico.setAttribute('family', t.startIconFamily);
-                    }
                     t.appendChild(ico);
                 }
                 break;
-            case 'endIconFamily':
             case 'endIcon':
                 {
                     t.querySelectorAll('[slot="end-icon"]').forEach(n => n.remove());
                     if (!t.endIcon) break;
-                    let ico = document.createElement('webui-fa');
+                    let ico = document.createElement('webui-icon');
                     ico.setAttribute('slot', 'end-icon');
                     ico.setAttribute('icon', t.endIcon);
-                    if (t.endIconFamily) {
-                        ico.setAttribute('family', t.endIconFamily);
-                    }
                     t.appendChild(ico);
                 }
                 break;

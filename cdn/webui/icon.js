@@ -18,11 +18,21 @@ Stroke line joins: miter|round|bevel
 */
 "use strict"
 {
+    const notFoundDef = `WEBUI-ICON-NOT-FOUND
+    M0 -70Q25 -45 25 -45Q45 -25 45 -25Q70 0 70 0Q50 20 50 20Q25 45 25 45Q0 70 0 70Q-35 35 -35 35Q-70 0 -70 0Q-45 -25 -45 -25Q-25 -45 -25 -45Q0 -70 0 -70z
+    M0 -70Q25 -45 25 -45Q45 -25 45 -25Q70 0 70 0Q50 20 50 20Q25 45 25 45Q0 70 0 70Q-35 35 -35 35Q-70 0 -70 0Q-45 -25 -45 -25Q-25 -45 -25 -45Q0 -70 0 -70z
+    M0 -70Q25 -45 25 -45Q45 -25 45 -25Q70 0 70 0Q50 20 50 20Q25 45 25 45Q0 70 0 70Q-35 35 -35 35Q-70 0 -70 0Q-45 -25 -45 -25Q-25 -45 -25 -45Q0 -70 0 -70z`;
     const pathCount = 8;
     const cache = {}, waiter = {};
     const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     const defCircle = 'M 0 -95 A 95 95 0 1 1 0 95 A 95 95 0 1 1 0 -95';
     const defSquare = 'M-95 -95 L -95 95 L 95 95 L 95 -95Z';
+    const missing = {};
+    function noteMissingIcon(name, ex) {
+        if (missing[name]) return;
+        missing[name] = true;
+        console.log('missing icon', name, ex || '');
+    }
     async function getIcon(name, handler) {
         if (!name) {
             return '';
@@ -38,16 +48,21 @@ Stroke line joins: miter|round|bevel
             waiter[name] = [];
             try {
                 let result = await fetch(`${srcRoot}${name}.webui`);
-                if (!result.ok) return;
-                iconDef = await result.text();
-                if (!iconDef.startsWith("WEBUI-ICON-")) {
-                    iconDef = '';
+                if (!result.ok) {
+                    noteMissingIcon(name);
+                    iconDef = notFoundDef;
                 } else {
-                    iconDef = iconDef.replace(/\r/g, '');
+                    iconDef = await result.text();
+                    if (!iconDef.startsWith("WEBUI-ICON-")) {
+                        noteMissingIcon(name);
+                        iconDef = notFoundDef;
+                    } else {
+                        iconDef = iconDef.replace(/\r/g, '');
+                    }
                 }
             } catch (ex) {
-                console.error('Failed loading fa icon file', name, ex);
-                iconDef = '';
+                noteMissingIcon(name, ex);
+                iconDef = notFoundDef;
             }
             cache[name] = iconDef;
             handler(iconDef);
@@ -83,7 +98,13 @@ Stroke line joins: miter|round|bevel
                     break;
                 case 'icon':
                     if (!value) return;
-                    getIcon(value, (iconDef) => {
+                    let idata = value.split('|');
+                    let icon = idata.shift();
+                    idata.forEach(flag => {
+                        let av = flag.split(':');
+                        t.setAttribute(av[0], webui.getDefined(av[1], true));
+                    });
+                    getIcon(icon, (iconDef) => {
                         t.setIconDefinition(iconDef);
                     });
                     break;
@@ -185,7 +206,7 @@ justify-items: center;
 height: auto;
 width: auto;
 min-height: var(--ico-height);
-margin:auto;
+margin:0;
 padding:0;
 }
 svg {

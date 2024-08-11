@@ -5,16 +5,16 @@
 <webui-toggle-icon data-toggleattr="[ID]|docked" data-enabled="[ID][docked]" icon-on="send-backward" icon-off="bring-forward" title-on="Hide Navigation" title-off="Dock Navigation"></webui-toggle-icon>`;
     const moveableTemplate = `
 <button data-setattr="[ID]|slot|left" aria-label="Set navigation to left" class="toggle-pos-left">
-<webui-fa icon="sidebar"></webui-fa>
+<webui-icon icon="sidebar"></webui-icon>
 </button>
 <button data-setattr="[ID]|slot|right" aria-label="Set navigation to right" class="toggle-pos-right">
-<webui-fa icon="sidebar-flip"></webui-fa>
+<webui-icon icon="sidebar-flip"></webui-icon>
 </button>
 <button data-setattr="[ID]|slot|top" aria-label="Set navigation to top" class="toggle-pos-top">
-<webui-fa icon="window"></webui-fa>
+<webui-icon icon="window"></webui-icon>
 </button>
 <button data-setattr="[ID]|slot|bottom" aria-label="Set navigation to bottom" class="toggle-pos-bottom">
-<webui-fa icon="window-flip" class="fa-rotate-180"></webui-fa>
+<webui-icon icon="window-flip" class="fa-rotate-180"></webui-icon>
 </button>`;
     webui.define("webui-drawer", {
         preload: 'fa flex toggle-icon',

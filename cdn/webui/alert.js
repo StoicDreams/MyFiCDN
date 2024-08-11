@@ -1,7 +1,7 @@
 /* Display inline alert message */
 "use strict"
 webui.define("webui-alert", {
-    preload: 'fa',
+    preload: 'icon',
     constructor: (t) => {
         t.icon = t.template.querySelector('#icon');
         t.btnClose = t.template.querySelector('#close');
@@ -66,6 +66,9 @@ webui.define("webui-alert", {
         }
     },
     shadowTemplate: `
+<webui-icon id="icon" icon=""></webui-icon>
+<div><slot></slot></div>
+<button id="close"><webui-icon icon="xmark"></webui-icon></button>
 <style type="text/css">
 :host {
 display:none;
@@ -106,8 +109,5 @@ color:inherit;
 border-radius:var(--corners);
 }
 </style>
-<webui-fa id="icon" icon=""></webui-fa>
-<div><slot></slot></div>
-<button id="close"><webui-fa icon="xmark"></webui-fa></button>
 `
 });

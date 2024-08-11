@@ -38,46 +38,40 @@ webui.define("webui-button", {
     attr: ['href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family', 'start-icon-class', 'end-icon-class', 'elevation'],
     attrChanged: (t, property, _value) => {
         switch (property) {
-            case 'startIconFamily':
             case 'startIconClass':
             case 'startIcon':
                 {
                     t.querySelectorAll('[slot="start-icon"]').forEach(n => n.remove());
                     if (!t.startIcon) break;
-                    let ico = document.createElement('webui-fa');
+                    let ico = document.createElement('webui-icon');
                     ico.setAttribute('slot', 'start-icon');
                     ico.setAttribute('icon', t.startIcon);
-                    if (t.startIconFamily) {
-                        ico.setAttribute('family', t.startIconFamily);
-                    }
                     if (t.startIconClass) {
                         ico.className = t.startIconClass;
                     }
                     t.appendChild(ico);
                 }
                 break;
-            case 'endIconFamily':
             case 'endIconClass':
             case 'endIcon':
                 {
                     t.querySelectorAll('[slot="end-icon"]').forEach(n => n.remove());
                     if (!t.endIcon) break;
-                    let ico = document.createElement('webui-fa');
+                    let ico = document.createElement('webui-icon');
                     ico.setAttribute('slot', 'end-icon');
                     ico.setAttribute('icon', t.endIcon);
-                    if (t.endIconFamily) {
-                        ico.setAttribute('family', t.endIconFamily);
-                    }
                     if (t.endIconClass) {
                         ico.className = t.endIconClass;
                     }
                     t.appendChild(ico);
                 }
                 break;
-
         }
     },
     shadowTemplate: `
+<slot name="start-icon"></slot>
+<slot></slot>
+<slot name="end-icon"></slot>
 <style type="text/css">
 :host {
 --theme-shadow-blur:var(--box-shadow-blur, 2px);
@@ -112,8 +106,5 @@ box-shadow:inset -1px -1px var(--box-shadow-blur) rgba(255,255,255,0.5), inset 1
 cursor:pointer;
 }
 </style>
-<slot name="start-icon"></slot>
-<slot></slot>
-<slot name="end-icon"></slot>
 `
 });

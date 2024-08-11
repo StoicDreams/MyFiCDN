@@ -135,7 +135,7 @@ cursor:pointer;
 </style>
 <label><slot></slot><span></span></label>
 <input type="file" accept="*" />
-<webui-button theme="danger"><webui-fa icon="xmark"></webui-fa></webui-button>
+<webui-button theme="danger"><webui-icon icon="xmark"></webui-icon></webui-button>
 `
     });
 }

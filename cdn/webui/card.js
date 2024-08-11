@@ -35,7 +35,7 @@ webui.define("webui-card", {
             let l = document.createElement('a');
             l.setAttribute('href', t.link);
             t._header.appendChild(l);
-            let li = document.createElement('webui-fa');
+            let li = document.createElement('webui-icon');
             l.appendChild(li);
             li.setAttribute('icon', 'arrow-up-right-from-square');
         }
@@ -55,6 +55,8 @@ webui.define("webui-card", {
         t.remove();
     },
     shadowTemplate: `
+<slot name="header"></slot>
+<slot></slot>
 <style type="text/css">
 :host {
 background-color:color-mix(in srgb, var(--theme-color, inherit) 50%, black);
@@ -67,7 +69,5 @@ grid-gap:var(--padding);
 padding:var(--padding);
 }
 </style>
-<slot name="header"></slot>
-<slot></slot>
 `
 });

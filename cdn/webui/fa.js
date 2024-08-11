@@ -2,9 +2,7 @@
 "use strict"
 {
     const faCache = {
-        'regular': {
-            'triangle-exclamation': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M27.4 432L0 480H55.3 456.7 512l-27.4-48L283.6 80.4 256 32 228.4 80.4 27.4 432zm401.9 0H82.7L256 128.7 429.3 432zM232 296v24h48V296 208H232v88zm48 104V352H232v48h48z"/></svg>`
-        }
+        'regular': {}
     };
     const faWait = {
         'regular': {}
@@ -27,12 +25,8 @@
         } else {
             faWait[family][name] = [];
             try {
-                let result = await fetch(`https://fa.myfi.ws/svgs/${family}/${name}.svg`);
-                if (!result.ok) return;
-                svg = await result.text();
-                if (!svg.startsWith("<svg")) {
-                    svg = '';
-                }
+                // TODO: implement loading from Font Awesome Kits through API
+                svg = '';
             } catch (ex) {
                 console.error('Failed loading fa icon file', family, name, ex);
                 svg = '';

@@ -1604,8 +1604,8 @@ a[data-click]:not([disabled]):not(:disabled):not(.disabled) {
 
 a[href] svg,
 a[data-click] svg,
-a[href] webui-fa,
-a[data-click] webui-fa,
+a[href] webui-icon,
+a[data-click] webui-icon,
 a[href] webui-avatar,
 a[data-click] webui-avatar {
     filter: drop-shadow(var(--link-shadow));

@@ -16,16 +16,8 @@ webui.define("webui-avatar", {
                     t._slot.innerHTML = value;
                     return;
                 }
-                if (value.indexOf(' ') !== -1) {
-                    let fi = value.split(' ');
-                    if (fi.length !== 2) { return; }
-                    let fam = fi[0];
-                    let ico = fi[1];
-                    if (['brands', 'solid', 'regular', 'thin', 'duotone'].indexOf(fam) === -1) {
-                        fam = fi[1];
-                        ico = fi[0];
-                    }
-                    t._slot.innerHTML = `<webui-fa icon="${ico}" family="${fam}"></webui-fa>`;
+                if (value.indexOf('/') === -1) {
+                    t._slot.innerHTML = `<webui-icon icon="${value}""></webui-icon>`;
                     return;
                 }
                 if (value.length < 3) {

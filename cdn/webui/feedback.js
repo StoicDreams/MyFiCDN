@@ -99,7 +99,7 @@ align-items:center;
 justify-content:center;
 }
 </style>
-<webui-fa icon="comment"></webui-fa>
+<webui-icon icon="feedback"></webui-icon>
 `
     });
 }

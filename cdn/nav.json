@@ -1,7 +1,7 @@
 [
     {
         "name": "Home",
-        "icon": "house",
+        "icon": "home|theme:primary|circle|backing",
         "url": "/"
     },
     {

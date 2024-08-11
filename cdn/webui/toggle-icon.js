@@ -104,6 +104,7 @@ padding:var(--padding, 1rem);
 cursor:pointer;
 transition: all var(--main-transition, 400ms) ease-in-out;
 }
+span:empty {display:none;}
 </style>
 `
 });

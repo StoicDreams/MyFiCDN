@@ -109,6 +109,20 @@ const webuiDialog = function (data) {
             }
         },
         shadowTemplate: `
+<dialog>
+<form method="dialog">
+<header>
+<section></section>
+<button id="dlg-close" value="cancel" formmethod="dialog"><webui-icon icon="xmark"></webui-icon></button>
+</header>
+<section></section>
+<footer>
+<button id="dlg-cancel" value="cancel" formmethod="dialog" formnovalidate></button>
+<span></span>
+<button id="dlg-confirm" value="confirm" formmethod="dialog"></button>
+</footer>
+</form>
+</dialog>
 <style type="text/css">
 :host {
 }
@@ -207,20 +221,6 @@ background-color:var(--color-success, #555);
 color:var(--color-success-offset, #FFF);
 }
 </style>
-<dialog>
-<form method="dialog">
-<header>
-<section></section>
-<button id="dlg-close" value="cancel" formmethod="dialog"><webui-fa icon="xmark"></webui-fa></button>
-</header>
-<section></section>
-<footer>
-<button id="dlg-cancel" value="cancel" formmethod="dialog" formnovalidate></button>
-<span></span>
-<button id="dlg-confirm" value="confirm" formmethod="dialog"></button>
-</footer>
-</form>
-</dialog>
 `
     });
 }
