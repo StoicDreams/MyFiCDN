@@ -6,7 +6,7 @@ const webuiDialog = function (data) {
 {
     const defaultData = { content: "Missing Content", confirm: "Ok" };
     webui.define("webui-dialogs", {
-        preload: 'fa',
+        preload: 'icon',
         constructor: (t) => {
             t.dialog = t.template.querySelector('dialog');
             t.form = t.template.querySelector('form');

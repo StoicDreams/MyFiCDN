@@ -1,7 +1,7 @@
 "use strict"
 {
     webui.define("webui-dropdown", {
-        preload: 'fa',
+        preload: 'icon',
         constructor: (t) => {
             t._template = t.template.querySelector('slot[name="template"]');
             let optionTemplate = t.querySelector('[slot="template"]');
