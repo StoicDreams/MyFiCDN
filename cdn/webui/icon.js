@@ -84,10 +84,18 @@ Stroke line joins: miter|round|bevel
                 t._dynPaths.push(t[`_i${instance}`]);
             }
         },
-        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'circle'],
+        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'circle', 'rotate'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'inverted':
+                    break;
+                case 'rotate':
+                    let number = parseFloat(value);
+                    if (number > 0 || number < 0) {
+                        t._svg.style.transform = `rotate(${number}deg)`;
+                    } else {
+                        t._svg.style.transform = '';
+                    }
                     break;
                 case 'circle':
                     if (value === null) {

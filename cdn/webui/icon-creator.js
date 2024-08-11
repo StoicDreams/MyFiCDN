@@ -22,8 +22,14 @@
             t._iconOptions = webui.create('webui-flex', { justify: 'center' });
             t._inputs = webui.create('webui-grid', { columns: '1fr 1fr' });
             t._svgContainer = webui.create('div', { style: 'display:block;position:relative;aspect-ratio:1;padding:0;margin:0;' });
-            t._svgPreview = webui.createFromHTML(previewHTML, { style: 'aspect-ratio:1;background-color:#DDF;color:#333;stroke:blue;stroke-width:15;fill:#FFFF0088;' });
+            t._backingHTML = webui.create('div', { 'style': 'width:100%;height:100%;overflow:hidden;position:absolute;z-index:0;top:0;left:0;' });
+            t._svgContainer.appendChild(t._backingHTML);
+            t._svgPreview = webui.createFromHTML(previewHTML, { style: 'aspect-ratio:1;position:relative;z-index:1;color:#333;stroke:blue;stroke-width:15;fill:#FFFF0022;' });
             t._svgContainer.appendChild(t._svgPreview);
+            t._backingInput = webui.create('webui-input-message', { label: 'Background Tracing', placeholder: 'Enter HTML for preview background to show Image or SVG of desired image to trace over.' });
+            t._backingInput.addEventListener('input', _ => {
+                t._backingHTML.innerHTML = t._backingInput.value;
+            });
             t._svgPPaths = [];
             function setPlaceholderCoord(path, index) {
                 let y = -100 + 2 + (index * 4);
@@ -336,8 +342,6 @@
             [{ l: 'Regular', d: {} },
             { l: 'Thin', d: { thin: '' } },
             { l: 'Thick', d: { thick: '' } },
-            { l: 'Square', d: { square: '' } },
-            { l: 'Circle', d: { circle: '' } },
             { l: 'Duo-Tone', d: { duo: '' } },
             { l: 'Tri-Tone', d: { tri: '' } },
             { l: 'Inverted', d: { inverted: '' } }].forEach(def => {
@@ -392,6 +396,7 @@
             inputsColumn.appendChild(webui.create('p', { class: "pl-4", html: `<strong>CTRL</strong> Precision Movement` }));
             inputsColumn.appendChild(webui.create('p', { class: "pl-4", html: `<strong>SHIFT</strong> Move Pair` }));
             inputsColumn.appendChild(t._input);
+            inputsColumn.appendChild(t._backingInput);
             t._input.addEventListener('input', _ => {
                 let value = t._input.value;
                 if (!value) {
