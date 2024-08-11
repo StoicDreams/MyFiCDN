@@ -19,7 +19,6 @@
             t._datasub = webui.create('webui-data');
             t.appendChild(t._datasub);
             t._select.addEventListener('change', _ => {
-                t.value = t._select.value;
                 t.dispatchEvent(new Event('change', { bubbles: true }));
                 t.applyDataChange();
             });
@@ -132,18 +131,22 @@
             }
             t.applyDataChange();
         },
+        props: {
+            'value': {
+                get() { return webui.getDefined(this._select.value, ''); },
+                set(v) { this.setValue(v); }
+            }
+        },
         setValue: function (value) {
             let t = this;
             let o = t._select.querySelector(`option[value="${value}"]`);
             if (!o) {
-                if (value !== undefined) {
-                    t.value = value;
-                }
                 return;
             }
-            t.value = value;
+            t._select.value = value;
             o.selected = true;
             t.applyDataChange();
+            t.dispatchEvent(new Event('change', { bubbles: true }));
         },
         shadowTemplate: `
 <label>

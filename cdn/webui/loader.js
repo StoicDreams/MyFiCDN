@@ -155,6 +155,16 @@ const webui = (() => {
         applyProperties(t) { }
         create(name, attr) {
             let el = document.createElement(name);
+            return this.attachAttributes(el, attr);
+        }
+        createFromHTML(html, attr) {
+            let container = this.create('div');
+            container.innerHTML = html;
+            let el = container.childNodes[0];
+            if (!el) return el;
+            return this.attachAttributes(el, attr);
+        }
+        attachAttributes(el, attr) {
             if (attr) {
                 Object.keys(attr).forEach(key => {
                     switch (key) {

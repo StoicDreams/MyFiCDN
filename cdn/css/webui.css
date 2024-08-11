@@ -2,7 +2,7 @@
 
 :root {
     --fa-default-family: regular;
-    --icon-transition-duration: 600ms;
+    --icon-transition-duration: 400ms;
     --color-black: #101010FF;
     --color-white: #FFFFFFFF;
     --color-black-offset: var(--color-white);
@@ -44,7 +44,7 @@
     --scroll-shadow: -4px 0 -4px rgba(255, 255, 255, 0.2) inset;
     --box-shadow-blur: 2px;
     --link-shadow: 0 0 5px #00C9FF;
-    --main-transition: 200ms;
+    --main-transition: 300ms;
     --readability-line-limit: 66ch;
     --backdrop-blur: blur(4px);
     --transition-speed: 180ms;

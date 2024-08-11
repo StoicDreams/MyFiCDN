@@ -1,6 +1,9 @@
 [
+    "circle",
+    "diamond",
     "equals",
     "hamburger",
     "home",
-    "plus"
+    "plus",
+    "toggle"
 ]
