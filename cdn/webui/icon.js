@@ -174,7 +174,7 @@ Stroke line joins: miter|round|bevel
 --ico-color-offset: var(--theme-color);
 --ico-color-secondary: var(--ico-color-primary);
 --ico-color-tertiary: var(--ico-color-primary);
---ico-stroke-width: 20;
+--ico-stroke-width: var(--icon-stroke-width, 10);
 --ico-height: var(--icon-height, 3ch);
 --ico-transition-duration: var(--icon-transition-duration, 400ms);
 display: inline-flex;
@@ -209,21 +209,50 @@ stroke:var(--ico-color-tertiary);
 path:not(.backing):nth-of-type(4n+4) {
 stroke:var(--ico-color-secondary);
 }
+:host([fill]) path:not(.backing) {
+fill:var(--ico-color-primary);
+}
+:host([fill]) path:not(.backing):nth-of-type(4n+3) {
+fill:var(--ico-color-tertiary);
+}
+:host([fill]) path:not(.backing):nth-of-type(4n+4) {
+fill:var(--ico-color-secondary);
+}
 :host([thin]) {
---ico-stroke-width: 15;
+--ico-stroke-width: calc(0.5 * var(--icon-stroke-width, 10));
 }
 :host([thick]) {
---ico-stroke-width: 25;
+--ico-stroke-width: calc(1.5 * var(--icon-stroke-width, 10));
 }
 :host([duo]) path {
 --ico-color-secondary: color-mix(in srgb, var(--ico-color-primary) 50%, var(--ico-color-offset));
+}
+:host([duo][fill]) path:not(.backing),
+:host([tri][fill]) path:not(.backing) {
+fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
+}
+:host([duo][fill]) path:not(.backing):nth-of-type(4n+3) {
+fill:var(--ico-color-tertiary);
+}
+:host([duo][fill]) path:not(.backing):nth-of-type(4n+4) {
+fill:var(--ico-color-secondary);
 }
 :host([tri]) path {
 --ico-color-secondary: color-mix(in srgb, var(--ico-color-primary) 66%, var(--ico-color-offset));
 --ico-color-tertiary: color-mix(in srgb, var(--ico-color-primary) 33%, var(--ico-color-offset));
 }
+:host([tri][fill]) path:not(.backing):nth-of-type(4n+3) {
+fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
+}
+:host([tri][fill]) path:not(.backing):nth-of-type(4n+4) {
+fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
+}
+:host([sharp]) path {
+stroke-linecap:butt;
+stroke-linejoin: miter;
+}
 path.backing {
-stroke-width: 10;
+stroke-width: var(--ico-stroke-width);
 }
 path.backing {
 stroke: var(--ico-color-border);

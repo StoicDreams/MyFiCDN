@@ -22,7 +22,7 @@
             t._iconOptions = webui.create('webui-flex', { justify: 'center' });
             t._inputs = webui.create('webui-grid', { columns: '1fr 1fr' });
             t._svgContainer = webui.create('div', { style: 'display:block;position:relative;aspect-ratio:1;padding:0;margin:0;' });
-            t._svgPreview = webui.createFromHTML(previewHTML, { style: 'aspect-ratio:1;background-color:#DDF;color:#333;stroke:blue;stroke-width:15;fill:yellow;' });
+            t._svgPreview = webui.createFromHTML(previewHTML, { style: 'aspect-ratio:1;background-color:#DDF;color:#333;stroke:blue;stroke-width:15;fill:#FFFF0088;' });
             t._svgContainer.appendChild(t._svgPreview);
             t._svgPPaths = [];
             function setPlaceholderCoord(path, index) {
@@ -44,7 +44,7 @@
                     let d = [];
                     d.push(`M${path._cOrigin.x} ${path._cOrigin.y}`);
                     path._cQ.forEach(cq => {
-                        d.push(`Q${cq.x} ${cq.y} ${cq.qx} ${cq.qy}`);
+                        d.push(`Q${cq.qx} ${cq.qy} ${cq.x} ${cq.y}`);
                     });
                     let ds = d.join('') + 'z';
                     if (path.getAttribute('d') !== ds) {
@@ -54,8 +54,8 @@
                 }
                 setPlaceholderCoord(path, i - 1);
             }
-            function getGrabStyle(color) {
-                return `position:absolute;aspect-ratio:1;width:2.5%;border-radius:100%;transform:translate(-50%,-50%);background-color:${color};`;
+            function getGrabStyle(color, z) {
+                return `position:absolute;aspect-ratio:1;width:2.5%;border-radius:100%;transform:translate(-50%,-50%);background-color:${color};z-index:${z};`;
             }
             t._svgPreview.addEventListener('click', ev => {
                 if (!moving) return;
@@ -73,33 +73,33 @@
                 ev.preventDefault();
                 return false;
             });
-            t._svgPreview.addEventListener('mousemove', ev => {
-                if (!moving) return;
-                ev.stopPropagation();
-                ev.preventDefault();
+            function processMove(ev) {
                 let x = ev.pageX;
                 let y = ev.pageY;
                 let mx = x - moving._moveOX;
                 let my = y - moving._moveOY;
-                moving._moveOX = x;
-                moving._moveOY = y;
                 if (moving._isQuad) {
-                    moving._myData.qx = moving._myData.qx + pxToPath(mx);
-                    moving._myData.qy = moving._myData.qy + pxToPath(my);
+                    moving._myData.qx = moving._dataOX + pxToPath(mx);
+                    moving._myData.qy = moving._dataOY + pxToPath(my);
                     moving.style.top = `${pathToRel(moving._myData.qy)}%`;
                     moving.style.left = `${pathToRel(moving._myData.qx)}%`;
                 } else {
-                    moving._myData.x = moving._myData.x + pxToPath(mx);
-                    moving._myData.y = moving._myData.y + pxToPath(my);
+                    moving._myData.x = moving._dataOX + pxToPath(mx);
+                    moving._myData.y = moving._dataOY + pxToPath(my);
                     moving.style.top = `${pathToRel(moving._myData.y)}%`;
                     moving.style.left = `${pathToRel(moving._myData.x)}%`;
                 }
                 buildIconDef();
+            }
+            t._svgPreview.addEventListener('mousemove', ev => {
+                if (!moving) return;
+                ev.stopPropagation();
+                ev.preventDefault();
+                processMove(ev);
                 return false;
             });
             t._svgPreview.addEventListener('mouseup', ev => {
                 if (!moving) return;
-                console.log('mouse up');
                 ev.stopPropagation();
                 ev.preventDefault();
                 moving = null;
@@ -107,23 +107,36 @@
             });
             t._svgPreview.addEventListener('mouseleave', ev => {
                 if (!moving || ev.relatedTarget !== 'svg') return;
-                console.log('mouse out', ev, ev.relatedTarget.nodeName);
                 ev.stopPropagation();
                 ev.preventDefault();
                 moving = null;
                 return false;
             });
-            let moving = null;
-            function setupGrabberEvents(grabber, data, isQuad) {
+            let moving = null, movingPair = null;
+            function setupGrabberEvents(grabber, data, isQuad, pairGrabber) {
                 grabber._myData = data;
                 grabber._isQuad = !!isQuad;
                 grabber.addEventListener('mouseup', ev => {
                     moving = null;
+                    movingPair = null;
+                });
+                grabber.addEventListener('mousemove', ev => {
+                    if (!moving) return;
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    processMove(ev);
+                    return false;
                 });
                 grabber.addEventListener('mousedown', ev => {
                     ev.stopPropagation();
                     ev.preventDefault();
+                    console.log('shift', ev.shiftKey);
                     moving = grabber;
+                    if (ev.shiftKey && pairGrabber) {
+                        movingPair = pairGrabber;
+                    }
+                    grabber._dataOX = isQuad ? data.qx : data.x;
+                    grabber._dataOY = isQuad ? data.qy : data.y;
                     grabber._moveOX = ev.pageX;
                     grabber._moveOY = ev.pageY;
                     return false;
@@ -137,19 +150,23 @@
                     if (line.startsWith('M-100')) return;
                     builder.push(line);
                 });
-                t._input.value = builder.join('\n');
+                let value = builder.join('\n');
+                t._input.value = value;
+                icons.forEach(icon => {
+                    icon.setIconDefinition(value);
+                });
             }
             t._svgPPaths.forEach(path => {
                 path._grab = {
-                    main: webui.create('a', { style: getGrabStyle('purple') }),
+                    main: webui.create('a', { style: getGrabStyle('purple', 100) }),
                     quads: []
                 }
                 setupGrabberEvents(path._grab.main, path._cOrigin, false);
                 t._svgContainer.appendChild(path._grab.main);
                 for (let gi = 0; gi < 11; ++gi) {
                     let g = {
-                        main: webui.create('a', { style: getGrabStyle('red') }),
-                        quad: webui.create('a', { style: getGrabStyle('green') })
+                        main: webui.create('a', { style: getGrabStyle('red', 101) }),
+                        quad: webui.create('a', { style: getGrabStyle('green', 102) })
                     };
                     setupGrabberEvents(g.main, path._cQ[gi], false);
                     setupGrabberEvents(g.quad, path._cQ[gi], true);
@@ -166,8 +183,7 @@
             function pxToPath(px) {
                 let size = t._svgPreview.clientWidth;
                 let ratio = 200 / size;
-                console.log('size', size, px * ratio);
-                return px * ratio;
+                return Math.round(px * ratio);
             }
             function relToPath(r) {
                 return (r * 2) - 100;
@@ -196,23 +212,33 @@
                 let c = { x: 0, y: 0, qx: 0, qy: 0 };
                 let s = '';
                 let index = 0;
+                let isM = false;
                 function setValue() {
                     let val = parseFloat(s);
                     s = '';
                     if (++index === 1) {
-                        c.x = val;
+                        if (isM) {
+                            c.x = val;
+                        } else {
+                            c.qx = val;
+                        }
                     } else if (index === 2) {
-                        c.y = val;
+                        if (isM) {
+                            c.y = val;
+                        } else {
+                            c.qy = val;
+                        }
                     } else if (index === 3) {
-                        c.qx = val;
+                        c.x = val;
                     } else if (index === 4) {
-                        console.log('set qy', s, val);
-                        c.qy = val;
+                        c.y = val;
                     }
                 }
                 subdef.split('').forEach(char => {
                     switch (char) {
                         case 'M':
+                            isM = true;
+                            break;
                         case 'Z':
                         case 'm':
                         case 'z':
@@ -239,7 +265,6 @@
                 return c;
             }
             function setPathDefinition(path, definition) {
-                //t._svgPPaths[i].setAttribute('d', lines[i]);
                 let segments = definition.split('Q');
                 let main = getCoord(segments.shift());
                 path._cOrigin.x = main.x;
@@ -285,7 +310,6 @@
             t._inputs.appendChild(t._svgContainer);
             let icons = [];
             [{ l: 'Regular', d: {} },
-            { l: 'Inverted', d: { inverted: '' } },
             { l: 'Thin', d: { thin: '' } },
             { l: 'Thick', d: { thick: '' } },
             { l: 'Square', d: { square: '' } },
@@ -293,7 +317,8 @@
             { l: 'Bordered Square', d: { square: '', bordered: '' } },
             { l: 'Bordered Circle', d: { circle: '', bordered: '' } },
             { l: 'Duo-Tone', d: { duo: '' } },
-            { l: 'Tri-Tone', d: { tri: '' } }].forEach(def => {
+            { l: 'Tri-Tone', d: { tri: '' } },
+            { l: 'Inverted', d: { inverted: '' } }].forEach(def => {
                 let attributes = def.d;
                 attributes.width = '100px';
                 attributes.class = 'my-1';
@@ -321,16 +346,21 @@
                     }
                 });
             });
-            t._backingToggle = webui.create('webui-toggle-icon', { label: 'Backing', 'title-on': 'Disable Backing', 'title-off': 'Enable Backing', 'theme-on': 'success', 'theme-off': 'shade' });
-            t._backingToggle.addEventListener('change', _ => {
-                icons.forEach(icon => {
-                    if (t._backingToggle.value) {
-                        icon.setAttribute('backing', '');
-                    } else {
-                        icon.removeAttribute('backing');
-                    }
+            function setupToggleIcon(name, label, flagAttr) {
+                t[name] = webui.create('webui-toggle-icon', { label: label, 'title-on': `Disable ${label}`, 'title-off': `Enable ${label}`, 'theme-on': 'success', 'theme-off': 'shade' });
+                t[name].addEventListener('change', _ => {
+                    icons.forEach(icon => {
+                        if (t[name].value) {
+                            icon.setAttribute(flagAttr, '');
+                        } else {
+                            icon.removeAttribute(flagAttr);
+                        }
+                    });
                 });
-            });
+            }
+            setupToggleIcon('_backingToggle', 'Backing', 'backing');
+            setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
+            setupToggleIcon('_fillToggle', 'Fill', 'fill');
             t._input = webui.create('webui-input-message', { 'label': `Definition`, value: 'WEBUI-ICON-DEF\n', placeholder: "WEBUI-ICON-NAME" });
             t._inputs.appendChild(t._input);
             t._input.addEventListener('input', _ => {
@@ -354,6 +384,8 @@
             t.appendChild(t._iconOptions);
             t._iconOptions.appendChild(t._color);
             t._iconOptions.appendChild(t._backingToggle);
+            t._iconOptions.appendChild(t._sharpToggle);
+            t._iconOptions.appendChild(t._fillToggle);
             t.appendChild(t._inputs);
             t.appendChild(t._bottomGrid);
             t.loadIcons();
