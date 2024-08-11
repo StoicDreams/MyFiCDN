@@ -73,21 +73,40 @@
                 ev.preventDefault();
                 return false;
             });
+            function applySnapping(value) {
+                if (!stepAlt) {
+                    return value - (value % 5);
+                }
+                return value;
+            }
             function processMove(ev) {
                 let x = ev.pageX;
                 let y = ev.pageY;
                 let mx = x - moving._moveOX;
                 let my = y - moving._moveOY;
+                stepAlt = ev.ctrlKey;
                 if (moving._isQuad) {
-                    moving._myData.qx = moving._dataOX + pxToPath(mx);
-                    moving._myData.qy = moving._dataOY + pxToPath(my);
+                    moving._myData.qx = applySnapping(moving._dataOX + pxToPath(mx));
+                    moving._myData.qy = applySnapping(moving._dataOY + pxToPath(my));
                     moving.style.top = `${pathToRel(moving._myData.qy)}%`;
                     moving.style.left = `${pathToRel(moving._myData.qx)}%`;
+                    if (movingPair) {
+                        movingPair._myData.x = applySnapping(movingPair._dataOX + pxToPath(mx));
+                        movingPair._myData.y = applySnapping(movingPair._dataOY + pxToPath(my));
+                        movingPair.style.top = `${pathToRel(movingPair._myData.y)}%`;
+                        movingPair.style.left = `${pathToRel(movingPair._myData.x)}%`;
+                    }
                 } else {
-                    moving._myData.x = moving._dataOX + pxToPath(mx);
-                    moving._myData.y = moving._dataOY + pxToPath(my);
+                    moving._myData.x = applySnapping(moving._dataOX + pxToPath(mx));
+                    moving._myData.y = applySnapping(moving._dataOY + pxToPath(my));
                     moving.style.top = `${pathToRel(moving._myData.y)}%`;
                     moving.style.left = `${pathToRel(moving._myData.x)}%`;
+                    if (movingPair) {
+                        movingPair._myData.qx = applySnapping(movingPair._dataOX + pxToPath(mx));
+                        movingPair._myData.qy = applySnapping(movingPair._dataOY + pxToPath(my));
+                        movingPair.style.top = `${pathToRel(movingPair._myData.qy)}%`;
+                        movingPair.style.left = `${pathToRel(movingPair._myData.qx)}%`;
+                    }
                 }
                 buildIconDef();
             }
@@ -112,7 +131,7 @@
                 moving = null;
                 return false;
             });
-            let moving = null, movingPair = null;
+            let moving = null, movingPair = null, stepAlt = false;
             function setupGrabberEvents(grabber, data, isQuad, pairGrabber) {
                 grabber._myData = data;
                 grabber._isQuad = !!isQuad;
@@ -131,14 +150,19 @@
                     ev.stopPropagation();
                     ev.preventDefault();
                     console.log('shift', ev.shiftKey);
-                    moving = grabber;
-                    if (ev.shiftKey && pairGrabber) {
-                        movingPair = pairGrabber;
-                    }
                     grabber._dataOX = isQuad ? data.qx : data.x;
                     grabber._dataOY = isQuad ? data.qy : data.y;
                     grabber._moveOX = ev.pageX;
                     grabber._moveOY = ev.pageY;
+                    moving = grabber;
+                    if (ev.shiftKey && pairGrabber) {
+                        movingPair = pairGrabber;
+                        pairGrabber._dataOX = isQuad ? data.x : data.qx;
+                        pairGrabber._dataOY = isQuad ? data.y : data.qy;
+                    } else {
+                        movingPair = null;
+                    }
+                    stepAlt = ev.ctrlKey;
                     return false;
                 });
             }
@@ -168,8 +192,8 @@
                         main: webui.create('a', { style: getGrabStyle('red', 101) }),
                         quad: webui.create('a', { style: getGrabStyle('green', 102) })
                     };
-                    setupGrabberEvents(g.main, path._cQ[gi], false);
-                    setupGrabberEvents(g.quad, path._cQ[gi], true);
+                    setupGrabberEvents(g.main, path._cQ[gi], false, g.quad);
+                    setupGrabberEvents(g.quad, path._cQ[gi], true, g.main);
                     path._grab.quads.push(g);
                     t._svgContainer.appendChild(g.main);
                     t._svgContainer.appendChild(g.quad);
@@ -347,7 +371,7 @@
                 });
             });
             function setupToggleIcon(name, label, flagAttr) {
-                t[name] = webui.create('webui-toggle-icon', { label: label, 'title-on': `Disable ${label}`, 'title-off': `Enable ${label}`, 'theme-on': 'success', 'theme-off': 'shade' });
+                t[name] = webui.create('webui-toggle-icon', { label: label, 'title-on': `Disable ${label}`, 'title-off': `Enable ${label}`, 'theme-on': 'success', 'theme-off': 'shade', 'flags-on': 'fill', 'flags-off': '' });
                 t[name].addEventListener('change', _ => {
                     icons.forEach(icon => {
                         if (t[name].value) {
@@ -361,8 +385,13 @@
             setupToggleIcon('_backingToggle', 'Backing', 'backing');
             setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
             setupToggleIcon('_fillToggle', 'Fill', 'fill');
+            let inputsColumn = webui.create('webui.flex', { column: '' });
             t._input = webui.create('webui-input-message', { 'label': `Definition`, value: 'WEBUI-ICON-DEF\n', placeholder: "WEBUI-ICON-NAME" });
-            t._inputs.appendChild(t._input);
+            t._inputs.appendChild(inputsColumn);
+            inputsColumn.appendChild(webui.create('h6', { html: `<strong>Movement Modifiers</strong>` }));
+            inputsColumn.appendChild(webui.create('p', { class: "pl-4", html: `<strong>CTRL</strong> Precision Movement` }));
+            inputsColumn.appendChild(webui.create('p', { class: "pl-4", html: `<strong>SHIFT</strong> Move Pair` }));
+            inputsColumn.appendChild(t._input);
             t._input.addEventListener('input', _ => {
                 let value = t._input.value;
                 if (!value) {

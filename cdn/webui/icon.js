@@ -224,9 +224,11 @@ fill:var(--ico-color-secondary);
 :host([thick]) {
 --ico-stroke-width: calc(1.5 * var(--icon-stroke-width, 10));
 }
+:host([fill]) path,
 :host([duo]) path {
 --ico-color-secondary: color-mix(in srgb, var(--ico-color-primary) 50%, var(--ico-color-offset));
 }
+:host([fill]) path:not(.backing),
 :host([duo][fill]) path:not(.backing),
 :host([tri][fill]) path:not(.backing) {
 fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
