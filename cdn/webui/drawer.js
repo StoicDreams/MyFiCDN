@@ -2,7 +2,7 @@
 "use strict"
 {
     const dockableTemplate = `
-<webui-toggle-icon data-toggleattr="[ID]|docked" data-enabled="[ID][docked]" icon-on="send-backward" icon-off="bring-forward" title-on="Hide Navigation" title-off="Dock Navigation"></webui-toggle-icon>`;
+<webui-toggle-icon class="pa-0" data-toggleattr="[ID]|docked" data-enabled="[ID]" icon-on="stacked-squares" icon-off="stacked-squares" title-on="Hide Navigation" flags-on="fill" flags-off="" title-off="Dock Navigation"></webui-toggle-icon>`;
     const moveableTemplate = `
 <button data-setattr="[ID]|slot|left" aria-label="Set navigation to left" class="toggle-pos-left">
 <webui-icon icon="drawer|rotate:90"></webui-icon>
@@ -17,7 +17,7 @@
 <webui-icon icon="drawer"></webui-icon>
 </button>`;
     webui.define("webui-drawer", {
-        preload: 'fa flex toggle-icon',
+        preload: 'icon flex toggle-icon',
         constructor: (t) => {
             t._idselector = `#${t._id}`;
             t.headerSlot = t.template.querySelector('slot[name=header]');
@@ -78,8 +78,8 @@
 <slot name="footer"></slot>
 <style type="text/css">
 :host {
-background-color: var(--theme-color, var(--site-background-color, white));
-color: var(--theme-color-offset, var(--site-background-offset, black));
+background-color: var(--theme-color, var(--color-background, white));
+color: var(--theme-color-offset, var(--color-background-offset, black));
 display: flex;
 flex-direction: column;
 overflow: auto;
@@ -138,7 +138,10 @@ padding:var(--padding,1em);
 display: flex;
 gap:var(--padding, 1em);
 padding:var(--padding,1em);
-background-color:rgba(0,0,0,0.1);
+--theme-color: var(--color-footer);
+--theme-color-offset: var(--color-footer-offset);
+background-color:var(--theme-color);
+color:var(--theme-color-offset);
 }
 slot:not([name]) {
 display:block;

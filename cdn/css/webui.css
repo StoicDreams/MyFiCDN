@@ -7,8 +7,8 @@
     --color-white: #FFFFFFFF;
     --color-black-offset: var(--color-white);
     --color-white-offset: var(--color-black);
-    --site-background-color: #333333FF;
-    --site-background-offset: var(--color-white);
+    --color-background: #333333FF;
+    --color-background-offset: var(--color-white);
     --color-site: var(--background-color);
     --color-site-offset: var(--background-color-offset);
     --color-site: var(--background-color);
@@ -29,8 +29,8 @@
     --color-warning-offset: var(--color-white);
     --color-danger: rgb(183, 5, 5);
     --color-danger-offset: var(--color-white);
-    --color-shade: rgba(125, 125, 125, 0.2);
-    --color-shade-offset: inherit;
+    --color-shade: color-mix(in srgb, var(--color-theme) 80%, var(--color-title));
+    --color-shade-offset: var(--color-theme-offset);
     --color-active: rgb(31, 112, 92);
     --color-active-offset: var(--color-white);
     --color-button: var(--color-info);
@@ -39,6 +39,8 @@
     --color-action-offset: var(--color-success-offset);
     --color-footer: var(--color-shade);
     --color-footer-offset: var(--color-shade-offset);
+    --color-theme: var(--color-background);
+    --color-theme-offset: var(--color-background-offset);
 
     --scroll-color: color-mix(in srgb, var(--theme-color) 20%, transparent);
     --scroll-shadow: -4px 0 -4px rgba(255, 255, 255, 0.2) inset;
@@ -120,8 +122,8 @@
     --typography-weight: 400;
     --typography-lineheight: 1.33;
     --typography-letterspacing: normal;
-    --theme-color: var(--site-background-color);
-    --theme-color-offset: var(--site-background-offset);
+    --theme-color: var(--color-background);
+    --theme-color-offset: var(--color-background-offset);
     --theme-padding: var(--padding);
     --theme-border-width: 1px;
 }
@@ -187,8 +189,8 @@ html {
 html,
 body,
 #app {
-    background-color: var(--site-background-color);
-    color: var(--site-background-offset);
+    background-color: var(--color-background);
+    color: var(--color-background-offset);
     display: block;
     position: relative;
     margin: 0;
@@ -928,8 +930,8 @@ aside.app-drawer.left {
     position: relative;
     flex-direction: column;
     gap: var(--padding);
-    background-color: var(--site-background-color);
-    color: var(--site-background-offset);
+    background-color: var(--color-background);
+    color: var(--color-background-offset);
     overflow: auto;
     border-radius: var(--corners);
 }
@@ -3051,8 +3053,8 @@ a.theme-background:link,
 a.theme-background:visited,
 a.theme-background:focus,
 a.theme-background:active {
-    background-color: var(--site-background-color);
-    color: var(--site-background-offset);
+    background-color: var(--color-background);
+    color: var(--color-background-offset);
     --theme-color: var(--color-background);
     --theme-color-offset: var(--color-background-offset);
 }
@@ -3192,8 +3194,8 @@ a.theme-inherit:active {
 }
 
 .color-background {
-    color: var(--site-background-color);
-    --theme-color-offset: var(--site-background-color);
+    color: var(--color-background);
+    --theme-color-offset: var(--color-background);
 }
 
 .color-black {
@@ -3272,8 +3274,8 @@ body>div.tooltip {
     border-radius: var(--corners);
     top: 50%;
     left: 50%;
-    background-color: var(--site-background-color);
-    color: var(--site-background-offset);
+    background-color: var(--color-background);
+    color: var(--color-background-offset);
     padding: calc(1 * var(--padding)) calc(2 * var(--padding));
     font-size: var(--typography-size);
     z-index: 99999;
@@ -3463,8 +3465,8 @@ webui-side-by-side>*>* {
 
 .titlebar-button:hover {
     background: #5bbec3;
-    background: var(--site-background-offset);
-    color: var(--site-background-color);
+    background: var(--color-background-offset);
+    color: var(--color-background);
 }
 
 webui-drawer[slot="top"] .toggle-pos-top,

@@ -44,6 +44,7 @@ webui.define('webui-toggle-icon', {
     getTitleOff: function () { return this.titleOff || this.title || null; },
     applyFlags(flags) {
         let t = this;
+        console.log('apply flags', t);
         if (typeof flags !== 'string') return;
         flags.split(' ').forEach(flag => {
             if (!flag) return;
@@ -100,7 +101,7 @@ color:var(--theme-color-offset, inherit);
 border:none;
 box-shadow:none;
 margin:0;
-padding:var(--padding, 1rem);
+padding:0;
 cursor:pointer;
 transition: all var(--main-transition, 400ms) ease-in-out;
 }

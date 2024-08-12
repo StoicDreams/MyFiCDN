@@ -110,7 +110,12 @@ Stroke line joins: miter|round|bevel
                     let icon = idata.shift();
                     idata.forEach(flag => {
                         let av = flag.split(':');
-                        t.setAttribute(av[0], webui.getDefined(av[1], true));
+                        console.log('flag', av);
+                        if (av[0].startsWith('-')) {
+                            t.removeAttribute(av[0].substring(1));
+                        } else {
+                            t.setAttribute(av[0], webui.getDefined(av[1], true));
+                        }
                     });
                     getIcon(icon, (iconDef) => {
                         t.setIconDefinition(iconDef);
@@ -257,7 +262,9 @@ fill:var(--ico-color-secondary);
 :host([duo]) path {
 --ico-color-secondary: color-mix(in srgb, var(--ico-color-primary) 50%, var(--ico-color-offset));
 }
-:host([fill]) path:not(.backing),
+:host([fill]) path:not(.backing) {
+fill:color-mix(in srgb, var(--ico-color-primary) 80%, var(--ico-color-offset));
+}
 :host([duo][fill]) path:not(.backing),
 :host([tri][fill]) path:not(.backing) {
 fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));

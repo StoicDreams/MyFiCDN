@@ -116,8 +116,8 @@ webui.define("webui-app", {
     shadowTemplate: `
 <style type="text/css">
 :host {
-background-color: var(--site-background-color, white);
-color: var(--site-background-offset, black);
+background-color: var(--color-background, white);
+color: var(--color-background-offset, black);
 display: grid;
 grid-template-columns: min-content auto min-content;
 grid-template-rows: min-content min-content auto min-content min-content;
