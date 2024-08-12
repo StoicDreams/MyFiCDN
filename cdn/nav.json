@@ -1,7 +1,7 @@
 [
     {
         "name": "Home",
-        "icon": "home|theme:primary|circle|backing",
+        "icon": "home|theme:primary|shape:circle|backing",
         "url": "/"
     },
     {

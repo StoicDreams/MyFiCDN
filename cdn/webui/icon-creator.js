@@ -379,7 +379,8 @@
                 right.appendChild(iconRight);
                 right.appendChild(webui.create('label', { text: def.l, class: 'text-center' }));
             });
-            t._color = webui.create('webui-dropdown', { 'label': 'Icon Theme' });
+            t._color = webui.create('webui-dropdown', { label: 'Icon Theme' });
+            t._shape = webui.create('webui-dropdown', { label: 'Shape' });
             t._color.addEventListener('change', _ => {
                 let theme = t._color.value;
                 t._topGrid.querySelectorAll('webui-icon').forEach(icon => {
@@ -387,6 +388,16 @@
                         icon.removeAttribute('theme');
                     } else {
                         icon.setAttribute('theme', theme);
+                    }
+                });
+            });
+            t._shape.addEventListener('change', _ => {
+                let shape = t._shape.value;
+                t._topGrid.querySelectorAll('webui-icon').forEach(icon => {
+                    if (!shape) {
+                        icon.removeAttribute('shape');
+                    } else {
+                        icon.setAttribute('shape', shape);
                     }
                 });
             });
@@ -406,7 +417,6 @@
             setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
             setupToggleIcon('_fillToggle', 'Fill', 'fill');
             setupToggleIcon('_borderToggle', 'Bordered', 'bordered');
-            setupToggleIcon('_circleToggle', 'Circle', 'circle');
             let inputsColumn = webui.create('webui.flex', { column: '' });
             t._input = webui.create('webui-input-message', { 'label': `Definition`, value: 'WEBUI-ICON-DEF\n', placeholder: "WEBUI-ICON-NAME" });
             t._inputs.appendChild(inputsColumn);
@@ -435,15 +445,15 @@
             t.appendChild(t._topGrid);
             t.appendChild(t._iconOptions);
             t._iconOptions.appendChild(t._color);
+            t._iconOptions.appendChild(t._shape);
             t._iconOptions.appendChild(t._backingToggle);
             t._iconOptions.appendChild(t._sharpToggle);
             t._iconOptions.appendChild(t._fillToggle);
             t._iconOptions.appendChild(t._borderToggle);
-            t._iconOptions.appendChild(t._circleToggle);
             t.appendChild(t._inputs);
             t.appendChild(t._bottomGrid);
             t.loadIcons();
-            let options = JSON.stringify([
+            let colorOptions = JSON.stringify([
                 { value: '', display: 'None' },
                 { value: 'black', display: 'Black' },
                 { value: 'white', display: 'White' },
@@ -459,7 +469,14 @@
                 { value: 'button', display: 'Button' },
                 { value: 'action', display: 'Action' }
             ]);
-            t._color.setAttribute('options', options);
+            t._color.setAttribute('options', colorOptions);
+            let shapeOptions = JSON.stringify([
+                { value: '', display: 'Square' },
+                { value: 'circle', display: 'Circle' },
+                { value: 'triangle', display: 'Triangle' },
+                { value: 'octo', display: 'Octogon' },
+            ]);
+            t._shape.setAttribute('options', shapeOptions);
         },
         loadFromDefinition: function (iconDef) {
             let t = this;

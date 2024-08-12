@@ -27,6 +27,9 @@ Stroke line joins: miter|round|bevel
     const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     const defCircle = 'M1 -93Q31 -91 53 -76Q76 -59 86 -35Q95 -12 92 13Q89 37 72 59Q58 76 37 86Q10 97 -16 92Q-45 85 -64 68Q-85 47 -92 16Q-96 -10 -87 -34Q-76 -60 -56 -75Q-26 -94 1 -93z';
     const defSquare = 'M0 -95Q80 -95 80 -95Q95 -95 95 -80Q95 0 95 0Q95 80 95 80Q95 95 80 95Q0 95 0 95Q-80 95 -80 95Q-95 95 -95 80Q-95 0 -95 0Q-95 -80 -95 -80Q-95 -90 -80 -95z';
+    const defTriangle = 'M0 -90Q20 -55 20 -55Q40 -20 40 -20Q55 5 55 5Q90 65 90 65Q60 65 60 65Q0 65 0 65Q-55 65 -55 65Q-90 65 -90 65Q-55 5 -55 5Q-40 -20 -40 -20Q-20 -55 -20 -55z';
+    const defTallTriangle = 'M0 -90Q25 -40 25 -40Q40 -10 40 -10Q55 20 55 20Q90 90 90 90Q60 90 60 90Q0 90 0 90Q-55 90 -55 90Q-90 90 -90 90Q-50 10 -50 10Q-30 -30 -30 -30Q-15 -60 -15 -60z';
+    const defOcto = `M0 -90Q40 -90 40 -90Q90 -40 90 -40Q90 0 90 0Q90 40 90 40Q40 90 40 90Q0 90 0 90Q-40 90 -40 90Q-90 40 -90 40Q-90 0 -90 0Q-90 -40 -90 -40Q-40 -90 -40 -90z`;
     const missing = {};
     function noteMissingIcon(name, ex) {
         if (missing[name]) return;
@@ -85,7 +88,7 @@ Stroke line joins: miter|round|bevel
                 t._dynPaths.push(t[`_i${instance}`]);
             }
         },
-        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'circle', 'rotate', 'count'],
+        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'shape', 'rotate', 'count'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'count':
@@ -106,11 +109,21 @@ Stroke line joins: miter|round|bevel
                         t._svg.style.transform = '';
                     }
                     break;
-                case 'circle':
-                    if (value === null) {
-                        t._backPath.setAttribute('d', defSquare);
-                    } else {
-                        t._backPath.setAttribute('d', defCircle);
+                case 'shape':
+                    switch (value) {
+                        case 'octo':
+                        case 'octogon':
+                            t._backPath.setAttribute('d', defOcto);
+                            break;
+                        case 'triangle':
+                            t._backPath.setAttribute('d', defTriangle);
+                            break;
+                        case 'circle':
+                            t._backPath.setAttribute('d', defCircle);
+                            break;
+                        default:
+                            t._backPath.setAttribute('d', defSquare);
+                            break;
                     }
                     break;
                 case 'icon':
