@@ -44,7 +44,6 @@ webui.define('webui-toggle-icon', {
     getTitleOff: function () { return this.titleOff || this.title || null; },
     applyFlags(flags) {
         let t = this;
-        console.log('apply flags', t);
         if (typeof flags !== 'string') return;
         flags.split(' ').forEach(flag => {
             if (!flag) return;

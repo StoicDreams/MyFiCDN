@@ -76,6 +76,7 @@ Stroke line joins: miter|round|bevel
         preload: "",
         constructor: (t) => {
             t._svg = t.template.querySelector('svg');
+            t._countSlot = t.template.querySelector('slot[name=count]');
             t._style = t.template.querySelector('defs style');
             t._backPath = t.template.querySelector('path.backing');
             t._dynPaths = [];
@@ -84,9 +85,17 @@ Stroke line joins: miter|round|bevel
                 t._dynPaths.push(t[`_i${instance}`]);
             }
         },
-        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'circle', 'rotate'],
+        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'circle', 'rotate', 'count'],
         attrChanged: (t, property, value) => {
             switch (property) {
+                case 'count':
+                    let num = parseInt(value) || 0;
+                    if (num > 0) {
+                        t._countSlot.innerHTML = num.toLocaleString();
+                    } else {
+                        t._countSlot.innerHTML = value;
+                    }
+                    break;
                 case 'inverted':
                     break;
                 case 'rotate':
@@ -110,7 +119,6 @@ Stroke line joins: miter|round|bevel
                     let icon = idata.shift();
                     idata.forEach(flag => {
                         let av = flag.split(':');
-                        console.log('flag', av);
                         if (av[0].startsWith('-')) {
                             t.removeAttribute(av[0].substring(1));
                         } else {
@@ -201,6 +209,7 @@ Stroke line joins: miter|round|bevel
 <path class="i7" d=""></path>
 <path class="i8" d=""></path>
 </svg>
+<slot name="count"></slot>
 <style type="text/css">
 :host {
 --ico-color-border: var(--icon-default-border-color, none);
@@ -305,11 +314,29 @@ fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
 :host([inverted]) path.backing {
 fill:var(--ico-color-offset);
 }
+:host([border]) path.backing,
 :host([bordered]) path.backing {
 --ico-color-border:var(--ico-color-primary);
 }
 :host(:not([circle]):not([inverted]):not([square]) path.backing),
 path[d=""] {
+display:none;
+}
+slot[name="count"] {
+display:flex;
+justify-content:center;
+position:absolute;
+border-radius:1em;
+background-color:var(--theme-color-offset, var(--color-info-offset));
+color:var(--theme-color, var(--color-info));
+bottom:50%;
+right:-5%;
+padding:1px;
+font-size:0.6em;
+min-width:1rem;
+text-align:center;
+}
+slot[name="count"]:empty {
 display:none;
 }
 </style>`

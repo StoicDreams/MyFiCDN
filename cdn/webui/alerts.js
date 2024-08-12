@@ -71,13 +71,13 @@
     }
 
     webui.define("webui-alerts", {
-        "preload": "fa alert dialogs",
+        "preload": "icon alert dialogs",
         constructor: (t) => {
             t.count = 0;
             t.icon = t.template.querySelector('webui-icon');
             t.btnClose = t.template.querySelector('#close');
             if (!window.webuiAlert) {
-                window.webuiAlert = (message, variant) => {
+                webui.alert = (message, variant) => {
                     let alert = document.createElement('webui-alert');
                     if (message.nodeName) {
                         alert.appendChild(message);
@@ -97,6 +97,7 @@
                         }
                     }, popupTiming)
                 };
+                window.webuiAlert = webui.alert;
             }
             t.addEventListener('click', _ev => {
                 if (!t.drawer) {

@@ -10,6 +10,7 @@
         preload: 'dialogs input-message alert alerts',
         constructor: (t) => {
             let extraContent = t.innerHTML;
+            t._icon = t.template.querySelector('webui-icon');
             t.addEventListener('click', async _ => {
                 let options = {
                     title: `Give us your Feedback!`,
@@ -85,11 +86,28 @@
                 }
             });
         },
-        attr: ['title', 'data-post'],
+        setTheme: function (value) {
+            let t = this;
+            t._icon.setAttribute('theme', value);
+        },
+        attr: ['title', 'data-post', 'flags'],
+        attrChanged: (t, property, value) => {
+            switch (property) {
+                case 'flags':
+                    if (typeof value === 'string') {
+                        value.split(' ').forEach(flag => {
+                            let fa = flag.split(':');
+                            t._icon.setAttribute(fa[0], fa[1] || '');
+                        });
+                    }
+                    break;
+            }
+        },
         connected: (t) => {
             t.setAttribute('data-subscribe', 'feedback:click');
         },
         shadowTemplate: `
+<webui-icon icon="feedback" fill></webui-icon>
 <style type="text/css">
 :host {
 display:inline-flex;
@@ -99,7 +117,6 @@ align-items:center;
 justify-content:center;
 }
 </style>
-<webui-icon icon="feedback"></webui-icon>
 `
     });
 }

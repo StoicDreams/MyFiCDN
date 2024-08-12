@@ -132,7 +132,6 @@ const webui = (() => {
         appSrc = '/wc';
         appMin = '.min'
         constructor() {
-            this.hello = "World";
             this._appSettings = appSettings;
             this.storage = new MemStorage();
             let cachedSessionData = this.storage.getItem('session-data') || {};

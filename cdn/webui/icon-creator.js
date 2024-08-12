@@ -29,6 +29,24 @@
             t._backingInput = webui.create('webui-input-message', { label: 'Background Tracing', placeholder: 'Enter HTML for preview background to show Image or SVG of desired image to trace over.' });
             t._backingInput.addEventListener('input', _ => {
                 t._backingHTML.innerHTML = t._backingInput.value;
+                let svg = t._backingHTML.querySelector('svg');
+                if (svg) {
+                    svg.setAttribute('width', '100%');
+                    svg.setAttribute('height', '100%');
+                    if (t._backingHTML.innerHTML !== t._backingInput.value) {
+                        t._backingInput.value = t._backingHTML.innerHTML;
+                    }
+                    return;
+                }
+                let img = t._backingHTML.querySelector('img');
+                if (img) {
+                    img.setAttribute('width', '100%');
+                    img.setAttribute('height', '100%');
+                    if (t._backingHTML.innerHTML !== t._backingInput.value) {
+                        t._backingInput.value = t._backingHTML.innerHTML;
+                    }
+                    return;
+                }
             });
             t._svgPPaths = [];
             function setPlaceholderCoord(path, index) {
