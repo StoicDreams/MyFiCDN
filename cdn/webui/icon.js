@@ -25,8 +25,8 @@ Stroke line joins: miter|round|bevel
     const pathCount = 8;
     const cache = {}, waiter = {};
     const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
-    const defCircle = 'M 0 -95 A 95 95 0 1 1 0 95 A 95 95 0 1 1 0 -95';
-    const defSquare = 'M-95 -95 L -95 95 L 95 95 L 95 -95Z';
+    const defCircle = 'M1 -93Q31 -91 53 -76Q76 -59 86 -35Q95 -12 92 13Q89 37 72 59Q58 76 37 86Q10 97 -16 92Q-45 85 -64 68Q-85 47 -92 16Q-96 -10 -87 -34Q-76 -60 -56 -75Q-26 -94 1 -93z';
+    const defSquare = 'M0 -95Q80 -95 80 -95Q95 -95 95 -80Q95 0 95 0Q95 80 95 80Q95 95 80 95Q0 95 0 95Q-80 95 -80 95Q-95 95 -95 80Q-95 0 -95 0Q-95 -80 -95 -80Q-95 -90 -80 -95z';
     const missing = {};
     function noteMissingIcon(name, ex) {
         if (missing[name]) return;
