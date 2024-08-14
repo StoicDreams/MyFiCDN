@@ -1,30 +1,93 @@
 "use strict"
 {
+    const dCoordCount = 12;
     const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     const previewHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
 <!--! Stoic Dreams - https://webui.stoicdreams.com License - https://webui.stoicdreams.com/license Copyright 2024 Stoic Dreams Inc. -->
-<path class="i1" d=""></path>
-<path class="i2" d=""></path>
-<path class="i3" d=""></path>
-<path class="i4" d=""></path>
-<path class="i5" d=""></path>
-<path class="i6" d=""></path>
-<path class="i7" d=""></path>
-<path class="i8" d=""></path></svg>`;
+<path d=""></path></svg>`;
+    const defaultPath = 'M0 -85Q5 -85 5 -85Q10 -85 10 -85Q15 -85 15 -85Q20 -85 20 -85Q25 -85 25 -85Q30 -85 30 -85Q35 -85 35 -85Q40 -85 40 -85Q45 -85 45 -85Q50 -85 50 -85Q55 -85 55 -85z';
     webui.define('webui-icon-creator', {
         preload: "icon dropdown",
         constructor: (t) => {
-            t._topGrid = webui.create('webui-grid', { columns: '1fr 1fr', gap: '1' });
-            t._leftGrid = webui.create('webui-grid', { gap: '1', theme: 'black', width: '100', height: '100' });
-            t._rightGrid = webui.create('webui-grid', { gap: '1', theme: 'white', width: '100', height: '100' });
+        },
+        setupComponent: function () {
+            let t = this;
+            t.style.display = 'flex';
+            t.style.flexDirection = 'column';
+            t.style.flexGap = 'var(--padding)';
+            let colorOptions = JSON.stringify([
+                { value: '', display: 'None' },
+                { value: 'black', display: 'Black' },
+                { value: 'white', display: 'White' },
+                { value: 'title', display: 'Title' },
+                { value: 'primary', display: 'Primary' },
+                { value: 'secondary', display: 'Secondary' },
+                { value: 'tertiary', display: 'Tertiary' },
+                { value: 'info', display: 'info' },
+                { value: 'success', display: 'success' },
+                { value: 'warning', display: 'warning' },
+                { value: 'danger', display: 'danger' },
+                { value: 'active', display: 'Active' },
+                { value: 'button', display: 'Button' },
+                { value: 'action', display: 'Action' }
+            ]);
+            let shapeOptions = JSON.stringify([
+                { value: '', display: 'Square' },
+                { value: 'circle', display: 'Circle' },
+                { value: 'triangle', display: 'Triangle' },
+                { value: 'octo', display: 'Octogon' },
+            ]);
+            t._modPath = 1;
+            t._topGrid = webui.create('webui-grid', { name: 'top-grid', columns: '1fr 1fr', gap: '1' });
+            t.appendChild(t._topGrid);
+            t._leftGrid = webui.create('webui-grid', { name: 'left-grid', gap: '1', theme: 'black', width: '100', height: '100' });
             t._topGrid.appendChild(t._leftGrid);
+            t._rightGrid = webui.create('webui-grid', { name: 'right-grid', gap: '1', theme: 'white', width: '100', height: '100' });
             t._topGrid.appendChild(t._rightGrid);
-            t._iconOptions = webui.create('webui-flex', { justify: 'center' });
+            t._iconOptions = webui.create('webui-flex', { name: 'icon-options', justify: 'center' });
+            t.appendChild(t._iconOptions);
+            t._color = webui.create('webui-dropdown', { label: 'Icon Theme', options: colorOptions });
+            t._iconOptions.appendChild(t._color);
+            t._color.addEventListener('change', _ => {
+                let theme = t._color.value;
+                t._topGrid.querySelectorAll('webui-icon').forEach(icon => {
+                    if (!theme) {
+                        icon.removeAttribute('theme');
+                    } else {
+                        icon.setAttribute('theme', theme);
+                    }
+                });
+            });
+            t._shape = webui.create('webui-dropdown', { label: 'Shape', options: shapeOptions });
+            t._iconOptions.appendChild(t._shape);
+            t._shape.addEventListener('change', _ => {
+                let shape = t._shape.value;
+                t._topGrid.querySelectorAll('webui-icon').forEach(icon => {
+                    if (!shape) {
+                        icon.removeAttribute('shape');
+                    } else {
+                        icon.setAttribute('shape', shape);
+                    }
+                });
+            });
+            setupToggleIcon('_backingToggle', 'Backing', 'backing');
+            setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
+            setupToggleIcon('_fillToggle', 'Fill', 'fill');
+            setupToggleIcon('_borderToggle', 'Bordered', 'bordered');
+            t._iconOptions.appendChild(t._backingToggle);
+            t._iconOptions.appendChild(t._sharpToggle);
+            t._iconOptions.appendChild(t._fillToggle);
+            t._iconOptions.appendChild(t._borderToggle);
             t._inputs = webui.create('webui-grid', { columns: '1fr 1fr' });
+            t.appendChild(t._inputs);
             t._svgContainer = webui.create('div', { style: 'display:block;position:relative;aspect-ratio:1;padding:0;margin:0;' });
+            t._inputs.appendChild(t._svgContainer);
             t._backingHTML = webui.create('div', { 'style': 'width:100%;height:100%;overflow:hidden;position:absolute;z-index:0;top:0;left:0;' });
             t._svgContainer.appendChild(t._backingHTML);
-            t._svgPreview = webui.createFromHTML(previewHTML, { style: 'aspect-ratio:1;position:relative;z-index:1;color:#333;stroke:blue;stroke-width:15;fill:#FFFF0022;' });
+            t._svgPreview = webui.createFromHTML(previewHTML, { style: 'aspect-ratio:1;position:relative;z-index:1;color:#333;stroke:blue;stroke-width:4;fill:#FFFF0022;' });
+            t._previewPath = t._svgPreview.querySelector('path');
+            t._iconPreview = webui.create('webui-icon', { style: 'position:absolute;width:100%;top:0;left:0;opacity:0.5;' });
+            t._svgContainer.appendChild(t._iconPreview);
             t._svgContainer.appendChild(t._svgPreview);
             t._backingInput = webui.create('webui-input-message', { label: 'Background Tracing', placeholder: 'Enter HTML for preview background to show Image or SVG of desired image to trace over.' });
             t._backingInput.addEventListener('input', _ => {
@@ -48,39 +111,47 @@
                     return;
                 }
             });
-            t._svgPPaths = [];
-            function setPlaceholderCoord(path, index) {
-                let y = -100 + 2 + (index * 4);
-                path._cOrigin = { x: -100, y: y };
-                let cq = [];
-                for (let q = 1; q < 12; ++q) {
-                    cq.push({ x: -100 + (q * 5), y: y, qx: -100 + (q * 5), qy: y });
+            const pathCoords = [
+                { x: 0, y: 0 },
+                { x: -10, y: 0, qx: -10, qy: 0 },
+                { x: -20, y: 0, qx: -20, qy: 0 },
+                { x: -30, y: 0, qx: -30, qy: 0 },
+                { x: -40, y: 0, qx: -40, qy: 0 },
+                { x: -50, y: 0, qx: -50, qy: 0 },
+                { x: 50, y: 0, qx: 50, qy: 0 },
+                { x: 40, y: 0, qx: 40, qy: 0 },
+                { x: 30, y: 0, qx: 30, qy: 0 },
+                { x: 20, y: 0, qx: 20, qy: 0 },
+                { x: 10, y: 0, qx: 10, qy: 0 },
+                { x: 0, y: 0, qx: 0, qy: 0 }
+            ];
+            t._buildDef = function () {
+                let d = [];
+                d.push(`M${pathCoords[0].x} ${pathCoords[0].y}`);
+                for (let path = 1; path < pathCoords.length; ++path) {
+                    d.push(`Q${pathCoords[path].qx} ${pathCoords[path].qy} ${pathCoords[path].x} ${pathCoords[path].y}`);
                 }
-                path._cQ = cq;
-                path._buildDef();
-                return path;
-            }
-            for (let i = 1; i <= 8; ++i) {
-                let path = t._svgPreview.querySelector(`.i${i}`);
-                t._svgPPaths.push(path);
-                t._svgPreview.appendChild(path);
-                path._buildDef = function () {
-                    let d = [];
-                    d.push(`M${path._cOrigin.x} ${path._cOrigin.y}`);
-                    path._cQ.forEach(cq => {
-                        d.push(`Q${cq.qx} ${cq.qy} ${cq.x} ${cq.y}`);
-                    });
-                    let ds = d.join('') + 'z';
-                    if (path.getAttribute('d') !== ds) {
-                        path.setAttribute('d', ds);
-                    }
-                    return ds;
+                let ds = d.join('') + 'z';
+                if (t._previewPath.getAttribute('d') !== ds) {
+                    t._previewPath.setAttribute('d', ds);
                 }
-                setPlaceholderCoord(path, i - 1);
+                if (t._inputPath.value !== ds) {
+                    t._inputPath.value = ds;
+                }
+                let lines = checkForValidInput();
+                lines[t._modPath] = ds;
+                let fullDef = lines.join('\n');
+                if (fullDef !== t._inputFull.value) {
+                    t._inputFull.value = fullDef;
+                    setPreview();
+                }
+
+                return ds;
             }
             function getGrabStyle(color, z) {
                 return `position:absolute;aspect-ratio:1;width:2.5%;border-radius:100%;transform:translate(-50%,-50%);background-color:${color};z-index:${z};`;
             }
+            let moving = null, movingPair = [], stepAlt = false;
             t._svgPreview.addEventListener('click', ev => {
                 if (!moving) return;
                 ev.stopPropagation();
@@ -103,6 +174,19 @@
                 }
                 return value;
             }
+            function movePaired(paired, mx, my) {
+                if (paired._isQuad) {
+                    paired._myData.qx = applySnapping(paired._dataOX + pxToPath(mx));
+                    paired._myData.qy = applySnapping(paired._dataOY + pxToPath(my));
+                    paired.style.top = `${pathToRel(paired._myData.qy)}%`;
+                    paired.style.left = `${pathToRel(paired._myData.qx)}%`;
+                } else {
+                    paired._myData.x = applySnapping(paired._dataOX + pxToPath(mx));
+                    paired._myData.y = applySnapping(paired._dataOY + pxToPath(my));
+                    paired.style.top = `${pathToRel(paired._myData.y)}%`;
+                    paired.style.left = `${pathToRel(paired._myData.x)}%`;
+                }
+            }
             function processMove(ev) {
                 let x = ev.pageX;
                 let y = ev.pageY;
@@ -114,24 +198,15 @@
                     moving._myData.qy = applySnapping(moving._dataOY + pxToPath(my));
                     moving.style.top = `${pathToRel(moving._myData.qy)}%`;
                     moving.style.left = `${pathToRel(moving._myData.qx)}%`;
-                    if (movingPair) {
-                        movingPair._myData.x = applySnapping(movingPair._dataOX + pxToPath(mx));
-                        movingPair._myData.y = applySnapping(movingPair._dataOY + pxToPath(my));
-                        movingPair.style.top = `${pathToRel(movingPair._myData.y)}%`;
-                        movingPair.style.left = `${pathToRel(movingPair._myData.x)}%`;
-                    }
                 } else {
                     moving._myData.x = applySnapping(moving._dataOX + pxToPath(mx));
                     moving._myData.y = applySnapping(moving._dataOY + pxToPath(my));
                     moving.style.top = `${pathToRel(moving._myData.y)}%`;
                     moving.style.left = `${pathToRel(moving._myData.x)}%`;
-                    if (movingPair) {
-                        movingPair._myData.qx = applySnapping(movingPair._dataOX + pxToPath(mx));
-                        movingPair._myData.qy = applySnapping(movingPair._dataOY + pxToPath(my));
-                        movingPair.style.top = `${pathToRel(movingPair._myData.qy)}%`;
-                        movingPair.style.left = `${pathToRel(movingPair._myData.qx)}%`;
-                    }
                 }
+                movingPair.forEach(paired => {
+                    movePaired(paired, mx, my);
+                });
                 buildIconDef();
             }
             t._svgPreview.addEventListener('mousemove', ev => {
@@ -155,13 +230,13 @@
                 moving = null;
                 return false;
             });
-            let moving = null, movingPair = null, stepAlt = false;
-            function setupGrabberEvents(grabber, data, isQuad, pairGrabber) {
+            function setupGrabberEvents(grabber, dataIndex, isQuad, pairGrabber) {
+                let data = pathCoords[dataIndex];
                 grabber._myData = data;
                 grabber._isQuad = !!isQuad;
                 grabber.addEventListener('mouseup', ev => {
                     moving = null;
-                    movingPair = null;
+                    movingPair = [];
                 });
                 grabber.addEventListener('mousemove', ev => {
                     if (!moving) return;
@@ -173,18 +248,31 @@
                 grabber.addEventListener('mousedown', ev => {
                     ev.stopPropagation();
                     ev.preventDefault();
-                    console.log('shift', ev.shiftKey);
                     grabber._dataOX = isQuad ? data.qx : data.x;
                     grabber._dataOY = isQuad ? data.qy : data.y;
                     grabber._moveOX = ev.pageX;
                     grabber._moveOY = ev.pageY;
                     moving = grabber;
                     if (ev.shiftKey && pairGrabber) {
-                        movingPair = pairGrabber;
+                        movingPair = [pairGrabber];
                         pairGrabber._dataOX = isQuad ? data.x : data.qx;
                         pairGrabber._dataOY = isQuad ? data.y : data.qy;
+                    } else if (ev.shiftKey) {
+                        let index = 1;
+                        grabbers.slice(1).forEach(pairSet => {
+                            let data = pathCoords[index++];
+                            [pairSet.main, pairSet.quad].forEach(paired => {
+                                paired._dataOX = paired._isQuad ? data.qx : data.x;
+                                paired._dataOY = paired._isQuad ? data.qy : data.y;
+                            });
+                        });
+                        movingPair = [];
+                        grabbers.slice(1).forEach(pairSet => {
+                            movingPair.push(pairSet.main);
+                            movingPair.push(pairSet.quad);
+                        });
                     } else {
-                        movingPair = null;
+                        movingPair = [];
                     }
                     stepAlt = ev.ctrlKey;
                     return false;
@@ -192,38 +280,36 @@
             }
             function buildIconDef() {
                 let builder = [];
-                builder.push(defName);
-                t._svgPPaths.forEach(path => {
-                    let line = path._buildDef();
-                    if (line.startsWith('M-100')) return;
-                    builder.push(line);
+                let index = 0;
+                pathCoords.forEach(coord => {
+                    if (index++ === 0) {
+                        builder.push(`${coord.x} ${coord.y}`);
+                    } else {
+                        builder.push(`${coord.qx} ${coord.qy} ${coord.x} ${coord.y}`);
+                    }
                 });
-                let value = builder.join('\n');
-                t._input.value = value;
-                icons.forEach(icon => {
-                    icon.setIconDefinition(value);
-                });
+                let value = `M${builder.join('Q')}z`;
+                t._inputPath.value = value;
+                t._buildDef();
             }
-            t._svgPPaths.forEach(path => {
-                path._grab = {
-                    main: webui.create('a', { style: getGrabStyle('purple', 100) }),
-                    quads: []
-                }
-                setupGrabberEvents(path._grab.main, path._cOrigin, false);
-                t._svgContainer.appendChild(path._grab.main);
-                for (let gi = 0; gi < 11; ++gi) {
-                    let g = {
-                        main: webui.create('a', { style: getGrabStyle('red', 101) }),
-                        quad: webui.create('a', { style: getGrabStyle('green', 102) })
-                    };
-                    setupGrabberEvents(g.main, path._cQ[gi], false, g.quad);
-                    setupGrabberEvents(g.quad, path._cQ[gi], true, g.main);
-                    path._grab.quads.push(g);
-                    t._svgContainer.appendChild(g.main);
-                    t._svgContainer.appendChild(g.quad);
-                }
-
+            let grabbers = [];
+            grabbers.push({
+                main: webui.create('a', { style: getGrabStyle('purple', 100) }),
+                quads: []
             });
+            setupGrabberEvents(grabbers[0].main, 0, false);
+            t._svgContainer.appendChild(grabbers[0].main);
+            for (let gi = 1; gi < dCoordCount; ++gi) {
+                grabbers.push({
+                    main: webui.create('a', { style: getGrabStyle('red', 101) }),
+                    quad: webui.create('a', { style: getGrabStyle('green', 102) })
+                });
+                setupGrabberEvents(grabbers[gi].main, gi, false, grabbers[gi].quad);
+                setupGrabberEvents(grabbers[gi].quad, gi, true, grabbers[gi].main);
+                t._svgContainer.appendChild(grabbers[gi].main);
+                t._svgContainer.appendChild(grabbers[gi].quad);
+            }
+
             let lastDrawn = '';
             function pathToRel(p) {
                 return (p + 100) * 0.5;
@@ -237,30 +323,21 @@
                 return (r * 2) - 100;
             }
             function setGrabPositions(path) {
-                path._grab.main.style.top = `${pathToRel(path._cOrigin.y)}%`;
-                path._grab.main.style.left = `${pathToRel(path._cOrigin.x)}%`;
-                let index = 0;
-                path._grab.quads.forEach(quad => {
-                    let d = path._cQ[index++];
-                    quad.main.style.left = `${pathToRel(d.x)}%`;
-                    quad.main.style.top = `${pathToRel(d.y)}%`;
-                    quad.quad.style.left = `${pathToRel(d.qx)}%`;
-                    quad.quad.style.top = `${pathToRel(d.qy)}%`;
-                });
-            }
-            function setupPath(path) {
-                if (path.getAttribute('d').startsWith('M-100')) {
-                    path.style.strokeWidth = '2';
-                } else {
-                    path.style.strokeWidth = '5';
+                for (let index = 0; index < grabbers.length; ++index) {
+                    grabbers[index].main.style.left = `${pathToRel(pathCoords[index].x)}%`;
+                    grabbers[index].main.style.top = `${pathToRel(pathCoords[index].y)}%`;
+                    if (index > 0) {
+                        grabbers[index].quad.style.left = `${pathToRel(pathCoords[index].qx)}%`;
+                        grabbers[index].quad.style.top = `${pathToRel(pathCoords[index].qy)}%`;
+                    }
                 }
-                setGrabPositions(path);
             }
             function getCoord(subdef) {
                 let c = { x: 0, y: 0, qx: 0, qy: 0 };
                 let s = '';
                 let index = 0;
                 let isM = false;
+                if (!subdef) return c;
                 function setValue() {
                     let val = parseFloat(s);
                     s = '';
@@ -312,51 +389,56 @@
                 }
                 return c;
             }
-            function setPathDefinition(path, definition) {
+            function setPathDefinition(definition) {
                 let segments = definition.split('Q');
-                let main = getCoord(segments.shift());
-                path._cOrigin.x = main.x;
-                path._cOrigin.y = main.y;
-                let index = 0;
-                while (segments.length > 0) {
-                    let quad = getCoord(segments.shift());
-                    let i = index++;
-                    path._cQ[i].x = quad.x;
-                    path._cQ[i].y = quad.y;
-                    path._cQ[i].qx = quad.qx;
-                    path._cQ[i].qy = quad.qy;
+                if (definition.startsWith('WEBUI-ICON')) {
+                    segments.shift();
                 }
-                path._buildDef();
+                let main = getCoord(segments.shift());
+                pathCoords[0].x = main.x;
+                pathCoords[0].y = main.y;
+                let index = 1;
+                while (segments.length > 0) {
+                    let line = segments.shift();
+                    if (line.startsWith('WEBUI-ICON')) continue;
+                    if (!line) continue;
+                    if (index >= pathCoords.length) break;
+                    let quad = getCoord(line);
+                    let i = index++;
+                    pathCoords[i].x = quad.x;
+                    pathCoords[i].y = quad.y;
+                    pathCoords[i].qx = quad.qx;
+                    pathCoords[i].qy = quad.qy;
+                }
+                t._buildDef();
             }
             let defName = 'WEBUI-ICON-NAME';
-            function setPreview(definition) {
+            function setPreview() {
+                let definition = t._inputFull.value;
                 if (!definition) return;
-                if (definition === lastDrawn) return;
-                lastDrawn = definition;
+                let snapShot = `${t._modPath}|${definition}`;
+                if (snapShot === lastDrawn) return;
+                lastDrawn = snapShot;
                 let lines = definition.split('\n');
                 if (lines.length === 0) return;
                 if (lines[0].startsWith('WEBUI-ICON-')) {
                     defName = lines.shift();
                 }
-                let i = 0;
-                while (i < lines.length && i < t._svgPPaths.length) {
-                    if (lines[i]) {
-                        setPathDefinition(t._svgPPaths[i], lines[i]);
-                    } else {
-                        setPlaceholderCoord(t._svgPPaths[i], i);
-                    }
-
-                    setupPath(t._svgPPaths[i]);
-                    ++i;
+                if (t._modPath >= lines.length) {
+                    t._modPath = lines.length;
+                    t._selectPath.value = t._modPath;
                 }
-                while (i < t._svgPPaths.length) {
-                    setPlaceholderCoord(t._svgPPaths[i], i);
-                    setupPath(t._svgPPaths[i]);
-                    ++i;
+                let i = t._modPath - 1;
+                if (lines[i]) {
+                    setPathDefinition(lines[i]);
                 }
+                icons.forEach(icon => {
+                    icon.setIconDefinition(definition);
+                });
+                setGrabPositions();
             }
-            t._inputs.appendChild(t._svgContainer);
             let icons = [];
+            icons.push(t._iconPreview);
             [{ l: 'Regular', d: {} },
             { l: 'Thin', d: { thin: '' } },
             { l: 'Thick', d: { thick: '' } },
@@ -379,28 +461,6 @@
                 right.appendChild(iconRight);
                 right.appendChild(webui.create('label', { text: def.l, class: 'text-center' }));
             });
-            t._color = webui.create('webui-dropdown', { label: 'Icon Theme' });
-            t._shape = webui.create('webui-dropdown', { label: 'Shape' });
-            t._color.addEventListener('change', _ => {
-                let theme = t._color.value;
-                t._topGrid.querySelectorAll('webui-icon').forEach(icon => {
-                    if (!theme) {
-                        icon.removeAttribute('theme');
-                    } else {
-                        icon.setAttribute('theme', theme);
-                    }
-                });
-            });
-            t._shape.addEventListener('change', _ => {
-                let shape = t._shape.value;
-                t._topGrid.querySelectorAll('webui-icon').forEach(icon => {
-                    if (!shape) {
-                        icon.removeAttribute('shape');
-                    } else {
-                        icon.setAttribute('shape', shape);
-                    }
-                });
-            });
             function setupToggleIcon(name, label, flagAttr) {
                 t[name] = webui.create('webui-toggle-icon', { label: label, 'title-on': `Disable ${label}`, 'title-off': `Enable ${label}`, 'theme-on': 'success', 'theme-off': 'shade', 'flags-on': 'fill', 'flags-off': '' });
                 t[name].addEventListener('change', _ => {
@@ -413,70 +473,68 @@
                     });
                 });
             }
-            setupToggleIcon('_backingToggle', 'Backing', 'backing');
-            setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
-            setupToggleIcon('_fillToggle', 'Fill', 'fill');
-            setupToggleIcon('_borderToggle', 'Bordered', 'bordered');
             let inputsColumn = webui.create('webui.flex', { column: '' });
-            t._input = webui.create('webui-input-message', { 'label': `Definition`, value: 'WEBUI-ICON-DEF\n', placeholder: "WEBUI-ICON-NAME" });
-            t._inputs.appendChild(inputsColumn);
             inputsColumn.appendChild(webui.create('h6', { html: `<strong>Movement Modifiers</strong>` }));
             inputsColumn.appendChild(webui.create('p', { class: "pl-4", html: `<strong>CTRL</strong> Precision Movement` }));
             inputsColumn.appendChild(webui.create('p', { class: "pl-4", html: `<strong>SHIFT</strong> Move Pair` }));
-            inputsColumn.appendChild(t._input);
-            inputsColumn.appendChild(t._backingInput);
-            t._input.addEventListener('input', _ => {
-                let value = t._input.value;
-                if (!value) {
-                    t._input.value = 'WEBUI-ICON-DEF';
-                    return;
+            let pathOptions = [];
+            for (let p = 1; p <= 8; ++p) {
+                pathOptions.push({ value: `${p}` });
+            }
+            t._selectPath = webui.create('webui-dropdown', { label: 'Select Path to Edit', options: JSON.stringify(pathOptions) });
+            t._selectPath.addEventListener('change', _ => {
+                t._modPath = t._selectPath.value;
+                let lines = checkForValidInput();
+                if (t._modPath !== t._selectPath.value) {
+                    t._selectPath.value = t._modPath;
                 }
-                setPreview(value);
-                icons.forEach(icon => {
-                    icon.setIconDefinition(value);
-                });
+                t._inputPath.value = lines[t._modPath];
+                setPreview();
+            });
+            t._inputFull = webui.create('webui-input-message', { 'label': `Definition`, value: 'WEBUI-ICON-DEF\n', placeholder: "WEBUI-ICON-NAME" });
+            t._inputPath = webui.create('webui-input-message', { 'label': `Definition`, value: '', placeholder: "" });
+            t._inputs.appendChild(inputsColumn);
+            inputsColumn.appendChild(t._inputFull);
+            inputsColumn.appendChild(t._selectPath);
+            inputsColumn.appendChild(t._inputPath);
+            inputsColumn.appendChild(t._backingInput);
+            function checkForValidInput() {
+                let values = t._inputFull.value.split('\n');
+                if (values.length === 0) {
+                    values.push('WEBUI-ICON-DEF');
+                }
+                if (values.length === 1) {
+                    values.push(defaultPath);
+                    t._inputFull.value = values.join('\n');
+                }
+                if (t._modPath > values.length) {
+                    t._modPath = values.length;
+                    t._selectPath.value = t._modPath;
+                }
+                return values;
+            }
+            t._inputFull.addEventListener('input', _ => {
+                let values = checkForValidInput();
+                let path = values[t._modPath];
+                if (t._inputPath.value !== path) {
+                    t._inputPath.value = path;
+                }
+                setPreview();
+            });
+            t._inputPath.addEventListener('input', _ => {
+                let values = checkForValidInput();
+                let value = values.join('\n');
+                if (t._inputFull.value !== value) {
+                    t._inputFull.value = value;
+                }
+                setPreview();
             });
             t._bottomGrid = webui.create('webui-grid', { gap: '1', theme: 'inherit', width: '100', height: '100' });
-        },
-        connected: (t) => {
-            t.style.display = 'flex';
-            t.style.flexDirection = 'column';
-            t.style.flexGap = 'var(--padding)';
-            t.appendChild(t._topGrid);
-            t.appendChild(t._iconOptions);
-            t._iconOptions.appendChild(t._color);
-            t._iconOptions.appendChild(t._shape);
-            t._iconOptions.appendChild(t._backingToggle);
-            t._iconOptions.appendChild(t._sharpToggle);
-            t._iconOptions.appendChild(t._fillToggle);
-            t._iconOptions.appendChild(t._borderToggle);
-            t.appendChild(t._inputs);
             t.appendChild(t._bottomGrid);
             t.loadIcons();
-            let colorOptions = JSON.stringify([
-                { value: '', display: 'None' },
-                { value: 'black', display: 'Black' },
-                { value: 'white', display: 'White' },
-                { value: 'title', display: 'Title' },
-                { value: 'primary', display: 'Primary' },
-                { value: 'secondary', display: 'Secondary' },
-                { value: 'tertiary', display: 'Tertiary' },
-                { value: 'info', display: 'info' },
-                { value: 'success', display: 'success' },
-                { value: 'warning', display: 'warning' },
-                { value: 'danger', display: 'danger' },
-                { value: 'active', display: 'Active' },
-                { value: 'button', display: 'Button' },
-                { value: 'action', display: 'Action' }
-            ]);
-            t._color.setAttribute('options', colorOptions);
-            let shapeOptions = JSON.stringify([
-                { value: '', display: 'Square' },
-                { value: 'circle', display: 'Circle' },
-                { value: 'triangle', display: 'Triangle' },
-                { value: 'octo', display: 'Octogon' },
-            ]);
-            t._shape.setAttribute('options', shapeOptions);
+        },
+        connected: (t) => {
+            t.setupComponent();
         },
         loadFromDefinition: function (iconDef) {
             let t = this;
@@ -497,14 +555,14 @@
                     let label = webui.create('label', { text: icon });
                     container.appendChild(label);
                     container.addEventListener('click', _ => {
-                        t._input.value = el._definition;
-                        t._input.dispatchEvent(new Event('input', { bubbles: true }));
+                        t._inputFull.value = el._definition;
+                        t._inputFull.dispatchEvent(new Event('input', { bubbles: true }));
                     });
                     if (isFirst) {
                         isFirst = false;
                         setTimeout(() => {
-                            t._input.value = el._definition;
-                            t._input.dispatchEvent(new Event('input', { bubbles: true }));
+                            t._inputFull.value = el._definition;
+                            t._inputFull.dispatchEvent(new Event('input', { bubbles: true }));
                         }, 100);
                     }
                 });

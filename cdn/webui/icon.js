@@ -25,6 +25,7 @@ Stroke line joins: miter|round|bevel
     const pathCount = 8;
     const cache = {}, waiter = {};
     const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
+    const defUnused = 'M0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0z';
     const defCircle = 'M1 -93Q31 -91 53 -76Q76 -59 86 -35Q95 -12 92 13Q89 37 72 59Q58 76 37 86Q10 97 -16 92Q-45 85 -64 68Q-85 47 -92 16Q-96 -10 -87 -34Q-76 -60 -56 -75Q-26 -94 1 -93z';
     const defSquare = 'M0 -95Q80 -95 80 -95Q95 -95 95 -80Q95 0 95 0Q95 80 95 80Q95 95 80 95Q0 95 0 95Q-80 95 -80 95Q-95 95 -95 80Q-95 0 -95 0Q-95 -80 -95 -80Q-95 -90 -80 -95z';
     const defTriangle = 'M0 -90Q20 -55 20 -55Q40 -20 40 -20Q55 5 55 5Q90 65 90 65Q60 65 60 65Q0 65 0 65Q-55 65 -55 65Q-90 65 -90 65Q-55 5 -55 5Q-40 -20 -40 -20Q-20 -55 -20 -55z';
@@ -186,7 +187,7 @@ Stroke line joins: miter|round|bevel
         },
         setPathRule(path, rule) {
             if (!rule) {
-                path.setAttribute('d', '');
+                path.setAttribute('d', defUnused);
                 return;
             }
             let segments = rule.split('|');
@@ -203,7 +204,7 @@ Stroke line joins: miter|round|bevel
             let t = this;
             for (let instance = 1; instance <= pathCount; ++instance) {
                 let key = `_i${instance}`;
-                t[key].setAttribute('d', '');
+                t[key].setAttribute('d', defUnused);
             }
         },
         shadowTemplate: `
@@ -258,6 +259,7 @@ stroke:var(--ico-color-primary);
 stroke-width:var(--ico-stroke-width);
 stroke-linecap:round;
 stroke-linejoin: round;
+opacity:1;
 }
 path:not(.backing):nth-of-type(4n+3) {
 stroke:var(--ico-color-tertiary);
@@ -351,6 +353,9 @@ text-align:center;
 }
 slot[name="count"]:empty {
 display:none;
+}
+path[d="M0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0z"] {
+stroke-width:0;
 }
 </style>`
     });
