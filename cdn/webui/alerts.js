@@ -88,8 +88,7 @@
                     alert.setAttribute('show', true);
                     alert.userclosed = false;
                     alertList.push(alert);
-                    t.count += 1;
-                    t.icon.setAttribute('count', t.count.toLocaleString());
+                    t.setCount(t.count + 1);
                     popup.appendChild(alert);
                     setTimeout(() => {
                         if (alert.parentNode === popup) {
@@ -126,6 +125,15 @@
                     break;
             }
         },
+        setCount: function (value) {
+            this.count = value;
+            this.icon.setAttribute('count', value === 0 ? '' : value.toLocaleString());
+            if (this.count === 0) {
+                this.icon.setAttribute('theme', 'info');
+            } else {
+                this.icon.setAttribute('theme', 'success');
+            }
+        },
         checkCounts: function () {
             let newCount = 0;
             alertList.map(a => {
@@ -134,12 +142,12 @@
                 }
             });
             if (newCount != this.count) {
-                this.count = newCount;
-                this.icon.setAttribute('count', newCount === 0 ? '' : newCount.toLocaleString());
+                this.setCount(newCount);
             }
             setTimeout(() => this.checkCounts(), 1000);
         },
         shadowTemplate: `
+<webui-icon icon="bell|fill|tri|theme:info"></webui-icon>
 <style type="text/css">
 :host {
 display:inline-flex;
@@ -149,7 +157,6 @@ align-items:center;
 justify-content:center;
 }
 </style>
-<webui-icon icon="bell"></webui-icon>
 `
     });
 }
