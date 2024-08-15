@@ -82,7 +82,7 @@
             t.appendChild(t._inputs);
             t._svgContainer = webui.create('div', { style: 'display:block;position:relative;aspect-ratio:1;padding:0;margin:0;' });
             t._inputs.appendChild(t._svgContainer);
-            t._backingHTML = webui.create('div', { 'style': 'width:100%;height:100%;overflow:hidden;position:absolute;z-index:0;top:0;left:0;' });
+            t._backingHTML = webui.create('div', { 'style': 'width:100%;height:100%;overflow:hidden;position:absolute;z-index:0;top:0;left:0;color:orange;' });
             t._svgContainer.appendChild(t._backingHTML);
             t._svgPreview = webui.createFromHTML(previewHTML, { style: 'aspect-ratio:1;position:relative;z-index:1;color:#333;stroke:blue;stroke-width:4;fill:#FFFF0022;' });
             t._previewPath = t._svgPreview.querySelector('path');
@@ -483,9 +483,18 @@
             }
             t._selectPath = webui.create('webui-dropdown', { label: 'Select Path to Edit', options: JSON.stringify(pathOptions) });
             t._selectPath.addEventListener('change', _ => {
+                let changeTo = t._selectPath.value;
                 t._modPath = t._selectPath.value;
-                let lines = checkForValidInput();
-                if (t._modPath !== t._selectPath.value) {
+                let lines = checkForValidInput(true);
+                let pathCount = lines.length - 1;
+                if (changeTo > pathCount) {
+                    if (pathCount >= 8) {
+                        t._modPath = pathCount;
+                    } else {
+                        lines.push(defaultPath);
+                        t._modPath = pathCount + 1;
+                        t._inputFull.value = lines.join('\n');
+                    }
                     t._selectPath.value = t._modPath;
                 }
                 t._inputPath.value = lines[t._modPath];
@@ -498,18 +507,22 @@
             inputsColumn.appendChild(t._selectPath);
             inputsColumn.appendChild(t._inputPath);
             inputsColumn.appendChild(t._backingInput);
-            function checkForValidInput() {
+            function checkForValidInput(skipPathUpdate) {
                 let values = t._inputFull.value.split('\n');
                 if (values.length === 0) {
                     values.push('WEBUI-ICON-DEF');
                 }
                 if (values.length === 1) {
                     values.push(defaultPath);
-                    t._inputFull.value = values.join('\n');
+                    if (!skipPathUpdate) {
+                        t._inputFull.value = values.join('\n');
+                    }
                 }
                 if (t._modPath > values.length) {
                     t._modPath = values.length;
-                    t._selectPath.value = t._modPath;
+                    if (!skipPathUpdate) {
+                        t._selectPath.value = t._modPath;
+                    }
                 }
                 return values;
             }
