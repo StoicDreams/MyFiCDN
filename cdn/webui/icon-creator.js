@@ -75,10 +75,7 @@
             setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
             setupToggleIcon('_fillToggle', 'Fill', 'fill');
             setupToggleIcon('_borderToggle', 'Bordered', 'bordered');
-            t._iconOptions.appendChild(t._backingToggle);
-            t._iconOptions.appendChild(t._sharpToggle);
-            t._iconOptions.appendChild(t._fillToggle);
-            t._iconOptions.appendChild(t._borderToggle);
+            setupToggleIcon('_banToggle', 'Ban', 'ban');
             t._inputs = webui.create('webui-grid', { columns: '1fr 1fr' });
             t.appendChild(t._inputs);
             t._svgContainer = webui.create('div', { style: 'display:block;position:relative;aspect-ratio:1;padding:0;margin:0;' });
@@ -473,6 +470,7 @@
                         }
                     });
                 });
+                t._iconOptions.appendChild(t[name]);
             }
             let inputsColumn = webui.create('webui.flex', { column: '' });
             inputsColumn.appendChild(webui.create('h6', { html: `<strong>Movement Modifiers</strong>` }));

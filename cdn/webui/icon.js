@@ -242,6 +242,7 @@ Stroke line joins: miter|round|bevel
 <path class="i6" d=""></path>
 <path class="i7" d=""></path>
 <path class="i8" d=""></path>
+<path class="ban" d="M-60 60Q-50 50 -50 50Q-35 35 -35 35Q-20 20 -20 20Q-10 10 -10 10Q-5 5 -5 5Q5 -5 5 -5Q10 -10 10 -10Q20 -20 20 -20Q35 -35 35 -35Q50 -50 50 -50Q60 -60 60 -60z"></path>
 </svg>
 <slot name="count"></slot>
 <style type="text/css">
@@ -381,6 +382,12 @@ display:none;
 }
 path[d="M0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0z"] {
 stroke-width:0;
+}
+path.ban {
+stroke-width:calc(var(--ico-stroke-width) * 2);
+}
+:host(:not([ban])) path.ban {
+display:none;
 }
 </style>`
     });
