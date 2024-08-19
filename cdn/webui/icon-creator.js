@@ -33,6 +33,7 @@
             ]);
             let shapeOptions = JSON.stringify([
                 { value: '', display: 'Square' },
+                { value: 'badge', display: 'Badge' },
                 { value: 'circle', display: 'Circle' },
                 { value: 'triangle', display: 'Triangle' },
                 { value: 'octo', display: 'Octogon' },
@@ -62,7 +63,7 @@
             t._iconOptions.appendChild(t._shape);
             t._shape.addEventListener('change', _ => {
                 let shape = t._shape.value;
-                t._topGrid.querySelectorAll('webui-icon').forEach(icon => {
+                icons.forEach(icon => {
                     if (!shape) {
                         icon.removeAttribute('shape');
                     } else {
@@ -390,7 +391,7 @@
                 return c;
             }
             function setPathDefinition(definition) {
-                let segments = definition.split('Q');
+                let segments = definition.split('|').pop().split('Q');
                 if (definition.startsWith('WEBUI-ICON')) {
                     segments.shift();
                 }
@@ -563,7 +564,7 @@
                 icons.forEach(icon => {
                     let container = webui.create('a', { style: 'flex-direction:column;' });
                     t._bottomGrid.appendChild(container);
-                    let el = webui.create('webui-icon', { icon: icon, width: '100' });
+                    let el = webui.create('webui-icon', { icon: `${icon}|fill|tri|theme:primary`, width: '32' });
                     container.appendChild(el);
                     let label = webui.create('label', { text: icon });
                     container.appendChild(label);

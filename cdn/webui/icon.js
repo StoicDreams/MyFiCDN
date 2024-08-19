@@ -26,6 +26,7 @@ Stroke line joins: miter|round|bevel
     const cache = {}, waiter = {};
     const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     const defUnused = 'M0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0z';
+    const defBadge = 'M-28 68Q0 115 28 68Q86 86 68 28Q115 0 68 -28Q86 -86 28 -68Q1 -115 -28 -68Q-86 -86 -68 -28Q-115 0 -68 28Q-86 86 -28 68Q-28 68 -28 68Q-28 68 -28 68Q-28 68 -28 68z';
     const defCircle = 'M1 -93Q31 -91 53 -76Q76 -59 86 -35Q95 -12 92 13Q89 37 72 59Q58 76 37 86Q10 97 -16 92Q-45 85 -64 68Q-85 47 -92 16Q-96 -10 -87 -34Q-76 -60 -56 -75Q-26 -94 1 -93z';
     const defSquare = 'M0 -95Q80 -95 80 -95Q95 -95 95 -80Q95 0 95 0Q95 80 95 80Q95 95 80 95Q0 95 0 95Q-80 95 -80 95Q-95 95 -95 80Q-95 0 -95 0Q-95 -80 -95 -80Q-95 -90 -80 -95z';
     const defTriangle = 'M0 -90Q20 -55 20 -55Q40 -20 40 -20Q55 5 55 5Q90 65 90 65Q60 65 60 65Q0 65 0 65Q-55 65 -55 65Q-90 65 -90 65Q-55 5 -55 5Q-40 -20 -40 -20Q-20 -55 -20 -55z';
@@ -116,8 +117,12 @@ Stroke line joins: miter|round|bevel
                         case 'octogon':
                             t._backPath.setAttribute('d', defOcto);
                             break;
+                        case 'tri':
                         case 'triangle':
                             t._backPath.setAttribute('d', defTriangle);
+                            break;
+                        case 'badge':
+                            t._backPath.setAttribute('d', defBadge);
                             break;
                         case 'circle':
                             t._backPath.setAttribute('d', defCircle);
@@ -133,6 +138,7 @@ Stroke line joins: miter|round|bevel
                     let icon = idata.shift();
                     idata.forEach(flag => {
                         let av = flag.split(':');
+                        console.log('flag', t, value, flag);
                         if (av[0].startsWith('-')) {
                             t.removeAttribute(av[0].substring(1));
                         } else {
@@ -191,9 +197,23 @@ Stroke line joins: miter|round|bevel
                 return;
             }
             let segments = rule.split('|');
+            path.classList.remove('tri');
+            path.classList.remove('bi');
             if (segments.length > 1) {
-                let stroke = segments.shift();
-                path.style.stroke = stroke;
+                let seg = segments.shift();
+                let num = parseInt(seg);
+                if (isNaN(num)) {
+                    switch (seg) {
+                        case 'tri':
+                            path.classList.add('tri');
+                            break;
+                        case 'bi':
+                            path.classList.add('bi');
+                            break;
+                    }
+                } else {
+                    path.style.stroke = stroke;
+                }
             }
             while (segments.length > 1) {
                 segments.shift();
@@ -261,19 +281,24 @@ stroke-linecap:round;
 stroke-linejoin: round;
 opacity:1;
 }
-path:not(.backing):nth-of-type(4n+3) {
+path.tri,
+path.tri {
 stroke:var(--ico-color-tertiary);
 }
-path:not(.backing):nth-of-type(4n+4) {
+path.bi,
+path.bi {
 stroke:var(--ico-color-secondary);
 }
 :host([fill]) path:not(.backing) {
 fill:var(--ico-color-primary);
 }
-:host([fill]) path:not(.backing):nth-of-type(4n+3) {
+:host([fill]) path.tri,
+:host([fill]) path.tri {
 fill:var(--ico-color-tertiary);
 }
-:host([fill]) path:not(.backing):nth-of-type(4n+4) {
+:host([fill]) path.bi,
+:host([fill]) path.bi,
+:host([fill]) path.bi {
 fill:var(--ico-color-secondary);
 }
 :host([thin]) {
