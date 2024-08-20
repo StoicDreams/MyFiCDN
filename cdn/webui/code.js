@@ -1,26 +1,27 @@
 "use strict"
 {
+    const template = `
+<label class="d-flex align-center"><span></span><webui-icon icon="copy" shade="tri" shape="circle" fill title="Copy Code" style="height:1rem"></webui-icon></label>
+<pre>
+<code></code>
+</pre>`;
     webui.define('webui-code', {
         preload: 'icon',
         constructor: (t) => {
             let code = t.innerHTML;
-            t.innerHTML = webui.trimLinePreTabs(`
-            <label class="d-flex align-center"><span></span><webui-icon icon="copy" shade="tri" shape="circle" fill title="Copy Code" style="height:1rem"></webui-icon></label>
-            <pre>
-            <code></code>
-            </pre>
-            `);
-            t._label = t.querySelector('label > span');
-            t._copy = t.querySelector('label > webui-icon');
+            t.innerHTML = '';
+            t._template = webui.create('div', { html: template });
+            t._label = t._template.querySelector('label > span');
+            t._copy = t._template.querySelector('label > webui-icon');
+            t._pre = t._template.querySelector('pre');
+            t._code = t._template.querySelector('code');
             t._copy.addEventListener('click', async ev => {
                 ev.stopPropagation();
                 ev.preventDefault();
                 await navigator.clipboard.writeText(t.value);
                 webui.alert('Copied code to clipboard', 'success');
                 return false;
-            })
-            t._pre = t.querySelector('pre');
-            t._code = t.querySelector('code');
+            });
             t._code.innerText = code;
         },
         attr: ['language', 'lang', 'label', 'lines', 'nocopy'],
@@ -79,6 +80,9 @@
             }
         },
         connected: (t) => {
+            while (t._template.childNodes.length > 0) {
+                t.appendChild(t._template.childNodes[0]);
+            }
         }
     });
 }
