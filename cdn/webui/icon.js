@@ -217,17 +217,19 @@ Stroke line joins: miter|round|bevel
             }
             let segments = rule.split('|');
             path.classList.remove('tri');
-            path.classList.remove('bi');
+            path.classList.remove('duo');
             if (segments.length > 1) {
                 let seg = segments.shift();
                 let num = parseInt(seg);
                 if (isNaN(num)) {
                     switch (seg) {
                         case 'tri':
+                        case 'trio':
                             path.classList.add('tri');
                             break;
                         case 'bi':
-                            path.classList.add('bi');
+                        case 'duo':
+                            path.classList.add('duo');
                             break;
                     }
                 } else {
@@ -305,8 +307,8 @@ path.tri,
 path.tri {
 stroke:var(--ico-color-tertiary);
 }
-path.bi,
-path.bi {
+path.duo,
+path.duo {
 stroke:var(--ico-color-secondary);
 }
 :host([fill]) path:not(.backing) {
@@ -316,9 +318,9 @@ fill:var(--ico-color-primary);
 :host([fill]) path.tri {
 fill:var(--ico-color-tertiary);
 }
-:host([fill]) path.bi,
-:host([fill]) path.bi,
-:host([fill]) path.bi {
+:host([fill]) path.duo,
+:host([fill]) path.duo,
+:host([fill]) path.duo {
 fill:var(--ico-color-secondary);
 }
 :host([fill]) path,
@@ -335,7 +337,7 @@ fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
 :host([shade="duo"][fill]) path:not(.backing).tri {
 fill:var(--ico-color-tertiary);
 }
-:host([shade="duo"][fill]) path:not(.backing).bi {
+:host([shade="duo"][fill]) path:not(.backing).duo {
 fill:var(--ico-color-secondary);
 }
 :host([shade="tri"]) path {
@@ -345,7 +347,7 @@ fill:var(--ico-color-secondary);
 :host([shade="tri"][fill]) path:not(.backing).tri {
 fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
 }
-:host([shade="tri"][fill]) path:not(.backing).bi {
+:host([shade="tri"][fill]) path:not(.backing).duo {
 fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
 }
 :host([sharp]) path {

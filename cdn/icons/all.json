@@ -8,16 +8,20 @@
         "tags": "round shapes"
     },
     {
+        "name": "copy",
+        "tags": "editor clone paper"
+    },
+    {
         "name": "diamond",
         "tags": "square shapes"
     },
     {
         "name": "dollar",
-        "tags": "cash"
+        "tags": "cash money"
     },
     {
         "name": "drawer",
-        "tags": ""
+        "tags": "side slide"
     },
     {
         "name": "equals",
