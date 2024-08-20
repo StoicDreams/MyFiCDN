@@ -104,8 +104,11 @@
             setupToggleIcon('_banToggle', 'Ban', 'ban');
             setupToggleIcon('_invertToggle', 'Inverted', 'inverted');
             t.appendChild(t._inputSearch);
-            t._codeSample = webui.create('webui-code', { 'lang': 'html', 'label': `Icon Code`, 'copy': true });
+            t._codeSample = webui.create('webui-code', { 'lang': 'html', 'label': `Icon Code` });
             inputsColumn.appendChild(t._codeSample);
+            inputsColumn.appendChild(webui.create('p', { html: `Icon components also accept pipe delimited configurations, useful when passing icon data to parent components that pass icon values to child webui-icon components.` }));
+            t._codeSamplePiped = webui.create('webui-code', { 'lang': 'html', 'label': `Icon Code Piped` });
+            inputsColumn.appendChild(t._codeSamplePiped);
             t._bottomGrid = webui.create('webui-grid', { gap: '1', theme: 'white', width: '100', height: '100' });
             t.appendChild(t._bottomGrid);
             t.loadIcons();
@@ -119,6 +122,23 @@
             ico.removeAttribute('style');
             let code = ico.outerHTML;
             t._codeSample.value = code;
+            let pipeData = [];
+            pipeData.push(ico.getAttribute('icon'));
+            ico.getAttributeNames().forEach(attr => {
+                switch (attr) {
+                    case 'icon':
+                        break;
+                    default:
+                        let value = ico.getAttribute(attr);
+                        if (value) {
+                            pipeData.push(`${attr}:${value}`);
+                        } else {
+                            pipeData.push(`${attr}`);
+                        }
+                        break;
+                }
+            })
+            t._codeSamplePiped.value = `<webui-icon icon="${pipeData.join('|')}"></webui-icon>`;
         },
         setIcon: function (icon) {
             let t = this;
