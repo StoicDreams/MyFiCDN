@@ -17,7 +17,6 @@
             t._midIcon = t.template.querySelector('webui-icon.mid');
             t._endIcon = t.template.querySelector('webui-icon.end');
             t._datasub = webui.create('webui-data');
-            t.appendChild(t._datasub);
             t._select.addEventListener('change', _ => {
                 t.dispatchEvent(new Event('change', { bubbles: true }));
                 t.applyDataChange();
@@ -61,6 +60,7 @@
         },
         connected: (t) => {
             let id = webui.uuid();
+            t.appendChild(t._datasub);
             t._forLabel.setAttribute('for', id);
             t._select.setAttribute('id', id);
         },

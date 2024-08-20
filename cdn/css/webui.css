@@ -630,7 +630,7 @@ webui-code {
     --theme-offset: var(--color-info-offset);
 }
 
-webui-code[lang]>label:empty+pre {
+webui-code[lang].hide-label>pre {
     margin-top: calc(2 * var(--padding));
 }
 
@@ -644,7 +644,7 @@ webui-code>label {
     padding: calc(0.5 * var(--padding)) var(--padding);
 }
 
-webui-code>label:empty {
+webui-code.hide-label>label {
     display: none;
 }
 
@@ -671,7 +671,7 @@ pre[languagetag]:before {
     box-sizing: border-box;
 }
 
-webui-code>label:not(:empty)+pre[languagetag]:before {
+webui-code:not(.hide-label)>pre[languagetag]:before {
     translate: 0 -100%;
     background-image: none;
 }

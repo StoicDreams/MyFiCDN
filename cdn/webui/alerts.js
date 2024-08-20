@@ -147,7 +147,7 @@
             setTimeout(() => this.checkCounts(), 1000);
         },
         shadowTemplate: `
-<webui-icon icon="bell|fill|tri|theme:info"></webui-icon>
+<webui-icon icon="bell|fill|shade:tri|theme:info"></webui-icon>
 <style type="text/css">
 :host {
 display:inline-flex;

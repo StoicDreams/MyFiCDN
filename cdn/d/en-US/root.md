@@ -16,8 +16,10 @@
 <webui-tabs pad="var(--padding)" vertical transition-timing="200" data-subscribe="session-home-tab-index:setTab">
     <webui-button slot="tabs">Welcome</webui-button>
     <webui-content slot="content" src="/d/en-US/content/welcome.md"></webui-content>
-    <webui-button slot="tabs">Icons</webui-button>
-    <webui-content slot="content" src="/d/en-US/content/icons.md"></webui-content>
+    <webui-button slot="tabs">Icon Search</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/icon-search.md"></webui-content>
+    <webui-button slot="tabs">Icon Creator</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/icon-creator.md"></webui-content>
     <webui-button slot="tabs">Loading Bars</webui-button>
     <webui-content slot="content" src="/d/en-US/content/loading-bars.md"></webui-content>
     <webui-button slot="tabs">File Loading</webui-button>

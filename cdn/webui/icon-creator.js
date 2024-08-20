@@ -71,6 +71,19 @@
                     }
                 });
             });
+            function setupToggleIcon(name, label, flagAttr) {
+                t[name] = webui.create('webui-toggle-icon', { label: label, 'title-on': `Disable ${label}`, 'title-off': `Enable ${label}`, 'theme-on': 'success', 'theme-off': 'shade', 'flags-on': 'fill', 'flags-off': '' });
+                t[name].addEventListener('change', _ => {
+                    icons.forEach(icon => {
+                        if (t[name].value) {
+                            icon.setAttribute(flagAttr, '');
+                        } else {
+                            icon.removeAttribute(flagAttr);
+                        }
+                    });
+                });
+                t._iconOptions.appendChild(t[name]);
+            }
             setupToggleIcon('_backingToggle', 'Backing', 'backing');
             setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
             setupToggleIcon('_fillToggle', 'Fill', 'fill');
@@ -438,8 +451,8 @@
             let icons = [];
             icons.push(t._iconPreview);
             [{ l: 'Regular', d: {} },
-            { l: 'Thin', d: { thin: '' } },
-            { l: 'Thick', d: { thick: '' } },
+            { l: 'Thin', d: { stroke: 'thin' } },
+            { l: 'Thick', d: { stroke: 'thick' } },
             { l: 'Duo-Tone', d: { duo: '' } },
             { l: 'Tri-Tone', d: { tri: '' } },
             { l: 'Inverted', d: { inverted: '' } }].forEach(def => {
@@ -459,19 +472,6 @@
                 right.appendChild(iconRight);
                 right.appendChild(webui.create('label', { text: def.l, class: 'text-center' }));
             });
-            function setupToggleIcon(name, label, flagAttr) {
-                t[name] = webui.create('webui-toggle-icon', { label: label, 'title-on': `Disable ${label}`, 'title-off': `Enable ${label}`, 'theme-on': 'success', 'theme-off': 'shade', 'flags-on': 'fill', 'flags-off': '' });
-                t[name].addEventListener('change', _ => {
-                    icons.forEach(icon => {
-                        if (t[name].value) {
-                            icon.setAttribute(flagAttr, '');
-                        } else {
-                            icon.removeAttribute(flagAttr);
-                        }
-                    });
-                });
-                t._iconOptions.appendChild(t[name]);
-            }
             let inputsColumn = webui.create('webui.flex', { column: '' });
             inputsColumn.appendChild(webui.create('h6', { html: `<strong>Movement Modifiers</strong>` }));
             inputsColumn.appendChild(webui.create('p', { class: "pl-4", html: `<strong>CTRL</strong> Precision Movement` }));
@@ -559,10 +559,11 @@
                 if (!result.ok) return;
                 let icons = await result.json();
                 let isFirst = true;
-                icons.forEach(icon => {
+                icons.forEach(data => {
+                    let icon = data.name;
                     let container = webui.create('a', { style: 'flex-direction:column;' });
                     t._bottomGrid.appendChild(container);
-                    let el = webui.create('webui-icon', { icon: `${icon}|fill|tri|theme:primary`, width: '32' });
+                    let el = webui.create('webui-icon', { icon: `${icon}|fill|shade:tri|theme:primary`, width: '32' });
                     container.appendChild(el);
                     let label = webui.create('label', { text: icon });
                     container.appendChild(label);

@@ -1,18 +1,66 @@
 [
-    "bell",
-    "circle",
-    "diamond",
-    "dollar",
-    "drawer",
-    "equals",
-    "facebook",
-    "feedback",
-    "hamburger",
-    "hierarchy",
-    "home",
-    "plus",
-    "stacked-squares",
-    "toggle-on",
-    "toggle-off",
-    "xmark"
+    {
+        "name": "bell",
+        "tags": "alert"
+    },
+    {
+        "name": "circle",
+        "tags": "round shapes"
+    },
+    {
+        "name": "diamond",
+        "tags": "square shapes"
+    },
+    {
+        "name": "dollar",
+        "tags": "cash"
+    },
+    {
+        "name": "drawer",
+        "tags": ""
+    },
+    {
+        "name": "equals",
+        "tags": "math lines bars"
+    },
+    {
+        "name": "facebook",
+        "tags": "brands social"
+    },
+    {
+        "name": "feedback",
+        "tags": "talk message chat"
+    },
+    {
+        "name": "hamburger",
+        "tags": "menu bars"
+    },
+    {
+        "name": "hierarchy",
+        "tags": "graph data mapping"
+    },
+    {
+        "name": "home",
+        "tags": "house building"
+    },
+    {
+        "name": "plus",
+        "tags": "math add"
+    },
+    {
+        "name": "stacked-squares",
+        "tags": "shapes"
+    },
+    {
+        "name": "toggle-on",
+        "tags": "switch"
+    },
+    {
+        "name": "toggle-off",
+        "tags": "switch"
+    },
+    {
+        "name": "xmark",
+        "tags": "close"
+    }
 ]

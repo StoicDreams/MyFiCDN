@@ -28,7 +28,7 @@ Stroke line joins: miter|round|bevel
     const defUnused = 'M0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0z';
     const defBadge = 'M-28 68Q0 115 28 68Q86 86 68 28Q115 0 68 -28Q86 -86 28 -68Q1 -115 -28 -68Q-86 -86 -68 -28Q-115 0 -68 28Q-86 86 -28 68Q-28 68 -28 68Q-28 68 -28 68Q-28 68 -28 68z';
     const defCircle = 'M1 -93Q31 -91 53 -76Q76 -59 86 -35Q95 -12 92 13Q89 37 72 59Q58 76 37 86Q10 97 -16 92Q-45 85 -64 68Q-85 47 -92 16Q-96 -10 -87 -34Q-76 -60 -56 -75Q-26 -94 1 -93z';
-    const defSquare = 'M0 -95Q80 -95 80 -95Q95 -95 95 -80Q95 0 95 0Q95 80 95 80Q95 95 80 95Q0 95 0 95Q-80 95 -80 95Q-95 95 -95 80Q-95 0 -95 0Q-95 -80 -95 -80Q-95 -90 -80 -95z';
+    const defSquare = 'M0 -95Q80 -95 80 -95Q95 -95 95 -80Q95 0 95 0Q95 80 95 80Q95 95 80 95Q0 95 0 95Q-80 95 -80 95Q-95 95 -95 80Q-95 0 -95 0Q-95 -80 -95 -80Q-95 -95 -80 -95z';
     const defTriangle = 'M0 -90Q20 -55 20 -55Q40 -20 40 -20Q55 5 55 5Q90 65 90 65Q60 65 60 65Q0 65 0 65Q-55 65 -55 65Q-90 65 -90 65Q-55 5 -55 5Q-40 -20 -40 -20Q-20 -55 -20 -55z';
     const defTallTriangle = 'M0 -90Q25 -40 25 -40Q40 -10 40 -10Q55 20 55 20Q90 90 90 90Q60 90 60 90Q0 90 0 90Q-55 90 -55 90Q-90 90 -90 90Q-50 10 -50 10Q-30 -30 -30 -30Q-15 -60 -15 -60z';
     const defOcto = `M0 -90Q40 -90 40 -90Q90 -40 90 -40Q90 0 90 0Q90 40 90 40Q40 90 40 90Q0 90 0 90Q-40 90 -40 90Q-90 40 -90 40Q-90 0 -90 0Q-90 -40 -90 -40Q-40 -90 -40 -90z`;
@@ -90,7 +90,7 @@ Stroke line joins: miter|round|bevel
                 t._dynPaths.push(t[`_i${instance}`]);
             }
         },
-        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'shape', 'rotate', 'count'],
+        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'shape', 'rotate', 'count', 'stroke', 'shade'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'count':
@@ -132,13 +132,28 @@ Stroke line joins: miter|round|bevel
                             break;
                     }
                     break;
+                case 'stroke':
+                    if (!value) {
+                        t.style.removeProperty('--ico-stroke-width');
+                    }
+                    switch (value) {
+                        case 'thin':
+                            t._svg.style.setProperty('--ico-stroke-width', '5');
+                            break;
+                        case 'thick':
+                            t._svg.style.setProperty('--ico-stroke-width', '15');
+                            break;
+                        default:
+                            t._svg.style.setProperty('--ico-stroke-width', `${(parseInt(value) || 10)}`);
+                            break;
+                    }
+                    break;
                 case 'icon':
                     if (!value) return;
                     let idata = value.split('|');
                     let icon = idata.shift();
                     idata.forEach(flag => {
                         let av = flag.split(':');
-                        console.log('flag', t, value, flag);
                         if (av[0].startsWith('-')) {
                             t.removeAttribute(av[0].substring(1));
                         } else {
@@ -159,7 +174,11 @@ Stroke line joins: miter|round|bevel
                     break;
             }
         },
-        connected: (_t) => { },
+        connected: (t) => {
+            if (!t.shape) {
+                t._backPath.setAttribute('d', defSquare);
+            }
+        },
         setIconDefinition(iconDef) {
             if (!iconDef || typeof iconDef !== 'string') return;
             let t = this;
@@ -233,7 +252,7 @@ Stroke line joins: miter|round|bevel
 <defs>
 <style></style>
 </defs>
-<path class="backing" d="M-95 -95 L -95 95 L 95 95 L 95 -95Z"></path>
+<path class="backing" d=""></path>
 <path class="i1" d=""></path>
 <path class="i2" d=""></path>
 <path class="i3" d=""></path>
@@ -302,37 +321,31 @@ fill:var(--ico-color-tertiary);
 :host([fill]) path.bi {
 fill:var(--ico-color-secondary);
 }
-:host([thin]) {
---ico-stroke-width: calc(0.5 * var(--icon-stroke-width, 10));
-}
-:host([thick]) {
---ico-stroke-width: calc(1.5 * var(--icon-stroke-width, 10));
-}
 :host([fill]) path,
-:host([duo]) path {
+:host([shade="duo"]) path {
 --ico-color-secondary: color-mix(in srgb, var(--ico-color-primary) 50%, var(--ico-color-offset));
 }
 :host([fill]) path:not(.backing) {
 fill:color-mix(in srgb, var(--ico-color-primary) 80%, var(--ico-color-offset));
 }
-:host([duo][fill]) path:not(.backing),
-:host([tri][fill]) path:not(.backing) {
+:host([shade="duo"][fill]) path:not(.backing),
+:host([shade="tri"][fill]) path:not(.backing) {
 fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
 }
-:host([duo][fill]) path:not(.backing):nth-of-type(4n+3) {
+:host([shade="duo"][fill]) path:not(.backing).tri {
 fill:var(--ico-color-tertiary);
 }
-:host([duo][fill]) path:not(.backing):nth-of-type(4n+4) {
+:host([shade="duo"][fill]) path:not(.backing).bi {
 fill:var(--ico-color-secondary);
 }
-:host([tri]) path {
+:host([shade="tri"]) path {
 --ico-color-secondary: color-mix(in srgb, var(--ico-color-primary) 66%, var(--ico-color-offset));
 --ico-color-tertiary: color-mix(in srgb, var(--ico-color-primary) 33%, var(--ico-color-offset));
 }
-:host([tri][fill]) path:not(.backing):nth-of-type(4n+3) {
+:host([shade="tri"][fill]) path:not(.backing).tri {
 fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
 }
-:host([tri][fill]) path:not(.backing):nth-of-type(4n+4) {
+:host([shade="tri"][fill]) path:not(.backing).bi {
 fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
 }
 :host([sharp]) path {
