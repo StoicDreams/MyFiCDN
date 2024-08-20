@@ -268,7 +268,7 @@ Stroke line joins: miter|round|bevel
 <slot name="count"></slot>
 <style type="text/css">
 :host {
---ico-color-border: var(--icon-default-border-color, none);
+--ico-color-border: var(--icon-default-border-color, transparent);
 --ico-color-primary: var(--theme-color-offset, currentColor);
 --ico-color-offset: var(--theme-color);
 --ico-color-secondary: var(--ico-color-primary);
@@ -296,7 +296,7 @@ transition: all var(--ico-transition-duration) ease-in-out;
 }
 path {
 transition: all var(--ico-transition-duration) ease-in-out;
-fill:none;
+fill:transparent;
 stroke:var(--ico-color-primary);
 stroke-width:var(--ico-stroke-width);
 stroke-linecap:round;
@@ -312,43 +312,28 @@ path.duo {
 stroke:var(--ico-color-secondary);
 }
 :host([fill]) path:not(.backing) {
-fill:var(--ico-color-primary);
-}
-:host([fill]) path.tri,
-:host([fill]) path.tri {
-fill:var(--ico-color-tertiary);
-}
-:host([fill]) path.duo,
-:host([fill]) path.duo,
-:host([fill]) path.duo {
-fill:var(--ico-color-secondary);
+--my-fill-color:var(--icon-color-primary);
+fill:var(--my-fill-color);
 }
 :host([fill]) path,
 :host([shade="duo"]) path {
 --ico-color-secondary: color-mix(in srgb, var(--ico-color-primary) 50%, var(--ico-color-offset));
-}
-:host([fill]) path:not(.backing) {
-fill:color-mix(in srgb, var(--ico-color-primary) 80%, var(--ico-color-offset));
-}
-:host([shade="duo"][fill]) path:not(.backing),
-:host([shade="tri"][fill]) path:not(.backing) {
-fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
-}
-:host([shade="duo"][fill]) path:not(.backing).tri {
-fill:var(--ico-color-tertiary);
-}
-:host([shade="duo"][fill]) path:not(.backing).duo {
-fill:var(--ico-color-secondary);
+--ico-color-tertiary: color-mix(in srgb, var(--ico-color-primary) 50%, var(--ico-color-offset));
 }
 :host([shade="tri"]) path {
 --ico-color-secondary: color-mix(in srgb, var(--ico-color-primary) 66%, var(--ico-color-offset));
 --ico-color-tertiary: color-mix(in srgb, var(--ico-color-primary) 33%, var(--ico-color-offset));
 }
-:host([shade="tri"][fill]) path:not(.backing).tri {
-fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
+:host([fill]) path:not(.backing).duo,
+:host([fill]) path:not(.backing).tri,
+:host([fill][shade="duo"]) path:not(.backing).duo {
+--my-fill-color:var(--ico-color-secondary);
 }
-:host([shade="tri"][fill]) path:not(.backing).duo {
-fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
+:host([fill][shade="tri"]) path:not(.backing).duo {
+--my-fill-color:var(--ico-color-secondary);
+}
+:host([fill][shade="tri"]) path:not(.backing).tri {
+--my-fill-color:var(--ico-color-tertiary);
 }
 :host([sharp]) path {
 stroke-linecap:butt;
@@ -407,3 +392,34 @@ display:none;
 </style>`
     });
 }
+/*
+:host([fill]) path.tri,
+:host([fill]) path.tri {
+fill:var(--ico-color-tertiary);
+}
+:host([fill]) path.duo,
+:host([fill]) path.duo,
+:host([fill]) path.duo {
+fill:var(--ico-color-secondary);
+}
+:host([fill]) path:not(.backing) {
+fill:color-mix(in srgb, var(--ico-color-primary) 80%, var(--ico-color-offset));
+}
+:host([shade="duo"][fill]) path:not(.backing),
+:host([shade="tri"][fill]) path:not(.backing) {
+fill:color-mix(in srgb, var(--ico-color-primary) 90%, var(--ico-color-offset));
+}
+:host([shade="duo"][fill]) path:not(.backing).tri {
+fill:var(--ico-color-tertiary);
+}
+:host([shade="duo"][fill]) path:not(.backing).duo {
+fill:var(--ico-color-secondary);
+}
+
+:host([shade="tri"][fill]) path:not(.backing).tri {
+fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
+}
+:host([shade="tri"][fill]) path:not(.backing).duo {
+fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
+}
+*/
