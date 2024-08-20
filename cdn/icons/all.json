@@ -48,6 +48,10 @@
         "tags": "house building"
     },
     {
+        "name": "icons",
+        "tags": "shapes group"
+    },
+    {
         "name": "plus",
         "tags": "math add"
     },
