@@ -100,9 +100,11 @@ color:var(--theme-color-offset, inherit);
 border:none;
 box-shadow:none;
 margin:0;
-padding:0;
+padding:0 var(--padding);
 cursor:pointer;
 transition: all var(--main-transition, 400ms) ease-in-out;
+border-radius:1rem;
+line-height:1rem;
 }
 span:empty {display:none;}
 </style>

@@ -54,7 +54,7 @@
             t._inputs.appendChild(inputsColumn);
             inputsColumn.appendChild(webui.create('h6', { html: `<strong>Icon Search</strong>` }));
             t._inputSearch = webui.create('webui-input-text', { 'label': `Search / Filter Icons`, value: '', placeholder: "menu" });
-            t._iconFlags = webui.create('webui-flex', { name: 'icon-options', justify: 'flex-start', align: 'center', wrap: true, html: `<h6 class="f1">Flags:</h6>` });
+            t._iconFlags = webui.create('webui-flex', { name: 'icon-options', justify: 'flex-start', align: 'center', wrap: true, gap: 5, html: `<h6 class="f1">Flags:</h6>` });
             inputsColumn.appendChild(t._iconFlags);
             function setupDropdown(label, attr, options) {
                 let dd = webui.create('webui-dropdown', { label: label, options: options });
