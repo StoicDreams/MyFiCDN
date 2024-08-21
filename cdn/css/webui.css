@@ -3381,7 +3381,7 @@ webui-side-by-side>* {
     width: 100%;
 }
 
-webui-side-by-side>*>* {
+webui-side-by-side>* {
     max-width: var(--readability-line-limit);
     margin: auto;
 }
