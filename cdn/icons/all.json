@@ -4,6 +4,14 @@
         "tags": "alert"
     },
     {
+        "name": "caret",
+        "tags": "left right up down prev next drop select"
+    },
+    {
+        "name": "caret-line",
+        "tags": "prev next"
+    },
+    {
         "name": "circle",
         "tags": "round shapes"
     },
@@ -26,6 +34,10 @@
     {
         "name": "equals",
         "tags": "math lines bars"
+    },
+    {
+        "name": "exclamation",
+        "tags": "alert warning danger"
     },
     {
         "name": "facebook",

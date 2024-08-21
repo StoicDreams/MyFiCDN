@@ -52,21 +52,25 @@ webui.define("webui-alert", {
         this.setTheme(theme);
         switch (theme) {
             case "danger":
-                this.icon.setAttribute('icon', 'hexagon-exclamation');
+                this.icon.setAttribute('icon', 'exclamation');
+                this.icon.setAttribute('shape', 'octogon');
                 break;
             case "success":
                 this.icon.setAttribute('icon', 'thumbs-up');
+                this.icon.setAttribute('shape', 'circle');
                 break;
             case "info":
-                this.icon.setAttribute('icon', 'circle-exclamation');
+                this.icon.setAttribute('icon', 'exclamation');
+                this.icon.setAttribute('shape', 'circle');
                 break;
             default:
-                this.icon.setAttribute('icon', 'triangle-exclamation');
+                this.icon.setAttribute('icon', 'exclamation');
+                this.icon.setAttribute('shape', 'triangle');
                 break;
         }
     },
     shadowTemplate: `
-<webui-icon id="icon" icon=""></webui-icon>
+<webui-icon id="icon" icon="" bordered backing></webui-icon>
 <div><slot></slot></div>
 <button id="close"><webui-icon icon="xmark"></webui-icon></button>
 <style type="text/css">

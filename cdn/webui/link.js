@@ -5,26 +5,27 @@ webui.define('webui-link', {
         t._startIcon = t.template.querySelector('slot[name="start-icon"]');
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
     },
-    attr: ['href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family'],
+    attr: ['href', 'icon', 'start-icon', 'end-icon'],
     attrChanged: (t, property, value) => {
         switch (property) {
+            case 'icon':
             case 'startIcon':
                 {
                     t.querySelectorAll('[slot="start-icon"]').forEach(n => n.remove());
-                    if (!t.startIcon) break;
+                    if (!value) break;
                     let ico = document.createElement('webui-icon');
                     ico.setAttribute('slot', 'start-icon');
-                    ico.setAttribute('icon', t.startIcon);
+                    ico.setAttribute('icon', value);
                     t.appendChild(ico);
                 }
                 break;
             case 'endIcon':
                 {
                     t.querySelectorAll('[slot="end-icon"]').forEach(n => n.remove());
-                    if (!t.endIcon) break;
+                    if (!value) break;
                     let ico = document.createElement('webui-icon');
                     ico.setAttribute('slot', 'end-icon');
-                    ico.setAttribute('icon', t.endIcon);
+                    ico.setAttribute('icon', value);
                     t.appendChild(ico);
                 }
                 break;
@@ -45,7 +46,7 @@ font-size:inherit;
 font:inherit;
 -webkit-user-select: text;
 user-select: text;
-color:var(--theme-color, inherit);
+color:var(--theme-color-offset, inherit);
 }
 :host([href]:not(:disabled)),
 :host([data-trigger]:not(:disabled)),

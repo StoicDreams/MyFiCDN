@@ -8,11 +8,13 @@ webui.define('webui-nav-group', {
         t._display = document.createElement('span');
         t._anchor.appendChild(t._display);
         t._caret = document.createElement('webui-icon');
-        t._caret.setAttribute('icon', 'caret-down');
+        t._caret.setAttribute('icon', 'caret');
+        t._caret.setAttribute('fill', true);
+        t._caret.setAttribute('rotate', "180");
         t._anchor.appendChild(t._caret);
         t._anchor.addEventListener('click', _ev => {
             t.open = !t.open;
-            t._caret.setAttribute('icon', t.open ? 'caret-up' : 'caret-down');
+            t._caret.setAttribute('rotate', t.open ? '0' : '180');
             if (t.open) {
                 t._anchor.classList.add('show');
             } else {

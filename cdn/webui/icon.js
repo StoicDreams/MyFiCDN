@@ -26,6 +26,7 @@ Stroke line joins: miter|round|bevel
     const cache = {}, waiter = {};
     const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     const defUnused = 'M0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0z';
+    const defShield = 'M-90 -25Q-90 -75 -90 -75Q-40 -75 0 -90Q50 -75 90 -75Q90 -30 90 -30Q90 -20 90 -20Q90 0 90 0Q90 25 60 50Q0 90 0 90Q-60 50 -60 50Q-90 25 -90 0Q-90 -15 -90 -15z';
     const defBadge = 'M-28 68Q0 115 28 68Q86 86 68 28Q115 0 68 -28Q86 -86 28 -68Q1 -115 -28 -68Q-86 -86 -68 -28Q-115 0 -68 28Q-86 86 -28 68Q-28 68 -28 68Q-28 68 -28 68Q-28 68 -28 68z';
     const defCircle = 'M1 -93Q31 -91 53 -76Q76 -59 86 -35Q95 -12 92 13Q89 37 72 59Q58 76 37 86Q10 97 -16 92Q-45 85 -64 68Q-85 47 -92 16Q-96 -10 -87 -34Q-76 -60 -56 -75Q-26 -94 1 -93z';
     const defSquare = 'M0 -95Q80 -95 80 -95Q95 -95 95 -80Q95 0 95 0Q95 80 95 80Q95 95 80 95Q0 95 0 95Q-80 95 -80 95Q-95 95 -95 80Q-95 0 -95 0Q-95 -80 -95 -80Q-95 -95 -80 -95z';
@@ -126,6 +127,9 @@ Stroke line joins: miter|round|bevel
                             break;
                         case 'circle':
                             t._backPath.setAttribute('d', defCircle);
+                            break;
+                        case 'shield':
+                            t._backPath.setAttribute('d', defShield);
                             break;
                         default:
                             t._backPath.setAttribute('d', defSquare);
