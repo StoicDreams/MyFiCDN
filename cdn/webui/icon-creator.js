@@ -453,8 +453,8 @@
             [{ l: 'Regular', d: {} },
             { l: 'Thin', d: { stroke: 'thin' } },
             { l: 'Thick', d: { stroke: 'thick' } },
-            { l: 'Duo-Tone', d: { duo: '' } },
-            { l: 'Tri-Tone', d: { tri: '' } },
+            { l: 'Duo-Tone', d: { shade: 'duo' } },
+            { l: 'Tri-Tone', d: { shade: 'tri' } },
             { l: 'Inverted', d: { inverted: '' } }].forEach(def => {
                 let attributes = def.d;
                 attributes.width = '100px';

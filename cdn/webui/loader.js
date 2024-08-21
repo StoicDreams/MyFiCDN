@@ -856,11 +856,15 @@ const webui = (() => {
                             break;
                         case 'text':
                         case 'innerText':
-                            el.innerText = isNull ? '' : webui.applyAppDataToContent(value);
+                            if (!isNull) {
+                                el.innerText = webui.applyAppDataToContent(value);
+                            }
                             break;
                         case 'html':
                         case 'innerHTML':
-                            el.innerHTML = isNull ? '' : webui.applyAppDataToContent(value);
+                            if (!isNull) {
+                                el.innerHTML = webui.applyAppDataToContent(value);
+                            }
                             break;
                         default:
                             if (typeof el[toSet] === 'function') {
