@@ -7,7 +7,7 @@
 <path d=""></path></svg>`;
     const defaultPath = 'M0 -85Q5 -85 5 -85Q10 -85 10 -85Q15 -85 15 -85Q20 -85 20 -85Q25 -85 25 -85Q30 -85 30 -85Q35 -85 35 -85Q40 -85 40 -85Q45 -85 45 -85Q50 -85 50 -85Q55 -85 55 -85z';
     webui.define('webui-icon-creator', {
-        preload: "icon dropdown",
+        preload: "icon dropdown input-range input-text input-message",
         constructor: (t) => {
         },
         setupComponent: function () {
@@ -47,30 +47,27 @@
             t._topGrid.appendChild(t._rightGrid);
             t._iconOptions = webui.create('webui-flex', { name: 'icon-options', justify: 'center' });
             t.appendChild(t._iconOptions);
-            t._color = webui.create('webui-dropdown', { label: 'Icon Theme', options: colorOptions });
-            t._iconOptions.appendChild(t._color);
-            t._color.addEventListener('change', _ => {
-                let theme = t._color.value;
-                t._topGrid.querySelectorAll('webui-icon').forEach(icon => {
-                    if (!theme) {
-                        icon.removeAttribute('theme');
-                    } else {
-                        icon.setAttribute('theme', theme);
-                    }
+            let inputsColumn = webui.create('webui.flex', { column: '' });
+            inputsColumn.appendChild(webui.create('h6', { html: `<strong>Movement Modifiers</strong>` }));
+            inputsColumn.appendChild(webui.create('p', { class: "pl-4", html: `<strong>CTRL</strong> Precision Movement` }));
+            inputsColumn.appendChild(webui.create('p', { class: "pl-4", html: `<strong>SHIFT</strong> Move Pair` }));
+            t._iconFlags = webui.create('webui-flex', { name: 'icon-options', justify: 'flex-start', align: 'center', wrap: true, gap: 5, html: `<h6 class="f1">Flags:</h6>` });
+            inputsColumn.appendChild(t._iconFlags);
+            function setupDropdown(label, attr, options) {
+                let dd = webui.create('webui-dropdown', { label: label, options: options });
+                inputsColumn.appendChild(dd);
+                dd.addEventListener('change', _ => {
+                    let value = dd.value;
+                    icons.forEach(icon => {
+                        if (!value) {
+                            icon.removeAttribute(attr);
+                        } else {
+                            icon.setAttribute(attr, value);
+                        }
+                    });
+                    t.buildIconCode();
                 });
-            });
-            t._shape = webui.create('webui-dropdown', { label: 'Shape', options: shapeOptions });
-            t._iconOptions.appendChild(t._shape);
-            t._shape.addEventListener('change', _ => {
-                let shape = t._shape.value;
-                icons.forEach(icon => {
-                    if (!shape) {
-                        icon.removeAttribute('shape');
-                    } else {
-                        icon.setAttribute('shape', shape);
-                    }
-                });
-            });
+            }
             function setupToggleIcon(name, label, flagAttr) {
                 t[name] = webui.create('webui-toggle-icon', { label: label, 'title-on': `Disable ${label}`, 'title-off': `Enable ${label}`, 'theme-on': 'success', 'theme-off': 'shade', 'flags-on': 'fill', 'flags-off': '' });
                 t[name].addEventListener('change', _ => {
@@ -82,13 +79,38 @@
                         }
                     });
                 });
-                t._iconOptions.appendChild(t[name]);
+                t._iconFlags.appendChild(t[name]);
             }
+            setupDropdown('Icon Theme', 'theme', colorOptions);
+            setupDropdown('Shape', 'shape', shapeOptions);
+            setupDropdown('Stroke', 'stroke', JSON.stringify([
+                { value: '', display: 'Regular' },
+                { value: 'thin', display: 'Thin' },
+                { value: 'thick', display: 'Thick' }
+            ]));
+            setupDropdown('Shade', 'shade', JSON.stringify([
+                { value: '', display: 'Regular' },
+                { value: 'duo', display: 'Duo' },
+                { value: 'tri', display: 'Trio' }
+            ]));
+            let rotate = webui.create('webui-input-range', { label: 'Rotation', min: 0, max: 355, step: 5 });
+            inputsColumn.appendChild(rotate);
+            rotate.addEventListener('input', _ => {
+                let value = rotate.value;
+                icons.forEach(icon => {
+                    if (value > 0) {
+                        icon.setAttribute('rotate', value);
+                    } else {
+                        icon.removeAttribute('rotate');
+                    }
+                });
+            });
             setupToggleIcon('_backingToggle', 'Backing', 'backing');
             setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
             setupToggleIcon('_fillToggle', 'Fill', 'fill');
             setupToggleIcon('_borderToggle', 'Bordered', 'bordered');
             setupToggleIcon('_banToggle', 'Ban', 'ban');
+
             t._inputs = webui.create('webui-grid', { columns: '1fr 1fr' });
             t.appendChild(t._inputs);
             t._svgContainer = webui.create('div', { style: 'display:block;position:relative;aspect-ratio:1;padding:0;margin:0;' });
@@ -100,7 +122,51 @@
             t._iconPreview = webui.create('webui-icon', { style: 'position:absolute;width:100%;top:0;left:0;opacity:0.5;' });
             t._svgContainer.appendChild(t._iconPreview);
             t._svgContainer.appendChild(t._svgPreview);
+            t._inputFull = webui.create('webui-input-message', { 'label': `Definition`, value: 'WEBUI-ICON-DEF\n', placeholder: "WEBUI-ICON-NAME" });
+            inputsColumn.appendChild(t._inputFull);
+            t._inputPath = webui.create('webui-input-message', { 'label': `Definition`, value: '', placeholder: "" });
+            let pathOptions = [];
+            for (let p = 1; p <= 8; ++p) {
+                pathOptions.push({ value: `${p}` });
+            }
+            t._selectPath = webui.create('webui-dropdown', { label: 'Select Path to Edit', options: JSON.stringify(pathOptions) });
+            inputsColumn.appendChild(t._selectPath);
+            t._selectPath.addEventListener('change', _ => {
+                let changeTo = t._selectPath.value;
+                t._modPath = t._selectPath.value;
+                let lines = checkForValidInput(true);
+                let pathCount = lines.length - 1;
+                if (changeTo > pathCount) {
+                    if (pathCount >= 8) {
+                        t._modPath = pathCount;
+                    } else {
+                        lines.push(defaultPath);
+                        t._modPath = pathCount + 1;
+                        t._inputFull.value = lines.join('\n');
+                    }
+                    t._selectPath.value = t._modPath;
+                }
+                t._inputPath.value = lines[t._modPath];
+                setPreview();
+            });
+            inputsColumn.appendChild(t._inputPath);
+            let bgScale = webui.create('webui-input-range', { label: 'Background Scale', value: '100', min: 25, max: 200, step: 1 });
+            inputsColumn.appendChild(bgScale);
+            bgScale.addEventListener('input', _ => {
+                let value = parseInt(bgScale.value);
+                t._backingHTML.style.width = `${value}%`;
+                t._backingHTML.style.height = `${value}%`;
+                if (value !== 0) {
+                    let offset = (100 - value) / 2;
+                    t._backingHTML.style.top = `${offset}%`;
+                    t._backingHTML.style.left = `${offset}%`;
+                } else {
+                    t._backingHTML.style.top = ``;
+                    t._backingHTML.style.left = ``;
+                }
+            });
             t._backingInput = webui.create('webui-input-message', { label: 'Background Tracing', placeholder: 'Enter HTML for preview background to show Image or SVG of desired image to trace over.' });
+            inputsColumn.appendChild(t._backingInput);
             t._backingInput.addEventListener('input', _ => {
                 t._backingHTML.innerHTML = t._backingInput.value;
                 let svg = t._backingHTML.querySelector('svg');
@@ -472,40 +538,7 @@
                 right.appendChild(iconRight);
                 right.appendChild(webui.create('label', { text: def.l, class: 'text-center' }));
             });
-            let inputsColumn = webui.create('webui.flex', { column: '' });
-            inputsColumn.appendChild(webui.create('h6', { html: `<strong>Movement Modifiers</strong>` }));
-            inputsColumn.appendChild(webui.create('p', { class: "pl-4", html: `<strong>CTRL</strong> Precision Movement` }));
-            inputsColumn.appendChild(webui.create('p', { class: "pl-4", html: `<strong>SHIFT</strong> Move Pair` }));
-            let pathOptions = [];
-            for (let p = 1; p <= 8; ++p) {
-                pathOptions.push({ value: `${p}` });
-            }
-            t._selectPath = webui.create('webui-dropdown', { label: 'Select Path to Edit', options: JSON.stringify(pathOptions) });
-            t._selectPath.addEventListener('change', _ => {
-                let changeTo = t._selectPath.value;
-                t._modPath = t._selectPath.value;
-                let lines = checkForValidInput(true);
-                let pathCount = lines.length - 1;
-                if (changeTo > pathCount) {
-                    if (pathCount >= 8) {
-                        t._modPath = pathCount;
-                    } else {
-                        lines.push(defaultPath);
-                        t._modPath = pathCount + 1;
-                        t._inputFull.value = lines.join('\n');
-                    }
-                    t._selectPath.value = t._modPath;
-                }
-                t._inputPath.value = lines[t._modPath];
-                setPreview();
-            });
-            t._inputFull = webui.create('webui-input-message', { 'label': `Definition`, value: 'WEBUI-ICON-DEF\n', placeholder: "WEBUI-ICON-NAME" });
-            t._inputPath = webui.create('webui-input-message', { 'label': `Definition`, value: '', placeholder: "" });
             t._inputs.appendChild(inputsColumn);
-            inputsColumn.appendChild(t._inputFull);
-            inputsColumn.appendChild(t._selectPath);
-            inputsColumn.appendChild(t._inputPath);
-            inputsColumn.appendChild(t._backingInput);
             function checkForValidInput(skipPathUpdate) {
                 let values = t._inputFull.value.split('\n');
                 if (values.length === 0) {

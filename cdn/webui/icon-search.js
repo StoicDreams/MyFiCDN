@@ -2,7 +2,7 @@
 {
     const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     webui.define('webui-icon-search', {
-        preload: "icon dropdown",
+        preload: "icon dropdown input-range input-text input-message",
         constructor: (t) => {
         },
         attr: [],
@@ -97,6 +97,18 @@
                 { value: 'duo', display: 'Duo' },
                 { value: 'tri', display: 'Trio' }
             ]));
+            let rotate = webui.create('webui-input-range', { label: 'Rotation', min: 0, max: 355, step: 5 });
+            inputsColumn.appendChild(rotate);
+            rotate.addEventListener('input', _ => {
+                let value = rotate.value;
+                icons.forEach(icon => {
+                    if (value > 0) {
+                        icon.setAttribute('rotate', value);
+                    } else {
+                        icon.removeAttribute('rotate');
+                    }
+                });
+            });
             setupToggleIcon('_backingToggle', 'Backing', 'backing');
             setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
             setupToggleIcon('_fillToggle', 'Fill', 'fill');

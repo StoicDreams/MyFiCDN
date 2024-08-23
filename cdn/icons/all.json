@@ -64,6 +64,14 @@
         "tags": "shapes group"
     },
     {
+        "name": "messages",
+        "tags": "talk communication chat"
+    },
+    {
+        "name": "messages-question",
+        "tags": "talk communication chat question"
+    },
+    {
         "name": "plus",
         "tags": "math add"
     },

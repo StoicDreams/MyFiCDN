@@ -1,11 +1,11 @@
-/* Display single-line, text input field. */
+/* Display input range field. */
 "use strict"
-webui.define('webui-input-text', {
+webui.define('webui-input-range', {
     constructor: (t) => {
         t.internals = t.attachInternals();
         t._handleFormData = t.handleFormData.bind(t);
         t._field = t.template.querySelector('input');
-        t._field.setAttribute('name', 'text');
+        t._valueDisplay = t.template.querySelector('span');
         t._label = t.template.querySelector('label');
         t.addEventListener('focus', ev => {
             t._field.focus();
@@ -15,12 +15,14 @@ webui.define('webui-input-text', {
         });
         t._field.addEventListener('input', _ev => {
             t.setAttribute('value', t._field.value);
+            t._valueDisplay.innerText = t._field.value;
         });
         t._field.addEventListener('change', _ev => {
             t.setAttribute('value', t._field.value);
+            t._valueDisplay.innerText = t._field.value;
         });
     },
-    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'type', 'placeholder'],
+    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'placeholder', 'min', 'max', 'step'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'id':
@@ -40,11 +42,18 @@ webui.define('webui-input-text', {
             case 'placeholder':
                 t._field.setAttribute('placeholder', value);
                 break;
-            case 'type':
-                t._field.setAttribute('type', value);
-                break;
             case 'value':
                 t._field.value = value;
+                t._valueDisplay.innerText = t._field.value;
+                break;
+            case 'min':
+                t._field.setAttribute('min', value);
+                break;
+            case 'max':
+                t._field.setAttribute('max', value);
+                break;
+            case 'step':
+                t._field.setAttribute('step', value);
                 break;
         }
     },
@@ -58,9 +67,7 @@ webui.define('webui-input-text', {
         this.value = value;
     },
     connected: (t) => {
-        if (!t.getAttribute('type')) {
-            t._field.setAttribute('type', 'text');
-        }
+        t._valueDisplay.innerText = t._field.value;
     },
     handleFormData: function ({ formData }) {
         if (!this.disabled) {
@@ -69,7 +76,8 @@ webui.define('webui-input-text', {
     },
     shadowTemplate: `
 <label></label>
-<input></input>
+<span></span>
+<input type="range" value="0"></input>
 <style type="text/css">
 :host {
 display:flex;
