@@ -65,7 +65,6 @@
                             icon.setAttribute(attr, value);
                         }
                     });
-                    t.buildIconCode();
                 });
             }
             function setupToggleIcon(name, label, flagAttr) {
