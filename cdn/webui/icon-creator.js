@@ -595,7 +595,7 @@
                     let icon = data.name;
                     let container = webui.create('a', { style: 'flex-direction:column;' });
                     t._bottomGrid.appendChild(container);
-                    let el = webui.create('webui-icon', { icon: `${icon}|fill|shade:tri|theme:primary`, width: '32' });
+                    let el = webui.create('webui-icon', { icon: `${icon}|fill|shade:tri|theme:white`, width: '32' });
                     container.appendChild(el);
                     let label = webui.create('label', { text: icon });
                     container.appendChild(label);
