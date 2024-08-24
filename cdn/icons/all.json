@@ -104,6 +104,10 @@
         "tags": "switch"
     },
     {
+        "name": "traffic-cone",
+        "tags": "street warning"
+    },
+    {
         "name": "xmark",
         "tags": "close"
     }

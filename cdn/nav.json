@@ -6,7 +6,7 @@
     },
     {
         "name": "Test",
-        "icon": "traffic-cone",
+        "icon": "traffic-cone|stroke:thin|fill|shade:tri",
         "children": [
             {
                 "name": "404 Not Found",
