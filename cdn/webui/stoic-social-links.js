@@ -9,7 +9,7 @@ webui.define('webui-stoic-social-links', {
                 <webui-icon icon="dollar|shape:badge|bordered"></webui-icon>
                 </a>
                 <a class="pa-1" title="Link to Stoic Dreams Discord server" href="https://discord.com/channels/972856291909332993/1025781071608037466">
-                <webui-icon icon="discord"></webui-icon>
+                <webui-icon icon="discord|stroke:thin|inverted|shape:circle"></webui-icon>
                 </a>
                 <a class="pa-1" title="Link to Stoic Dreams on Facebook" href="https://www.facebook.com/stoicdreams">
                 <webui-icon icon="facebook|shape:square|inverted|fill"></webui-icon>

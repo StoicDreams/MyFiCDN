@@ -24,6 +24,10 @@
         "tags": "square shapes"
     },
     {
+        "name": "discord",
+        "tags": "brands social"
+    },
+    {
         "name": "dollar",
         "tags": "cash money"
     },
@@ -66,6 +70,10 @@
     {
         "name": "icons",
         "tags": "shapes group"
+    },
+    {
+        "name": "instagram",
+        "tags": "brands social"
     },
     {
         "name": "messages",
