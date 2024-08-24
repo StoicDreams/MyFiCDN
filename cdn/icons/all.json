@@ -80,6 +80,10 @@
         "tags": "math add"
     },
     {
+        "name": "square",
+        "tags": "shapes"
+    },
+    {
         "name": "stacked-squares",
         "tags": "shapes"
     },
