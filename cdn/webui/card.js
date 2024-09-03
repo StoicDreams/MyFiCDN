@@ -37,7 +37,7 @@ webui.define("webui-card", {
             t._header.appendChild(l);
             let li = document.createElement('webui-icon');
             l.appendChild(li);
-            li.setAttribute('icon', 'arrow-up-right-from-square');
+            li.setAttribute('icon', 'arrow-corner-from-square');
         }
         // JS Bug? Timeout needed or else header does not show up when loading after page navigation.
         setTimeout(() => {

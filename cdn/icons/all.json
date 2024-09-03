@@ -1,5 +1,21 @@
 [
     {
+        "name": "arrow-corner-from-square",
+        "tags": "external link open"
+    },
+    {
+        "name": "arrow-corner-into-square",
+        "tags": "internal close"
+    },
+    {
+        "name": "arrow-side-from-square",
+        "tags": "external open"
+    },
+    {
+        "name": "arrow-side-into-square",
+        "tags": "internal close"
+    },
+    {
         "name": "bell",
         "tags": "alert"
     },
