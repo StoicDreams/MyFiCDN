@@ -107,6 +107,7 @@
                     } else {
                         icon.removeAttribute('rotate');
                     }
+                    t.buildIconCode();
                 });
             });
             setupToggleIcon('_backingToggle', 'Backing', 'backing');
