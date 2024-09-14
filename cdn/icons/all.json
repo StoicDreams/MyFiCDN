@@ -100,6 +100,10 @@
         "tags": "talk communication chat question"
     },
     {
+        "name": "music",
+        "tags": "notes"
+    },
+    {
         "name": "plus",
         "tags": "math add"
     },
@@ -110,6 +114,10 @@
     {
         "name": "stacked-squares",
         "tags": "shapes"
+    },
+    {
+        "name": "star",
+        "tags": "space shapes"
     },
     {
         "name": "toggle-on",
