@@ -68,6 +68,10 @@
         "tags": "talk message chat"
     },
     {
+        "name": "gallery-thumbs",
+        "tags": "thumbnails images"
+    },
+    {
         "name": "hamburger",
         "tags": "menu bars"
     },
