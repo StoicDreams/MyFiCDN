@@ -1,5 +1,9 @@
 [
     {
+        "name": "arrow",
+        "tags": "pointer direction right left down up diagonal"
+    },
+    {
         "name": "arrow-corner-from-square",
         "tags": "external link open"
     },

@@ -6,13 +6,13 @@ webui.define("webui-next-page", {
         t._link = webui.create("webui-flex", { class: "next-page-link" });
         t._postContent = webui.create("webui-flex", { class: "next-page-post" });
         t.name = "Next Page";
-        t.icon = 'right';
+        t.icon = 'arrow|backing|shape:circle';
         t.family = 'regular';
         t.appendChild(t._preContent);
         t.appendChild(t._link);
         t.appendChild(t._postContent);
     },
-    attr: ['name', 'href', 'icon', 'family'],
+    attr: ['name', 'href', 'icon'],
     setValue: function (value) {
         let t = this;
         if (!value) {
@@ -20,8 +20,7 @@ webui.define("webui-next-page", {
         }
         t.name = value.name || undefined;
         t.href = value.href || '/';
-        t.icon = value.icon || 'right';
-        t.family = value.family || t.family;
+        t.icon = value.icon || 'arrow|backing|shape:circle';
         t.render();
     },
     render: function () {
@@ -43,7 +42,7 @@ webui.define("webui-next-page", {
                 return;
             } else {
                 t._link.innerHTML = webui.applyAppDataToContent(`
-                <webui-button class="ma-a" href="${t.href}" end-icon="${t.icon}" end-icon-family="${t.family}">
+                <webui-button class="ma-a" href="${t.href}" end-icon="${t.icon}">
                     Continue to ${t.name}
                 </webui-button>`);
                 t.style.display = '';
