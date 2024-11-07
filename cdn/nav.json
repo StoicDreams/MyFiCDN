@@ -6,16 +6,16 @@
     },
     {
         "name": "Test",
-        "icon": "traffic-cone|stroke:thin|fill|shade:tri",
+        "icon": "test|fill|shade:tri",
         "children": [
             {
                 "name": "404 Not Found",
-                "icon": "compass",
+                "icon": "compass|fill|bordered|backing|shape:circle",
                 "url": "/test"
             },
             {
                 "name": "Under Construction",
-                "icon": "helmet-safety",
+                "icon": "traffic-cone|stroke:thin|fill|shade|tri",
                 "url": "/under-construction"
             }
         ]

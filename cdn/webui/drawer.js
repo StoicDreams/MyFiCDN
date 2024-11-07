@@ -2,7 +2,7 @@
 "use strict"
 {
     const dockableTemplate = `
-<webui-toggle-icon class="pa-0" data-toggleattr="[ID]|docked" data-enabled="[ID]" icon-on="square|rotate:0" icon-off="drawer|rotate:90" title-on="Hide Navigation" flags-on="" flags-off="fill" title-off="Dock Navigation"></webui-toggle-icon>`;
+<webui-toggle-icon class="pa-0" data-toggleattr="[ID]|docked" data-enabled="[ID]" icon-on="arrow-side-from-square|rotate:180" icon-off="drawer|rotate:90" title-on="Hide Navigation" flags-on="" flags-off="fill" title-off="Dock Navigation"></webui-toggle-icon>`;
     const moveableTemplate = `
 <button data-setattr="[ID]|slot|left" aria-label="Set navigation to left" class="toggle-pos-left">
 <webui-icon icon="drawer|rotate:90"></webui-icon>
