@@ -15,6 +15,7 @@ env:
 jobs:
   copy-files:
     runs-on: ubuntu-latest
+    if: false
     steps:
     - uses: actions/checkout@v3
     - name: Azure Login
@@ -31,6 +32,7 @@ jobs:
         az logout
       if: always()
   purge-storage-cache:
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: copy-files
