@@ -22,7 +22,7 @@ window.DomInterop = (() => {
 		while (segments.length > 2) { segments.shift(); }
 		return segments.join('.');
 	})();
-	const cdnhost = parentDomain == 'myfi.ws' ? origin : `https://cdn.${parentDomain}`;
+	const cdnhost = parentDomain == 'myfi.ws' ? origin : `https://cdn.myfi.ws`;
 	(function LoadCSSFilesFromCDN() {
 		[
 			'i/framework.css',
@@ -65,7 +65,7 @@ window.DomInterop = (() => {
 			});
 			setTimeout(WatchForMermaidUpdates, 1000);
 		})();
-		(function WatchForPrismUpdates(){
+		(function WatchForPrismUpdates() {
 			'use strict';
 			document.querySelectorAll('pre:not([class*=language]) > code[class*=language]').forEach(e => {
 				Prism.highlightElement(e);
@@ -180,7 +180,7 @@ window.DomInterop = (() => {
 				ele.id = uuid();
 				scriptTags[key] = ele;
 				document.querySelector('.page').append(ele);
-			} catch {}
+			} catch { }
 		});
 		setTimeout(checkForScriptTags, 300);
 	})();
