@@ -287,6 +287,8 @@ footer:not([slot="content-footer"]) {
     background-color: var(--color-footer);
     color: var(--color-footer-offset);
     box-shadow: 0px 4px 12px 1px inset rgba(0, 0, 0, 0.4);
+    --theme-color: var(--color-footer);
+    --theme-color-offset: var(--color-footer-offset);
 }
 
 footer[slot="footer"]>* {
