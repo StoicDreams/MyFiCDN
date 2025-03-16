@@ -31,6 +31,19 @@ webui.define('webui-link', {
                 break;
         }
     },
+    connected: (t) => {
+        t.addEventListener('click', _ => {
+            if (t.href) {
+                if (t.target) {
+                    window.open(t.href, t.target);
+                } else if (t.href[0] === '/') {
+                    webui.navigateTo(t.href);
+                } else {
+                    window.location.href = t.href;
+                }
+            }
+        });
+    },
     shadowTemplate: `
 <style type="text/css">
 :host {
