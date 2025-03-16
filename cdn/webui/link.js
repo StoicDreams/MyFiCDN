@@ -5,7 +5,7 @@ webui.define('webui-link', {
         t._startIcon = t.template.querySelector('slot[name="start-icon"]');
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
     },
-    attr: ['href', 'icon', 'start-icon', 'end-icon'],
+    attr: ['href', 'target', 'icon', 'start-icon', 'end-icon'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'icon':
