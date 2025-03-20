@@ -128,6 +128,11 @@
     --theme-border-width: 1px;
 }
 
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 *:not(:defined) {
     opacity: 0;
 }
