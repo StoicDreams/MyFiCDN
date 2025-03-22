@@ -1334,6 +1334,7 @@ webui-card>header {
     font-size: 1.3em;
     font-weight: 600;
     height: min-content;
+    padding: 0 0 0 5px;
 }
 
 webui-card header>section:first-child {
