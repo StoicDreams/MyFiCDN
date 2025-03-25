@@ -13,6 +13,16 @@ webui.define('webui-nav', {
                 break;
         }
     },
+    connected: (t) => {
+        t.userRole = 0;
+        t.setAttribute('data-subscribe', 'session-user-role:setUserRole');
+        t._buildNav();
+    },
+    setUserRole: function (userRole) {
+        let t = this;
+        t.userRole = userRole || 0;
+        t._buildNav();
+    },
     setNavRoutes: function (data) {
         this.buildNav(data);
     },
@@ -26,6 +36,9 @@ webui.define('webui-nav', {
     buildLink: function (parent, link) {
         let t = this;
         let el = null;
+        if (link.role && link.role > 0 && link.role & t.userRole === 0) {
+            return;
+        }
         if (link.url) {
             el = document.createElement('webui-nav-link');
             el.setAttribute('url', link.url);
@@ -51,6 +64,13 @@ webui.define('webui-nav', {
         if (!navJson) return;
         let nav = JSON.parse(navJson);
         let t = this;
+        t._navData = nav;
+        t._buildNav();
+    },
+    _buildNav: function () {
+        let t = this;
+        let nav = t._navData;
+        if (!nav) return;
         t.innerHTML = '';
         nav.forEach(link => {
             this.buildLink(t, link);
