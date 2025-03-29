@@ -404,6 +404,7 @@ h6 {
     margin: 0;
     padding: var(--padding);
     border-radius: var(--corners) var(--corners) 0 0;
+    gap: 0.6ch;
 }
 
 h1 {
