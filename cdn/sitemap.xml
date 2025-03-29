@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
-		<loc>https://cdn.myfi.ws"/"</loc>
-		<lastmod>2025-03-23</lastmod>
+		<loc>https://cdn.myfi.ws/</loc>
+		<lastmod>2025-03-29</lastmod>
 	</url>
 	<url>
-		<loc>https://cdn.myfi.ws"/test"</loc>
-		<lastmod>2025-03-23</lastmod>
+		<loc>https://cdn.myfi.ws/test</loc>
+		<lastmod>2025-03-29</lastmod>
 	</url>
 	<url>
-		<loc>https://cdn.myfi.ws"/under-construction"</loc>
-		<lastmod>2025-03-23</lastmod>
+		<loc>https://cdn.myfi.ws/under-construction</loc>
+		<lastmod>2025-03-29</lastmod>
 	</url>
 </urlset>

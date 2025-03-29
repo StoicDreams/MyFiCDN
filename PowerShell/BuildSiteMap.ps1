@@ -2,10 +2,10 @@ $domain = "https://cdn.myfi.ws"
 
 $urls = [System.Collections.ArrayList]@();
 
-$appsettings = Get-Content "webapp/root_files/nav.json" -Raw | ConvertFrom-Json
+$appsettings = Get-Content "cdn/nav.json" -Raw | ConvertFrom-Json
 
 if ($appsettings.Length -eq 0) {
-	throw "webapp/root_files/nav.json file not found";
+	throw "cdn/nav.json file not found";
 }
 
 function ProcessNode {

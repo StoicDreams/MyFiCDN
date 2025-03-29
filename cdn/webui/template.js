@@ -1,4 +1,4 @@
-/* Template for open web components. */
+/* Template for Web UI components. */
 "use strict"
 webui.define("webui-template", {
     constructor: (t) => { },
@@ -13,7 +13,7 @@ webui.define("webui-template", {
     disconnectedCallback: function () { }
 });
 
-/* Template for open web components. */
+/* Template for Web UI components. */
 "use strict"
 webui.define("webui-shadow-template", {
     constructor: (t) => { },
