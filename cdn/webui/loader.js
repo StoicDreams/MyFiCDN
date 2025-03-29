@@ -1,5 +1,5 @@
 
-/* This script is used to dynamically load WebUI web components (webui-*) from cdn.myfi.ws and app components (app-*) from the local /wc (webui.appSrc) folder as they are encountered in the dom. */
+/* This script is used to dynamically load Web UI web components (webui-*) from cdn.myfi.ws and app components (app-*) from the local /wc (webui.appSrc) folder as they are encountered in the dom. */
 "use strict"
 const webui = (() => {
     const markdownOptions = {
