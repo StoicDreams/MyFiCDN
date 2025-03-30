@@ -72,7 +72,7 @@
             if (t._initiated && tabIndex === t._index) return;
             let index = 0;
             let foundIndex = false;
-            t.querySelectorAll('[slot="tabs"]').forEach(tab => {
+            Array.from(t.querySelectorAll('[slot="tabs"]')).filter(item=>item.parentNode===t).forEach(tab => {
                 if (tabIndex === index++) {
                     tab.setAttribute('theme', 'active');
                     t._index = index - 1;
@@ -88,7 +88,7 @@
             }
             index = 0;
             foundIndex = false;
-            t.querySelectorAll('[slot="content"]').forEach(_ => {
+            Array.from(t.querySelectorAll('[slot="content"]')).filter(item=>item.parentNode===t).forEach(_ => {
                 if (tabIndex === index++) {
                     let offset = tabIndex * 100;
                     t._slotContent.style.translate = `-${offset}% 0`;
@@ -115,10 +115,10 @@
         },
         render: function () {
             let t = this;
-            let nodes = t.querySelectorAll('[slot="content"]');
+            let nodes = Array.from(t.querySelectorAll('[slot="content"]')).filter(item=>item.parentNode===t);
             t._slotContent.style.setProperty('grid-template-columns', (new Array(nodes.length).fill('100%')).join(' '));
             let tabIndex = 0;
-            t.querySelectorAll('[slot="tabs"]').forEach(node => {
+            Array.from(t.querySelectorAll('[slot="tabs"]')).filter(item=>item.parentNode===t).forEach(node => {
                 const myIndex = tabIndex++;
                 if (!node._isSetup) {
                     node._isSetup = true;
