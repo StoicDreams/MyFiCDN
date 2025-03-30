@@ -44,6 +44,7 @@ const webui = (() => {
     const REJECT_STORAGE_CACHING = '0';
     const ACCEPT_SESSION_STORAGE = '1';
     const ACCEPT_LOCAL_STORAGE = '2';
+    const cachedFetches = {};
     let acceptedStorage = REJECT_STORAGE_CACHING;
     if (localStorage.key(STORAGE_ACCEPTED_KEY) && localStorage.getItem(STORAGE_ACCEPTED_KEY) === ACCEPT_LOCAL_STORAGE) {
         acceptedStorage = ACCEPT_LOCAL_STORAGE;
@@ -328,6 +329,29 @@ const webui = (() => {
                 }
             }
             customElements.define(name, CustomElement, defineOptions);
+        }
+        fetchWithCache(url, isJson) {
+            return new Promise((resolve, reject) => {
+                if (cachedFetches[url]) {
+                    resolve(cachedFetches[url]);
+                } else {
+                    fetch(url).then(res => {
+                        if (isJson) {
+                            res.json().then(json => {
+                                cachedFetches[url] = json;
+                                resolve(json);
+                            });
+                        } else {
+                            res.text().then(text => {
+                                cachedFetches[url] = text;
+                                resolve(text);
+                            });
+                        }
+                    }).catch(ex => {
+                        reject(ex);
+                    });
+                }
+            });
         }
         getData(key) {
             key = key.split(':')[0];
