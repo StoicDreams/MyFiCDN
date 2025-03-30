@@ -131,7 +131,7 @@ const webui = (() => {
     }
     class WebUI {
         appSrc = '/wc';
-        appMin = '.min'
+        appMin = '.min';
         constructor() {
             this._appSettings = appSettings;
             this.storage = new MemStorage();
