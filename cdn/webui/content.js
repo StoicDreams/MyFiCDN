@@ -6,6 +6,7 @@ webui.define("webui-content", {
         t.loadDelay = 300;
     },
     attr: ["src", 'preload', 'load-delay', 'height', 'width'],
+    flags: ['cache'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'height':
@@ -48,7 +49,7 @@ webui.define("webui-content", {
         t.classList.add('loading');
         t._contentLoaded = true;
         try {
-            let content = await fetch(t.src);
+            let content = t.cache ? await webui.fetchWithCache(t.src) :await fetch(t.src);
             if (!content.ok) {
                 t.innerHTML = `Failed to load content from ${t.src}`;
                 return;
