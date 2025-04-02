@@ -192,6 +192,11 @@ const webui = (() => {
             options = options || {};
             options.attr = options.attr || [];
             options.flags = options.flags || [];
+            ['class'].forEach(attr=>{
+                if (options.attr.indexOf(attr) === -1) {
+                    options.attr.push(attr);
+                }
+            });
             let defineOptions = {};
             let shadowTemplate = 0;
             if (options.shadowTemplate) {
@@ -277,8 +282,19 @@ const webui = (() => {
                     return options.attr;
                 }
                 attributeChangedCallback(property, oldValue, newValue) {
+                    let t=this;
                     if (oldValue === newValue) return;
                     property = webui.toCamel(property);
+                    if (['class'].indexOf(property) !== -1) {
+                        property = `_${property}`;
+                    }
+                    if (property === '_class' && t.shadowRoot && t.shadowRoot.childNodes) {
+                        t.shadowRoot.childNodes.forEach(node => {
+                            if (node.nodeName === 'SLOT') {
+                                node.className = newValue;
+                            }
+                        });
+                    }
                     if (options.flags.indexOf(property) !== -1) {
                         webui.setFlag(this, property, newValue);
                     } else {
@@ -289,13 +305,21 @@ const webui = (() => {
                     }
                 }
                 connectedCallback() {
-                    this._isConnected = true;
-                    checkAddedNode(this);
+                    let t=this;
+                    t._isConnected = true;
+                    checkAddedNode(t);
                     if (options.preload) {
-                        this.setAttribute('preload', options.preload);
+                        t.setAttribute('preload', options.preload);
                     }
                     if (typeof options.connected === 'function') {
-                        options.connected(this);
+                        options.connected(t);
+                    }
+                    if (t.shadowRoot && t.shadowRoot && t.shadowRoot.childNodes) {
+                        t.shadowRoot.childNodes.forEach(node=>{
+                            if (node.nodeName === 'SLOT') {
+                                node.classList = t.classList;
+                            }
+                        });
                     }
                 }
                 disconnectedCallback() {
