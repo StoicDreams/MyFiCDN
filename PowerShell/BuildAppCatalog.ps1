@@ -1,17 +1,18 @@
 Set-Location $PSScriptRoot
-Set-Location ../cdn/apps
+Set-Location ../cdn/apps/task-proxy
 
 $appsJsonPath = "apps.json"
 $apps = @{
+    "versions" = @{}
     "win" = @()
     "mac" = @()
     "ubu" = @()
 }
-$domain = "https://cdn.myfi.ws/apps/"
+$domain = "https://cdn.myfi.ws/apps/task-proxy/"
 
 $recordTemplate = @{"name" = "task-proxy_0.1.0_x64-setup.exe";"file" = "https://cdn.myfi.ws/apps/win/0.1.0/nsis/task-proxy_0.1.0_x64-setup.exe";"version" = "0.1.0"}
 
-function Get-AppVersionFromFolderName {
+function GetAppVersionFromFolderName {
     param(
         [string]$folderPath
     )
@@ -23,7 +24,7 @@ function Get-AppVersionFromFolderName {
     return $version
 }
 
-function Add-AppRecord {
+function AddAppRecord {
     param(
         [ref]$apps,
         [string]$os,
@@ -45,7 +46,7 @@ function Add-AppRecord {
     $apps.Value[$os] += $record
 }
 
-function Process-AppDirectory {
+function ProcessAppDirectory {
     param(
         [ref]$apps,
         [string]$os,
@@ -55,7 +56,7 @@ function Process-AppDirectory {
 
     if (Test-Path $path) {
         Get-ChildItem -Path $path -Directory | ForEach-Object {
-            $version = Get-AppVersionFromFolderName -folderPath $_.FullName
+            $version = GetAppVersionFromFolderName -folderPath $_.FullName
             if([string]::IsNullOrEmpty($version)){
                 Write-Warning "Could not get version from folder name $($_.FullName)"
                 return
@@ -66,7 +67,7 @@ function Process-AppDirectory {
                     $name = $_.Name
 
                     $fileVersion = $version
-                    Add-AppRecord -apps $apps -os $os -file $file -name $name -version $fileVersion
+                    AddAppRecord -apps $apps -os $os -file $file -name $name -version $fileVersion
                 }
             }
         }
@@ -75,14 +76,85 @@ function Process-AppDirectory {
     }
 }
 
+function CreateVersionNotes {
+    param(
+        [ref]$apps,
+        [string]$compare,
+        [string]$path
+    )
+    $headers = @{
+        "User-Agent" = "PowerShell"
+    }
+    $response = Invoke-RestMethod -Uri "https://api.github.com/repos/StoicDreams/TaskProxyApp/compare/$compare" -Headers $headers -Method Get
+
+    if ($response) {
+        $markdown = "## Release Notes`n`n"
+        foreach ($commit in $response.commits) {
+            $markdown = "$($markdown)$($commit.commit.message)`n`n"
+        }
+        $markdown | Out-File -FilePath $path -Encoding UTF8
+        $version = $compare.Split('v')[2]
+        Write-Host "Version $version saved to $path"
+        $apps.Value.versions.$version = $path
+    }
+}
+
 # Process Windows apps
-Process-AppDirectory -apps ([ref]$apps) -os "win" -path "win" -fileFilters @("*.exe", "*.msi")
+ProcessAppDirectory -apps ([ref]$apps) -os "win" -path "win" -fileFilters @("*.exe", "*.msi")
 
 # Process macOS apps
-Process-AppDirectory -apps ([ref]$apps) -os "mac" -path "mac" -fileFilters "*.dmg"
+ProcessAppDirectory -apps ([ref]$apps) -os "mac" -path "mac" -fileFilters "*.dmg"
 
 # Process Ubuntu apps
-Process-AppDirectory -apps ([ref]$apps) -os "ubu" -path "ubu" -fileFilters @("*.deb", "*.AppImage")
+ProcessAppDirectory -apps ([ref]$apps) -os "ubu" -path "ubu" -fileFilters @("*.deb", "*.AppImage")
+
+# Build Version files
+$headers = @{
+    "User-Agent" = "PowerShell"
+}
+$response = Invoke-RestMethod -Uri "https://api.github.com/repos/StoicDreams/TaskProxyApp/tags" -Headers $headers -Method Get
+
+if ($response) {
+    $prev = "";
+    $next = "";
+    # Note, latest releases are first
+    $releases = @()
+    $isFirst = $true
+    [array]::Reverse($response)
+    foreach ($tag in $response) {
+        $prev = $next
+        $next = $tag.name
+        if ($isFirst) {
+            $releases += $next
+            $isFirst = $false
+            continue
+        } else {
+            if (Test-Path "win/$($next.Substring(1))") {
+                $releases += $next
+            }
+        }
+    }
+    $isFirst = $true
+    foreach ($tag in $releases) {
+        $prev = $next
+        $next = $tag
+        if ($isFirst) {
+            $isFirst = $false
+            continue;
+        }
+        if ($prev -ne "") {
+            $fileName = "release-$($next.Substring(1)).md"
+            if (!(Test-Path $fileName)) {
+                CreateVersionNotes -apps ([ref]$apps) -compare "$prev...$next" -path $fileName
+            } else {
+                $version = $next.Substring(1)
+                $apps.versions.$version = $fileName
+            }
+        }
+    }
+} else {
+    Write-Host "Failed to fetch tags or no tags available."
+}
 
 $apps | ConvertTo-Json | Out-File -FilePath $appsJsonPath -Encoding UTF8
 Set-Location $PSScriptRoot
