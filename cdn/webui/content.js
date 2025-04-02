@@ -58,7 +58,7 @@ webui.define("webui-content", {
                 t.innerHTML = `Source ${t.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by t component)`;
                 return;
             }
-            if (t.hasAttribute('slot')) {
+            if (t.hasAttribute('slot') || t.hasAttribute('nest')) {
                 t.innerHTML = webui.applyAppDataToContent(body);
             } else {
                 let temp = document.createElement('div');
