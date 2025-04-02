@@ -85,6 +85,7 @@ webui.define("webui-content", {
     },
     shadowTemplate: `
 <slot></slot>
+<link rel="stylesheet" href="https://cdn.myfi.ws/css/webui.min.css">
 <style type="text/css">
 :host {
 --scroll-color: color-mix(in srgb, var(--theme-color) 20%, transparent);
