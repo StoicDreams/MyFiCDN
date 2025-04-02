@@ -279,7 +279,7 @@ const webui = (() => {
                     }
                 }
                 static get observedAttributes() {
-                    return options.attr;
+                    return options.attr.concat(options.flags);
                 }
                 attributeChangedCallback(property, oldValue, newValue) {
                     let t=this;

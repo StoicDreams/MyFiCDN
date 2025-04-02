@@ -49,12 +49,19 @@ webui.define("webui-content", {
         t.classList.add('loading');
         t._contentLoaded = true;
         try {
-            let content = t.cache ? await webui.fetchWithCache(t.src) :await fetch(t.src);
-            if (!content.ok) {
+            let content = null;
+            if (t.cache) {
+                content = await webui.fetchWithCache(t.src);
+            } else {
+                content = await fetch(t.src);
+                content = content.ok ? await content.text() : null;
+            }
+
+            if (!content) {
                 t.innerHTML = `Failed to load content from ${t.src}`;
                 return;
             }
-            let body = await content.text();
+            let body = content;
             if (body.startsWith('<!DOCTYPE')) {
                 t.innerHTML = `Source ${t.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by t component)`;
                 return;
@@ -80,9 +87,10 @@ webui.define("webui-content", {
             }
         } catch (ex) {
             t.innerHTML = `Source ${t.src} failed to load:${ex}`;
+        } finally {
+            t.classList.remove('loading');
+            t.classList.add('loaded');
         }
-        t.classList.remove('loading');
-        t.classList.add('loaded');
     },
     shadowTemplate: `
 <slot></slot>
