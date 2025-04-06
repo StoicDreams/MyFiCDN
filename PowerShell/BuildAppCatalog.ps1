@@ -89,8 +89,19 @@ function CreateVersionNotes {
 
     if ($response) {
         $markdown = "## Release Notes`n`n"
+        $copy = ""
         foreach ($commit in $response.commits) {
-            $markdown = "$($markdown)$($commit.commit.message)`n`n"
+            $messageLines = $commit.commit.message -split "`n"
+            foreach ($line in $messageLines) {
+                if ($line -match "^(feat|fix):") {
+                    $copy = "$($copy)$line`n\n"
+                }
+            }
+        }
+        if ($copy -eq "") {
+            $markdown = "$($markdown)General App improvements"
+        } else {
+            $markdown = "$($markdown)$copy"
         }
         $markdown | Out-File -FilePath $path -Encoding UTF8
         $version = $compare.Split('v')[2]
