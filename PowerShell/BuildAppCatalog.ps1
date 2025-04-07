@@ -55,7 +55,7 @@ function ProcessAppDirectory {
     )
 
     if (Test-Path $path) {
-        Get-ChildItem -Path $path -Directory | ForEach-Object {
+        Get-ChildItem -Path $path -Directory | Sort-Object @{Expression = {[version]$_.Name}} | ForEach-Object {
             $version = GetAppVersionFromFolderName -folderPath $_.FullName
             if([string]::IsNullOrEmpty($version)){
                 Write-Warning "Could not get version from folder name $($_.FullName)"
@@ -141,6 +141,12 @@ if ($response) {
             continue
         } else {
             if (Test-Path "win/$($next.Substring(1))") {
+                $releases += $next
+            }
+            elseif (Test-Path "mac/$($next.Substring(1))") {
+                $releases += $next
+            }
+            elseif (Test-Path "ubu/$($next.Substring(1))") {
                 $releases += $next
             }
         }
