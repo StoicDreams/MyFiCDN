@@ -99,7 +99,7 @@ function CreateVersionNotes {
             }
         }
         if ($copy -eq "") {
-            $markdown = "$($markdown)General App improvements"
+            $markdown = "$($markdown)General App Development`n`nNo notable features, enhancements, or modifications were made for this release."
         } else {
             $markdown = "$($markdown)$copy"
         }
