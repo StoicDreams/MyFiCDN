@@ -5,6 +5,7 @@ webui.define("webui-content", {
     constructor: (t) => {
         t.loadDelay = 300;
     },
+    linkCss: true,
     attr: ["src", 'preload', 'load-delay', 'height', 'width'],
     flags: ['cache'],
     attrChanged: (t, property, value) => {
@@ -94,7 +95,6 @@ webui.define("webui-content", {
     },
     shadowTemplate: `
 <slot></slot>
-<link rel="stylesheet" href="https://cdn.myfi.ws/css/webui.min.css">
 <style type="text/css">
 :host {
 --scroll-color: color-mix(in srgb, var(--theme-color) 20%, transparent);

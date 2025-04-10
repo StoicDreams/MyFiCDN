@@ -15,8 +15,15 @@
                 }
             });
         },
-        attr: ['label', 'title-on', 'title-off', 'icon', 'icon-on', 'icon-off', 'flags-on', 'flags-off', 'data-enabled', 'enabled', 'theme-on', 'theme-off'],
-        attrChanged: (t, _p, _v) => {
+        linkCss: true,
+        attr: ['label', 'title-on', 'title-off', 'icon', 'icon-on', 'icon-off', 'flags-on', 'flags-off', 'data-enabled', 'enabled', 'theme-on', 'theme-off', 'class'],
+        attrChanged: (t, prop, _v) => {
+            console.log(prop, _v);
+            switch (prop) {
+                case '_class':
+                    t._button.classList = t.classList;
+                    break;
+            }
             t.updateElements();
         },
         connected: (t) => {

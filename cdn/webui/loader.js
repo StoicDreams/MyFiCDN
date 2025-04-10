@@ -202,7 +202,11 @@ const webui = (() => {
             if (options.shadowTemplate) {
                 shadowTemplate = document.createElement('template');
                 shadowTemplate.setAttribute('shadowrootmode', true);
-                shadowTemplate.innerHTML = options.shadowTemplate;
+                if (options.linkCss) {
+                    shadowTemplate.innerHTML = `<link rel="stylesheet" href="https://cdn.myfi.ws/css/webui.min.css">${options.shadowTemplate}`;
+                } else {
+                    shadowTemplate.innerHTML = options.shadowTemplate;
+                }
                 delete options.shadowTemplate;
             }
             if (options.watchVisibility && options.attr.indexOf('visible') === -1) {
