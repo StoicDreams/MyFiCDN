@@ -86,6 +86,8 @@ if ($null -ne $version) {
     $rootpath = $rootpath.ToString().ToLower()
     Write-Host Path: "Root Path Start: $rootpath"
 
+    ApplyVersionUpdates .\cdn\webui poweredby.min.js '"version","([0-9\.]+)"' """version"",""$version"""
+    ApplyVersionUpdates .\cdn\webui poweredby.js 'setAttribute\("version", "([0-9\.]+)"\)' "setAttribute(""version"", ""$version"")"
     ApplyVersionUpdates .\cdn\webui version '.*' "$version"
     ApplyVersionUpdates .\ README.md '\[Version: ([0-9\.]+)\]' "[Version: $version]"
 }
