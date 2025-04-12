@@ -30,7 +30,11 @@ webui.define("webui-alert", {
     setValue: function (options) {
         let t = this;
         if (typeof options === 'string') {
-            options = JSON.parse(options);
+            try {
+                options = JSON.parse(options);
+            } catch {
+                options = {text:options};
+            }
         }
         if (!options) {
             t.removeAttribute('show');
