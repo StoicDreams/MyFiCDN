@@ -22,6 +22,9 @@ webui.define("webui-content", {
             case 'visible':
                 t.updateContent();
                 break;
+            case 'src':
+                t.setSrc(value);
+                break;
         }
     },
     connected: (t) => {
@@ -48,13 +51,13 @@ webui.define("webui-content", {
     fetchContent: async function () {
         let t = this;
         if (!t.preload && !t.visible) return;
-        if (t._contentLoaded) return;
+        if (t._contentLoaded && t._contentLoaded === t.src) return;
         if (!t.src) {
             setTimeout(() => t.fetchContent(), 10);
             return;
         }
         t.classList.add('loading');
-        t._contentLoaded = true;
+        t._contentLoaded = t.src;
         try {
             let content = null;
             if (t.cache) {
