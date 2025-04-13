@@ -90,6 +90,7 @@ transform:scaleY(0);
 transition:all 0.4s ease-out allow-discrete;
 background-color:var(--theme-color, inherit);
 color:var(--theme-color-offset, inherit);
+--icon-height:2.5ch;
 }
 :host>div {
 flex-grow:1;
