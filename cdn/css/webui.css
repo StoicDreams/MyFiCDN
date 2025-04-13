@@ -149,6 +149,7 @@ webui-app {
     min-width: 380px;
 }
 
+webui-content>p,
 webui-app>p {
     padding: var(--padding);
 }
@@ -464,6 +465,12 @@ webui-app>h3,
 webui-app>h4,
 webui-app>h5,
 webui-app>h6,
+webui-content>h1,
+webui-content>h2,
+webui-content>h3,
+webui-content>h4,
+webui-content>h5,
+webui-content>h6,
 main h1,
 main h2,
 main h3,
@@ -478,37 +485,49 @@ webui-app>h2,
 webui-app>h3,
 webui-app>h4,
 webui-app>h5,
-webui-app>h6 {
+webui-app>h6,
+webui-content>h1,
+webui-content>h2,
+webui-content>h3,
+webui-content>h4,
+webui-content>h5,
+webui-content>h6 {
     padding: var(--padding);
     font-size: calc(var(--typography-size) * 1.75);
 }
 
-webui-app>h1 {
+webui-app>h1,
+webui-content>h1 {
     background-color: var(--color-title);
     color: var(--color-title-offset);
 }
 
-webui-app>h2 {
+webui-app>h2,
+webui-content>h2 {
     background-color: var(--color-primary);
     color: var(--color-primary-offset);
 }
 
-webui-app>h3 {
+webui-app>h3,
+webui-content>h3 {
     background-color: var(--color-secondary);
     color: var(--color-secondary-offset);
 }
 
-webui-app>h4 {
+webui-app>h4,
+webui-content>h4 {
     background-color: var(--color-tertiary);
     color: var(--color-tertiary-offset);
 }
 
-webui-app>h5 {
+webui-app>h5,
+webui-content>h5 {
     background-color: var(--color-info);
     color: var(--color-info-offset);
 }
 
-webui-app>h6 {
+webui-app>h6,
+webui-content>h6 {
     background-color: var(--color-action);
     color: var(--color-action-offset);
 }
@@ -687,6 +706,7 @@ webui-code:not(.hide-label)>pre[languagetag]:before {
 }
 
 webui-app>webui-paper>pre,
+webui-content>webui-paper>pre,
 main>.paper>pre {
     margin-left: var(--padding);
     margin-right: var(--padding);
