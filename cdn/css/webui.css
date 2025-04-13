@@ -3505,6 +3505,10 @@ webui-drawer[slot="bottom"] webui-stoic-dreams-logo {
     height: 2rem;
 }
 
+.hidden {
+    display: none;
+}
+
 .webui-alerts-popup {
     z-index: 999;
     padding: 2em;
