@@ -42,6 +42,7 @@ webui.define("webui-content", {
     setSrc: function(value) {
       let t=this;
       t.src = value;
+      t._contentLoaded = false;
       t.fetchContent();
     },
     fetchContent: async function () {
