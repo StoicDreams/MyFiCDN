@@ -605,7 +605,7 @@ const webui = (() => {
                     segment[skey] = value;
                 }
             }
-            document.querySelectorAll(`[data-subscribe*="${baseKey}"]`).forEach(sub => {
+            webui.querySelectorAll(`[data-subscribe*="${baseKey}"]`).forEach(sub => {
                 sub.dataset.subscribe.split('|').forEach(k => {
                     let ts = k.split(':')
                     let sections = ts[0].split('.');
@@ -622,6 +622,19 @@ const webui = (() => {
                     }
                 });
             });
+        }
+        querySelectorAll(selector, rootNode = document) {
+            const results = [];
+            rootNode.querySelectorAll(selector).forEach(element => {
+              results.push(element);
+            });
+            rootNode.querySelectorAll('*').forEach(element => {
+              if (element.shadowRoot) {
+                const nestedResults = webui.querySelectorAll(selector, element.shadowRoot);
+                results.push(...nestedResults);
+              }
+            });
+            return results;
         }
         setDefaultData(data, defaultData) {
             if (!data || !defaultData) return data;
@@ -878,6 +891,14 @@ const webui = (() => {
     }
     function handleDataTrigger(ev) {
         let el = ev.srcElement || ev.target || ev;
+        if (ev.composedPath) {
+            for(let path of ev.composedPath()) {
+                if (path.dataset && path.dataset.trigger) {
+                    el = path;
+                    break;
+                }
+            }
+        }
         let key = el.dataset.trigger;
         if (!key) return;
         key.split('|').forEach(key => {
@@ -1040,7 +1061,7 @@ const webui = (() => {
         document.body.addEventListener('input', handleDataTrigger);
         document.body.addEventListener('change', handleDataTrigger);
         document.body.addEventListener('click', ev => {
-            let target = ev.target;
+            let target = ev.composedPath ? ev.composedPath()[0] : ev.target;
             let retValue = true;
             let breakAtEnd = false;
             let applyDynStyles = false;
@@ -1051,7 +1072,11 @@ const webui = (() => {
                 breakAtEnd = true;
             }
             while (!breakAtEnd && target !== document.body && target !== null && target !== undefined) {
-                if (target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'false' && !ev.ctrlKey) {
+                if (!target.hasAttribute) {
+                    target = target.parentNode;
+                    continue;
+                }
+                if (target.hasAttribute && target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'false' && !ev.ctrlKey) {
                     ev.stopPropagation();
                     ev.preventDefault();
                     return false;

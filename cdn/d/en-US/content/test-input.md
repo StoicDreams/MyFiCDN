@@ -19,3 +19,9 @@
         <webui-input-message label="Message Box" data-trigger="test1" data-subscribe="test1"></webui-input-message>
     </webui-flex>
 </webui-side-by-side>
+
+<webui-page-segment>
+
+<app-test></app-test>
+
+</webui-page-segment>
