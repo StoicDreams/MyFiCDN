@@ -108,7 +108,7 @@ transform:scaleY(0);
 button {
 display:inline-flex;
 cursor:pointer;
-padding:0.5em 0em;
+padding:auto 0em;
 align-items:center;
 justify-content:center;
 border:none;
