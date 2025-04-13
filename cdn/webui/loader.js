@@ -2,6 +2,7 @@
 /* This script is used to dynamically load Web UI web components (webui-*) from cdn.myfi.ws and app components (app-*) from the local /wc (webui.appSrc) folder as they are encountered in the dom. */
 "use strict"
 const webui = (() => {
+    const AsyncFunction = (async () => {}).constructor;
     const markdownOptions = {
         gfm: true,
     };
@@ -14,6 +15,7 @@ const webui = (() => {
         'page-path': location.pathname,
         'app-domain': location.hostname.toLowerCase()
     };
+    let isProcessing = false;
     let sessionData = {
         'session-user-role': 0,
         'session-username': 'Guest',
@@ -730,6 +732,42 @@ const webui = (() => {
                 lines.push(l.trim());
             });
             return lines.join('\n');
+        }
+        trySoloProcess(handler, onError) {
+            let t=this;
+            if (typeof handler !== 'function') {
+                console.log('Invalid handler for webui.tryProcessing - expecting function', handler, onError);
+                return;
+            }
+            if (handler.constructor == AsyncFunction) {
+                return async () => {
+                    if (isProcessing) return;
+                    isProcessing = true;
+                    try {
+                        await handler();
+                    } catch (ex) {
+                        if (typeof onError === 'function') {
+                            onError(ex);
+                        }
+                    } finally {
+                        isProcessing = false;
+                    }
+                }
+            } else {
+                return () => {
+                    if (isProcessing) return;
+                    isProcessing = true;
+                    try {
+                        handler();
+                    } catch (ex) {
+                        if (typeof onError === 'function') {
+                            onError(ex);
+                        }
+                    } finally {
+                        isProcessing = false;
+                    }
+                }
+            }
         }
         uuid() {
             try {
