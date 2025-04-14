@@ -65,7 +65,8 @@ white-space:nowrap;
 }
 slot[name="icon"]>svg,
 slot[name="icon"]>img,
-slot[name="icon"]>* {
+slot[name="icon"]>*,
+:host>*[slot="icon"] {
 font-size:inherit;
 max-height:4ch;
 }
