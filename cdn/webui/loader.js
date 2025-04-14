@@ -698,7 +698,7 @@ const webui = (() => {
                     default:
                         return false;
                 }
-                target = target.parentNode;
+                target = target.parentNode || target.host;
             }
         }
         toSnake(key) {
@@ -1073,7 +1073,7 @@ const webui = (() => {
             }
             while (!breakAtEnd && target !== document.body && target !== null && target !== undefined) {
                 if (!target.hasAttribute) {
-                    target = target.parentNode;
+                    target = target.parentNode || target.host;
                     continue;
                 }
                 if (target.hasAttribute && target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'false' && !ev.ctrlKey) {
@@ -1146,7 +1146,7 @@ const webui = (() => {
                     webui.applyDynamicStyles();
                     break;
                 }
-                target = target.parentNode;
+                target = target.parentNode || target.host;
             }
             return retValue;
         });
