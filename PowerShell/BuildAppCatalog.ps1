@@ -93,10 +93,11 @@ function CreateVersionNotes {
         foreach ($commit in $response.commits) {
             $messageLines = $commit.commit.message -split "`n"
             foreach ($line in $messageLines) {
-                $line = $line.Trim().
-                    Replace("feat:", "**Feature:**").
-                    Replace("fix:", "**Fix:**")
-                if ($line -match "^(feat|fix):") {
+                if ($line -match "^(feat|fix|wip):") {
+                    $line = $line.Trim().
+                        Replace("feat:", "**Feature:**").
+                        Replace("fix:", "**Fix:**").
+                        Replace("wip:", "**Work-In-Progress:**")
                     $copy = "$($copy)$line`n\n"
                 }
             }
