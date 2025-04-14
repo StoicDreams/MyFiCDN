@@ -1651,7 +1651,13 @@ webui-nav-link,
     display: block;
     padding: calc(0.1 * var(--padding));
 }
-
+webui-nav-link>a>webui-stoic-dreams-logo,
+webui-nav-link>a>webui-icon,
+webui-nav-link>a>svg,
+webui-nav-link>a>img {
+    max-height: 3.5ch;
+    font-size:1.1em;
+}
 webui-nav-group>webui-nav-link,
 webui-nav-group>webui-nav-group,
 .nav-group>section {
