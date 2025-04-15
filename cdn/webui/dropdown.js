@@ -19,6 +19,7 @@
             t._datasub = webui.create('webui-data');
             t._select.addEventListener('change', _ => {
                 t.dispatchEvent(new Event('change', { bubbles: true }));
+                if (!t._optionsSet) return;
                 t.applyDataChange();
             });
         },
@@ -72,7 +73,7 @@
         applyDataChange: function () {
             let t = this;
             let dn = t.dataset.name;
-            if (!dn) { return; }
+            if (!dn || !t._optionsSet) { return; }
             if (t.hasAttribute('multiple')) {
                 let s = [];
                 t._select.querySelectorAll('option:checked').forEach(option => {
@@ -83,7 +84,7 @@
             } else {
                 let s = t._select.querySelector('option:checked');
                 if (!s) {
-                    webui.setData(dn, {});
+                    webui.setData(dn, '{}');
                 } else {
                     webui.setData(dn, JSON.parse(s.dataset.data || '{}'));
                 }
@@ -125,21 +126,30 @@
                 option.innerHTML = template ? webui.replaceAppData(template, item) : display;
                 t._select.appendChild(option);
             });
-            if (value) {
-                t.value = value;
+            let dn = t.dataset.name;
+            if (dn) {
+                let check=webui.getData(dn);
+                if(check !== undefined) {
+                    value = t.dataset.id ? check[t.dataset.id] : check.id;
+                }
             }
-            if (t.value !== undefined) {
-                let value = `${t.value}`;
+            if (value !== undefined) {
                 let o = t._select.querySelector(`option[value="${value.replace(/\\/g,'\\\\')}"]`);
                 if (o) {
                     o.selected = true;
+                } else {
+                    let first = t._select.querySelector('option');
+                    if (first) {
+                        first.selected = true;
+                    }
                 }
             } else {
                 let first = t._select.querySelector('option');
                 if (first) {
-                    t.value = (t.dataset.id ? first[t.dataset.id] : first.id) || first.value;
+                    first.selected = true;
                 }
             }
+            t._optionsSet = true;
             t.applyDataChange();
         },
         props: {
@@ -150,7 +160,8 @@
         },
         setValue: function (value) {
             let t = this;
-            value = `${t.value}`;
+            if (!t._isConnected || !t._optionsSet) return;
+            value = `${value}`;
             let o = t._select.querySelector(`option[value="${value.replace(/\\/g,'\\\\')}"]`);
             if (!o) {
                 return;

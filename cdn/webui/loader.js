@@ -18,14 +18,12 @@ const webui = (() => {
     const notifyForAppDataChanges = [];
     const notifyForSessionDataChanges = [];
     function notifyAppDataChanged(changeDetails) {
-        console.log('Change detected in appData:', changeDetails);
         notifyForAppDataChanges.forEach(handler=>{
             if (!handler) return;
             handler(changeDetails, appData, watchedAppData);
         });
     }
     function notifySessionDataChanged(changeDetails) {
-        console.log('Change detected in sessionData:', changeDetails);
         notifyForSessionDataChanges.forEach(handler=>{
             if (!handler) return;
             handler(changeDetails, sessionData, watchedSessionData);
@@ -97,11 +95,10 @@ const webui = (() => {
     let debug = false;
     const memStorageCache = {};
     const STORAGE_ACCEPTED_KEY = 'storage_accepted';
-    const REJECT_STORAGE_CACHING = '0';
     const ACCEPT_SESSION_STORAGE = '1';
     const ACCEPT_LOCAL_STORAGE = '2';
     const cachedFetches = {};
-    let acceptedStorage = REJECT_STORAGE_CACHING;
+    let acceptedStorage = ACCEPT_SESSION_STORAGE;
     if (localStorage.key(STORAGE_ACCEPTED_KEY) && localStorage.getItem(STORAGE_ACCEPTED_KEY) === ACCEPT_LOCAL_STORAGE) {
         acceptedStorage = ACCEPT_LOCAL_STORAGE;
         Object.keys(localStorage).forEach(key => {
@@ -131,7 +128,6 @@ const webui = (() => {
     }
     class MemStorage {
         STORAGE_ACCEPTED_KEY = STORAGE_ACCEPTED_KEY;
-        REJECT_STORAGE_CACHING = REJECT_STORAGE_CACHING;
         ACCEPT_SESSION_STORAGE = ACCEPT_SESSION_STORAGE;
         ACCEPT_LOCAL_STORAGE = ACCEPT_LOCAL_STORAGE;
         key(key) {
@@ -179,7 +175,7 @@ const webui = (() => {
             });
         }
         rejectCachedStorage() {
-            acceptedStorage = REJECT_STORAGE_CACHING;
+            acceptedStorage = ACCEPT_SESSION_STORAGE;
             this.setItem(STORAGE_ACCEPTED_KEY, acceptedStorage);
             sessionStorage.clear();
             localStorage.clear();
@@ -399,6 +395,7 @@ const webui = (() => {
                     }
                 }
                 disconnectedCallback() {
+                    this._isConnected = false;
                     if (typeof options.disconnected === 'function') {
                         options.disconnected(this);
                     }
@@ -819,7 +816,7 @@ const webui = (() => {
         trySoloProcess(handler, onError) {
             let t=this;
             if (typeof handler !== 'function') {
-                console.log('Invalid handler for webui.tryProcessing - expecting function', handler, onError);
+                console.error('Invalid handler for webui.tryProcessing - expecting function', handler, onError);
                 return;
             }
             if (handler.constructor == AsyncFunction) {
@@ -969,6 +966,7 @@ const webui = (() => {
                 }
             }
         }
+        if (!el._isConnected) return;
         let key = el.dataset.trigger;
         if (!key) return;
         key.split('|').forEach(key => {
@@ -1002,6 +1000,7 @@ const webui = (() => {
             });
             return toSet;
         }
+        if (!el._isConnected) { return; }
         key.split('|').forEach(key => {
             key = key.trim();
             let a = 0;
@@ -1346,16 +1345,8 @@ const webui = (() => {
         let fetchContent = fetch(fullContentUrl);
         let fetchData = fetch(`${appSettings.pageDataEndpoint}${dataUrl}`);
         appSettings.app.main.classList.add('transition');
-        let timerStart = Date.now();
-        // Clear page data
-        Object.keys(watchedAppData).forEach(key => {
-            let keepKey = key.startsWith('app-') || key.startsWith('session-');
-            if (!keepKey) {
-                webui.setData(key, '');
-            }
-        });
-
         webui.setData('page-path', page);
+        let timerStart = Date.now();
         try {
             let contentResult = await fetchContent;
             if (!contentResult.ok) {
@@ -1366,6 +1357,14 @@ const webui = (() => {
             if (elapsed < 300) {
                 await transitionDelay(300 - elapsed);
             }
+            appSettings.app.setPageContent('', appData, fullContentUrl);
+            // Clear page data
+            Object.keys(watchedAppData).forEach(key => {
+                let keepKey = key.startsWith('app-') || key.startsWith('session-') || ['page-path'].indexOf(key) !== -1;
+                if (!keepKey) {
+                    webui.setData(key, '');
+                }
+            });
             if (body.startsWith(`<!DOCTYPE`)) {
                 throw Error(`Invalid page content loaded from ${fullContentUrl}`);
             }

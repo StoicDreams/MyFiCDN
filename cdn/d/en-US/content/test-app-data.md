@@ -5,7 +5,7 @@
         <webui-input-text theme="info" label="App Test.One" placeholder="One" data-trigger="app-test.one" data-subscribe="app-test.one:value"></webui-input-text>
         <webui-input-text theme="tertiary" label="App Test.Two" placeholder="Two" data-trigger="app-test.two" data-subscribe="app-test.two:value"></webui-input-text>
         <webui-input-text theme="secondary" label="App Test.Three" placeholder="Three" data-trigger="app-test.three" data-subscribe="app-test.three:value"></webui-input-text>
-        <webui-dropdown theme="primary" data-name="test-selected" icon="flask-vial" label="Dropdown Test" newlabel="Select an Option!" data-trigger="app-test.dropdown" data-subscribe="app-test.dropdown" data-options="page-dropdown-test">
+        <webui-dropdown theme="primary" data-name="app-test-selected" icon="flask-vial" label="Dropdown Test" newlabel="Select an Option!" data-trigger="app-test.dropdown" data-subscribe="app-test.dropdown" data-options="page-dropdown-test">
             <option slot="template">{TEMPLATE_NAME}</option>
         </webui-dropdown>
     </webui-flex>
