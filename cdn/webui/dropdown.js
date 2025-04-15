@@ -103,6 +103,7 @@
                 return;
             }
             let template = t._optionTemplate;
+            let value = t.value;
             t._select.innerHTML = '';
             if (t._includeNew) {
                 let option = webui.create('option', { value: t.newid, html: t.newlabel });
@@ -115,7 +116,7 @@
                     id = item.value;
                 }
                 if (id === undefined) {
-                    console.error('webui-dropdown data error: Option is missing id', item);
+                    console.error('webui-dropdown data error: Option is missing value', item);
                     return;
                 }
                 let display = (t.dataset.display ? item[t.dataset.display] : item.display) || item.display || id;
@@ -124,15 +125,18 @@
                 option.innerHTML = template ? webui.replaceAppData(template, item) : display;
                 t._select.appendChild(option);
             });
+            if (value) {
+                t.value = value;
+            }
             if (t.value !== undefined) {
-                let o = t._select.querySelector(`option[value="${t.value}"]`);
+                let o = t._select.querySelector(`option[value="${t.value.replace(/\\/g,'\\\\')}"]`);
                 if (o) {
                     o.selected = true;
                 }
             } else {
                 let first = t._select.querySelector('option');
                 if (first) {
-                    t.value = first.value;
+                    t.value = (t.dataset.id ? first[t.dataset.id] : first.id) || first.value;
                 }
             }
             t.applyDataChange();
@@ -145,7 +149,7 @@
         },
         setValue: function (value) {
             let t = this;
-            let o = t._select.querySelector(`option[value="${value}"]`);
+            let o = t._select.querySelector(`option[value="${value.replace(/\\/g,'\\\\')}"]`);
             if (!o) {
                 return;
             }
