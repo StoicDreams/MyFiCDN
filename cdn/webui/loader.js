@@ -174,12 +174,6 @@ const webui = (() => {
                 sessionStorage.setItem(key, memStorageCache[key]);
             });
         }
-        rejectCachedStorage() {
-            acceptedStorage = ACCEPT_SESSION_STORAGE;
-            this.setItem(STORAGE_ACCEPTED_KEY, acceptedStorage);
-            sessionStorage.clear();
-            localStorage.clear();
-        }
     }
     class WebUI {
         appSrc = '/wc';
