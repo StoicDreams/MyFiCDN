@@ -39,7 +39,7 @@ I confirm that I am using my personal device and that I understand the above sta
         ];
         if (!isDesktopApp) {
             options.splice(0, 0, {
-                name: 'Single Session/Tab Storage (Medium Security)',
+                name: 'Single Session/Tab Storage (Best Security)',
                 theme: btnSesTheme,
                 body: `
 <webui-paper class="pa-1">
