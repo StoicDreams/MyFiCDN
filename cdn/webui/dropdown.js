@@ -113,9 +113,10 @@
                     console.error('webui-dropdown data error: Option is missing id', item);
                     return;
                 }
+                let display = (t.dataset.display ? item[t.dataset.display] : item.display) || item.display || id;
                 let option = webui.create('option', { value: id });
                 option.dataset.data = JSON.stringify(item);
-                option.innerHTML = template ? webui.replaceAppData(template, item) : item.display || id;
+                option.innerHTML = template ? webui.replaceAppData(template, item) : display;
                 t._select.appendChild(option);
             });
             if (t.value !== undefined) {
