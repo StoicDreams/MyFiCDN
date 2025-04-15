@@ -21,14 +21,14 @@ const webui = (() => {
         console.log('Change detected in appData:', changeDetails);
         notifyForAppDataChanges.forEach(handler=>{
             if (!handler) return;
-            handler(changeDetails, watchedAppData);
+            handler(changeDetails, appData, watchedAppData);
         });
     }
     function notifySessionDataChanged(changeDetails) {
         console.log('Change detected in sessionData:', changeDetails);
         notifyForSessionDataChanges.forEach(handler=>{
             if (!handler) return;
-            handler(changeDetails, watchedSessionData);
+            handler(changeDetails, sessionData, watchedSessionData);
         });
     }
     function getHandler(notifyHandler) {
