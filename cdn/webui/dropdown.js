@@ -42,6 +42,11 @@
                     break;
                 case 'label':
                     t._label.innerHTML = value;
+                    if (value) {
+                        t._forLabel.classList.remove('hide');
+                    } else {
+                        t._forLabel.classList.add('hide');
+                    }
                     break;
                 case 'startIcon':
                 case 'icon':
@@ -150,7 +155,7 @@
             t.dispatchEvent(new Event('change', { bubbles: true }));
         },
         shadowTemplate: `
-<label>
+<label class="hide">
 <webui-icon class="start"></webui-icon>
 <slot name="label"></slot>
 <webui-icon class="mid"></webui-icon>
@@ -185,7 +190,7 @@ flex-grow:1;
 padding: var(--padding, 2px 5px);
 height:100%;
 }
-label:empty {display:none;}
+label.hide {display:none;}
 label {
 display:flex;
 align-items:center;
