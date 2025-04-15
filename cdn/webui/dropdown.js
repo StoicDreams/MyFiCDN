@@ -129,7 +129,8 @@
                 t.value = value;
             }
             if (t.value !== undefined) {
-                let o = t._select.querySelector(`option[value="${t.value.replace(/\\/g,'\\\\')}"]`);
+                let value = `${t.value}`;
+                let o = t._select.querySelector(`option[value="${value.replace(/\\/g,'\\\\')}"]`);
                 if (o) {
                     o.selected = true;
                 }
@@ -149,6 +150,7 @@
         },
         setValue: function (value) {
             let t = this;
+            value = `${t.value}`;
             let o = t._select.querySelector(`option[value="${value.replace(/\\/g,'\\\\')}"]`);
             if (!o) {
                 return;

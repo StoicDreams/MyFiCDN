@@ -15,6 +15,59 @@ const webui = (() => {
         'page-path': location.pathname,
         'app-domain': location.hostname.toLowerCase()
     };
+    const notifyForAppDataChanges = [];
+    const notifyForSessionDataChanges = [];
+    function notifyAppDataChanged(changeDetails) {
+        console.log('Change detected in appData:', changeDetails);
+        notifyForAppDataChanges.forEach(handler=>{
+            if (!handler) return;
+            handler(changeDetails, watchedAppData);
+        });
+    }
+    function notifySessionDataChanged(changeDetails) {
+        console.log('Change detected in sessionData:', changeDetails);
+        notifyForSessionDataChanges.forEach(handler=>{
+            if (!handler) return;
+            handler(changeDetails, watchedSessionData);
+        });
+    }
+    function getHandler(notifyHandler) {
+        const handler = {
+            set(target, property, value, receiver) {
+                const oldValue = target[property];
+                const changeType = property in target ? 'update' : 'add';
+                const success = Reflect.set(target, property, value, receiver);
+                if (success && oldValue !== value) {
+                    notifyAppDataChanged({
+                        type: changeType,
+                        property: property,
+                        oldValue: oldValue,
+                        newValue: value,
+                        timestamp: new Date()
+                    });
+                }
+                return success;
+            },
+            deleteProperty(target, property) {
+                if (property in target) {
+                    const oldValue = target[property];
+                    const success = Reflect.deleteProperty(target, property);
+                    if (success) {
+                        notifyHandler({
+                            type: 'delete',
+                            property: property,
+                            oldValue: oldValue,
+                            timestamp: new Date()
+                        });
+                    }
+                    return success;
+                }
+                return true;
+            }
+        };
+        return handler;
+    }
+    const watchedAppData = new Proxy(appData, getHandler(notifyAppDataChanged));
     let isProcessing = false;
     let sessionData = {
         'session-user-role': 0,
@@ -23,6 +76,7 @@ const webui = (() => {
         'session-first-name': 'Guest',
         'session-last-name': ''
     };
+    const watchedSessionData = new Proxy(sessionData, getHandler(notifySessionDataChanged));
     const appSettings = {
         appType: 'website',
         isDesktopApp: false,
@@ -147,6 +201,22 @@ const webui = (() => {
             window.addEventListener('unload', _ => {
                 this.storage.setItem('session-data', JSON.stringify(sessionData));
             });
+        }
+        watchAppDataChanges(handler) {
+            notifyForAppDataChanges.push(handler);
+        }
+        watchSessionDataChanges(handler) {
+            notifyForSessionDataChanges.push(handler);
+        }
+        unwatchAppDataChanges(handler) {
+            let index = notifyForAppDataChanges.indexOf(handler);
+            if (index === -1) return;
+            notifyForAppDataChanges.splice(index,1);
+        }
+        unwatchSessionDataChanges(handler) {
+            let index = notifyForSessionDataChanges.indexOf(handler);
+            if (index === -1) return;
+            notifyForSessionDataChanges.splice(index,1);
         }
         applyAppDataToContent(content, preTrim) {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
@@ -385,7 +455,7 @@ const webui = (() => {
         }
         getData(key) {
             key = key.split(':')[0];
-            let dataContainer = webui.toSnake(key).startsWith('session-') ? sessionData : appData;
+            let dataContainer = webui.toSnake(key).startsWith('session-') ? watchedSessionData : watchedAppData;
             let segments = key.split('.');
             if (segments.length === 1) {
                 key = webui.toSnake(key);
@@ -512,7 +582,7 @@ const webui = (() => {
             if (data) {
                 text = this.replaceData(text, data);
             }
-            [appData, sessionData].forEach(dataContainer => {
+            [watchedAppData, watchedSessionData].forEach(dataContainer => {
                 Object.keys(dataContainer).forEach(key => {
                     let keys = [];
                     keys.push(`{${this.toSnake(key).replace(/-/g, '_').toUpperCase()}}`);
@@ -569,7 +639,7 @@ const webui = (() => {
             key = key.split(':')[0];
             let sections = key.split('.');
             let baseKey = webui.toSnake(sections[0]);
-            let dataContainer = key.startsWith('session-') ? sessionData : appData;
+            let dataContainer = key.startsWith('session-') ? watchedSessionData : watchedAppData;
             if (sections.length === 1) {
                 key = webui.toSnake(key);
                 if (JSON.stringify(dataContainer[key]) === JSON.stringify(value)) {
@@ -1278,7 +1348,7 @@ const webui = (() => {
         appSettings.app.main.classList.add('transition');
         let timerStart = Date.now();
         // Clear page data
-        Object.keys(appData).forEach(key => {
+        Object.keys(watchedAppData).forEach(key => {
             let keepKey = key.startsWith('app-') || key.startsWith('session-');
             if (!keepKey) {
                 webui.setData(key, '');

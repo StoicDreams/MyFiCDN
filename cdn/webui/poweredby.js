@@ -17,7 +17,7 @@ webui.define('webui-poweredby', {
     },
     connected: (t) => {
         if (!t.version) {
-            t.setAttribute("version", "0.11.6");
+            t.setAttribute("version", "0.11.7");
             webui.setData('webui-version', t.getAttribute('version'));
         }
     },
