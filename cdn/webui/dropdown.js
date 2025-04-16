@@ -133,24 +133,8 @@
                     value = t.dataset.id ? check[t.dataset.id] : check.id;
                 }
             }
-            if (value !== undefined) {
-                let o = t._select.querySelector(`option[value="${value.replace(/\\/g,'\\\\')}"]`);
-                if (o) {
-                    o.selected = true;
-                } else {
-                    let first = t._select.querySelector('option');
-                    if (first) {
-                        first.selected = true;
-                    }
-                }
-            } else {
-                let first = t._select.querySelector('option');
-                if (first) {
-                    first.selected = true;
-                }
-            }
             t._optionsSet = true;
-            t.applyDataChange();
+            t.setValue(value);
         },
         props: {
             'value': {
