@@ -98,6 +98,9 @@
             if (options === undefined || options === null || options === '') {
                 options = [];
             }
+            let oJson = JSON.stringify(options);
+            if (oJson === t._oJson) return;
+            t._oJson = oJson;
             let data = options.forEach ? options : JSON.parse(options);
             if (!data.forEach) {
                 console.error('webui-dropdown data error: Invalid data loaded - Expecting an array of data.');

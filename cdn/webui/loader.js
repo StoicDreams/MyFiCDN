@@ -192,22 +192,6 @@ const webui = (() => {
                 this.storage.setItem('session-data', JSON.stringify(sessionData));
             });
         }
-        watchAppDataChanges(handler) {
-            notifyForAppDataChanges.push(handler);
-        }
-        watchSessionDataChanges(handler) {
-            notifyForSessionDataChanges.push(handler);
-        }
-        unwatchAppDataChanges(handler) {
-            let index = notifyForAppDataChanges.indexOf(handler);
-            if (index === -1) return;
-            notifyForAppDataChanges.splice(index,1);
-        }
-        unwatchSessionDataChanges(handler) {
-            let index = notifyForSessionDataChanges.indexOf(handler);
-            if (index === -1) return;
-            notifyForSessionDataChanges.splice(index,1);
-        }
         applyAppDataToContent(content, preTrim) {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
             let pt = typeof preTrim == 'boolean' ? preTrim : undefined;
@@ -479,6 +463,12 @@ const webui = (() => {
                 }
             });
             return this.applyAppDataToContent(html.join('\n'), data);
+        }
+        isEqual(a, b) {
+            if (a === b) return true;
+            if (typeof a !== typeof b) return false;
+            if (a !== a && b !== b) return true;
+            return JSON.stringify(a) === JSON.stringify(b);
         }
         unitIfNumber(input, unit) {
             let num = parseFloat(input);
@@ -852,6 +842,22 @@ const webui = (() => {
                     return v.toString(16);
                 });
             }
+        }
+        watchAppDataChanges(handler) {
+            notifyForAppDataChanges.push(handler);
+        }
+        watchSessionDataChanges(handler) {
+            notifyForSessionDataChanges.push(handler);
+        }
+        unwatchAppDataChanges(handler) {
+            let index = notifyForAppDataChanges.indexOf(handler);
+            if (index === -1) return;
+            notifyForAppDataChanges.splice(index,1);
+        }
+        unwatchSessionDataChanges(handler) {
+            let index = notifyForSessionDataChanges.indexOf(handler);
+            if (index === -1) return;
+            notifyForSessionDataChanges.splice(index,1);
         }
     }
     const webui = new WebUI();
