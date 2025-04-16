@@ -115,7 +115,7 @@
                 t._select.appendChild(option);
             }
             data.forEach(item => {
-                let id = t.dataset.id ? item[t.dataset.id] : item.id;
+                let id = webui.getDefined(item[t.dataset.id], item.id, item.value);
                 if (id === undefined && item.value !== undefined) {
                     id = item.value;
                 }
@@ -133,7 +133,7 @@
             if (dn) {
                 let check=webui.getData(dn);
                 if(check !== undefined) {
-                    value = t.dataset.id ? check[t.dataset.id] : check.id;
+                    value = webui.getDefined(check[t.dataset.id], check.id, check.value);
                 }
             }
             t._optionsSet = true;
