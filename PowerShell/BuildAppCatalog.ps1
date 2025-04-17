@@ -96,8 +96,8 @@ function CreateVersionNotes {
                 if ($line -match "^(feat|fix):") {
                     $line = $line.Trim().
                         Replace("feat:", "**Feature:**").
-                        Replace("fix:", "**Fix:**").
-                    $copy = "$($copy)$line`n\n"
+                        Replace("fix:", "**Fix:**")
+                    $copy = "$($copy)$line`n`n"
                 }
             }
         }
