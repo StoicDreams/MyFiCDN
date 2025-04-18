@@ -797,39 +797,68 @@ const webui = (() => {
             });
             return lines.join('\n');
         }
-        trySoloProcess(handler, onError) {
-            let t=this;
+        async try(handler, onError, onFinally) {
             if (typeof handler !== 'function') {
-                console.error('Invalid handler for webui.tryProcessing - expecting function', handler, onError);
+                console.error('Invalid handler for webui.try - expecting function', handler, onError);
                 return;
             }
-            if (handler.constructor == AsyncFunction) {
-                return async () => {
-                    if (isProcessing) return;
-                    isProcessing = true;
-                    try {
-                        await handler();
-                    } catch (ex) {
-                        if (typeof onError === 'function') {
-                            onError(ex);
-                        }
-                    } finally {
-                        isProcessing = false;
-                    }
+            try {
+                if (handler.constructor == AsyncFunction) {
+                    return await handler();
+                } else {
+                    return handler();
                 }
-            } else {
-                return () => {
-                    if (isProcessing) return;
-                    isProcessing = true;
-                    try {
-                        handler();
-                    } catch (ex) {
-                        if (typeof onError === 'function') {
-                            onError(ex);
-                        }
-                    } finally {
-                        isProcessing = false;
+            } catch (ex) {
+                if (typeof onError === 'function') {
+                    onError(ex);
+                }
+            } finally {
+                if (typeof onFinally === 'function') {
+                    onFinally(ex);
+                }
+            }
+        }
+        async trySoloProcess(handler, onError) {
+            if (typeof handler !== 'function') {
+                console.error('Invalid handler for webui.trySoloProcess - expecting function', handler, onError);
+                return;
+            }
+            if (isProcessing) return;
+            isProcessing = true;
+            try {
+                if (handler.constructor == AsyncFunction) {
+                    return await handler();
+                } else {
+                    return handler();
+                }
+            } catch (ex) {
+                if (typeof onError === 'function') {
+                    onError(ex);
+                }
+            } finally {
+                isProcessing = false;
+            }
+        }
+        eventSoloProcess(handler, onError) {
+            if (typeof handler !== 'function') {
+                console.error('Invalid handler for webui.eventSoloProcess - expecting function', handler, onError);
+                return;
+            }
+            return async () => {
+                if (isProcessing) return;
+                isProcessing = true;
+                try {
+                    if (handler.constructor == AsyncFunction) {
+                        return await handler();
+                    } else {
+                        return handler();
                     }
+                } catch (ex) {
+                    if (typeof onError === 'function') {
+                        onError(ex);
+                    }
+                } finally {
+                    isProcessing = false;
                 }
             }
         }
