@@ -7,7 +7,7 @@ const webui = (() => {
         gfm: true,
     };
     const appDataOnce = [];
-    const appDataLimit = ['app-name','app-company-singular','app-company-possessive','app-domain','app-api'];
+    const appDataLimit = ['app-name','app-company-singular','app-company-possessive','app-domain','app-api','app-not-found-html'];
     const appData = {
         'app-name': 'App',
         'app-company-singular': 'Company',
