@@ -62,7 +62,7 @@ webui.define('webui-nav', {
     },
     buildNav: function (navJson) {
         if (!navJson) return;
-        let nav = JSON.parse(navJson);
+        let nav = typeof navJson === 'string' ? JSON.parse(navJson) : typeof navJson.forEach === 'function' ? navJson : [];
         let t = this;
         t._navData = nav;
         t._buildNav();
