@@ -6,6 +6,8 @@ const webui = (() => {
     const markdownOptions = {
         gfm: true,
     };
+    const appDataOnce = [];
+    const appDataLimit = ['app-name','app-company-singular','app-company-possessive','app-domain','app-api'];
     const appData = {
         'app-name': 'App',
         'app-company-singular': 'Company',
@@ -616,11 +618,18 @@ const webui = (() => {
         }
         setData(key, value) {
             if (!key) return;
-            value = structuredClone(value);
             key = key.split(':')[0];
             let sections = key.split('.');
             let baseKey = webui.toSnake(sections[0]);
+            if (appDataLimit.indexOf(baseKey)!==-1) {
+                if (appDataOnce.indexOf(baseKey) !== -1) {
+                    console.log(`${key} is a reserved key and cannot be set again after initialization`);
+                    return;
+                }
+                appDataOnce.push(baseKey);
+            }
             let dataContainer = key.startsWith('session-') ? watchedSessionData : watchedAppData;
+            value = structuredClone(value);
             if (sections.length === 1) {
                 key = webui.toSnake(key);
                 if (JSON.stringify(dataContainer[key]) === JSON.stringify(value)) {
