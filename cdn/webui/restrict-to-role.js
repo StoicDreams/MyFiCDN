@@ -14,7 +14,7 @@
             t.checkRole();
         },
         connected: (t) => {
-            t.setAttribute('data-subscribe', 'session-user-role:setUserRole');
+            t.addDataset('subscribe', 'session-user-role:setUserRole');
             t.checkRole();
         },
         setSessionUserRole: function (userRole) {

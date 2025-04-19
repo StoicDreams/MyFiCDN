@@ -104,7 +104,7 @@
             }
         },
         connected: (t) => {
-            t.setAttribute('data-subscribe', 'feedback:click');
+            t.addDataset('subscribe', 'feedback:click');
         },
         shadowTemplate: `
 <webui-icon icon="feedback" fill></webui-icon>

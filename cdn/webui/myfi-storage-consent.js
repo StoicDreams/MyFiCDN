@@ -93,7 +93,7 @@ With this storage option, browser data is only stored until you either close you
 `);
         },
         connected: (t) => {
-            t.setAttribute('data-subscribe', `${webui.storage.STORAGE_ACCEPTED_KEY}:setAcceptedKey`);
+            t.addDataset('subscribe', `${webui.storage.STORAGE_ACCEPTED_KEY}:setAcceptedKey`);
             t.render();
         }
     });

@@ -2,12 +2,12 @@
 /* This script is used to dynamically load Web UI web components (webui-*) from cdn.myfi.ws and app components (app-*) from the local /wc (webui.appSrc) folder as they are encountered in the dom. */
 "use strict"
 const webui = (() => {
-    const AsyncFunction = (async () => {}).constructor;
+    const AsyncFunction = (async () => { }).constructor;
     const markdownOptions = {
         gfm: true,
     };
     const appDataOnce = [];
-    const appDataLimit = ['app-name','app-company-singular','app-company-possessive','app-domain','app-api','app-not-found-html'];
+    const appDataLimit = ['app-name', 'app-company-singular', 'app-company-possessive', 'app-domain', 'app-api', 'app-not-found-html'];
     const appData = {
         'app-name': 'App',
         'app-company-singular': 'Company',
@@ -20,13 +20,13 @@ const webui = (() => {
     const notifyForAppDataChanges = [];
     const notifyForSessionDataChanges = [];
     function notifyAppDataChanged(changeDetails) {
-        notifyForAppDataChanges.forEach(handler=>{
+        notifyForAppDataChanges.forEach(handler => {
             if (!handler) return;
             handler(changeDetails, appData, watchedAppData);
         });
     }
     function notifySessionDataChanged(changeDetails) {
-        notifyForSessionDataChanges.forEach(handler=>{
+        notifyForSessionDataChanges.forEach(handler => {
             if (!handler) return;
             handler(changeDetails, sessionData, watchedSessionData);
         });
@@ -240,7 +240,7 @@ const webui = (() => {
             options = options || {};
             options.attr = options.attr || [];
             options.flags = options.flags || [];
-            ['class'].forEach(attr=>{
+            ['class'].forEach(attr => {
                 if (options.attr.indexOf(attr) === -1) {
                     options.attr.push(attr);
                 }
@@ -333,8 +333,35 @@ const webui = (() => {
                 static get observedAttributes() {
                     return options.attr.concat(options.flags);
                 }
+                addDataset(key, value) {
+                    let t = this;
+                    if (t.hasDataset(key, value)) {
+                        webui.log.info('Dataset already has that value', key, value);
+                        return;
+                    }
+                    let ds = t.getAttribute(`data-${key}`);
+                    ds = ds ? ds.split('|') : [];
+                    ds.push(value);
+                    t.setAttribute(`data-${key}`, ds.join('|'));
+                }
+                hasDataset(key, value) {
+                    let t = this;
+                    let ds = t.getAttribute(`data-${key}`);
+                    ds = ds ? ds.split('|') : [];
+                    if (value === undefined) {
+                        return ds.length !== 0;
+                    }
+                    let found = false;
+                    ds.forEach(item => {
+                        let k = item.split(':')[0];
+                        if (k === key) {
+                            found = true;
+                        }
+                    });
+                    return found;
+                }
                 attributeChangedCallback(property, oldValue, newValue) {
-                    let t=this;
+                    let t = this;
                     if (oldValue === newValue) return;
                     property = webui.toCamel(property);
                     if (['class'].indexOf(property) !== -1) {
@@ -357,7 +384,7 @@ const webui = (() => {
                     }
                 }
                 connectedCallback() {
-                    let t=this;
+                    let t = this;
                     t._isConnected = true;
                     checkAddedNode(t);
                     if (options.preload) {
@@ -367,7 +394,7 @@ const webui = (() => {
                         options.connected(t);
                     }
                     if (t.shadowRoot && t.shadowRoot && t.shadowRoot.childNodes) {
-                        t.shadowRoot.childNodes.forEach(node=>{
+                        t.shadowRoot.childNodes.forEach(node => {
                             if (node.nodeName === 'SLOT') {
                                 node.classList = t.classList;
                             }
@@ -472,6 +499,18 @@ const webui = (() => {
             if (a !== a && b !== b) return true;
             return JSON.stringify(a) === JSON.stringify(b);
         }
+        log = (() => {
+            let log = (...args) => console.log(...args);
+            log.assert = (...args) => console.assert(...args);
+            log.info = (...args) => console.info(...args);
+            log.dir = (...args) => console.dir(...args);
+            log.trace = (...args) => console.trace(...args);
+            log.error = (...args) => console.error(...args);
+            log.warn = (...args) => console.warn(...args);
+            log.time = (key) => console.time(key);
+            log.timeEnd = (key) => console.timeEnd(key);
+            return log;
+        })()
         unitIfNumber(input, unit) {
             let num = parseFloat(input);
             if (num === input || `${num}` === input) {
@@ -621,9 +660,9 @@ const webui = (() => {
             key = key.split(':')[0];
             let sections = key.split('.');
             let baseKey = webui.toSnake(sections[0]);
-            if (appDataLimit.indexOf(baseKey)!==-1) {
+            if (appDataLimit.indexOf(baseKey) !== -1) {
                 if (appDataOnce.indexOf(baseKey) !== -1) {
-                    console.log(`${key} is a reserved key and cannot be set again after initialization`);
+                    webui.log.warn(`${key} is a reserved key and cannot be set again after initialization`);
                     return;
                 }
                 appDataOnce.push(baseKey);
@@ -686,13 +725,13 @@ const webui = (() => {
         querySelectorAll(selector, rootNode = document) {
             const results = [];
             rootNode.querySelectorAll(selector).forEach(element => {
-              results.push(element);
+                results.push(element);
             });
             rootNode.querySelectorAll('*').forEach(element => {
-              if (element.shadowRoot) {
-                const nestedResults = webui.querySelectorAll(selector, element.shadowRoot);
-                results.push(...nestedResults);
-              }
+                if (element.shadowRoot) {
+                    const nestedResults = webui.querySelectorAll(selector, element.shadowRoot);
+                    results.push(...nestedResults);
+                }
             });
             return results;
         }
@@ -890,12 +929,17 @@ const webui = (() => {
         unwatchAppDataChanges(handler) {
             let index = notifyForAppDataChanges.indexOf(handler);
             if (index === -1) return;
-            notifyForAppDataChanges.splice(index,1);
+            notifyForAppDataChanges.splice(index, 1);
         }
         unwatchSessionDataChanges(handler) {
             let index = notifyForSessionDataChanges.indexOf(handler);
             if (index === -1) return;
-            notifyForSessionDataChanges.splice(index,1);
+            notifyForSessionDataChanges.splice(index, 1);
+        }
+        wait(milliseconds) {
+            return new Promise(resolve => {
+                setTimeout(resolve, milliseconds);
+            });
         }
     }
     const webui = new WebUI();
@@ -994,17 +1038,24 @@ const webui = (() => {
             sub.click();
         });
     }
-    function handleDataTrigger(ev) {
+    async function handleDataTrigger(ev) {
         let el = ev.srcElement || ev.target || ev;
         if (ev.composedPath) {
-            for(let path of ev.composedPath()) {
+            for (let path of ev.composedPath()) {
                 if (path.dataset && path.dataset.trigger) {
                     el = path;
                     break;
                 }
             }
         }
-        if (!el._isConnected) return;
+        let tick = 0;
+        while (el._isConnected === undefined && ++tick < 100) {
+            await webui.wait(10);
+        }
+        if (!el._isConnected) {
+            webui.log.warn('Unexpected: Element is not connected', tick, el);
+            return;
+        }
         let key = el.dataset.trigger;
         if (!key) return;
         key.split('|').forEach(key => {
@@ -1160,7 +1211,7 @@ const webui = (() => {
     }
     window.addEventListener('popstate', ev => {
         if (ev.state) {
-            console.log("TODO: handle history updates", ev);
+            webui.log.trace("TODO: handle history updates", ev);
         }
     });
 
@@ -1368,6 +1419,14 @@ const webui = (() => {
             setTimeout(() => resolve(), ms);
         });
     }
+    function clearPageData() {
+        Object.keys(watchedAppData).forEach(key => {
+            let keepKey = key.startsWith('app-') || key.startsWith('session-') || ['page-path'].indexOf(key) !== -1;
+            if (!keepKey) {
+                webui.setData(key, '');
+            }
+        });
+    }
     async function loadPage() {
         if (!appSettings.app) {
             setTimeout(() => {
@@ -1396,13 +1455,7 @@ const webui = (() => {
                 await transitionDelay(300 - elapsed);
             }
             appSettings.app.setPageContent('', appData, fullContentUrl);
-            // Clear page data
-            Object.keys(watchedAppData).forEach(key => {
-                let keepKey = key.startsWith('app-') || key.startsWith('session-') || ['page-path'].indexOf(key) !== -1;
-                if (!keepKey) {
-                    webui.setData(key, '');
-                }
-            });
+            clearPageData();
             if (body.startsWith(`<!DOCTYPE`)) {
                 throw Error(`Invalid page content loaded from ${fullContentUrl}`);
             }
@@ -1417,6 +1470,7 @@ const webui = (() => {
             if (elapsed < 300) {
                 await transitionDelay(300 - elapsed);
             }
+            clearPageData();
             appSettings.app.setPageContent('<webui-page-not-found></webui-page-not-found>', appData);
         }
         try {

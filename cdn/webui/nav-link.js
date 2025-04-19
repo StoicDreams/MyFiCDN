@@ -46,6 +46,6 @@ webui.define('webui-nav-link', {
             t.innerHTML = '';
         }
         t.appendChild(t._anchor);
-        t.setAttribute('data-subscribe', 'page-path:setter');
+        t.addDataset('subscribe', 'page-path:setter');
     }
 });

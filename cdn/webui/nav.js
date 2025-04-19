@@ -15,7 +15,7 @@ webui.define('webui-nav', {
     },
     connected: (t) => {
         t.userRole = 0;
-        t.setAttribute('data-subscribe', 'session-user-role:setUserRole');
+        t.addDataset('subscribe', 'session-user-role:setUserRole');
         t._buildNav();
     },
     setUserRole: function (userRole) {
