@@ -4,7 +4,9 @@ const webuiDialog = function (data) {
     return webuiDialog._handler(data);
 }
 {
-    const defaultData = { content: "Missing Content", confirm: "Ok" };
+    const defaultDialogOptions = { content: "Missing Content", confirm: "Ok" };
+    const defaultWaitOptions = { hideclose: true, ignoreBackdropClick: true, content: 'Loading, please wait!' };
+    webui.dialog = webuiDialog;
     webui.define("webui-dialogs", {
         preload: 'icon',
         constructor: (t) => {
@@ -37,18 +39,27 @@ const webuiDialog = function (data) {
             });
             if (!webuiDialog._handler) {
                 webuiDialog._handler = function (data) {
-                    return new Promise((resolve, reject) => {
+                    let promise = new Promise((resolve, reject) => {
                         resetNodes();
-                        data = data || defaultData;
+                        data = data || defaultDialogOptions;
+                        let defaultSet = data.isLoading ? defaultWaitOptions : defaultDialogOptions;
+                        if (data.isLoading) {
+                            data = {...defaultWaitOptions, ...data};
+                        }
                         t._ignoreBackdropClick = !!data.ignoreBackdropClick;
                         t.dialog.style.minWidth = data.minWidth || '';
-                        setContent(t.content, data.content || defaultData.content);
-                        setContent(t.btnCancel, data.cancel || defaultData.cancel);
-                        setContent(t.btnConfirm, data.confirm || defaultData.confirm);
+                        setContent(t.content, data.content || defaultSet.content);
+                        setContent(t.btnCancel, data.cancel || defaultSet.cancel);
+                        setContent(t.btnConfirm, data.confirm || defaultSet.confirm);
                         setContent(t.header, data.title || '');
-                        if (data.hideclose) {
+                        if (data.isLoading) {
+                            t.dialog.classList.add('isloading');
+                        }
+                        else if (data.hideclose) {
+                            t.dialog.classList.remove('isloading');
                             t.dialog.setAttribute('data-hideclose', true);
                         } else {
+                            t.dialog.classList.remove('isloading');
                             t.dialog.removeAttribute('data-hideclose');
                         }
                         close = (canceled) => {
@@ -85,6 +96,10 @@ const webuiDialog = function (data) {
                         });
                         t.dialog.showModal();
                     });
+                    promise.close = ()=>{
+                        close();
+                    };
+                    return promise;
                 };
             }
             function setContent(el, content) {
@@ -209,6 +224,8 @@ color:inherit;
 border-radius:var(--corners);
 }
 button:empty {display:none;}
+dialog.isloading header,
+dialog.isloading footer,
 dialog[data-hideclose] button#dlg-close {
 display:none;
 }
