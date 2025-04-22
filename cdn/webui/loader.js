@@ -391,7 +391,9 @@ const webui = (() => {
                         t.setAttribute('preload', options.preload);
                     }
                     if (typeof options.connected === 'function') {
-                        options.connected(t);
+                        setTimeout(()=>{
+                            options.connected(t);
+                        },1);
                     }
                     if (t.shadowRoot && t.shadowRoot && t.shadowRoot.childNodes) {
                         t.shadowRoot.childNodes.forEach(node => {
