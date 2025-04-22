@@ -28,6 +28,12 @@ webui.define("webui-content", {
         }
     },
     connected: (t) => {
+        if (t.innerHTML) {
+            if (!t.src) {
+                t.src = 'html';
+            }
+            t._contentLoaded = 'html';
+        }
         setTimeout(() => t.updateContent(), 10);
     },
     updateContent: function () {
