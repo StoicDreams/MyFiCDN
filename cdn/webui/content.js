@@ -51,6 +51,7 @@ webui.define("webui-content", {
         }
     },
     setHtml: function(html) {
+        let t = this;
         t.src = 'html';
         t._contentLoaded = 'html';
         t.classList.remove('loading');
