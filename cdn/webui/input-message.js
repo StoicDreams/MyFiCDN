@@ -17,8 +17,9 @@
         let text = el.value;
         let postTab = text.slice(el.selectionEnd, text.length);
         let cursorPos = el.selectionEnd;
-        ev.target.value = text.slice(0, el.selectionStart) + "\t" + postTab;
-        ++cursorPos;
+        let tab=el.getAttribute('tab') || '\t';
+        ev.target.value = text.slice(0, el.selectionStart) + tab + postTab;
+        cursorPos += tab.length;
         el.selectionStart = cursorPos;
         el.selectionEnd = cursorPos;
     }
@@ -62,7 +63,7 @@
             t._field.addEventListener('change', onInput);
             t._field.addEventListener('input', onInput);
         },
-        attr: ['title', 'name', 'autofocus', 'value', 'label', 'placeholder'],
+        attr: ['title', 'name', 'autofocus', 'value', 'label', 'placeholder', 'tab'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'placeholder':
@@ -79,6 +80,9 @@
                     break;
                 case 'value':
                     t._field.value = value;
+                    break;
+                case 'tab':
+                    t._field.setAttribute('tab', value||'  ');
                     break;
             }
         },

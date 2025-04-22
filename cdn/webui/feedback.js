@@ -2,7 +2,7 @@
 "use strict"
 {
     const content = `
-<webui-input-message theme="primary" label="Enter your feedback here!" autofocus></webui-input-message>
+<webui-input-message theme="primary" tab label="Enter your feedback here!" autofocus></webui-input-message>
 <webui-alert id="alert"></webuialert>
 `;
 
