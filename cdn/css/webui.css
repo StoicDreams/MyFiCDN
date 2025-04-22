@@ -3531,6 +3531,7 @@ webui-drawer[slot="bottom"] webui-stoic-dreams-logo {
     height: 2rem;
 }
 
+.hide,
 .hidden {
     display: none;
 }
