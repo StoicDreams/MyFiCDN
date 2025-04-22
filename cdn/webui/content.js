@@ -33,6 +33,8 @@ webui.define("webui-content", {
                 t.src = 'html';
             }
             t._contentLoaded = 'html';
+            t.classList.remove('loading');
+            t.classList.add('loaded');
         }
         setTimeout(() => t.updateContent(), 10);
     },
@@ -59,7 +61,6 @@ webui.define("webui-content", {
         if (!t.preload && !t.visible) return;
         if (t._contentLoaded && t._contentLoaded === t.src) return;
         if (!t.src) {
-            setTimeout(() => t.fetchContent(), 10);
             return;
         }
         t.classList.add('loading');
