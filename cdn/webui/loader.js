@@ -236,6 +236,22 @@ const webui = (() => {
             }
             return el;
         }
+        closest(target, selector) {
+            if (!target) return null;
+            if (target.composedPath instanceof Function) {
+                const path = target.composedPath();
+                for (const el of path) {
+                    if (el instanceof Element && el.matches(selector)) return el;
+                }
+            } else {
+                let el = target;
+                while (el) {
+                    if (el.matches instanceof Function && el.matches(selector)) return el;
+                    el = el.parentNode || el.host;
+                }
+            }
+            return null;
+        }
         define(name, options) {
             options = options || {};
             options.attr = options.attr || [];
