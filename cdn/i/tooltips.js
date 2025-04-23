@@ -35,7 +35,7 @@
 	let tooltipDistancePadding = 30;
 	document.body.addEventListener('click', CloseIfOpen);
 	document.body.addEventListener('input', CloseIfOpen);
-	document.body.addEventListener('mouseover', ev => {
+	document.body.addEventListener('mousemove', ev => {
 		if (!window.tooltipsEnabled) return;
 		let [target, display] = CheckContainersForAriaLabel(ev.composedPath()[0]);
 		if (!target) { CloseIfOpen(); return; }
