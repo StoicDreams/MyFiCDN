@@ -15,7 +15,7 @@
 	function CheckContainersForAriaLabel(target) {
 		while (target && target !== target.parentNode) {
 			if (!target.getAttribute) {
-				target = target.parentNode;
+				target = target.parentNode || target.host;
 				continue;
 			}
 			let title = target.getAttribute('title');
@@ -28,7 +28,7 @@
 			//if (target.ariaLabel) { return [target, target.ariaLabel]; }
 			let ariaLabel = target.getAttribute('aria-label');
 			if (ariaLabel) { return [target, ariaLabel]; }
-			target = target.parentNode;
+			target = target.parentNode || target.host;
 		}
 		return [null, null];
 	}
@@ -37,7 +37,7 @@
 	document.body.addEventListener('input', CloseIfOpen);
 	document.body.addEventListener('mouseover', ev => {
 		if (!window.tooltipsEnabled) return;
-		let [target, display] = CheckContainersForAriaLabel(ev.target);
+		let [target, display] = CheckContainersForAriaLabel(ev.composedPath()[0]);
 		if (!target) { CloseIfOpen(); return; }
 		if (target === capturedElement) { return; }
 		let client = target.getBoundingClientRect();
