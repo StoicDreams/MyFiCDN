@@ -264,7 +264,7 @@ const webui = (() => {
             let defineOptions = {};
             let shadowTemplate = 0;
             if (options.shadowTemplate) {
-                shadowTemplate = document.createElement('template');
+                shadowTemplate = webui.create('template');
                 shadowTemplate.setAttribute('shadowrootmode', true);
                 if (options.linkCss) {
                     shadowTemplate.innerHTML = `<link rel="stylesheet" href="https://cdn.myfi.ws/css/webui.min.css">${options.shadowTemplate}`;
@@ -1544,7 +1544,7 @@ const webui = (() => {
     function loadWebUIComponent(wc) {
         if (wcLoaded[wc]) return;
         wcLoaded[wc] = true;
-        let script = document.createElement('script');
+        let script = webui.create('script');
         script.setAttribute('async', true);
         script.setAttribute('src', `${wcRoot}webui/${wc}${wcMin}.js`)
         document.head.append(script);
@@ -1552,7 +1552,7 @@ const webui = (() => {
     function loadAppComponent(wc) {
         if (appLoaded[wc]) return;
         appLoaded[wc] = true;
-        let script = document.createElement('script');
+        let script = webui.create('script');
         script.setAttribute('async', true);
         script.setAttribute('src', `${webui.appSrc}/${wc}${webui.appMin}.js`)
         document.head.append(script);

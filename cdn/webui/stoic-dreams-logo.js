@@ -3,7 +3,7 @@
 webui.define('webui-stoic-dreams-logo', {
     constructor: (t) => {
         t._slot = t.template.querySelector('slot[name=logo]');
-        let tempDiv = document.createElement('div');
+        let tempDiv = webui.create('div');
         tempDiv.innerHTML = `<svg class="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 150 150" version="1.1" title="">
 <g class="background">
 <path d="M 2158.991216 2528.477009 L 416.929839 2528.477009 C 212.472576 2528.477009 46.822784 2362.788733 46.822784 2158.383846 L 46.822784 416.270769 C 46.822784 211.933098 212.472576 46.177605 416.929839 46.177605 L 2158.991216 46.177605 C 2363.381685 46.177605 2529.098271 211.933098 2529.098271 416.270769 L 2529.098271 2158.383846 C 2529.098271 2362.788733 2363.381685 2528.477009 2158.991216 2528.477009 Z M 2158.991216 2528.477009 " transform="matrix(0.0584818,0,0,0.0581146,0,0.00000113284)"/>

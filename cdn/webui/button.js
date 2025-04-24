@@ -2,6 +2,7 @@
 "use strict"
 webui.define("webui-button", {
     constructor: (t) => {
+        t._label = t.template.querySelector('slot:not([name])');
         t._startIcon = t.template.querySelector('slot[name="start-icon"]');
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
         t.addEventListener('click', _ => {
@@ -35,15 +36,23 @@ webui.define("webui-button", {
             }
         });
     },
-    attr: ['href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family', 'start-icon-class', 'end-icon-class', 'elevation'],
-    attrChanged: (t, property, _value) => {
+    attr: ['label', 'href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family', 'start-icon-class', 'end-icon-class', 'elevation'],
+    attrChanged: (t, property, value) => {
         switch (property) {
+            case 'label':
+                t.childNodes.forEach(node=>{
+                    if (node.nodeName === '#text' || (node.hasAttribute && !node.hasAttribute('slot'))) {
+                        node.remove();
+                    }
+                });
+                t.appendChild(webui.create('span', {html:value}));
+                break;
             case 'startIconClass':
             case 'startIcon':
                 {
                     t.querySelectorAll('[slot="start-icon"]').forEach(n => n.remove());
                     if (!t.startIcon) break;
-                    let ico = document.createElement('webui-icon');
+                    let ico = webui.create('webui-icon');
                     ico.setAttribute('slot', 'start-icon');
                     ico.setAttribute('icon', t.startIcon);
                     if (t.startIconClass) {
@@ -57,7 +66,7 @@ webui.define("webui-button", {
                 {
                     t.querySelectorAll('[slot="end-icon"]').forEach(n => n.remove());
                     if (!t.endIcon) break;
-                    let ico = document.createElement('webui-icon');
+                    let ico = webui.create('webui-icon');
                     ico.setAttribute('slot', 'end-icon');
                     ico.setAttribute('icon', t.endIcon);
                     if (t.endIconClass) {

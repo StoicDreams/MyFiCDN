@@ -41,7 +41,7 @@
     webui.define("webui-fa", {
         constructor: (t) => {
             t.loadid = 0;
-            t.svg = document.createElement('svg');
+            t.svg = webui.create('svg');
             t.icon = "triangle-exclamation";
             t.iconSlot = t.template.querySelector('slot[name=icon]');
             t.countSlot = t.template.querySelector('slot[name=count]');

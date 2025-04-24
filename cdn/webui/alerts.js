@@ -1,8 +1,8 @@
-/* Displays Alert icon and enables webuiAlert(message:string|html, variant:string[success|warning|danger|info]) for displaying popup alerts. */
+/* Displays Alert icon and enables webui.alert(message:string|html, variant:string[success|warning|danger|info]) for displaying popup alerts. */
 "use strict"
 {
     const alertList = [];
-    const popup = document.createElement('section');
+    const popup = webui.create('section');
     popup.classList.add('webui-alerts-popup');
     popup.style.display = 'block';
     popup.style.position = 'fixed';
@@ -15,7 +15,7 @@
     let popupTiming = 5000;
 
     function getAlertHeader() {
-        const container = document.createElement('header');
+        const container = webui.create('header');
         container.style.padding = 'var(--padding)';
         container.setAttribute('slot', 'header');
         container.innerHTML = alertTitle;
@@ -23,7 +23,7 @@
     }
 
     function getAlertContent() {
-        const container = document.createElement('section');
+        const container = webui.create('section');
         container.style.padding = 'var(--padding)';
         if (alertList.length === 0) {
             container.innerHTML = '<webui-alert variant="info" show>You have no alerts at this time.</webui-alert>';
@@ -78,7 +78,7 @@
             t.btnClose = t.template.querySelector('#close');
             if (!window.webuiAlert) {
                 webui.alert = (message, variant) => {
-                    let alert = document.createElement('webui-alert');
+                    let alert = webui.create('webui-alert');
                     if (message.nodeName) {
                         alert.appendChild(message);
                     } else {

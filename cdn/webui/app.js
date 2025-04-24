@@ -3,7 +3,7 @@
 webui.define("webui-app", {
     constructor: (t) => {
         webui.setApp(t);
-        t.dynstyles = document.createElement('style');
+        t.dynstyles = webui.create('style');
         t.dynstyles.setAttribute('type', 'text/css');
         t.headerSlot = t.template.querySelector('slot[name=header]');
         t.contentFooterSlot = t.template.querySelector('slot[name="content-footer"]');
@@ -26,7 +26,7 @@ webui.define("webui-app", {
         this.mainSlot.assignedElements().forEach(node => {
             node.remove();
         });
-        let temp = document.createElement('div');
+        let temp = webui.create('div');
         temp.innerHTML = content;
         temp.childNodes.forEach(node => {
             this.appendChild(node);

@@ -2,7 +2,7 @@
 "use strict"
 webui.define('webui-poweredby', {
     constructor: (t) => {
-        t.anchor = document.createElement('a');
+        t.anchor = webui.create('a');
         t.anchor.setAttribute('href', 'https://webui.stoicdreams.com');
         t.anchor.innerHTML = 'Web UI';
         t.appendChild(t.anchor);
@@ -17,7 +17,7 @@ webui.define('webui-poweredby', {
     },
     connected: (t) => {
         if (!t.version) {
-            t.setAttribute("version", "0.11.21");
+            t.setAttribute("version", "0.11.22");
             webui.setData('webui-version', t.getAttribute('version'));
         }
     },

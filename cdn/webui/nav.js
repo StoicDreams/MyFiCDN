@@ -40,10 +40,10 @@ webui.define('webui-nav', {
             return;
         }
         if (link.url) {
-            el = document.createElement('webui-nav-link');
+            el = webui.create('webui-nav-link');
             el.setAttribute('url', link.url);
         } else if (link.children) {
-            el = document.createElement('webui-nav-group');
+            el = webui.create('webui-nav-group');
             link.children.forEach(child => {
                 t.buildLink(el, child);
             });

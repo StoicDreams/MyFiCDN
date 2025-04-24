@@ -13,7 +13,7 @@ webui.define('webui-link', {
                 {
                     t.querySelectorAll('[slot="start-icon"]').forEach(n => n.remove());
                     if (!value) break;
-                    let ico = document.createElement('webui-icon');
+                    let ico = webui.create('webui-icon');
                     ico.setAttribute('slot', 'start-icon');
                     ico.setAttribute('icon', value);
                     t.appendChild(ico);
@@ -23,7 +23,7 @@ webui.define('webui-link', {
                 {
                     t.querySelectorAll('[slot="end-icon"]').forEach(n => n.remove());
                     if (!value) break;
-                    let ico = document.createElement('webui-icon');
+                    let ico = webui.create('webui-icon');
                     ico.setAttribute('slot', 'end-icon');
                     ico.setAttribute('icon', value);
                     t.appendChild(ico);

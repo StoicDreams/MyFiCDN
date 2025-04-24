@@ -3,9 +3,9 @@
 webui.define('webui-nav-link', {
     preload: 'icon',
     constructor: (t) => {
-        t._anchor = document.createElement('a');
+        t._anchor = webui.create('a');
         t._anchor.classList.add('navlink');
-        t._display = document.createElement('span');
+        t._display = webui.create('span');
         t._anchor.appendChild(t._display);
     },
     attr: ['icon', 'name', 'url'],
@@ -33,7 +33,7 @@ webui.define('webui-nav-link', {
                 break;
             case 'icon':
                 if (!t._icon) {
-                    t._icon = document.createElement('webui-icon');
+                    t._icon = webui.create('webui-icon');
                     t._anchor.insertBefore(t._icon, t._display);
                 }
                 t._icon.setAttribute('icon', value);

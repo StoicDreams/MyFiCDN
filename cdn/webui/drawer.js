@@ -64,7 +64,7 @@
         buildFooterContent: function () {
             this.querySelectorAll('[slot="footer"]').forEach(el => el.remove());
             let content = '';
-            let fb = document.createElement('webui-flex');
+            let fb = webui.create('webui-flex');
             fb.setAttribute('justify', 'center');
             fb.setAttribute('slot', 'footer');
             if (this.dataMoveable) { content += moveableTemplate.split('[ID]').join(this._idselector); }

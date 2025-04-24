@@ -94,7 +94,7 @@ webui.define("webui-content", {
             if (t.hasAttribute('slot') || t.hasAttribute('nest')) {
                 t.innerHTML = webui.applyAppDataToContent(body);
             } else {
-                let temp = document.createElement('div');
+                let temp = webui.create('div');
                 temp.innerHTML = webui.applyAppDataToContent(body);
                 let n = [];
                 let p = t.parentNode;

@@ -3,11 +3,11 @@
 webui.define('webui-nav-group', {
     preload: 'icon',
     constructor: (t) => {
-        t._anchor = document.createElement('a');
+        t._anchor = webui.create('a');
         t._anchor.classList.add('navlink');
-        t._display = document.createElement('span');
+        t._display = webui.create('span');
         t._anchor.appendChild(t._display);
-        t._caret = document.createElement('webui-icon');
+        t._caret = webui.create('webui-icon');
         t._caret.setAttribute('icon', 'caret');
         t._caret.setAttribute('fill', true);
         t._caret.setAttribute('rotate', "180");
@@ -31,7 +31,7 @@ webui.define('webui-nav-group', {
                 break;
             case 'icon':
                 if (!t._icon) {
-                    t._icon = document.createElement('webui-icon');
+                    t._icon = webui.create('webui-icon');
                     t._anchor.insertBefore(t._icon, t._display);
                 }
                 t._icon.setAttribute('icon', value);

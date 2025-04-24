@@ -11,7 +11,7 @@ webui.define("webui-card", {
         if (!t._header) {
             t._header = t.querySelector('slot[name="header"]');
             if (!t._header) {
-                t._header = document.createElement('header');
+                t._header = webui.create('header');
                 t._header.setAttribute('slot', 'header');
             }
         }
@@ -19,7 +19,7 @@ webui.define("webui-card", {
         t._header.className = `theme-${t.theme || 'title'}`;
         t._header.innerHTML = '';
         if (t.avatar) {
-            let a = document.createElement('webui-avatar');
+            let a = webui.create('webui-avatar');
             a.setAttribute('src', t.avatar);
             t._header.appendChild(a);
         }
@@ -27,15 +27,15 @@ webui.define("webui-card", {
             t.style.maxWidth = `${t.width}px`;
             t.style.minWidth = `${(t.width * 0.7)}px`;
         }
-        let n = document.createElement('section');
+        let n = webui.create('section');
         n.classList.add('flex-grow');
         t._header.appendChild(n);
         n.innerHTML = `${t.name || ''}`;
         if (t.link) {
-            let l = document.createElement('a');
+            let l = webui.create('a');
             l.setAttribute('href', t.link);
             t._header.appendChild(l);
-            let li = document.createElement('webui-icon');
+            let li = webui.create('webui-icon');
             l.appendChild(li);
             li.setAttribute('icon', 'arrow-corner-from-square');
         }
