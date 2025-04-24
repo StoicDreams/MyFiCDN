@@ -35,6 +35,18 @@ webui.define('webui-nav-link', {
                 if (!t._icon) {
                     t._icon = webui.create('webui-icon');
                     t._anchor.insertBefore(t._icon, t._display);
+                } else {
+                    t._icon.removeAttribute('backing');
+                    t._icon.removeAttribute('ban');
+                    t._icon.removeAttribute('bordered');
+                    t._icon.removeAttribute('fill');
+                    t._icon.removeAttribute('inverted');
+                    t._icon.removeAttribute('rotate');
+                    t._icon.removeAttribute('shade');
+                    t._icon.removeAttribute('shape');
+                    t._icon.removeAttribute('sharp');
+                    t._icon.removeAttribute('stroke');
+                    t._icon.removeAttribute('theme');
                 }
                 t._icon.setAttribute('icon', value);
                 break;
