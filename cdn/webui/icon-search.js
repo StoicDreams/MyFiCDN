@@ -2,6 +2,7 @@
 {
     const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     webui.define('webui-icon-search', {
+        pipedValue: '',
         preload: "icon dropdown input-range input-text input-message",
         constructor: (t) => {
         },
@@ -151,7 +152,8 @@
                         break;
                 }
             })
-            t._codeSamplePiped.value = `<webui-icon icon="${pipeData.join('|')}"></webui-icon>`;
+            t.pipedValue = pipeData.join('|');
+            t._codeSamplePiped.value = `<webui-icon icon="${t.pipedValue}"></webui-icon>`;
         },
         setIcon: function (icon) {
             let t = this;
