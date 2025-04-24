@@ -154,6 +154,8 @@
             })
             t.pipedValue = pipeData.join('|');
             t._codeSamplePiped.value = `<webui-icon icon="${t.pipedValue}"></webui-icon>`;
+            let ev = new CustomEvent('icon-update',{detail: t.pipedValue});
+            t.dispatchEvent(ev);
         },
         setIcon: function (icon) {
             let t = this;
