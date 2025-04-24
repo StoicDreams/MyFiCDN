@@ -62,7 +62,7 @@ At {APP_COMPANY_SINGULAR}, we take precautions to protect your information. When
 
 When we collect or transfer information, that information is encrypted and transmitted to us in a secure way. You can verify this by looking for a lock icon in the address bar and looking for "https" at the beginning of the address of the web page.
 
-While we use encryption to protect information transmitted online, we also protect your information offline. Only employees who need information to perform a specific job are granted access to personally identifiable information. All of our data is encrypted and secured in Microsoft Azure Cloud storage services, to help assure the highest security standards are in place to protect your data.
+While we use encryption to protect information transmitted online, we also protect your information offline. Only employees who need information to perform a specific job are granted access to personally identifiable information. All of our data is secured in private servers.
 
 </webui-page-segment>
 
@@ -88,9 +88,11 @@ Some of our business partners may use cookies on our websites. However, we have 
 
 <webui-page-segment>
 
+We use Google Analytics to track site usage.
+
 We may share aggregated information with our partners and advertisers. This information is not linked to any personal information that can identify any individual person.
 
-We may partner with other parties to provide specific services (for example, Azure Cloud services.) When the user signs up for these services, we may share names, or other contact information that is necessary for the third party to provide these services. These parties are not allowed to use personally identifiable information except for the purpose of providing these services.
+We may partner with other parties to provide specific services. When the user signs up or opts-in for these services, we may share names, or other contact information that is necessary for the third party to provide these services. These parties are not allowed to use personally identifiable information except for the purpose of providing these services.
 
 </webui-page-segment>
 
