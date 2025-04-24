@@ -39,7 +39,7 @@ const webui = (() => {
                 const changeType = property in target ? 'update' : 'add';
                 const success = Reflect.set(target, property, value, receiver);
                 if (success && oldValue !== value) {
-                    notifyAppDataChanged({
+                    notifyHandler({
                         type: changeType,
                         property: property,
                         oldValue: oldValue,
