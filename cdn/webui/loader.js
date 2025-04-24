@@ -7,15 +7,16 @@ const webui = (() => {
         gfm: true,
     };
     const appDataOnce = [];
-    const appDataLimit = ['app-name', 'app-company-singular', 'app-company-possessive', 'app-domain', 'app-api', 'app-not-found-html'];
+    const appDataLimit = ['app-name', 'app-company-singular', 'app-company-possessive', 'app-domain', 'app-api', 'app-not-found-html', 'app-data-endpoint', 'app-content-endpoint'];
     const appData = {
         'app-name': 'App',
         'app-company-singular': 'Company',
         'app-company-possessive': `Company's`,
+        'app-content-endpoint': '/d/en-US',
+        'app-domain': location.hostname.toLowerCase(),
         'page-title': '',
         'page-subtitle': '',
         'page-path': location.pathname,
-        'app-domain': location.hostname.toLowerCase()
     };
     const notifyForAppDataChanges = [];
     const notifyForSessionDataChanges = [];
@@ -83,7 +84,6 @@ const webui = (() => {
         rootPage: 'root',
         contentExtension: '.md',
         pageContentEndpoint: '/d/en-US',
-        pageDataEndpoint: 'https://api.myfi.ws/data/page/',
         encryptPageContent: false,
         encryptPageData: 'base64'
     };
@@ -1445,6 +1445,18 @@ const webui = (() => {
             }
         });
     }
+    async function fetchRemoteData() {
+        const pageDataEndpoint = webui.getData('app-data-endpoint');
+        if (pageDataEndpoint) {
+            let data = await fetch(`${pageDataEndpoint}${dataUrl}`);
+            if (!data.ok) {
+                webui.log.warn('Returned page data was not ok for %o', dataUrl);
+                return {};
+            }
+            return await data.json();
+        }
+        return {};
+    }
     async function loadPage() {
         if (!appSettings.app) {
             setTimeout(() => {
@@ -1456,9 +1468,9 @@ const webui = (() => {
         let url = page + location.search;
         let dataUrl = encryptUrl(url, appSettings.encryptPageData);
         let contentUrl = encryptUrl(url, appSettings.encryptPageContent);
-        let fullContentUrl = `${appSettings.pageContentEndpoint}${contentUrl}${appSettings.contentExtension}`;
+        let fullContentUrl = `${webui.getData('app-content-endpoint')}${contentUrl}${appSettings.contentExtension}`;
         let fetchContent = fetch(fullContentUrl);
-        let fetchData = fetch(`${appSettings.pageDataEndpoint}${dataUrl}`);
+        let fetchData = fetchRemoteData();
         appSettings.app.main.classList.add('transition');
         webui.setData('page-path', page);
         let timerStart = Date.now();
@@ -1483,7 +1495,7 @@ const webui = (() => {
                 checkNodes(document.body.childNodes);
             }, 100);
         } catch (ex) {
-            console.error('Failed loading page content', ex);
+            webui.log.error('Failed loading page content', ex);
             let elapsed = Date.now() - timerStart;
             if (elapsed < 300) {
                 await transitionDelay(300 - elapsed);
@@ -1492,11 +1504,7 @@ const webui = (() => {
             appSettings.app.setPageContent('<webui-page-not-found></webui-page-not-found>', appData);
         }
         try {
-            let dataResult = await fetchData;
-            if (!dataResult.ok) {
-                throw Error("Returned page data was not ok");
-            }
-            let data = await dataResult.json();
+            let data = await fetchData;
             webui.setData('page-data', data);
             if (!data.forEach) {
                 Object.keys(data).forEach(key => {
