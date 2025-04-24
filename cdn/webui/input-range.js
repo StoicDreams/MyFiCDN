@@ -1,6 +1,7 @@
 /* Display input range field. */
 "use strict"
 webui.define('webui-input-range', {
+    isInput:true,
     constructor: (t) => {
         t.internals = t.attachInternals();
         t._handleFormData = t.handleFormData.bind(t);
@@ -13,13 +14,15 @@ webui.define('webui-input-range', {
         t.addEventListener('click', _ev => {
             t._field.focus();
         });
-        t._field.addEventListener('input', _ev => {
-            t.setAttribute('value', t._field.value);
-            t._valueDisplay.innerText = t._field.value;
+        t._field.addEventListener('input', ev => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            t.setValue(t._field.value);
         });
-        t._field.addEventListener('change', _ev => {
-            t.setAttribute('value', t._field.value);
-            t._valueDisplay.innerText = t._field.value;
+        t._field.addEventListener('change', ev => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            t.setValue(t._field.value);
         });
     },
     attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'placeholder', 'min', 'max', 'step'],
@@ -60,11 +63,21 @@ webui.define('webui-input-range', {
     props: {
         'value': {
             get() { return webui.getDefined(this._field.value, ''); },
-            set(v) { this._field.value = webui.getDefined(v, ''); this.dispatchEvent(new Event('change', { bubbles: true })); }
+            set(v) { this.setValue(v); }
         }
     },
     setValue: function (value) {
-        this.value = value;
+        let t=this;
+        value = webui.getDefined(value, '');
+        if (value === t._value) return;
+        t._value = value;
+        t._valueDisplay.innerText = value;
+        if (t._field.value !== value) {
+            t._field.value = value;
+        }
+        t.setAttribute('value', t._field.value);
+        t.dispatchEvent(new Event('change', { bubbles: true }));
+        t.dispatchEvent(new Event('input', { bubbles: true }));
     },
     connected: (t) => {
         t._valueDisplay.innerText = t._field.value;

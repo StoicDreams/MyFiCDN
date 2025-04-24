@@ -57,7 +57,7 @@
             t._inputSearch = webui.create('webui-input-text', { 'label': `Search / Filter Icons`, value: '', placeholder: "menu" });
             t._iconFlags = webui.create('webui-flex', { name: 'icon-options', justify: 'flex-start', align: 'center', wrap: true, gap: 5, html: `<h6 class="f1">Flags:</h6>` });
             inputsColumn.appendChild(t._iconFlags);
-            function setupDropdown(label, attr, options) {
+            function setupDropdown(key, label, attr, options) {
                 let dd = webui.create('webui-dropdown', { label: label, options: options });
                 inputsColumn.appendChild(dd);
                 dd.addEventListener('change', _ => {
@@ -71,6 +71,7 @@
                     });
                     t.buildIconCode();
                 });
+                t[key] = dd;
             }
             function setupToggleIcon(name, label, flagAttr) {
                 t[name] = webui.create('webui-toggle-icon', { label: label, 'title-on': `Disable ${label}`, 'title-off': `Enable ${label}`, 'theme-on': 'success', 'theme-off': 'shade', 'flags-on': 'fill', 'flags-off': '' });
@@ -86,37 +87,40 @@
                 });
                 t._iconFlags.appendChild(t[name]);
             }
-            setupDropdown('Icon Theme', 'theme', colorOptions);
-            setupDropdown('Shape', 'shape', shapeOptions);
-            setupDropdown('Stroke', 'stroke', JSON.stringify([
+            setupDropdown('_theme', 'Icon Theme', 'theme', colorOptions);
+            setupDropdown('_shape', 'Shape', 'shape', shapeOptions);
+            setupDropdown('_stroke', 'Stroke', 'stroke', JSON.stringify([
                 { value: '', display: 'Regular' },
                 { value: 'thin', display: 'Thin' },
                 { value: 'thick', display: 'Thick' }
             ]));
-            setupDropdown('Shade', 'shade', JSON.stringify([
+            setupDropdown('_shade', 'Shade', 'shade', JSON.stringify([
                 { value: '', display: 'Regular' },
                 { value: 'duo', display: 'Duo' },
                 { value: 'tri', display: 'Trio' }
             ]));
-            let rotate = webui.create('webui-input-range', { label: 'Rotation', min: 0, max: 355, step: 5 });
-            inputsColumn.appendChild(rotate);
-            rotate.addEventListener('input', _ => {
-                let value = rotate.value;
-                icons.forEach(icon => {
-                    if (value > 0) {
-                        icon.setAttribute('rotate', value);
-                    } else {
-                        icon.removeAttribute('rotate');
-                    }
-                    t.buildIconCode();
-                });
-            });
+            t._rotate = webui.create('webui-input-range', { label: 'Rotation', min: 0, max: 355, step: 5 });
+            inputsColumn.appendChild(t._rotate);
+            {
+                function inputUpdated(){
+                    let value = t._rotate.value;
+                    icons.forEach(icon => {
+                        if (value > 0) {
+                            icon.setAttribute('rotate', value);
+                        } else {
+                            icon.removeAttribute('rotate');
+                        }
+                        t.buildIconCode();
+                    });
+                }
+                t._rotate.addEventListener('input', inputUpdated);
+            }
             setupToggleIcon('_backingToggle', 'Backing', 'backing');
             setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
             setupToggleIcon('_fillToggle', 'Fill', 'fill');
-            setupToggleIcon('_borderToggle', 'Bordered', 'bordered');
+            setupToggleIcon('_borderedToggle', 'Bordered', 'bordered');
             setupToggleIcon('_banToggle', 'Ban', 'ban');
-            setupToggleIcon('_invertToggle', 'Inverted', 'inverted');
+            setupToggleIcon('_invertedToggle', 'Inverted', 'inverted');
             t.appendChild(t._inputSearch);
             t._codeSample = webui.create('webui-code', { 'lang': 'html', 'label': `Icon Code` });
             inputsColumn.appendChild(t._codeSample);
@@ -156,6 +160,37 @@
             t._codeSamplePiped.value = `<webui-icon icon="${t.pipedValue}"></webui-icon>`;
             let ev = new CustomEvent('icon-update',{detail: t.pipedValue});
             t.dispatchEvent(ev);
+        },
+        resetOptions: function() {
+            let t=this;
+            ['_backingToggle','_sharpToggle','_fillToggle','_borderedToggle','_banToggle','_invertedToggle'].forEach(toggle=>{
+                t[toggle].value = false;
+            });
+            ['_theme','_shape','_stroke','_shade'].forEach(dd=>{
+                t[dd].value = '';
+            });
+            t._rotate.value = 0;
+        },
+        setIconFromCode: function(pipedValue) {
+            let t = this;
+            t.resetOptions();
+            let pipedData = pipedValue.split('|');
+            let icon=pipedData.shift();
+            t.setIcon(icon);
+            pipedData.forEach(segment=>{
+                if (segment.indexOf(':') !== -1) {
+                    let kv=segment.split(':');
+                    let dd = t[`_${kv[0]}`];
+                    if (dd) {
+                        dd.value = kv[1];
+                    }
+                } else {
+                    let toggle = t[`_${segment}Toggle`];
+                    if (toggle) {
+                        toggle.value = true;
+                    }
+                }
+            });
         },
         setIcon: function (icon) {
             let t = this;
