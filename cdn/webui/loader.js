@@ -938,6 +938,9 @@ const webui = (() => {
                 });
             }
         }
+        watchData(data, handler) {
+            return new Proxy(data, getHandler(handler));
+        }
         watchAppDataChanges(handler) {
             notifyForAppDataChanges.push(handler);
         }

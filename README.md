@@ -1,6 +1,6 @@
 # MyFi CDN
 
-[Version: 0.11.26](https://github.com/StoicDreams/MyFiCDN)
+[Version: 0.11.27](https://github.com/StoicDreams/MyFiCDN)
 
 CDN Services for Stoic Dreams
 
