@@ -201,6 +201,48 @@ const webui = (() => {
         }
         applyDynamicStyles() { }
         applyProperties(t) { }
+        clone(data, seen = new WeakMap) {
+            if (data === null || typeof data !== 'object') return data;
+            if (seen.has(data)) return seen.get(data);
+            let copy;
+            if (data instanceof Date) {
+                copy = new Date(data);
+            } else if (data instanceof RegExp) {
+                copy = new RegExp(data.source, data.flags);
+            } else if (data instanceof Map) {
+                copy = new Map();
+                seen.set(data, copy);
+                data.forEach((value, key) => {
+                    copy.set(webui.clone(key, seen), webui.clone(value, seen));
+                });
+            } else if (data instanceof Set) {
+                copy = new Set();
+                seen.set(data, copy);
+                data.forEach(value => {
+                    copy.add(webui.clone(value, seen));
+                });
+            } else if (Array.isArray(data)) {
+                copy = [];
+                seen.set(data, copy);
+                data.forEach((item, index) => {
+                    copy[index] = webui.clone(item, seen);
+                });
+            } else if (ArrayBuffer.isView(data)) {
+                copy = new data.constructor(data);
+            } else if (data instanceof ArrayBuffer) {
+                copy = data.slice(0);
+            } else {
+                copy = {};
+                seen.set(data, copy);
+                Object.keys(data).forEach(key => {
+                    copy[key] = webui.clone(data[key], seen);
+                });
+                Object.getOwnPropertySymbols(data).forEach(sym => {
+                    copy[sym] = webui.clone(data[sym], seen);
+                });
+            }
+            return copy;
+        }
         create(name, attr) {
             let el = document.createElement(name);
             return this.attachAttributes(el, attr);
