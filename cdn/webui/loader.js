@@ -331,7 +331,7 @@ const webui = (() => {
                             Object.defineProperty(t, key, options.props[key]);
                         });
                     }
-                    t._id = `d${crypto.randomUUID()}`.split('-').join('').toLowerCase();
+                    t._id = `d${webui.uuid()}`.split('-').join('').toLowerCase();
                     t.options = options;
                     if (shadowTemplate) {
                         t.template = shadowTemplate.content.cloneNode(true);
