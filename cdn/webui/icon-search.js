@@ -164,9 +164,11 @@
         resetOptions: function() {
             let t=this;
             ['_backingToggle','_sharpToggle','_fillToggle','_borderedToggle','_banToggle','_invertedToggle'].forEach(toggle=>{
+                if (!t[toggle]) return;
                 t[toggle].value = false;
             });
             ['_theme','_shape','_stroke','_shade'].forEach(dd=>{
+                if (!t[dd]) return;
                 t[dd].value = '';
             });
             t._rotate.value = 0;
