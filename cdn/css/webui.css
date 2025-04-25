@@ -333,7 +333,7 @@ footer>* {
 }
 
 .placeholder::before {
-    content: "Placeholder";
+    content: attr(message, "Placeholder");
 }
 
 .moving {
