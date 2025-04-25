@@ -13,6 +13,7 @@ webui.define('webui-nav-group', {
         t._caret.setAttribute('rotate', "180");
         t._anchor.appendChild(t._caret);
         t._anchor.addEventListener('click', _ev => {
+            if (t.classList.contains('disabled') || t.getAttribute('disabled')) return;
             t.open = !t.open;
             t._caret.setAttribute('rotate', t.open ? '0' : '180');
             if (t.open) {
