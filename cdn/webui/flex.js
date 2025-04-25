@@ -1,6 +1,7 @@
 /* Flex container */
 "use strict"
 webui.define('webui-flex', {
+    linkCss: true,
     constructor: (t) => {
         t._style = t.template.querySelector('style');
     },

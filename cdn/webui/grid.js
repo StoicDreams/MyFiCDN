@@ -1,6 +1,7 @@
 "use strict"
 {
     webui.define('webui-grid', {
+        linkCss: true,
         constructor: (t) => { },
         attr: ['columns', 'min', 'max', 'gap', 'width', 'height'],
         attrChanged: (t, property, value) => {
