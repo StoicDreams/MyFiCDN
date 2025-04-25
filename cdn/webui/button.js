@@ -36,7 +36,7 @@ webui.define("webui-button", {
             }
         });
     },
-    attr: ['label', 'href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family', 'start-icon-class', 'end-icon-class', 'elevation'],
+    attr: ['label', 'align', 'href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family', 'start-icon-class', 'end-icon-class', 'elevation'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'label':
@@ -88,6 +88,7 @@ display: inline-flex;
 flex-flow: row;
 gap: 0.5em;
 align-items: center;
+justify-content: center;
 text-decoration: none;
 padding: calc(1 * var(--padding)) calc(2 * var(--padding));
 border-radius: var(--corners);
@@ -104,6 +105,12 @@ white-space:nowrap;
 }
 :host([wrap]) {
 white-space:wrap;
+}
+:host([align="left"]) {
+justify-content:start;
+}
+:host([align="right"]) {
+justify-content:end;
 }
 :host([disabled]) {
 pointer-events:none;
