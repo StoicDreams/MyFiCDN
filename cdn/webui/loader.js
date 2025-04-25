@@ -610,13 +610,13 @@ const webui = (() => {
         parseMarkdown(md, preTrim) {
             let t = this;
             if (typeof md !== 'string') return md;
-            md = md.replace(/(\r\n|\r)+/mg, '\n');
+            md = md.replace(/(\r\n|\r){1}/mg, '\n');
             if (preTrim) {
                 md = this.trimLinePreWhitespce(md);
             } else {
                 md = this.trimLinePreTabs(md);
             }
-            md = md.replace(/(\n)/mg, '\n\n');
+            md = md.replace(/(\n)/mg, '\n');
             let html = t.marked.parse(md, markdownOptions) || '';
             html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
             return html;
