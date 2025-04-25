@@ -322,6 +322,33 @@ footer>* {
     align-items: center;
 }
 
+.placeholder {
+    display: flex;
+    border: 5px dashed var(--color-info);
+    background-color: var(--theme-color, var(--color-warning));
+    height: 30px;
+    opacity: 0.5;
+    justify-content: center;
+    align-items: center;
+}
+
+.placeholder::before {
+    content: "Placeholder";
+}
+
+.moving {
+    z-index: 1;
+    position: fixed !important;
+    opacity: 0.5;
+    transform: scale(0.8);
+    pointer-events: none;
+    cursor: move;
+}
+
+body.dragging * {
+    pointer-events: none;
+}
+
 [slot="header"]>.image>svg {
     height: 5em;
 }
