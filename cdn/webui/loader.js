@@ -433,7 +433,7 @@ const webui = (() => {
                         });
                     }
                     if (options.flags.indexOf(property) !== -1) {
-                        webui.setFlag(this, property, newValue);
+                        newValue = webui.setFlag(this, property, newValue);
                     } else {
                         webui.setProperty(this, property, newValue);
                     }
@@ -817,8 +817,10 @@ const webui = (() => {
         setFlag(t, property, value) {
             if ([undefined, null, 0, false, 'false', 'null', 'undefined', '0'].indexOf(value) !== -1) {
                 t[property] = false;
+                return false;
             } else {
                 t[property] = true;
+                return true;
             }
         }
         setProperty(t, property, value) {

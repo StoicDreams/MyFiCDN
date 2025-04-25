@@ -14,18 +14,26 @@ webui.define('webui-nav-group', {
         t._anchor.appendChild(t._caret);
         t._anchor.addEventListener('click', _ev => {
             if (t.classList.contains('disabled') || t.getAttribute('disabled')) return;
-            t.open = !t.open;
-            t._caret.setAttribute('rotate', t.open ? '0' : '180');
-            if (t.open) {
-                t._anchor.classList.add('show');
-            } else {
-                t._anchor.classList.remove('show');
-            }
+            t.setShow(!t.open);
         });
     },
+    setShow: function(value) {
+        let t=this;
+        t.open = value;
+        t._caret.setAttribute('rotate', t.open ? '0' : '180');
+        if (t.open) {
+            t._anchor.classList.add('show');
+        } else {
+            t._anchor.classList.remove('show');
+        }
+    },
+    flags: ['show'],
     attr: ['icon', 'name'],
     attrChanged: (t, property, value) => {
         switch (property) {
+            case 'show':
+                t.setShow(value);
+                break;
             case 'name':
                 t._display.innerHTML = value;
                 t._anchor.setAttribute('title', t._display.innerText);
