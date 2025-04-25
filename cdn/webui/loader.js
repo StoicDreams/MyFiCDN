@@ -443,6 +443,15 @@ const webui = (() => {
                 }
                 connectedCallback() {
                     let t = this;
+                    if (t._connectedInit) {
+                        if (typeof options.reconnected === 'function') {
+                            setTimeout(()=>{
+                                options.reconnected(t);
+                            },1);
+                        }
+                        return;
+                    }
+                    t._connectedInit = true;
                     t._isConnected = true;
                     checkAddedNode(t);
                     if (options.preload) {
