@@ -1137,12 +1137,14 @@ const webui = (() => {
             }
         }
         let tick = 0;
-        while (el._isConnected === undefined && ++tick < 100) {
-            await webui.wait(10);
-        }
-        if (!el._isConnected) {
-            webui.log.warn('Unexpected: Element is not connected', tick, el);
-            return;
+        if (el.nodeName.startsWith('APP-') || el.nodeName.startsWith('WEBUI-')) {
+            while (el._isConnected === undefined && ++tick < 100) {
+                await webui.wait(10);
+            }
+            if (!el._isConnected) {
+                webui.log.warn('Unexpected: Element is not connected', tick, el);
+                return;
+            }
         }
         let key = el.dataset.trigger;
         if (!key) return;
@@ -1177,7 +1179,6 @@ const webui = (() => {
             });
             return toSet;
         }
-        if (!el._isConnected) { return; }
         key.split('|').forEach(key => {
             key = key.trim();
             let a = 0;
