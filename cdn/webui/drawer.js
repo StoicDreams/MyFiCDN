@@ -168,6 +168,7 @@ min-width:3rem;
 :host([slot="bottom"]) ::slotted(:not([name])),
 :host([slot="top"]) ::slotted(:not([name])) {
 position:relative;
+flex-direction:row;
 }
 :host([slot="bottom"]) ::slotted([slot="footer"]),
 :host([slot="top"]) ::slotted([slot="footer"]) {
