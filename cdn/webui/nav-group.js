@@ -12,7 +12,11 @@ webui.define('webui-nav-group', {
         t._caret.setAttribute('fill', true);
         t._caret.setAttribute('rotate', "180");
         t._anchor.appendChild(t._caret);
-        t._anchor.addEventListener('click', _ev => {
+        t._anchor.addEventListener('click', ev => {
+            if(webui.closest(t, 'webui-drawer')) {
+                ev.stopPropagation();
+                ev.preventDefault();
+            }
             if (t.classList.contains('disabled') || t.getAttribute('disabled')) return;
             t.setShow(!t.open);
         });

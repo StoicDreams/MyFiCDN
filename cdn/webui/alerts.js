@@ -75,7 +75,6 @@
         constructor: (t) => {
             t.count = 0;
             t.icon = t.template.querySelector('webui-icon');
-            t.btnClose = t.template.querySelector('#close');
             if (!window.webuiAlert) {
                 webui.alert = (message, variant) => {
                     let alert = webui.create('webui-alert');
