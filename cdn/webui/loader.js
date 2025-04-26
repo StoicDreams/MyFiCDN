@@ -197,7 +197,7 @@ const webui = (() => {
         applyAppDataToContent(content, preTrim) {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
             let pt = typeof preTrim == 'boolean' ? preTrim : undefined;
-            return this.parseMarkdown(this.replaceAppData(content, data), pt);
+            return this.parseWebuiMarkdown(this.replaceAppData(content, data), pt);
         }
         applyDynamicStyles() { }
         applyProperties(t) { }
@@ -605,6 +605,20 @@ const webui = (() => {
                     break;
                 }
             }
+            return html;
+        }
+        parseWebuiMarkdown(md, preTrim) {
+            let t = this;
+            if (typeof md !== 'string') return md;
+            md = md.replace(/(\r\n|\r)*/mg, '\n');
+            if (preTrim) {
+                md = this.trimLinePreWhitespce(md);
+            } else {
+                md = this.trimLinePreTabs(md);
+            }
+            md = md.replace(/(\n)/mg, '\n\n');
+            let html = t.marked.parse(md, markdownOptions) || '';
+            html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
             return html;
         }
         parseMarkdown(md, preTrim) {
