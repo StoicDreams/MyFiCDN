@@ -144,8 +144,9 @@ background-color:var(--theme-color);
 color:var(--theme-color-offset);
 }
 slot:not([name]) {
-display:block;
+display:flex;
 flex-grow:1;
+flex-direction:column;
 }
 #actions:empty {display:none;}
 button {
