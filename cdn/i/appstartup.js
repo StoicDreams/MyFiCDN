@@ -6,7 +6,7 @@
  * */
 window.DomInterop = (() => {
 	'use strict';
-
+	console.error("%o and its associated files are being deprecated and will be deleted in the near future. Please take action to move associated files to your own hosting servers if you wish to continue using them.", 'https://cdn.myfi.ws/i/appstartup.js');
 	window.DebugEnabled = false;
 	window.GetActiveElementName = () => document.activeElement.nodeName;
 	if (!(function RedirectIfNotSecure() {
@@ -25,8 +25,7 @@ window.DomInterop = (() => {
 	const cdnhost = parentDomain == 'myfi.ws' ? origin : `https://cdn.myfi.ws`;
 	(function LoadCSSFilesFromCDN() {
 		[
-			'i/framework.css',
-			'fa/css/all.css'
+			'i/framework.css'
 		].forEach(url => {
 			let link = document.createElement('link');
 			link.rel = "stylesheet";
