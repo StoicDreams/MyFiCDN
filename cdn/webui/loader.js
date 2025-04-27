@@ -568,6 +568,29 @@ const webui = (() => {
             if (a !== a && b !== b) return true;
             return JSON.stringify(a) === JSON.stringify(b);
         }
+        isTextOverflowing(el) {
+            return el.scrollWidth > el.clientWidth + 1;
+        }
+        limitChars(text, limit) {
+            if (!text || !text.length || text.length <= limit) return text;
+            let words=text.split(' ');
+            let count=0;
+            let result = [];
+            result.push(words.unshift());
+            function addWord(word) {
+                count += word.length;
+                result.push(word);
+            }
+            addWord(words.unshift());
+            while(words.length > 0) {
+                let word = words.unshift();
+                if (count + word.length > limit) {
+                    break;
+                }
+                addWord(words.unshift());
+            }
+            return result.join(' ');
+        }
         log = (() => {
             let log = (...args) => console.log(...args);
             log.assert = (...args) => console.assert(...args);
@@ -1712,6 +1735,70 @@ const webui = (() => {
     })();
     return webui;
 })();
+
+setTimeout(() => {
+	'use strict';
+	window.tooltipsEnabled = true;
+	const Tooltip = webui.create('div');
+	Tooltip.className = 'tooltip closed';
+	let capturedElement = null;
+	document.body.appendChild(Tooltip);
+	let isShowing = false;
+	function CloseIfOpen() {
+		if (!isShowing) { return; }
+		isShowing = false;
+		capturedElement = null;
+		Tooltip.className = 'tooltip closed';
+	}
+	function CheckContainersForAriaLabel(target) {
+		while (target && target !== target.parentNode) {
+			if (!target.getAttribute) {
+				target = target.parentNode || target.host;
+				continue;
+			}
+			let title = target.getAttribute('title');
+			if (title && title != 'null') {
+				target.setAttribute('aria-label', title);
+				target.removeAttribute('title');
+			} else if (title === 'null') {
+				target.removeAttribute('title');
+			}
+			//if (target.ariaLabel) { return [target, target.ariaLabel]; }
+			let ariaLabel = target.getAttribute('aria-label');
+			if (ariaLabel) { return [target, ariaLabel]; }
+			target = target.parentNode || target.host;
+		}
+		return [null, null];
+	}
+	let tooltipDistancePadding = 30;
+	document.body.addEventListener('click', CloseIfOpen);
+	document.body.addEventListener('input', CloseIfOpen);
+	document.body.addEventListener('mousemove', ev => {
+		if (!window.tooltipsEnabled) return;
+		let [target, display] = CheckContainersForAriaLabel(ev.composedPath()[0]);
+		if (!target) { CloseIfOpen(); return; }
+		if (target === capturedElement) { return; }
+		let client = target.getBoundingClientRect();
+		isShowing = true;
+        let targetDisplay = `${target.innerText}`.trim();
+        if (targetDisplay === display && !webui.isTextOverflowing(target)) {
+            return;
+        }
+		capturedElement = target;
+		Tooltip.innerText = display;
+		Tooltip.className = 'tooltip open';
+		let myposition = {
+			x: client.left + (client.width / 2) - (Tooltip.clientWidth / 2),
+			y: client.top - tooltipDistancePadding
+		};
+		if (myposition.x + Tooltip.clientWidth > window.innerWidth) { myposition.x = window.innerWidth - Tooltip.clientWidth - 10; }
+		if (myposition.x < 0) { myposition.x = 10; }
+		if (myposition.y < 0) { myposition.y = client.top + client.height; }
+
+		Tooltip.style.left = `${myposition.x}px`;
+		Tooltip.style.top = `${myposition.y}px`;
+	});
+}, 1000);
 
 /**
 * marked v13.0.0 - a markdown parser
