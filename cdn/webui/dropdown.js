@@ -178,7 +178,9 @@ box-sizing:border-box;
 align-items: center;
 width:100%;
 width:-webui-fill-available;
-background-color:var(--theme-color);
+--theme-color:white;
+--theme-color-offset:black;
+background-color: color-mix(in srgb, var(--theme-color) 90%, black);
 color:var(--theme-color-offset);
 }
 :host([stack]) {
@@ -193,6 +195,9 @@ display:block;
 flex-grow:1;
 padding: var(--padding, 2px 5px);
 height:100%;
+background-color:var(--theme-color);
+color:var(--theme-color-offset);
+border-radius:var(--corners);
 }
 label.hide {display:none;}
 label {
