@@ -736,8 +736,8 @@ main>.paper>pre {
 
 code {
     display: inline;
-    background-color: var(--color-theme);
-    color: var(--color-theme-offset);
+    background-color: var(--theme-color, inherit);
+    color: var(--theme-color-offset, inherit);
     border-radius: var(--corners);
     outline: 1.5px solid var(--theme);
     white-space: pre-wrap;
