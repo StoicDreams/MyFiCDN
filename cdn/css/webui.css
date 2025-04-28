@@ -1,5 +1,4 @@
 @charset "UTF-8";
-
 :root {
     --fa-default-family: regular;
     --icon-transition-duration: 400ms;
@@ -127,23 +126,19 @@
     --theme-padding: var(--padding);
     --theme-border-width: 1px;
 }
-
 * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
 *:not(:defined) {
     opacity: 0;
 }
-
 webui-condition:not(:has(*:not([slot]))),
 webui-page-requires,
 webui-data,
 webui-data-loader {
     display: none;
 }
-
 webui-app {
     animation: animation-fadein 400ms ease-out;
     min-width: 380px;
@@ -676,8 +671,8 @@ pre,
 .auto_message_box {
     display: grid;
     position: relative;
-    background-color: var(--color-black);
-    color: var(--color-white);
+    background-color: var(--theme-color, var(--color-black));
+    color: var(--theme-color-offset, var(--color-white));
 }
 
 webui-code {
@@ -754,8 +749,8 @@ pre>code {
     position: relative;
     z-index: 1;
     padding: var(--padding);
-    background-color: inherit;
-    color: inherit;
+    background-color: var(--theme-color, inherit);
+    color: var(--theme-color-offset, inherit);
     height: 100%;
     overflow: auto;
     --line-height: 1.3em;
