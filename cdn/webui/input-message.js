@@ -63,9 +63,15 @@
             t._field.addEventListener('change', onInput);
             t._field.addEventListener('input', onInput);
         },
-        attr: ['title', 'name', 'autofocus', 'value', 'label', 'placeholder', 'tab'],
+        attr: ['title', 'name', 'autofocus', 'value', 'label', 'placeholder', 'tab', 'height', 'max-height'],
         attrChanged: (t, property, value) => {
             switch (property) {
+                case 'height':
+                    t.style.height = webui.pxIfNumber(value);
+                    break;
+                case 'maxHeight':
+                    t.style.maxHeight = webui.pxIfNumber(value);
+                    break;
                 case 'placeholder':
                     t._field.setAttribute('placeholder', value);
                     break;
@@ -116,6 +122,7 @@ position:relative;
 min-height:3em;
 box-sizing:border-box;
 border:var(--theme-border-width) solid var(--theme-color);
+overflow:auto;
 }
 textarea {
 display:block;

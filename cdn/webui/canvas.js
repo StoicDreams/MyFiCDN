@@ -1,6 +1,6 @@
 "use strict"
 {
-    webui.define("webui-html-to-canvas", {
+    webui.define("webui-canvas", {
         linkCss: false,
         watchVisibility: false,
         isInput: false,
@@ -14,7 +14,8 @@
             t._visibleLines = 0;
             t._contentHeight = 0;
         },
-        attr: ['height','max-height'],
+        flags: ['line-numbers'],
+        attr: ['height','max-height', 'alt-color'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'height':
@@ -24,14 +25,35 @@
                     t.style.maxHeight = webui.pxIfNumber(value);
                     break;
             }
+            t.updateCanvas();
         },
-        setHTML: function(html){
+        setLines(lines) {
+            const t = this;
+            t._lines = lines || [];
+            t._lines.push({});
+            t._textLines = lines.join('\n');
+            t.wrapAllLines();
+            t._contentHeight = t._wrappedLines.length * t._lineHeight;
+            t.updateCanvas();
+        },
+        setFromText: function(text) {
+            const t=this;
+            if (text === t._textLines) return;
+            let lines = text.split(/\r?\n/).map(line=>{
+                return {line:line};
+            });
+            t.setLines(lines);
+        },
+        setFromHTML: function(html){
             const t=this;
             const div = webui.create('div');
             div.innerHTML = html;
             let text = div.textContent || div.innerText || '';
             if (text === t._textLines) return;
-            t._textLines = text.split(/\r?\n/);
+            let lines = text.split(/\r?\n/).map(line=>{
+                return {line:line};
+            });
+            t.setLines(lines);
         },
         render: function() {
             const t=this;
@@ -41,46 +63,74 @@
         },
         wrapAllLines() {
             const t = this;
-            t._ctx.font = t._font;
-            const maxWidth = t._canvas.width - 20;
+            t._ctx.font = getComputedStyle(t).font;
+            const maxWidth = t._canvas.width - 50;
             t._wrappedLines = [];
-            for (let line of t._textLines) {
-                let words = line.split(/\s+/);
+            for (let lineObj of t._lines) {
+                if (!lineObj || lineObj.line === undefined) {
+                    t._wrappedLines.push({ lineObj });
+                    continue;
+                }
+                let words = lineObj.line.split(/\s+/);
                 let currentLine = '';
                 for (let word of words) {
                     const testLine = currentLine + word + ' ';
                     const metrics = t._ctx.measureText(testLine);
                     if (metrics.width > maxWidth && currentLine !== '') {
-                        t._wrappedLines.push(currentLine.trim());
+                        t._wrappedLines.push({ text: currentLine.trim(), lineObj });
                         currentLine = word + ' ';
                     } else {
                         currentLine = testLine;
                     }
                 }
                 if (currentLine) {
-                    t._wrappedLines.push(currentLine.trim());
+                    t._wrappedLines.push({ text: currentLine.trim(), lineObj });
                 }
             }
         },
         updateCanvas: function() {
             const t = this;
-            t._font = getComputedStyle(t).font;
+            if (!t._wrappedLines) return;
+            const ctx = t._ctx;
             const height = t._canvas.height;
             const width = t._canvas.width;
-            t._ctx.clearRect(0, 0, width, height);
+            ctx.clearRect(0, 0, width, height);
             const startLine = Math.floor(t._scrollTop / t._lineHeight);
             const endLine = Math.min(startLine + t._visibleLines, t._wrappedLines.length);
-            t._ctx.fillStyle = '#24292e';
-            t._ctx.font = t._font;
+            ctx.font = t._font;
+            let digits = t._lines.length.toString().length;
+            let padLeft = t.lineNumbers ? t._ctx.measureText(webui.repeat('0',digits)).width + 10 : 5;
             for (let i = startLine; i < endLine; i++) {
                 const y = (i - startLine) * t._lineHeight + t._lineHeight;
-                t._ctx.fillText(t._wrappedLines[i], 10, y);
+                const entry = t._wrappedLines[i];
+                const style = entry.lineObj || {};
+                const textColor = style.color || '#24292e';
+                const backgroundColor = style.background || (i%2==1 ? t.altColor : null);
+                const showLineNumber = t.lineNumbers && entry.text !== undefined;
+
+                if (backgroundColor) {
+                    ctx.fillStyle = backgroundColor;
+                    ctx.fillRect(0, y - t._lineHeight + 4, width, t._lineHeight);
+                }
+
+                if (showLineNumber) {
+                    ctx.fillStyle = '#999';
+                    let pad = digits - i.toString().length;
+                    ctx.fillText((i + 1).toString().padStart(pad, ' '), 4, y);
+                }
+
+                ctx.fillStyle = textColor;
+                ctx.fillText(entry.text || '', padLeft, y);
             }
-            if (t._contentHeight > height) {
-                const scrollbarHeight = Math.max((height / t._contentHeight) * height, 20);
-                const scrollbarY = (t._scrollTop / t._contentHeight) * height;
-                t._ctx.fillStyle = '#c0c0c0';
-                t._ctx.fillRect(width - 8, scrollbarY, 6, scrollbarHeight);
+            if (t._contentHeight > t._canvas.height) {
+                const viewHeight = t._canvas.height;
+                const contentHeight = t._contentHeight;
+                const scrollbarHeight = Math.max((viewHeight / contentHeight) * viewHeight, 20);
+                const scrollbarY = (t._scrollTop / contentHeight) * viewHeight;
+                const scrollbarX = t._canvas.width - 14;
+
+                ctx.fillStyle = '#c0c0c0';
+                ctx.fillRect(scrollbarX, scrollbarY, 14, scrollbarHeight);
             }
         },
         onScroll: function(e) {
@@ -88,9 +138,10 @@
             t._scrollTop = t.scrollTop;
             t.updateCanvas();
         },
-        copyText: function() {
-            let t=this;
-            navigator.clipboard.writeText(t._textLines.join('\n'));
+        copyText() {
+            const t = this;
+            const allText = t._lines.map(l => l.line || '').join('\n');
+            navigator.clipboard.writeText(allText);
         },
         onWheel(e) {
             const t = this;

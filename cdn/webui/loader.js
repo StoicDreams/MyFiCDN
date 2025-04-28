@@ -421,6 +421,7 @@ const webui = (() => {
                 attributeChangedCallback(property, oldValue, newValue) {
                     let t = this;
                     if (oldValue === newValue) return;
+                    let propDefined = property;
                     property = webui.toCamel(property);
                     if (['class'].indexOf(property) !== -1) {
                         property = `_${property}`;
@@ -432,7 +433,7 @@ const webui = (() => {
                             }
                         });
                     }
-                    if (options.flags.indexOf(property) !== -1) {
+                    if (options.flags.indexOf(propDefined) !== -1 || options.flags.indexOf(property) !== -1) {
                         newValue = webui.setFlag(this, property, newValue);
                     } else {
                         webui.setProperty(this, property, newValue);
@@ -704,6 +705,15 @@ const webui = (() => {
             tr.forEach(n => {
                 n.remove();
             });
+        }
+        repeat(digit, length) {
+            if (!length) return '';
+            let digits = [];
+            let index = 0;
+            while(index++ < length) {
+                digits.push(digit);
+            }
+            return digits.join('');
         }
         replaceAppData(text, data) {
             if (typeof text !== 'string') return text;
