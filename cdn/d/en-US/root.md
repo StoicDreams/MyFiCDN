@@ -46,6 +46,8 @@
     <webui-content slot="content" src="/d/en-US/content/grid.md"></webui-content>
     <webui-button align="left" slot="tabs">Dynamic Tabs</webui-button>
     <webui-content slot="content" src="/d/en-US/content/dynamic-tabs.md"></webui-content>
+    <webui-button align="left" slot="tabs">HTML to Canvas</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/test-html-to-canvas.md"></webui-content>
 </webui-tabs>
 
 <webui-data data-page-loaded="1"></webui-data>
