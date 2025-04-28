@@ -44,7 +44,7 @@
 display:grid;
 background-color:color-mix(in srgb, var(--theme-color) 90%, white);
 color:var(--theme-color-offset);
-grid-auto-rows: min-content auto;
+grid-auto-rows: min-content;
 grid-template-columns: var(--columns);
 gap:var(--padding);
 ::slotted(*) {

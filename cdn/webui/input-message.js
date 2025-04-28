@@ -128,10 +128,12 @@ font:inherit;
 resize: none;
 outline: none;
 border:none;
+flex-grow:1;
 }
 webui-flex {
 border: 1px solid var(--theme);
 background-color: var(--theme);
+min-height:100%;
 }
 label {
 display:block;
