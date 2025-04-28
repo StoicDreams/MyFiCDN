@@ -742,6 +742,7 @@ code {
     outline: 1.5px solid var(--theme);
     white-space: pre-wrap;
     overflow: hidden;
+    word-break: break-all;
 }
 
 pre>code {
