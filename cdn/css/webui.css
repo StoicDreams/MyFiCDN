@@ -4,7 +4,9 @@
     --icon-transition-duration: 400ms;
     --color-black: #101010FF;
     --color-white: #FFFFFFFF;
-    --color-transparent: inherit;
+    --color-transparent-text: inherit;
+    --color-transparent-text-offset: transparent;
+    --color-transparent: transparent;
     --color-transparent-offset: transparent;
     --color-black-offset: var(--color-white);
     --color-white-offset: var(--color-black);
