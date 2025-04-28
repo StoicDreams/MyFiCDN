@@ -100,12 +100,19 @@
             ctx.font = t._font;
             let digits = t._lines.length.toString().length;
             let padLeft = t.lineNumbers ? t._ctx.measureText(webui.repeat('0',digits)).width + 10 : 5;
+            function correctColor(color) {
+                if (!color) return color;
+                if (color.startsWith('--')) {
+                    return getComputedStyle(t).getPropertyValue(color);
+                }
+                return color;
+            }
             for (let i = startLine; i < endLine; i++) {
                 const y = (i - startLine) * t._lineHeight + t._lineHeight;
                 const entry = t._wrappedLines[i];
                 const style = entry.lineObj || {};
-                const textColor = style.color || '#24292e';
-                const backgroundColor = style.background || (i%2==1 ? t.altColor : null);
+                const textColor = correctColor(style.color || '--theme-color-offset');
+                const backgroundColor = correctColor(style.background || (i%2==1 ? t.altColor : '--theme-color'));
                 const showLineNumber = t.lineNumbers && entry.text !== undefined;
 
                 if (backgroundColor) {
@@ -114,9 +121,8 @@
                 }
 
                 if (showLineNumber) {
-                    ctx.fillStyle = '#999';
-                    let pad = digits - i.toString().length;
-                    ctx.fillText((i + 1).toString().padStart(pad, ' '), 4, y);
+                    ctx.fillStyle = textColor;
+                    ctx.fillText((i + 1).toString().padStart(digits, '0'), 4, y);
                 }
 
                 ctx.fillStyle = textColor;
