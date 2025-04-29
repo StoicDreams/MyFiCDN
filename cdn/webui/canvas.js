@@ -176,7 +176,6 @@
         },
         onWheel(e) {
             const t = this;
-            console.log(e);
             e.preventDefault();
             let multi = e.shiftKey && e.ctrlKey ? 4 : e.ctrlKey ? 3 : e.shiftKey ? 2 : 0.2;
             console.log('multi', multi);
