@@ -73,7 +73,9 @@
                     t._wrappedLines.push({ text: '', ...lineObj });
                     continue;
                 }
-                lineObj.lineNumber = ++lineNumber;
+                if (!lineObj.isFiller) {
+                    lineObj.lineNumber = ++lineNumber;
+                }
                 let originalLine = lineObj.line;
                 let currentLine = '';
                 if (originalLine.length > 0) {
@@ -115,12 +117,16 @@
                 return color;
             }
             let lastLineNumber = '';
+            let useAlt = false;
             for (let i = startLine; i < endLine; i++) {
                 const y = (i - startLine) * t._lineHeight + t._lineHeight;
                 const entry = t._wrappedLines[i];
-                const textColor = correctColor(entry.color || '--theme-color-offset');
-                const backgroundColor = correctColor(entry.background || (i%2==1 ? t.altColor || '--theme-color' : '--theme-color'));
-                const showLineNumber = t.lineNumbers && entry.text !== undefined;
+                const textColor = entry.isFiller ? '#00000000' : correctColor(entry.color || '--theme-color-offset');
+                if (entry.lineNumber) {
+                    useAlt = entry.lineNumber%2 == 1;
+                }
+                const backgroundColor = correctColor(entry.background || (!entry.isFiller && useAlt ? t.altColor || '--theme-color' : '--theme-color'));
+                const showLineNumber = t.lineNumbers && entry.text !== undefined && !entry.isFiller;
 
                 if (backgroundColor) {
                     ctx.fillStyle = backgroundColor;
