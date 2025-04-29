@@ -67,25 +67,31 @@
             t._ctx.font = getComputedStyle(t).font;
             const maxWidth = t._canvas.width - 50;
             t._wrappedLines = [];
+            let lineNumber = 0;
             for (let lineObj of t._lines) {
                 if (!lineObj || lineObj.line === undefined) {
-                    t._wrappedLines.push({ lineObj });
+                    t._wrappedLines.push({ text: '', ...lineObj });
                     continue;
                 }
-                let words = lineObj.line.split(/\s+/);
+                lineObj.lineNumber = ++lineNumber;
+                let originalLine = lineObj.line;
                 let currentLine = '';
-                for (let word of words) {
-                    const testLine = currentLine + word + ' ';
-                    const metrics = t._ctx.measureText(testLine);
-                    if (metrics.width > maxWidth && currentLine !== '') {
-                        t._wrappedLines.push({ text: currentLine.trim(), lineObj });
-                        currentLine = word + ' ';
-                    } else {
-                        currentLine = testLine;
+                if (originalLine.length > 0) {
+                    for (let i = 0; i < originalLine.length; i++) {
+                        const testLine = currentLine + originalLine[i];
+                        const metrics = t._ctx.measureText(testLine);
+                        if (metrics.width > maxWidth && currentLine !== '') {
+                            t._wrappedLines.push({ text: currentLine, ...lineObj });
+                            currentLine = originalLine[i];
+                        } else {
+                            currentLine = testLine;
+                        }
                     }
-                }
-                if (currentLine) {
-                    t._wrappedLines.push({ text: currentLine.trim(), lineObj });
+                    if (currentLine) {
+                        t._wrappedLines.push({ text: currentLine, ...lineObj });
+                    }
+                } else {
+                    t._wrappedLines.push({ text: currentLine, ...lineObj });
                 }
             }
         },
@@ -108,12 +114,12 @@
                 }
                 return color;
             }
+            let lastLineNumber = '';
             for (let i = startLine; i < endLine; i++) {
                 const y = (i - startLine) * t._lineHeight + t._lineHeight;
                 const entry = t._wrappedLines[i];
-                const style = entry.lineObj || {};
-                const textColor = correctColor(style.color || '--theme-color-offset');
-                const backgroundColor = correctColor(style.background || (i%2==1 ? t.altColor : '--theme-color'));
+                const textColor = correctColor(entry.color || '--theme-color-offset');
+                const backgroundColor = correctColor(entry.background || (i%2==1 ? t.altColor : '--theme-color'));
                 const showLineNumber = t.lineNumbers && entry.text !== undefined;
 
                 if (backgroundColor) {
@@ -121,9 +127,11 @@
                     ctx.fillRect(0, y - t._lineHeight + 4, width, t._lineHeight);
                 }
 
-                if (showLineNumber) {
+                console.log('entry', entry);
+                if (showLineNumber && entry.lineNumber && lastLineNumber !== entry.lineNumber) {
+                    lastLineNumber = entry.lineNumber;
                     ctx.fillStyle = textColor;
-                    ctx.fillText((i + 1).toString().padStart(digits, '0'), 4, y);
+                    ctx.fillText(entry.lineNumber.toString().padStart(digits, '0'), 4, y);
                 }
 
                 ctx.fillStyle = textColor;
