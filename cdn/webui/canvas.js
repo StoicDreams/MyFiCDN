@@ -40,6 +40,7 @@
         setFromText: function(text) {
             const t=this;
             if (text === t._textLines) return;
+            text = text || '';
             let lines = text.split(/\r?\n/).map(line=>{
                 return {line:line};
             });
@@ -153,10 +154,20 @@
                 ctx.fillRect(scrollbarX, scrollbarY, 14, scrollbarHeight);
             }
         },
-        onScroll: function(e) {
-            let t=this;
-            t._scrollTop = t.scrollTop;
+        getScroll: function() {
+            const t=this;
+            return t._scrollTop;
+        },
+        setScroll: function(value) {
+            const t=this;
+            t._scrollTop = value || 0;
+            const maxScroll = Math.max(0, t._contentHeight - t._canvas.height);
+            if (t._scrollTop < 0) t._scrollTop = 0;
+            if (t._scrollTop > maxScroll) t._scrollTop = maxScroll;
             t.updateCanvas();
+            if (t.dataset.trigger) {
+                t.dispatchEvent(new Event('change', {bubbles:true}));
+            }
         },
         copyText() {
             const t = this;
@@ -166,11 +177,7 @@
         onWheel(e) {
             const t = this;
             e.preventDefault();
-            t._scrollTop += (e.deltaY * 0.2);
-            const maxScroll = Math.max(0, t._contentHeight - t._canvas.height);
-            if (t._scrollTop < 0) t._scrollTop = 0;
-            if (t._scrollTop > maxScroll) t._scrollTop = maxScroll;
-            t.updateCanvas();
+            t.setScroll(t._scrollTop + (e.deltaY * 0.2));
         },
         connected: function (t) {
             const resizeObserver = new ResizeObserver(() => {

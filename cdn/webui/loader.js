@@ -1187,8 +1187,7 @@ const webui = (() => {
                 let kp = key.split(':');
                 key = kp[0];
                 let getter = kp[1];
-                let field = el[getter];
-                let value = typeof el[getter] === 'function' ? el[field]() : webui.getDefined(el[getter], el.dataset[getter]);
+                let value = typeof el[getter] === 'function' ? el[getter]() : webui.getDefined(el[getter], el.dataset[getter]);
                 if (oldData !== value) {
                     webui.setData(key, value);
                 }
