@@ -107,7 +107,7 @@
             ctx.clearRect(0, 0, width, height);
             const startLine = Math.floor(t._scrollTop / t._lineHeight);
             const endLine = Math.min(startLine + t._visibleLines, t._wrappedLines.length);
-            ctx.font = t._font;
+            ctx.font = getComputedStyle(t).font;
             let digits = t._lines.length.toString().length;
             let padLeft = t.lineNumbers ? t._ctx.measureText(webui.repeat('0',digits)).width + 10 : 5;
             function correctColor(color) {
