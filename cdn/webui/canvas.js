@@ -127,7 +127,6 @@
                     ctx.fillRect(0, y - t._lineHeight + 4, width, t._lineHeight);
                 }
 
-                console.log('entry', entry);
                 if (showLineNumber && entry.lineNumber && lastLineNumber !== entry.lineNumber) {
                     lastLineNumber = entry.lineNumber;
                     ctx.fillStyle = textColor;
@@ -208,7 +207,7 @@ canvas {
 display: block;
 width: 100%;
 height: 100%;
-background-color: #fafbfc;
+background-color: var(--theme-color);
 cursor: text;
 }
 </style>
