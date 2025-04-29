@@ -9,6 +9,7 @@
             t._canvas = t.template.querySelector('canvas');
             t._ctx = t._canvas.getContext('2d');
             t._textLines = [];
+            t._lines = [];
             t._lineHeight = 20;
             t._scrollTop = 0;
             t._visibleLines = 0;
