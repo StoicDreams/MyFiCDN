@@ -119,7 +119,7 @@
                 const y = (i - startLine) * t._lineHeight + t._lineHeight;
                 const entry = t._wrappedLines[i];
                 const textColor = correctColor(entry.color || '--theme-color-offset');
-                const backgroundColor = correctColor(entry.background || (i%2==1 ? t.altColor : '--theme-color'));
+                const backgroundColor = correctColor(entry.background || (i%2==1 ? t.altColor || '--theme-color' : '--theme-color'));
                 const showLineNumber = t.lineNumbers && entry.text !== undefined;
 
                 if (backgroundColor) {
