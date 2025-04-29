@@ -176,8 +176,11 @@
         },
         onWheel(e) {
             const t = this;
+            console.log(e);
             e.preventDefault();
-            t.setScroll(t._scrollTop + (e.deltaY * 0.2));
+            let multi = e.shiftKey && e.ctrlKey ? 4 : e.ctrlKey ? 3 : e.shiftKey ? 2 : 0.2;
+            console.log('multi', multi);
+            t.setScroll(t._scrollTop + (e.deltaY * multi));
         },
         connected: function (t) {
             const resizeObserver = new ResizeObserver(() => {
