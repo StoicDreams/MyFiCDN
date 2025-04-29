@@ -52,7 +52,7 @@
 
 <webui-data data-page-loaded="1"></webui-data>
 
-## Current Web UI Projects
+## Current Web UI Projects :tada:
 
 Sample of our current projects to demonstrate our `webui-cards` and `webui-card` components.
 
