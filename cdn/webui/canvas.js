@@ -180,19 +180,29 @@
             let multi = e.shiftKey && e.ctrlKey ? 4 : e.ctrlKey ? 3 : e.shiftKey ? 2 : 0.2;
             t.setScroll(t._scrollTop + (e.deltaY * multi));
         },
+        checkDimensions: function() {
+            const t=this;
+            const rect = t.getBoundingClientRect();
+            let height = Math.floor(rect.height);
+            let width = Math.floor(rect.width);
+            if (t._canvas.width === width && t._canvas.height === height) return;
+            t._canvas.width = width;
+            t._canvas.height = height;
+            t._visibleLines = Math.floor(height / t._lineHeight);
+            t.wrapAllLines();
+            t._contentHeight = t._wrappedLines.length * t._lineHeight;
+            t.updateCanvas();
+            setTimeout(()=>{t.checkDimensions();},100);
+        },
         connected: function (t) {
             const resizeObserver = new ResizeObserver(() => {
-                const rect = t.getBoundingClientRect();
-                t._canvas.width = rect.width;
-                t._canvas.height = rect.height;
-                t._visibleLines = Math.floor(rect.height / t._lineHeight);
-                t.wrapAllLines();
-                t._contentHeight = t._wrappedLines.length * t._lineHeight;
-                t.updateCanvas();
+                t.checkDimensions();
             });
             resizeObserver.observe(t);
             t._resizeObserver = resizeObserver;
-
+            t.addEventListener('click',_=>{
+                t.checkDimensions();
+            });
             t._boundOnWheel = (e) => t.onWheel(e);
             t._canvas.addEventListener('wheel', t._boundOnWheel, { passive: false });
         },
