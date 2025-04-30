@@ -631,17 +631,48 @@ const webui = (() => {
             }
             return html;
         }
+        parseWebuiSmartMarkdown(raw) {
+            const noTrimTags = ['code', 'template', 'webui-code'];
+            const insideBlock = { codeBlock: false, htmlBlock: false, tagStack: [] };
+            const lines = raw.split(/\r?\n/);
+            const output = [];
+            for (let line of lines) {
+                if (line.trim().startsWith('```')) {
+                    insideBlock.codeBlock = !insideBlock.codeBlock;
+                    output.push(line);
+                    continue;
+                }
+                if (insideBlock.codeBlock) {
+                    output.push(line);
+                    continue;
+                }
+                const openTag = line.match(/^<([a-zA-Z0-9-_]+)(\s|>|\/)/);
+                const closeTag = line.match(/^<\/([a-zA-Z0-9-_]+)>/);
+                if (openTag && noTrimTags.includes(openTag[1])) {
+                    insideBlock.tagStack.push(openTag[1]);
+                } else if (closeTag && insideBlock.tagStack.includes(closeTag[1])) {
+                    insideBlock.tagStack.pop();
+                }
+                if (/^<\w/.test(line) && insideBlock.tagStack.length === 0) {
+                    output.push(line.replace(/^\s+/, ''));
+                } else {
+                    output.push(line);
+                }
+            }
+            return output.join('\n');
+        }
         parseWebuiMarkdown(md, preTrim) {
             let t = this;
             if (typeof md !== 'string') return md;
-            md = md.replace(/(\r\n|\r)+/mg, '\n');
+            md = md.replace(/(\r\n|\r){1}/mg, '\n');
             if (preTrim) {
                 md = this.trimLinePreWhitespce(md);
             } else {
                 md = this.trimLinePreTabs(md);
             }
-            md = md.replace(/(\n)/mg, '\n\n');
-            let html = t.marked.parse(md, markdownOptions) || '';
+            //clean = md.replace(/\n/g, '\n\n');
+            let clean = t.parseWebuiSmartMarkdown(md).trim();
+            let html = t.marked.parse(clean, markdownOptions) || '';
             html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
             return html;
         }
@@ -938,22 +969,27 @@ const webui = (() => {
                 to.appendChild(ch);
             });
         }
-        trimLinePreTabs(html) {
+        trimLinePreTabs(html, tabLength = 4) {
             let lines = [], ls = 0;
-            html.split('\n').forEach(l => {
-                let isListItem = l.match(/^[ ]+-/);
-                if (isListItem && isListItem.length === 1) {
-                    if (isListItem[0].length > ls) {
-                        lines.push(l.substr(ls));
-                    } else {
-                        lines.push(l);
-                    }
-                } else {
-                    let nl = l.replace(/^([ ]{4}|\t)+/, a => { return ''; });
-                    ls = l.length - nl.length;
-                    lines.push(nl);
+            let tabRepl = webui.repeat(' ', tabLength);
+            let startLines = html.replace(/\t/g, tabRepl).split('\n');
+            let tabLen = 999;
+            let index = 0;
+            for(let line of startLines) {
+                if (index++ == 0) continue;
+                let m=line.match(/^([ ]*)/)[0].length;
+                if (m === 0) return html;
+                if (m < tabLen) {
+                    tabLen = m;
                 }
-            });
+            };
+            if (tabLen === 999) {
+                tabLen = 0;
+            }
+            if (tabLen === 0) return html;
+            for (let line of startLines) {
+                lines.push(line.substring(tabLen));
+            }
             return lines.join('\n');
         }
         trimLinePreWhitespce(html) {

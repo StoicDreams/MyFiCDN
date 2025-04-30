@@ -22,7 +22,7 @@
                 webui.alert('Copied code to clipboard', 'success');
                 return false;
             });
-            t._code.innerText = code;
+            t._code.innerText = code.trim();
         },
         attr: ['language', 'lang', 'label', 'lines', 'nocopy'],
         attrChanged: (t, property, value) => {

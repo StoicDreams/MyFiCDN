@@ -36,6 +36,7 @@
             t.wrapAllLines();
             t._contentHeight = t._wrappedLines.length * t._lineHeight;
             t.updateCanvas();
+            t.setScroll(0);
         },
         setFromText: function(text) {
             const t=this;

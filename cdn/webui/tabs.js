@@ -44,7 +44,7 @@
             webui.removeElements(t, '[data-dynamic]');
             let index = 0;
             data.forEach(item => {
-                let displayItem = webui.setDefaultData(item, { label: 'Missing Label', content: 'Missing Content' });
+                let displayItem = webui.setDefaultData(item, { name: 'Name', label: 'Missing Label', content: 'Missing Content' });
                 displayItem['tab-index'] = index++;
                 displayItem['tab-page'] = index;
                 let btn = webui.create('webui-button', { slot: 'tabs', 'data-dynamic': '1' });
