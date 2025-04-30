@@ -18,8 +18,7 @@
             t._copy.addEventListener('click', async ev => {
                 ev.stopPropagation();
                 ev.preventDefault();
-                await navigator.clipboard.writeText(t.value);
-                webui.alert('Copied code to clipboard', 'success');
+                webui.copyToClipboard(t.value);
                 return false;
             });
             t._code.innerText = webui.trimLinePreTabs(code.trim());
@@ -60,7 +59,7 @@
             }
         },
         setValue: function (value) {
-            let t = this;
+            const t = this;
             if (value === undefined) {
                 value = '';
             }
@@ -72,7 +71,7 @@
             delete t._code.dataset.highlighted;
         },
         applyLabelDisplay: function () {
-            let t = this;
+            const t = this;
             if (t._label.innerHTML || !t.nocopy) {
                 t.classList.remove('hide-label');
             } else {

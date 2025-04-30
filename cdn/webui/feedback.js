@@ -87,7 +87,7 @@
             });
         },
         setTheme: function (value) {
-            let t = this;
+            const t = this;
             t._icon.setAttribute('theme', value);
         },
         attr: ['title', 'data-post', 'flags'],

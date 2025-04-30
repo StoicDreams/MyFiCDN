@@ -10,7 +10,7 @@ webui.define("webui-cards", {
         t.setCards(cards);
     },
     setCards: function (json) {
-        let t = this;
+        const t = this;
         t.innerHTML = '';
         try {
             let cards = JSON.parse(json);

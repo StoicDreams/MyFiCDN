@@ -36,7 +36,7 @@ webui.define('webui-page-footer', {
         t.remove();
     },
     buildCopyright: function () {
-        let t = this;
+        const t = this;
         let currentYear = new Date().getFullYear();
         let company = t.company || '';
         let year = parseInt(t.copyright || currentYear);

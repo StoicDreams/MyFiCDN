@@ -50,6 +50,8 @@
     <webui-content slot="content" src="/d/en-US/content/test-canvas.md"></webui-content>
     <webui-button align="left" slot="tabs">Code</webui-button>
     <webui-content slot="content" src="/d/en-US/content/test-code.md"></webui-content>
+    <webui-button align="left" slot="tabs">Emojis</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/test-emojis.md"></webui-content>
 </webui-tabs>
 
 <webui-data data-page-loaded="1"></webui-data>

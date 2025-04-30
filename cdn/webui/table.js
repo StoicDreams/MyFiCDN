@@ -42,7 +42,7 @@
             }
         },
         setData: function (data) {
-            let t = this;
+            const t = this;
             data = data || {};
             if (typeof data === 'string') {
                 t._data = JSON.parse(data);
@@ -52,7 +52,7 @@
             t.render();
         },
         render: function () {
-            let t = this;
+            const t = this;
             t._table.innerHTML = '';
             let h = webui.create('tr');
             t._table.appendChild(h);

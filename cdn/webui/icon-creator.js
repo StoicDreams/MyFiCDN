@@ -11,7 +11,7 @@
         constructor: (t) => {
         },
         setupComponent: function () {
-            let t = this;
+            const t = this;
             t.style.display = 'flex';
             t.style.flexDirection = 'column';
             t.style.flexGap = 'var(--padding)';
@@ -581,11 +581,11 @@
             t.setupComponent();
         },
         loadFromDefinition: function (iconDef) {
-            let t = this;
+            const t = this;
             if (!iconDef) return;
         },
         loadIcons: async function () {
-            let t = this;
+            const t = this;
             try {
                 let result = await fetch(`${srcRoot}all.json`);
                 if (!result.ok) return;

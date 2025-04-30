@@ -50,7 +50,7 @@
             });
         },
         setValue: function (value) {
-            let t = this;
+            const t = this;
             if (!value || value.length === undefined || parseInt(value.length) !== value.length) {
                 t.value = [];
                 t._label.innerHTML = t.label;

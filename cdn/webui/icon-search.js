@@ -14,7 +14,7 @@
             t.setupComponent();
         },
         setupComponent: function () {
-            let t = this;
+            const t = this;
             t.style.display = 'flex';
             t.style.flexDirection = 'column';
             t.style.flexGap = 'var(--padding)';
@@ -135,7 +135,7 @@
             })
         },
         buildIconCode: function () {
-            let t = this;
+            const t = this;
             let ico = t._icons[0].cloneNode();
             ico.removeAttribute('style');
             let code = ico.outerHTML;
@@ -174,7 +174,7 @@
             t._rotate.value = 0;
         },
         setIconFromCode: function(pipedValue) {
-            let t = this;
+            const t = this;
             t.resetOptions();
             let pipedData = pipedValue.split('|');
             let icon=pipedData.shift();
@@ -195,13 +195,13 @@
             });
         },
         setIcon: function (icon) {
-            let t = this;
+            const t = this;
             t._current = icon;
             t._icons[0].setAttribute('icon', icon);
             t.buildIconCode();
         },
         updateDisplayedIcons: function () {
-            let t = this;
+            const t = this;
             let isFirst = true;
             let filter = t._inputSearch.value;
             if (typeof filter === 'string') {
@@ -253,7 +253,7 @@
             t.buildIconCode();
         },
         loadIcons: async function () {
-            let t = this;
+            const t = this;
             t._iconContainers = [];
             try {
                 let result = await fetch(`${srcRoot}all.json`);

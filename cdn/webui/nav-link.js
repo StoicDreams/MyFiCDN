@@ -10,7 +10,7 @@ webui.define('webui-nav-link', {
     },
     attr: ['icon', 'name', 'url'],
     setPagePath: function (value) {
-        let t = this;
+        const t = this;
         if (value === '' || value === '/root') {
             value = '/';
         }

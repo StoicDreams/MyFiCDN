@@ -1572,6 +1572,7 @@ a.btn:active,
     user-select: text;
 }
 
+.cursor-pointer,
 a.navlink:not([disabled]):not(.disabled),
 a[data-click]:not([disabled]):not(.disabled):not(:disabled),
 .btn:not([disabled]):not(.disabled:not(:disabled)),

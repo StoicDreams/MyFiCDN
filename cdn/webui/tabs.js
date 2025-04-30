@@ -27,7 +27,7 @@
             t.render();
         },
         setData: function (data, key) {
-            let t = this;
+            const t = this;
             if (!data || !data.forEach) return;
             let templateLabel = '';
             let templateContent = '';
@@ -66,7 +66,7 @@
             t.render();
         },
         setTab: function (tabIndex) {
-            let t = this;
+            const t = this;
             if (tabIndex === undefined || tabIndex === null) return;
             tabIndex = parseInt(tabIndex) || 0;
             if (t._initiated && tabIndex === t._index) return;
@@ -114,7 +114,7 @@
             t._initiated = true;
         },
         render: function () {
-            let t = this;
+            const t = this;
             let nodes = Array.from(t.querySelectorAll('[slot="content"]')).filter(item=>item.parentNode===t);
             t._slotContent.style.setProperty('grid-template-columns', (new Array(nodes.length).fill('100%')).join(' '));
             let tabIndex = 0;

@@ -37,13 +37,13 @@ webui.define('webui-stoic-dreams-logo', {
         t.render();
     },
     render: function () {
-        let t = this;
+        const t = this;
         let title = t.title || `${(`${t.text} ${t.text2}`.trim())} Logo`;
         t.svg.setAttribute('title', title);
         t._text.innerHTML = t.getText();
     },
     getText: function () {
-        let t = this;
+        const t = this;
         if (t.text2 && t.text) {
             return `<tspan class="line1" x="75" y="50">${t.text}</tspan><tspan class="line2" x="75" y="95">${t.text2}</tspan>`;
         }

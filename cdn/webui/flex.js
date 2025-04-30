@@ -14,7 +14,7 @@ webui.define('webui-flex', {
         return webui.pxIfNumber(value);
     },
     setStyles: function () {
-        let t = this;
+        const t = this;
         let a = t.attributes;
         if (!!a.justify) { t.style.justifyContent = `${a.justify.value}`; }
         if (!!a.align) { t.style.alignItems = `${a.align.value}`; }

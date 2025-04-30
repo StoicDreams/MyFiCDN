@@ -50,7 +50,7 @@
             t.checkConditions();
         },
         setValue: function (value, key) {
-            let t = this;
+            const t = this;
             switch (key) {
                 case 'value':
                     t.dataset.value = value;
@@ -67,7 +67,7 @@
             return true;
         },
         checkConditions: function () {
-            let t = this;
+            const t = this;
             if (!t._isConnected) return;
             let keys = t.dataset.subscribe;
             if (!keys && !t.dataset.value) {
@@ -127,7 +127,7 @@
         },
 
         showContent: function () {
-            let t = this;
+            const t = this;
             webui.removeChildren(t, ch => {
                 return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');
             });
@@ -136,7 +136,7 @@
             }
         },
         showInvalid: function () {
-            let t = this;
+            const t = this;
             webui.removeChildren(t, ch => {
                 return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');
             });

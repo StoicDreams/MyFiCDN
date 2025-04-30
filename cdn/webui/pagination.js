@@ -100,7 +100,7 @@
 
         },
         process: function () {
-            let t = this;
+            const t = this;
             if (!t._data || !t._data.forEach) return;
             let current = t._currentData || {};
             if (t._data.length === 0) {
@@ -184,7 +184,7 @@
             }
         },
         setValue: function (value, key, toSet) {
-            let t = this;
+            const t = this;
             value = value || 1;
             if (value === undefined || value === undefined) return;
             if (typeof value === 'string') {
@@ -201,7 +201,7 @@
             t.process();
         },
         setData: function (value) {
-            let t = this;
+            const t = this;
             if (typeof value === 'string') {
                 try {
                     if (!value) {

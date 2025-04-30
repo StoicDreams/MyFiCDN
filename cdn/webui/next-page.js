@@ -14,7 +14,7 @@ webui.define("webui-next-page", {
     },
     attr: ['name', 'href', 'icon'],
     setValue: function (value) {
-        let t = this;
+        const t = this;
         if (!value) {
             value = {};
         }
@@ -24,7 +24,7 @@ webui.define("webui-next-page", {
         t.render();
     },
     render: function () {
-        let t = this;
+        const t = this;
         if (t._isRendering) return;
         t._isRendering = true;
         let last = t._lastRender || (Date.now() - 1000);

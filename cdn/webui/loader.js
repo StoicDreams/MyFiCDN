@@ -294,6 +294,10 @@ const webui = (() => {
             }
             return null;
         }
+        async copyToClipboard(value) {
+            await navigator.clipboard.writeText(value);
+            webui.alert('Copied code to clipboard', 'success');
+        }
         define(name, options) {
             options = options || {};
             options.attr = options.attr || [];
@@ -325,7 +329,7 @@ const webui = (() => {
                 disconnectHandlers = [];
                 constructor() {
                     super();
-                    let t = this;
+                    const t = this;
                     if (options.props) {
                         Object.keys(options.props).forEach(key => {
                             Object.defineProperty(t, key, options.props[key]);
@@ -392,7 +396,7 @@ const webui = (() => {
                     return options.attr.concat(options.flags);
                 }
                 addDataset(key, value) {
-                    let t = this;
+                    const t = this;
                     if (t.hasDataset(key, value)) {
                         webui.log.info('Dataset already has that value', key, value);
                         return;
@@ -403,7 +407,7 @@ const webui = (() => {
                     t.setAttribute(`data-${key}`, ds.join('|'));
                 }
                 hasDataset(key, value) {
-                    let t = this;
+                    const t = this;
                     let ds = t.getAttribute(`data-${key}`);
                     ds = ds ? ds.split('|') : [];
                     if (value === undefined) {
@@ -419,7 +423,7 @@ const webui = (() => {
                     return found;
                 }
                 attributeChangedCallback(property, oldValue, newValue) {
-                    let t = this;
+                    const t = this;
                     if (oldValue === newValue) return;
                     let propDefined = property;
                     property = webui.toCamel(property);
@@ -443,7 +447,7 @@ const webui = (() => {
                     }
                 }
                 connectedCallback() {
-                    let t = this;
+                    const t = this;
                     if (t._connectedInit) {
                         if (typeof options.reconnected === 'function') {
                             setTimeout(()=>{
@@ -662,7 +666,7 @@ const webui = (() => {
             return output.join('\n');
         }
         parseWebuiMarkdown(md, preTrim) {
-            let t = this;
+            const t = this;
             if (typeof md !== 'string') return md;
             md = md.replace(/(\r\n|\r){1}/mg, '\n');
             if (preTrim) {
@@ -677,7 +681,7 @@ const webui = (() => {
             return html;
         }
         parseMarkdown(md, preTrim) {
-            let t = this;
+            const t = this;
             if (typeof md !== 'string') return md;
             md = md.replace(/(\r\n|\r){1}/mg, '\n');
             if (preTrim) {
@@ -3689,8 +3693,7 @@ webui.marked = (function () {
         }
     }
     ));
-    fetch('https://cdn.myfi.ws/i/emojis.json')
-        .then(r=>r.json())
+    webui.fetchWithCache('https://cdn.myfi.ws/i/emojis.json', true)
         .then(emojiMap=>{
             const emojiOptions = {
             emojis: emojiMap,

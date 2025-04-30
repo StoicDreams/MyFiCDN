@@ -22,7 +22,7 @@
             t.render();
         },
         render: function () {
-            let t = this;
+            const t = this;
         },
         shadowTemplate: `
 <div></div>

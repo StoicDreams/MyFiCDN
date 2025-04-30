@@ -35,7 +35,7 @@
             }
         },
         setValue(value) {
-            let t = this;
+            const t = this;
             t._enabled = !!value;
             if (t._enabled) {
                 t.removeAttribute('enabled');
@@ -50,7 +50,7 @@
         getTitleOn: function () { return this.titleOn || this.getAttribute('title-on') || this.getAttribute('title') || null; },
         getTitleOff: function () { return this.titleOff || this.getAttribute('title-off') || this.getAttribute('title') || null; },
         applyFlags(flags) {
-            let t = this;
+            const t = this;
             if (typeof flags !== 'string') return;
             flags.split(' ').forEach(flag => {
                 if (!flag) return;
@@ -58,7 +58,7 @@
             });
         },
         removeFlags(flags) {
-            let t = this;
+            const t = this;
             if (typeof flags !== 'string') return;
             flags.split(' ').forEach(flag => {
                 if (!flag) return;
@@ -66,7 +66,7 @@
             });
         },
         updateElements: function () {
-            let t = this;
+            const t = this;
             if (t.dataset.enabled) {
                 let el = document.querySelector(t.dataset.enabled);
                 if (el) {

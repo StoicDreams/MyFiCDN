@@ -39,7 +39,7 @@ webui.define("webui-content", {
         setTimeout(() => t.updateContent(), 10);
     },
     updateContent: function () {
-        let t = this;
+        const t = this;
         if (t.preload) {
             t.fetchContent();
             return;
@@ -51,7 +51,7 @@ webui.define("webui-content", {
         }
     },
     setHtml: function(html) {
-        let t = this;
+        const t = this;
         t.src = 'html';
         t._contentLoaded = 'html';
         t.classList.remove('loading');
@@ -65,7 +65,7 @@ webui.define("webui-content", {
       t.fetchContent();
     },
     fetchContent: async function () {
-        let t = this;
+        const t = this;
         if (!t.preload && !t.visible) return;
         if (t._contentLoaded && t._contentLoaded === t.src) return;
         if (!t.src) {

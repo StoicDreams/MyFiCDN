@@ -69,7 +69,7 @@
             }
         },
         updateIcon: async function () {
-            let t = this;
+            const t = this;
             let name = t.icon;
             let family = t.family;
             if (!family) {

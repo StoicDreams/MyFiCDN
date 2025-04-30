@@ -1,5 +1,32 @@
 "use strict"
 {
+    function extractOptions(options) {
+        if (options === undefined || options === null || options === '') {
+            return [];
+        }
+        if (!options) return [];
+        if (typeof options === 'string') {
+            try{
+                let items = JSON.parse(options);
+                if (!items || typeof items.forEach !== 'function') {
+                    console.error('Invalid dropdown options', items, options);
+                    return [];
+                }
+                return items;
+            }catch(ex) {
+                let items = options.split(',');
+                return items.map(item=>{
+                    item=item.trim();
+                    return {id:item,value:item,display:item};
+                });
+            }
+        }
+        if (typeof options.forEach !== 'function') {
+            console.error('Invalid dropdown options', options, typeof options);
+            return [];
+        }
+        return options;
+    }
     webui.define("webui-dropdown", {
         preload: 'icon',
         constructor: (t) => {
@@ -71,7 +98,7 @@
             t._select.setAttribute('id', id);
         },
         applyDataChange: function () {
-            let t = this;
+            const t = this;
             let dn = t.dataset.name;
             if (!dn || !t._optionsSet) { return; }
             if (t.hasAttribute('multiple')) {
@@ -94,10 +121,8 @@
             this.setOptions(options);
         },
         setOptions: function (options) {
-            let t = this;
-            if (options === undefined || options === null || options === '') {
-                options = [];
-            }
+            const t = this;
+            options = extractOptions(options);
             let oJson = JSON.stringify(options);
             if (oJson === t._oJson) return;
             t._oJson = oJson;
@@ -146,7 +171,7 @@
             }
         },
         setValue: function (value) {
-            let t = this;
+            const t = this;
             if (!t._isConnected || !t._optionsSet) return;
             value = `${value}`;
             let o = t._select.querySelector(`option[value="${value.replace(/\\/g,'\\\\')}"]`);

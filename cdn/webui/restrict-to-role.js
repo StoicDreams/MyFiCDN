@@ -21,12 +21,12 @@
             this.setUserRole(userRole);
         },
         setUserRole: function (userRole) {
-            let t = this;
+            const t = this;
             t.userRole = userRole || 0;
             t.checkRole();
         },
         checkRole: function () {
-            let t = this;
+            const t = this;
             if (t.userRole === undefined || t.role === undefined) {
                 t.showInvalid();
                 return;
@@ -48,7 +48,7 @@
             }
         },
         showValid: function () {
-            let t = this;
+            const t = this;
             if (t._showing === 'content') return;
             t._showing = 'content';
             webui.removeChildren(t, ch => !ch.hasAttribute || !ch.hasAttribute('slot'));
@@ -56,7 +56,7 @@
             webui.transferChildren(webui.create('div', { html: html }), t);
         },
         showInvalid: function () {
-            let t = this;
+            const t = this;
             if (t._showing === 'invalid') return;
             t._showing = 'invalid';
             webui.removeChildren(t, ch => !ch.hasAttribute || !ch.hasAttribute('slot'));

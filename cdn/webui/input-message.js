@@ -99,7 +99,7 @@
             }
         },
         setValue: function (value) {
-            let t = this;
+            const t = this;
             t._field.value = value;
             t._field.dispatchEvent(new Event('input', { bubbles: true }));
             t._field.dispatchEvent(new Event('change', { bubbles: true }));

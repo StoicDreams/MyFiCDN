@@ -28,7 +28,7 @@ webui.define("webui-alert", {
         }
     },
     setValue: function (options) {
-        let t = this;
+        const t = this;
         if (typeof options === 'string') {
             try {
                 options = JSON.parse(options);

@@ -28,8 +28,7 @@
             t.process();
         },
         processPath: async function (src, dataKey) {
-            let t = this;
-
+            const t = this;
             async function handleProcess() {
                 if (t.usesAuth && !t.auth) {
                     console.error('webui-data-loader cannot load data: [auth] is not set with a data key.');
@@ -67,7 +66,7 @@
             }, t.delay || 10);
         },
         process: async function () {
-            let t = this;
+            const t = this;
             if (!t._sid) {
                 t._sid = webui.uuid();
             }

@@ -185,7 +185,7 @@ Stroke line joins: miter|round|bevel
         },
         setIconDefinition(iconDef) {
             if (!iconDef || typeof iconDef !== 'string') return;
-            let t = this;
+            const t = this;
             t._definition = iconDef;
             let defs = iconDef.split('\n');
             defs.shift();
@@ -205,7 +205,7 @@ Stroke line joins: miter|round|bevel
             }
         },
         setTheme(value) {
-            let t = this;
+            const t = this;
             if (value) {
                 t.style.setProperty('--theme-color', `var(--color-${value}-offset)`);
                 t.style.setProperty('--theme-color-offset', `var(--color-${value})`);
@@ -246,7 +246,7 @@ Stroke line joins: miter|round|bevel
             path.setAttribute('d', segments[0]);
         },
         clearPaths() {
-            let t = this;
+            const t = this;
             for (let instance = 1; instance <= pathCount; ++instance) {
                 let key = `_i${instance}`;
                 t[key].setAttribute('d', defUnused);

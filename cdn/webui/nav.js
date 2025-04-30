@@ -19,7 +19,7 @@ webui.define('webui-nav', {
         t._buildNav();
     },
     setUserRole: function (userRole) {
-        let t = this;
+        const t = this;
         t.userRole = userRole || 0;
         t._buildNav();
     },
@@ -34,7 +34,7 @@ webui.define('webui-nav', {
         this.buildNav(data);
     },
     buildLink: function (parent, link) {
-        let t = this;
+        const t = this;
         let el = null;
         if (link.role && link.role > 0 && link.role & t.userRole === 0) {
             return;
@@ -63,12 +63,12 @@ webui.define('webui-nav', {
     buildNav: function (navJson) {
         if (!navJson) return;
         let nav = typeof navJson === 'string' ? JSON.parse(navJson) : typeof navJson.forEach === 'function' ? navJson : [];
-        let t = this;
+            const t = this;
         t._navData = nav;
         t._buildNav();
     },
     _buildNav: function () {
-        let t = this;
+        const t = this;
         let nav = t._navData;
         if (!nav) return;
         t.innerHTML = '';

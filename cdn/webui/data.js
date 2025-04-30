@@ -89,7 +89,7 @@
             });
         },
         pushItem: function (value, key) {
-            let t = this;
+            const t = this;
             if (!key || !value) return;
             let template = t.querySelector('template[slot="json"][data-update]');
             if (!template) {
@@ -117,7 +117,7 @@
         setDefault: function (value, key) {
             let current = webui.getData(key);
             if (current) return;
-            let t = this;
+            const t = this;
             if (value) return;
             let template = t.querySelector(`template[name="${key}"]`);
             if (!template) {

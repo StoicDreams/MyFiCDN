@@ -7,7 +7,7 @@ webui.define("webui-card", {
         t.buildHeader();
     },
     buildHeader: function () {
-        let t = this;
+        const t = this;
         if (!t._header) {
             t._header = t.querySelector('slot[name="header"]');
             if (!t._header) {
