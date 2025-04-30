@@ -22,7 +22,7 @@
                 webui.alert('Copied code to clipboard', 'success');
                 return false;
             });
-            t._code.innerText = code.trim();
+            t._code.innerText = webui.trimLinePreTabs(code.trim());
         },
         attr: ['language', 'lang', 'label', 'lines', 'nocopy'],
         attrChanged: (t, property, value) => {
@@ -67,7 +67,7 @@
             if (typeof value !== 'string') {
                 value = JSON.stringify(value, null, 2);
             }
-            t._code.innerText = value;
+            t._code.innerText = webui.trimLinePreTabs(value.trim());
             t._code.removeAttribute('data-hl');
             delete t._code.dataset.highlighted;
         },

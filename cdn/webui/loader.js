@@ -987,8 +987,9 @@ const webui = (() => {
                 tabLen = 0;
             }
             if (tabLen === 0) return html;
+            let rgx = new RegExp(`^[ ]{1,${tabLen}}`);
             for (let line of startLines) {
-                lines.push(line.substring(tabLen));
+                lines.push(line.replace(rgx,''));
             }
             return lines.join('\n');
         }
