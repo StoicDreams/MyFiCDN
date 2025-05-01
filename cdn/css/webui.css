@@ -3568,7 +3568,6 @@ webui-drawer[slot="bottom"] webui-stoic-dreams-logo {
 
 .webui-alerts-popup {
     z-index: 999;
-    padding: 2em;
 }
 
 .webui-alerts-popup:empty {

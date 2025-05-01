@@ -6,7 +6,7 @@
     popup.classList.add('webui-alerts-popup');
     popup.style.display = 'block';
     popup.style.position = 'fixed';
-    popup.style.bottom = 0;
+    popup.style.bottom = '30px';
     popup.style.right = 0;
     popup.style.overflow = 'visible';
     document.body.appendChild(popup);
@@ -85,6 +85,7 @@
                     }
                     alert.setAttribute('variant', variant || 'danger');
                     alert.setAttribute('show', true);
+                    alert.style.margin = '0 10px 10px 0'
                     alert.userclosed = false;
                     alertList.push(alert);
                     t.setCount(t.count + 1);
