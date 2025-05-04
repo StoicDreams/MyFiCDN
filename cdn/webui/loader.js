@@ -954,7 +954,7 @@ const webui = (() => {
             }
         }
         toSnake(key, delim = '_') {
-            return key.replace(/[A-Z]/g, letter => `${delim}${letter.toLowerCase()}`);
+            return this.toCamel(key).replace(/[A-Z]/g, letter => `${delim}${letter.toLowerCase()}`);
         }
         toCamel(key) {
             return key.replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })
