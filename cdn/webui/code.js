@@ -36,7 +36,7 @@
                     t._pre.removeAttribute('languagetag');
                     if (!value) return;
                     t._pre.setAttribute('languagetag', value);
-                    t._code.classList.add(`language-${webui.toSnake(value.replace(/[ ]+/g, '-'))}`);
+                    t._code.classList.add(`language-${webui.toSnake(value.replace(/[ ]+/g, '-'))}`, '-');
                     break;
                 case 'lines':
                     t._code.style.height = `calc((${value} * var(--line-height)) + (2 * var(--padding)))`;

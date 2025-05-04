@@ -533,17 +533,17 @@ const webui = (() => {
         }
         getData(key) {
             key = key.split(':')[0];
-            let dataContainer = webui.toSnake(key).startsWith('session-') ? watchedSessionData : watchedAppData;
+            let dataContainer = webui.toSnake(key, '-').startsWith('session-') ? watchedSessionData : watchedAppData;
             let segments = key.split('.');
             if (segments.length === 1) {
-                key = webui.toSnake(key);
+                key = webui.toSnake(key, '-');
                 return structuredClone(dataContainer[key]);
             }
-            let skey = webui.toSnake(segments.shift());
+            let skey = webui.toSnake(segments.shift(), '-');
             let data = dataContainer[skey];
             while (segments.length > 0) {
                 if (!data) return undefined;
-                skey = webui.toSnake(segments.shift());
+                skey = webui.toSnake(segments.shift(), '-');
                 data = data[skey];
             }
             return structuredClone(data);
@@ -758,11 +758,11 @@ const webui = (() => {
             [watchedAppData, watchedSessionData].forEach(dataContainer => {
                 Object.keys(dataContainer).forEach(key => {
                     let keys = [];
-                    keys.push(`{${this.toSnake(key).replace(/-/g, '_').toUpperCase()}}`);
+                    keys.push(`{${this.toSnake(key).toUpperCase()}}`);
                     if (key.startsWith('session-')) {
-                        keys.push(`{${this.toSnake(key.substring(8)).replace(/-/g, '_').toUpperCase()}}`);
+                        keys.push(`{${this.toSnake(key.substring(8)).toUpperCase()}}`);
                     } else if (key.startsWith('app-')) {
-                        keys.push(`{${this.toSnake(key.substring(4)).replace(/-/g, '_').toUpperCase()}}`);
+                        keys.push(`{${this.toSnake(key.substring(4)).toUpperCase()}}`);
                     }
                     let val = webui.getData(key);
                     if (val === undefined || val === null) {
@@ -810,7 +810,7 @@ const webui = (() => {
             if (!key) return;
             key = key.split(':')[0];
             let sections = key.split('.');
-            let baseKey = webui.toSnake(sections[0]);
+            let baseKey = webui.toSnake(sections[0], '-');
             if (appDataLimit.indexOf(baseKey) !== -1) {
                 if (appDataOnce.indexOf(baseKey) !== -1) {
                     webui.log.warn(`${key} is a reserved key and cannot be set again after initialization`);
@@ -821,7 +821,7 @@ const webui = (() => {
             let dataContainer = key.startsWith('session-') ? watchedSessionData : watchedAppData;
             value = structuredClone(value);
             if (sections.length === 1) {
-                key = webui.toSnake(key);
+                key = webui.toSnake(key, '-');
                 if (JSON.stringify(dataContainer[key]) === JSON.stringify(value)) {
                     return;
                 }
@@ -832,14 +832,14 @@ const webui = (() => {
                 }
             } else {
                 let skey = sections.shift();
-                skey = webui.toSnake(skey);
+                skey = webui.toSnake(skey, '-');
                 if (!dataContainer[skey]) {
                     dataContainer[skey] = {};
                 }
                 let segment = dataContainer[skey];
                 while (sections.length > 1) {
                     skey = sections.shift();
-                    skey = webui.toSnake(skey);
+                    skey = webui.toSnake(skey, '-');
                     if (!segment[skey]) {
                         segment[skey] = {};
                     }
@@ -953,8 +953,8 @@ const webui = (() => {
                 target = target.parentNode || target.host;
             }
         }
-        toSnake(key) {
-            return key.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+        toSnake(key, delim = '_') {
+            return key.replace(/[A-Z]/g, letter => `${delim}${letter.toLowerCase()}`);
         }
         toCamel(key) {
             return key.replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })

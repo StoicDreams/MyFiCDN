@@ -1,1 +1,13 @@
+# Ignore IDE Files
+.idea/
+
+# Ignore Build Folders
+target
+dist
+pkg
+
+# Ignore Legacy Files
+.legacy
+
+# Ignore Deployment folders
 apps

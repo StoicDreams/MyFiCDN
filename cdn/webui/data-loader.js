@@ -52,9 +52,9 @@
                     let payload = await result.text();
                     try {
                         payload = JSON.parse(payload);
-                        webui.setData(webui.toSnake(dataKey), payload);
+                        webui.setData(webui.toSnake(dataKey, '-'), payload);
                     } catch (ex) {
-                        webui.setData(webui.toSnake(dataKey), payload);
+                        webui.setData(webui.toSnake(dataKey, '-'), payload);
                     }
                 } catch (ex) {
                     console.error('webui-data-loader failed loading data:', ex);
