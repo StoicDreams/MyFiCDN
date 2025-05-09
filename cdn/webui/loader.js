@@ -471,6 +471,7 @@ const webui = (() => {
                         },1);
                     }
                     if (t.shadowRoot && t.shadowRoot && t.shadowRoot.childNodes) {
+                        t.setAttribute('has-shadow',true);
                         t.shadowRoot.childNodes.forEach(node => {
                             if (node.nodeName === 'SLOT') {
                                 node.classList = t.classList;
@@ -877,7 +878,7 @@ const webui = (() => {
             rootNode.querySelectorAll(selector).forEach(element => {
                 results.push(element);
             });
-            rootNode.querySelectorAll('*').forEach(element => {
+            rootNode.querySelectorAll('[has-shadow]').forEach(element => {
                 if (element.shadowRoot) {
                     const nestedResults = webui.querySelectorAll(selector, element.shadowRoot);
                     results.push(...nestedResults);
