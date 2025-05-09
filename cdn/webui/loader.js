@@ -6,6 +6,9 @@ const webui = (() => {
     const markdownOptions = {
         gfm: true,
     };
+    const map = {
+        subs: {}
+    };
     const appDataOnce = [];
     const appDataLimit = ['app-name', 'app-company-singular', 'app-company-possessive', 'app-domain', 'app-api', 'app-not-found-html', 'app-data-endpoint', 'app-content-endpoint'];
     const appData = {
@@ -379,7 +382,7 @@ const webui = (() => {
                             });
                         }
                         ['input', 'select'].forEach(selector => {
-                            t.template.querySelectorAll(selector).forEach(el => {
+                            webui.querySelectorAll(selector, t.template).forEach(el => {
                                 ['event', 'click', 'blur'].forEach(evname => {
                                     el.addEventListener(evname, ev => {
                                         setTimeout(() => {
@@ -855,26 +858,22 @@ const webui = (() => {
                     segment[skey] = value;
                 }
             }
-            webui.querySelectorAll(`[data-subscribe*="${baseKey}"]`).forEach(sub => {
-                sub.dataset.subscribe.split('|').forEach(k => {
-                    let ts = k.split(':')
-                    let sections = ts[0].split('.');
-                    let skeys = [];
-                    let mk = ts[0];
-                    while (sections.length > 0) {
-                        skeys.push(sections.shift());
-                        let skey = skeys.join('.');
-                        if (mk === skey) {
-                            setTimeout(() => {
-                                setDataToEl(sub, skey);
-                            }, 10);
-                        }
-                    }
+            if (map.subs[baseKey] && map.subs[baseKey].forEach) {
+                map.subs[baseKey].forEach(node=>{
+                    setDataToEl(node, baseKey);
                 });
+            }
+            /*
+            webui.querySelectorAll(`[data-subscribe*="${baseKey}"]`).forEach(sub => {
+                setDataToEl(sub, baseKey);
             });
+            */
         }
         querySelectorAll(selector, rootNode = document) {
             const results = [];
+            if (!rootNode || typeof(rootNode.querySelectorAll) !== 'function') {
+                return [];
+            }
             rootNode.querySelectorAll(selector).forEach(element => {
                 results.push(element);
             });
@@ -1157,7 +1156,7 @@ const webui = (() => {
             });
         }
         function applyDataHide() {
-            document.querySelectorAll('[data-hide]').forEach(el => {
+            webui.querySelectorAll('[data-hide]').forEach(el => {
                 let sel = el.dataset.hide;
                 if (!sel) return;
                 let found = document.querySelector(sel);
@@ -1196,7 +1195,7 @@ const webui = (() => {
     function handleDataClick(ev) {
         let key = ev.dataset.click;
         if (!key) { return; }
-        document.querySelectorAll(`[data-subscribe*="${key}:click"]`).forEach(sub => {
+        webui.querySelectorAll(`[data-subscribe*="${key}:click"]`).forEach(sub => {
             sub.click();
         });
     }
@@ -1423,7 +1422,7 @@ const webui = (() => {
                 if (target.dataset.setattr) {
                     let [val, attr, sel] = target.dataset.setattr.split('|').reverse();
                     if (sel) {
-                        document.querySelectorAll(sel).forEach(el => {
+                        webui.querySelectorAll(sel).forEach(el => {
                             setAttr(el, attr, val);
                         });
                     } else {
@@ -1435,7 +1434,7 @@ const webui = (() => {
                 if (target.dataset.toggleclass) {
                     let [cls, sel] = target.dataset.toggleclass.split('|').reverse();
                     if (sel) {
-                        document.querySelectorAll(sel).forEach(el => toggleClass(el, cls));
+                        webui.querySelectorAll(sel).forEach(el => toggleClass(el, cls));
                     } else {
                         toggleClass(target, cls);
                     }
@@ -1446,7 +1445,7 @@ const webui = (() => {
                     target.dataset.removeclass.split(';').forEach(ds => {
                         let [cls, sel] = ds.split('|').reverse();
                         if (sel) {
-                            document.querySelectorAll(sel).forEach(el => removeClass(el, cls));
+                            webui.querySelectorAll(sel).forEach(el => removeClass(el, cls));
                         } else {
                             removeClass(target, cls);
                         }
@@ -1456,7 +1455,7 @@ const webui = (() => {
                 if (target.dataset.toggleattr) {
                     let [attr, sel] = target.dataset.toggleattr.split('|').reverse();
                     if (sel) {
-                        document.querySelectorAll(sel).forEach(el => toggleAttr(el, attr));
+                        webui.querySelectorAll(sel).forEach(el => toggleAttr(el, attr));
                     } else {
                         toggleAttr(target, attr);
                     }
@@ -1476,11 +1475,20 @@ const webui = (() => {
         if (!node || !node.getAttribute) return;
         let dataKey = node.getAttribute('data-subscribe');
         if (dataKey) {
-            setDataToEl(node, dataKey);
+            dataKey.split('|').forEach(dk=>{
+                let dataKey = dk.split(':')[0];
+                if (!map.subs[dataKey]) {
+                    map.subs[dataKey] = [];
+                }
+                if (map.subs[dataKey].indexOf(node) === -1) {
+                    map.subs[dataKey].push(node);
+                }
+                setDataToEl(node, dataKey);
+            });
         }
-        node.childNodes.forEach(n => {
-            checkForSubscription(n);
-        });
+        // node.childNodes.forEach(n => {
+        //     checkForSubscription(n);
+        // });
     }
 
     function checkAttributeMutations(mutation) {
@@ -1542,6 +1550,29 @@ const webui = (() => {
     }
 
     const observeDataSubscriptions = (domNode) => {
+        function checkForSubscriptionAttr(node) {
+            checkForSubscription(node);
+            webui.querySelectorAll('[data-subscribe]', node).forEach(node=>{
+                checkForSubscription(node);
+            });
+        }
+        checkForSubscriptionAttr(domNode);
+        function removeNodeFromSubs(node) {
+            Object.keys(map.subs).forEach(key=>{
+                let index = map.subs[key].indexOf(node);
+                if (index !== -1) {
+                    map.subs[key].splice(index, 1);
+                }
+            });
+        }
+        function handleRemovedNodes(node) {
+            if (node.dataset && node.dataset.subscribe) {
+                removeNodeFromSubs(node);
+            }
+            webui.querySelectorAll('[data-subscribe]', node).forEach(node=>{
+                removeNodeFromSubs(node);
+            });
+        }
         const observer = new MutationObserver(mutations => {
             mutations.forEach(function (mutation) {
                 checkAttributeMutations(mutation);
@@ -1550,7 +1581,10 @@ const webui = (() => {
                 }
                 Array.from(mutation.addedNodes).forEach(el => {
                     applyAttributeSettings(el);
-                    checkForSubscription(el);
+                    checkForSubscriptionAttr(el);
+                });
+                Array.from(mutation.removedNodes).forEach(el =>{
+                    handleRemovedNodes(el);
                 });
             });
         });
@@ -1564,14 +1598,14 @@ const webui = (() => {
     };
     runWhenBodyIsReady(() => {
         observeDataSubscriptions(document.body);
-        document.querySelectorAll('[data-subscribe]').forEach(el => {
+        webui.querySelectorAll('[data-subscribe]').forEach(el => {
             let key = el.dataset.subscribe;
             setDataToEl(el, key);
         });
-        document.querySelectorAll('[theme]').forEach(el => {
+        webui.querySelectorAll('[theme]').forEach(el => {
             applyAttributeSettings(el, 'theme');
         });
-        document.querySelectorAll('[elevation]').forEach(el => {
+        webui.querySelectorAll('[elevation]').forEach(el => {
             applyAttributeSettings(el, 'elevation');
         });
     });
