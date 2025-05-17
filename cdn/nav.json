@@ -17,6 +17,11 @@
                 "name": "Under Construction",
                 "icon": "traffic-cone|stroke:thin|fill|shade|tri",
                 "url": "/under-construction"
+            },
+            {
+                "name": "Test",
+                "icon": "test|fill|shade:tri",
+                "url": "/test"
             }
         ]
     }
