@@ -353,11 +353,10 @@ const webui = (() => {
                             t.formStateRestoreCallback = (state) => { t.value = state; }
                         }
                         t.addEventListener('input', _ => {
-                            console.log('input', t.value);
                             t.internals_.setFormValue(t.value);
+                            console.log('input', t.value, t.internals_);
                         });
                         t.addEventListener('change', _ => {
-                            console.log('change', t.value);
                             t.internals_.setFormValue(t.value);
                         });
                     }
