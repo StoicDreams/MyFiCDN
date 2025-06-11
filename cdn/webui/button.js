@@ -1,11 +1,15 @@
 /* Button Component */
 "use strict"
 webui.define("webui-button", {
+    isInput: true,
     constructor: (t) => {
         t._label = t.template.querySelector('slot:not([name])');
         t._startIcon = t.template.querySelector('slot[name="start-icon"]');
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
         t.addEventListener('click', _ => {
+            if (t.getAttribute('type') === 'submit' || t.hasAttribute('submit')) {
+                t.internals_.form.requestSubmit();
+            }
             if (t.dataset.transfer) {
                 t.dataset.transfer.split('|').forEach(ft => {
                     let fts = t.dataset.transfer.split(':');
@@ -36,16 +40,16 @@ webui.define("webui-button", {
             }
         });
     },
-    attr: ['label', 'align', 'href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family', 'start-icon-class', 'end-icon-class', 'elevation'],
+    attr: ['label', 'align', 'href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family', 'start-icon-class', 'end-icon-class', 'elevation', 'submit'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'label':
-                t.childNodes.forEach(node=>{
+                t.childNodes.forEach(node => {
                     if (node.nodeName === '#text' || (node.hasAttribute && !node.hasAttribute('slot'))) {
                         node.remove();
                     }
                 });
-                t.appendChild(webui.create('span', {html:value}));
+                t.appendChild(webui.create('span', { html: value }));
                 break;
             case 'startIconClass':
             case 'startIcon':

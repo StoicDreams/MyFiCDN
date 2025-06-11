@@ -333,6 +333,9 @@ const webui = (() => {
                 constructor() {
                     super();
                     const t = this;
+                    if (isInput) {
+                        t.internals_ = t.attachInternals();
+                    }
                     if (options.props) {
                         Object.keys(options.props).forEach(key => {
                             Object.defineProperty(t, key, options.props[key]);
