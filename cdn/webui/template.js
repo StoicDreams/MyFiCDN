@@ -7,7 +7,7 @@
         preload: '',
         constructor: (t) => { },
         flags: [],
-        attr: ['height','max-height'],
+        attr: ['height', 'max-height'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'height':
@@ -22,8 +22,8 @@
             t.setupComponent();
         },
         disconnected: function (t) { },
-        reconnected: function(t) {},
-        setupComponent: function(){
+        reconnected: function (t) { },
+        setupComponent: function () {
             const t = this;
         },
     });
@@ -40,9 +40,9 @@
         constructor: (t) => {
             t._slotMain = t.template.querySelector('slot:not([name])');
             t._slotSomething = t.template.querySelector('slot[name="something"]');
-         },
+        },
         flags: [],
-        attr: ['height','max-height'],
+        attr: ['height', 'max-height'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'height':
@@ -57,17 +57,17 @@
             t.setupComponent();
         },
         disconnected: function (t) { },
-        reconnected: function(t) {},
-        setupComponent: function(){
+        reconnected: function (t) { },
+        setupComponent: function () {
             const t = this;
         },
         shadowTemplate: `
+<slot></slot>
+<slot name="something"></slot>
 <style type="text/css">
 :host {
 }
 </style>
-<slot></slot>
-<slot name="something"></slot>
 `
     });
 }
