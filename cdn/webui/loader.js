@@ -346,6 +346,12 @@ const webui = (() => {
                             get() { return t.getAttribute('name'); },
                             set(v) { t.setAttribute('name', v); }
                         });
+                        if (!t.formResetCallback) {
+                            t.formResetCallback = () => { t.value = ''; }
+                        }
+                        if (!t.formStateRestoreCallback) {
+                            t.formStateRestoreCallback = (state) => { t.value = state; }
+                        }
                     }
                     t._id = `d${webui.uuid()}`.split('-').join('').toLowerCase();
                     t.options = options;
