@@ -341,6 +341,12 @@ const webui = (() => {
                             Object.defineProperty(t, key, options.props[key]);
                         });
                     }
+                    if (isInput) {
+                        Object.defineProperty(t, 'name', {
+                            get() { return t.getAttribute('name'); },
+                            set(v) { t.setAttribute('name', v); }
+                        });
+                    }
                     t._id = `d${webui.uuid()}`.split('-').join('').toLowerCase();
                     t.options = options;
                     if (shadowTemplate) {
