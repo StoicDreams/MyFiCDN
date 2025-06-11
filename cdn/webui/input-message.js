@@ -17,7 +17,7 @@
         let text = el.value;
         let postTab = text.slice(el.selectionEnd, text.length);
         let cursorPos = el.selectionEnd;
-        let tab=el.getAttribute('tab') || '\t';
+        let tab = el.getAttribute('tab') || '\t';
         ev.target.value = text.slice(0, el.selectionStart) + tab + postTab;
         cursorPos += tab.length;
         el.selectionStart = cursorPos;
@@ -39,7 +39,6 @@
     webui.define('webui-input-message', {
         preload: 'flex',
         constructor: (t) => {
-            t.internals = t.attachInternals();
             t.autosize = () => {
                 if (t._lav !== t.value) {
                     t._lav = t.value;
@@ -88,7 +87,7 @@
                     t._field.value = value;
                     break;
                 case 'tab':
-                    t._field.setAttribute('tab', value||'  ');
+                    t._field.setAttribute('tab', value || '  ');
                     break;
             }
         },

@@ -1,9 +1,8 @@
 /* Display input range field. */
 "use strict"
 webui.define('webui-input-range', {
-    isInput:true,
+    isInput: true,
     constructor: (t) => {
-        t.internals = t.attachInternals();
         t._handleFormData = t.handleFormData.bind(t);
         t._field = t.template.querySelector('input');
         t._valueDisplay = t.template.querySelector('span');
@@ -67,7 +66,7 @@ webui.define('webui-input-range', {
         }
     },
     setValue: function (value) {
-        let t=this;
+        let t = this;
         value = webui.getDefined(value, '');
         if (value === t._value) return;
         t._value = value;
