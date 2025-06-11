@@ -65,6 +65,7 @@ webui.define('webui-input-text', {
         }
     },
     handleFormData: function ({ formData }) {
+        console.log('handle form data', formData, this.name, this.value);
         if (!this.disabled) {
             formData[this.name] = this.value;
         }
