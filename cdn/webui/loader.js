@@ -352,6 +352,12 @@ const webui = (() => {
                         if (!t.formStateRestoreCallback) {
                             t.formStateRestoreCallback = (state) => { t.value = state; }
                         }
+                        t.addEventListener('input', _ => {
+                            t.internals_.setFormValue(t.value);
+                        });
+                        t.addEventListener('change', _ => {
+                            t.internals_.setFormValue(t.value);
+                        });
                     }
                     t._id = `d${webui.uuid()}`.split('-').join('').toLowerCase();
                     t.options = options;
