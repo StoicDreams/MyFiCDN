@@ -328,7 +328,6 @@ const webui = (() => {
             let isInput = options.isInput || name.indexOf('input') !== -1;
             class CustomElement extends HTMLElement {
                 static formAssociated = isInput;
-                internals;
                 disconnectHandlers = [];
                 constructor() {
                     super();
