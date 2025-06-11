@@ -79,10 +79,10 @@
                     options.content = 'Attribute data-post="https://..." needs to be set.'
                 }
                 try {
-                    await webuiDialog(options);
+                    await webui.dialog(options);
                 } catch (ex) {
                     if (ex === 'canceled') return;
-                    console.error('Unexpected error from feedback->webuiDialog()', ex);
+                    console.error('Unexpected error from feedback->webui.dialog()', ex);
                 }
             });
         },

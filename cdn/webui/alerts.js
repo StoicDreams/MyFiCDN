@@ -44,7 +44,7 @@
     }
 
     function showAlertsInDialog() {
-        webuiDialog({
+        webui.dialog({
             title: getAlertHeader(),
             content: getAlertContent(),
             confirm: 'Close',

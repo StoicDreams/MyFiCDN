@@ -644,6 +644,65 @@ const webui = (() => {
             }
             return html;
         }
+        async openSharedDrawer(header, content) {
+            if (content === undefined) {
+                content = header;
+                header = undefined;
+            }
+            if (typeof header === 'function') {
+                if (header.constructor == AsyncFunction) {
+                    header = await header();
+                } else {
+                    header = header();
+                }
+            }
+            if (typeof header === 'string') {
+                const container = webui.create('header');
+                container.style.padding = 'var(--padding)';
+                container.setAttribute('slot', 'header');
+                container.innerHTML = header;
+                header = container;
+            } else {
+                let hc = header;
+                header = webui.create('header');
+                header.style.padding = 'var(--padding)';
+                header.setAttribute('slot', 'header');
+                if (hc) {
+                    header.appendChild(hc);
+                }
+            }
+            if (typeof content === 'function') {
+                if (content.constructor == AsyncFunction) {
+                    content = await content();
+                } else {
+                    content = content();
+                }
+            }
+            if (typeof content === 'string') {
+                const container = webui.create('section');
+                container.style.padding = 'var(--padding)';
+                container.innerHTML = content;
+                content = container;
+            }
+            let el = document.querySelector('webui-drawer.shared');
+            if (!el) {
+                webui.dialog({
+                    title: header,
+                    content: content,
+                    confirm: 'Close',
+                });
+                return;
+            }
+            if (el.classList.contains('open')) {
+                el.classList.remove('open');
+                await webui.wait(400);
+            }
+            el.innerHTML = '';
+            el.appendChild(header);
+            el.appendChild(content);
+            await webui.wait(100);
+            el.classList.add('open');
+        }
         parseWebuiSmartMarkdown(raw) {
             const noTrimTags = ['code', 'template', 'webui-code'];
             const insideBlock = { codeBlock: false, htmlBlock: false, tagStack: [] };
