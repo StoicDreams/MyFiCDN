@@ -42,7 +42,6 @@
             t.autosize = () => {
                 if (t._lav !== t.value) {
                     t._lav = t.value;
-                    t.internals.setFormValue(t.name, t.value);
                 }
                 autosizeTextArea(t._field);
             };

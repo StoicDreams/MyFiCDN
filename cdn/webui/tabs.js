@@ -72,7 +72,7 @@
             if (t._initiated && tabIndex === t._index) return;
             let index = 0;
             let foundIndex = false;
-            Array.from(t.querySelectorAll('[slot="tabs"]')).filter(item=>item.parentNode===t).forEach(tab => {
+            Array.from(t.querySelectorAll('[slot="tabs"]')).filter(item => item.parentNode === t).forEach(tab => {
                 if (tabIndex === index++) {
                     tab.setAttribute('theme', 'active');
                     t._index = index - 1;
@@ -88,11 +88,14 @@
             }
             index = 0;
             foundIndex = false;
-            Array.from(t.querySelectorAll('[slot="content"]')).filter(item=>item.parentNode===t).forEach(_ => {
+            Array.from(t.querySelectorAll('[slot="content"]')).filter(item => item.parentNode === t).forEach(c => {
                 if (tabIndex === index++) {
                     let offset = tabIndex * 100;
                     t._slotContent.style.translate = `-${offset}% 0`;
                     foundIndex = true;
+                    webui.querySelectorAll(t, '[name]').forEach(item => item.removeAttribute('disabled'));
+                } else {
+                    webui.querySelectorAll(t, '[name]').forEach(item => item.setAttribute('disabled', true));
                 }
             });
             if (tabIndex > 0 && !foundIndex) {
@@ -115,10 +118,10 @@
         },
         render: function () {
             const t = this;
-            let nodes = Array.from(t.querySelectorAll('[slot="content"]')).filter(item=>item.parentNode===t);
+            let nodes = Array.from(t.querySelectorAll('[slot="content"]')).filter(item => item.parentNode === t);
             t._slotContent.style.setProperty('grid-template-columns', (new Array(nodes.length).fill('100%')).join(' '));
             let tabIndex = 0;
-            Array.from(t.querySelectorAll('[slot="tabs"]')).filter(item=>item.parentNode===t).forEach(node => {
+            Array.from(t.querySelectorAll('[slot="tabs"]')).filter(item => item.parentNode === t).forEach(node => {
                 const myIndex = tabIndex++;
                 if (!node._isSetup) {
                     node._isSetup = true;
