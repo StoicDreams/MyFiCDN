@@ -63,6 +63,10 @@ webui.define('webui-input-text', {
             t._field.setAttribute('type', 'text');
         }
     },
+    formDisabledCallback(isDisabled) {
+        console.log(`formDisabledCallback called. Is disabled? ${isDisabled}`);
+        this._input.disabled = isDisabled;
+    },
     shadowTemplate: `
 <label></label>
 <input></input>
