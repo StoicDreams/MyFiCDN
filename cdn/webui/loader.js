@@ -353,7 +353,6 @@ const webui = (() => {
                         }
                         t.addEventListener('input', _ => {
                             t.internals_.setFormValue(t.value);
-                            console.log('input', t.value, t.internals_);
                         });
                         t.addEventListener('change', _ => {
                             t.internals_.setFormValue(t.value);
@@ -498,6 +497,9 @@ const webui = (() => {
                                 node.classList = t.classList;
                             }
                         });
+                    }
+                    if (isInput) {
+                        t.internals_.setFormValue(t.value);
                     }
                 }
                 disconnectedCallback() {
