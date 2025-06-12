@@ -64,12 +64,6 @@ webui.define('webui-input-text', {
             t._field.setAttribute('type', 'text');
         }
     },
-    handleFormData: function ({ formData }) {
-        console.log('handle form data', formData, this.name, this.value);
-        if (!this.disabled) {
-            formData[this.name] = this.value;
-        }
-    },
     shadowTemplate: `
 <label></label>
 <input></input>
