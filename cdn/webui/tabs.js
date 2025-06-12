@@ -93,9 +93,9 @@
                     let offset = tabIndex * 100;
                     t._slotContent.style.translate = `-${offset}% 0`;
                     foundIndex = true;
-                    webui.querySelectorAll(t, '[name]').forEach(item => item.removeAttribute('disabled'));
+                    webui.querySelectorAll('[name]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
                 } else {
-                    webui.querySelectorAll(t, '[name]').forEach(item => item.setAttribute('disabled', true));
+                    webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
                 }
             });
             if (tabIndex > 0 && !foundIndex) {
