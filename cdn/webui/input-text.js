@@ -2,7 +2,6 @@
 "use strict"
 webui.define('webui-input-text', {
     constructor: (t) => {
-        t._handleFormData = t.handleFormData.bind(t);
         t._field = t.template.querySelector('input');
         t._field.setAttribute('name', 'text');
         t._label = t.template.querySelector('label');
