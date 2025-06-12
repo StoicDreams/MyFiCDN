@@ -3,7 +3,6 @@
 webui.define('webui-input-range', {
     isInput: true,
     constructor: (t) => {
-        t._handleFormData = t.handleFormData.bind(t);
         t._field = t.template.querySelector('input');
         t._valueDisplay = t.template.querySelector('span');
         t._label = t.template.querySelector('label');
@@ -80,11 +79,6 @@ webui.define('webui-input-range', {
     },
     connected: (t) => {
         t._valueDisplay.innerText = t._field.value;
-    },
-    handleFormData: function ({ formData }) {
-        if (!this.disabled) {
-            formData[this.name] = this.value;
-        }
     },
     shadowTemplate: `
 <label></label>

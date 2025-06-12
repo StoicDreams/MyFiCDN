@@ -46,7 +46,6 @@
                 }
                 autosizeTextArea(t._field);
             };
-            t._handleFormData = t.handleFormData.bind(t);
             talist.push(t);
             t._label = t.template.querySelector('label');
             t._field = t.template.querySelector('textarea');
@@ -107,11 +106,6 @@
             let id = webui.uuid();
             t._label.setAttribute('for', id);
             t._field.setAttribute('id', id);
-        },
-        handleFormData: function ({ formData }) {
-            if (!this.disabled) {
-                formData[this.name] = this.value;
-            }
         },
         shadowTemplate: `
 <style type="text/css">
