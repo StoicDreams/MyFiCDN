@@ -535,6 +535,29 @@ const webui = (() => {
             }
             customElements.define(name, CustomElement, defineOptions);
         }
+        fetchApi(url, data, method = 'POST') {
+            const api = webui.appConfig.appApi || '';
+            if (!url.startsWith('http')) {
+                url = `${api}/${url}`;
+            }
+            let body = data;
+            let ct = 'text/plain';
+            if (data instanceof FormData) {
+                ct = 'multipart/form-data';
+            } else if (typeof data !== 'string') {
+                ct = 'application/json';
+                body = JSON.stringify(data);
+            }
+            return fetch(url, {
+                method: method,
+                mode: 'cors',
+                cache: 'no-cache',
+                body: body,
+                headers: {
+                    'Content-Type': ct
+                }
+            });
+        }
         fetchWithCache(url, isJson) {
             return new Promise((resolve, reject) => {
                 if (cachedFetches[url]) {
