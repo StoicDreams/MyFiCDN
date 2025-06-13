@@ -1754,10 +1754,11 @@ const webui = (() => {
             return;
         }
         let page = location.pathname === '/' ? '/' + appSettings.rootPage : location.pathname;
-        let url = page + location.search;
-        let dataUrl = encryptUrl(url, appSettings.encryptPageData);
-        let contentUrl = encryptUrl(url, appSettings.encryptPageContent);
-        let fullContentUrl = `${webui.getData('app-content-endpoint')}${contentUrl}${appSettings.contentExtension}`;
+        let contentUrl = `${page}${appSettings.contentExtension}${location.search}`;
+        if (appSettings.encryptPageContent) {
+            contentUrl = encryptUrl(contentUrl, appSettings.encryptPageContent);
+        }
+        let fullContentUrl = `${webui.getData('app-content-endpoint')}${contentUrl}`;
         let fetchContent = fetch(fullContentUrl);
         let fetchData = fetchRemoteData();
         appSettings.app.main.classList.add('transition');
