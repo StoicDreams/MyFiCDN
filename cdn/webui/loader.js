@@ -617,6 +617,20 @@ const webui = (() => {
             });
             return this.applyAppDataToContent(html.join('\n'), data);
         }
+        getQueryData(key) {
+            let data = location.search;
+            if (!data || data[0] !== '?') return null;
+            let dict = {};
+            data.substring(1).split('&').forEach(kv => {
+                kv = kv.split('=');
+                dict[kv[0]] = kv[1];
+            });
+            if (!key) return dict;
+            return dict[key];
+        }
+        getSearchData(key) {
+            return webui.getQueryData(key);
+        }
         isEqual(a, b) {
             if (a === b) return true;
             if (typeof a !== typeof b) return false;
