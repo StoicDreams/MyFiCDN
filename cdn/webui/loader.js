@@ -471,6 +471,9 @@ const webui = (() => {
                 }
                 connectedCallback() {
                     const t = this;
+                    if (options.content) {
+                        t.classList.add('content');
+                    }
                     if (t._connectedInit) {
                         if (typeof options.reconnected === 'function') {
                             setTimeout(() => {

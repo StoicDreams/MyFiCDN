@@ -1,4 +1,5 @@
 @charset "UTF-8";
+
 :root {
     --fa-default-family: regular;
     --icon-transition-duration: 400ms;
@@ -130,24 +131,29 @@
     --theme-padding: var(--padding);
     --theme-border-width: 1px;
 }
+
 * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
 *:not(:defined) {
     opacity: 0;
 }
+
 webui-condition:not(:has(*:not([slot]))),
 webui-page-requires,
 webui-data,
 webui-data-loader {
     display: none;
 }
+
 webui-app {
     animation: animation-fadein 400ms ease-out;
     min-width: 380px;
 }
 
+.content>p,
 webui-content>p,
 webui-app>p {
     padding: var(--padding);
@@ -485,6 +491,12 @@ p+h6 {
     margin-top: var(--padding);
 }
 
+.content>h1,
+.content>h2,
+.content>h3,
+.content>h4,
+.content>h5,
+.content>h6,
 webui-app>h1,
 webui-app>h2,
 webui-app>h3,
@@ -506,6 +518,12 @@ main h6 {
     box-shadow: 0px 4px 12px 1px rgba(0, 0, 0, 0.4);
 }
 
+.content>h1,
+.content>h2,
+.content>h3,
+.content>h4,
+.content>h5,
+.content>h6,
 webui-app>h1,
 webui-app>h2,
 webui-app>h3,
@@ -522,36 +540,42 @@ webui-content>h6 {
     font-size: calc(var(--typography-size) * 1.75);
 }
 
+.content>h1,
 webui-app>h1,
 webui-content>h1 {
     background-color: var(--color-title);
     color: var(--color-title-offset);
 }
 
+.content>h2,
 webui-app>h2,
 webui-content>h2 {
     background-color: var(--color-primary);
     color: var(--color-primary-offset);
 }
 
+.content>h3,
 webui-app>h3,
 webui-content>h3 {
     background-color: var(--color-secondary);
     color: var(--color-secondary-offset);
 }
 
+.content>h4,
 webui-app>h4,
 webui-content>h4 {
     background-color: var(--color-tertiary);
     color: var(--color-tertiary-offset);
 }
 
+.content>h5,
 webui-app>h5,
 webui-content>h5 {
     background-color: var(--color-info);
     color: var(--color-info-offset);
 }
 
+.content>h6,
 webui-app>h6,
 webui-content>h6 {
     background-color: var(--color-action);
@@ -731,6 +755,7 @@ webui-code:not(.hide-label)>pre[languagetag]:before {
     background-image: none;
 }
 
+.content>webui-paper>pre,
 webui-app>webui-paper>pre,
 webui-content>webui-paper>pre,
 main>.paper>pre {
@@ -1679,13 +1704,15 @@ webui-nav-link,
     display: block;
     padding: calc(0.1 * var(--padding));
 }
+
 webui-nav-link>a>webui-stoic-dreams-logo,
 webui-nav-link>a>webui-icon,
 webui-nav-link>a>svg,
 webui-nav-link>a>img {
     max-height: 3.5ch;
-    font-size:1.1em;
+    font-size: 1.1em;
 }
+
 webui-nav-group>webui-nav-link,
 webui-nav-group>webui-nav-group,
 .nav-group>section {
@@ -1724,9 +1751,11 @@ webui-nav-group>.navlink:not(.show)~webui-nav-group>*,
 .navlink>span {
     white-space: nowrap;
 }
+
 .navlink>span:empty {
-    display:none;
+    display: none;
 }
+
 .f0 {
     font-size: calc(var(--typography-size) * 0.8);
 }
