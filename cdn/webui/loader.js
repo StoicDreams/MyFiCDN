@@ -1761,7 +1761,7 @@ const webui = (() => {
         return {};
     }
     async function loadPage() {
-        if (!appSettings.app) {
+        if (!appSettings.app || !webui.appConfig.appName) {
             setTimeout(() => {
                 loadPage();
             }, 10);
