@@ -1768,7 +1768,19 @@ const webui = (() => {
             return;
         }
         let page = location.pathname === '/' ? '/' + appSettings.rootPage : location.pathname;
-        let contentUrl = `${page}${appSettings.contentExtension}${location.search}`;
+        let contentPage = page.toLowerCase();
+        if (webui.appConfig.dynNavRoutes && webui.appConfig.dynNavRoutes.length) {
+            for (let index = 0; index < webui.appConfig.dynNavRoutes.length; ++index) {
+                if (contentPage.startsWith(webui.appConfig.dynNavRoutes[index])) {
+                    contentPage = webui.appConfig.dynNavRoutes[index];
+                    break;
+                }
+            }
+        }
+        if (contentPage.endsWith('/')) {
+            contentPage = contentPage.substring(0, contentPage.length - 1);
+        }
+        let contentUrl = `${contentPage}${appSettings.contentExtension}${location.search}`;
         if (appSettings.encryptPageContent) {
             contentUrl = encryptUrl(contentUrl, appSettings.encryptPageContent);
         }

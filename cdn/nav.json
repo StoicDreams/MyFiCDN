@@ -11,7 +11,7 @@
             {
                 "name": "404 Not Found",
                 "icon": "compass|fill|bordered|backing|shape:circle",
-                "url": "/test"
+                "url": "/notfound"
             },
             {
                 "name": "Under Construction",
@@ -21,7 +21,7 @@
             {
                 "name": "Test",
                 "icon": "test|fill|shade:tri",
-                "url": "/test"
+                "url": "/test/hello"
             }
         ]
     }
