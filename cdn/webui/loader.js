@@ -545,7 +545,9 @@ const webui = (() => {
             }
             let body = data;
             let ct = 'text/plain';
-            if (data instanceof FormData) {
+            if (['get'].indexOf(method.toLowerCase()) !== -1) {
+                body = undefined;
+            } else if (data instanceof FormData) {
                 ct = 'multipart/form-data';
             } else if (typeof data !== 'string') {
                 ct = 'application/json';
