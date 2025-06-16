@@ -2,6 +2,7 @@
 "use strict"
 {
     webui.define("webui-template", {
+        content: true,
         watchVisibility: false,
         isInput: false,
         preload: '',
@@ -33,6 +34,7 @@
 "use strict"
 {
     webui.define("webui-shadow-template", {
+        content: true,
         linkCss: false,
         watchVisibility: false,
         isInput: false,

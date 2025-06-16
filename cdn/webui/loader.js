@@ -553,6 +553,7 @@ const webui = (() => {
             }
             return fetch(url, {
                 method: method,
+                credentials: 'include',
                 mode: 'cors',
                 cache: 'no-cache',
                 body: body,

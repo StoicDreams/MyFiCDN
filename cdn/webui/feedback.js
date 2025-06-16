@@ -39,6 +39,7 @@
                             if (input.value) {
                                 fetch(postUrl, {
                                     method: 'POST',
+                                    credentials: 'include',
                                     mode: 'cors',
                                     cache: 'no-cache',
                                     body: body,
