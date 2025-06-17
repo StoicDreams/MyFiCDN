@@ -539,12 +539,12 @@ const webui = (() => {
             customElements.define(name, CustomElement, defineOptions);
         }
         async fetchApi(url, data, method = 'POST') {
-            let count = 0;
-            while (!webui.appConfig.appApi && count < 500) {
-                await webui.wait(10);
-            }
-            const api = webui.appConfig.appApi || '';
             if (!url.startsWith('http')) {
+                let count = 0;
+                while (!webui.appConfig.appApi && count < 500) {
+                    await webui.wait(10);
+                }
+                const api = webui.appConfig.appApi || '';
                 url = `${api}/${url}`;
             }
             let body = data;
