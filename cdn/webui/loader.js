@@ -538,7 +538,11 @@ const webui = (() => {
             }
             customElements.define(name, CustomElement, defineOptions);
         }
-        fetchApi(url, data, method = 'POST') {
+        async fetchApi(url, data, method = 'POST') {
+            let count = 0;
+            while (!webui.appConfig.appApi && count < 500) {
+                await webui.wait(10);
+            }
             const api = webui.appConfig.appApi || '';
             if (!url.startsWith('http')) {
                 url = `${api}/${url}`;
@@ -553,7 +557,7 @@ const webui = (() => {
                 ct = 'application/json';
                 body = JSON.stringify(data);
             }
-            return fetch(url, {
+            return await fetch(url, {
                 method: method,
                 credentials: 'include',
                 mode: 'cors',
