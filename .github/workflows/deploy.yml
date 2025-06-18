@@ -14,4 +14,4 @@ jobs:
         WEB_DEPLOY_PREFIX: ${{ secrets.WEB_DEPLOY_PREFIX }}
         WEB_DEPLOY_POSTFIX: ${{ secrets.WEB_DEPLOY_POSTFIX }}
       run: |
-        ${env.WEB_DEPLOY_PREFIX}myficdn ${env.WEB_DEPLOY_POSTFIX}
+        eval "${env.WEB_DEPLOY_PREFIX}myficdn ${env.WEB_DEPLOY_POSTFIX}"
