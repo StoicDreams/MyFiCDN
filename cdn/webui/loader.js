@@ -752,6 +752,10 @@ const webui = (() => {
             if (typeof content === 'string') {
                 const container = webui.create('section');
                 container.style.padding = 'var(--padding)';
+                container.style.display = 'flex';
+                container.style.flexDirection = 'column';
+                container.style.flexGrow = '1';
+                container.style.overflow = 'auto';
                 container.innerHTML = content;
                 content = container;
             }
