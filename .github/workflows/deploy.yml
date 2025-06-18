@@ -10,5 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: run deployment
+      env:
+        WEB_DEPLOY_PREFIX: ${{ secrets.WEB_DEPLOY_PREFIX }}
+        WEB_DEPLOY_POSTFIX: ${{ secrets.WEB_DEPLOY_POSTFIX }}
       run: |
-        ${{ secrets.WEB_DEPLOY_PREFIX }}myficdn ${{ secrets.WEB_DEPLOY_POSTFIX }}
+        ${{ env.WEB_DEPLOY_PREFIX }}myficdn ${{ env.WEB_DEPLOY_POSTFIX }}
