@@ -20,6 +20,7 @@
                             appConfig[key] = data[key];
                             webui.setData(key, data[key]);
                         });
+                        webui.loadRoles();
                     })
                     .catch(err => {
                         console.error('Failed loading app config from src', err);

@@ -183,6 +183,7 @@ const webui = (() => {
     class WebUI {
         appSrc = '/wc';
         appMin = '.min';
+        appConfig = {};
         constructor() {
             this._appSettings = appSettings;
             this.storage = new MemStorage();
@@ -1202,6 +1203,28 @@ const webui = (() => {
                     isProcessing = false;
                 }
             }
+        }
+        async loadRoles() {
+            let t = this;
+            if (t.appConfig && t.appConfig.rolesApi) {
+                let resp = await webui.fetchApi(t.appConfig.rolesApi, null, 'get');
+                if (resp.status === 200) {
+                    let roles = parseInt(await resp.text());
+                    if (roles >= -1) {
+                        webui.setData('session-user-role', roles);
+                    } else {
+                        webui.setData('session-user-role', 0);
+                    }
+                }
+            } else {
+                console.warn("Cannot load roles, missing configuration.");
+            }
+        }
+        hasRole(role) {
+            return (this.userRoles & role) === role;
+        }
+        get userRoles() {
+            return this.getData('session-user-role');
         }
         uuid() {
             try {
