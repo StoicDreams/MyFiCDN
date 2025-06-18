@@ -11,7 +11,7 @@ jobs:
     steps:
     - name: run deployment
       env:
-        WEB_DEPLOY_PREFIX: ${{ secrets.WEB_DEPLOY_PREFIX }}
-        WEB_DEPLOY_POSTFIX: ${{ secrets.WEB_DEPLOY_POSTFIX }}
+        WEB_DEPLOY_API: ${{ secrets.WEB_DEPLOY_API }}
+        WEB_DEPLOY_TOKEN: ${{ secrets.WEB_DEPLOY_TOKEN }}
       run: |
-        eval "${env.WEB_DEPLOY_PREFIX}myficdn ${env.WEB_DEPLOY_POSTFIX}"
+        curl -X ${{secrets.WEB_DEPLOY_METHOD}} "${WEB_DEPLOY_API}myficdn" -H "Accept: */*" -H '${WEB_DEPLOY_TOKEN}'
