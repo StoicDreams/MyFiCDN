@@ -715,6 +715,14 @@ const webui = (() => {
             }
             return html;
         }
+        async closeSharedDrawer() {
+            let el = document.querySelector('webui-drawer.shared');
+            if (!el) return;
+            if (el.classList.contains('open')) {
+                el.classList.remove('open');
+                await webui.wait(400);
+            }
+        }
         async openSharedDrawer(header, content) {
             if (content === undefined) {
                 content = header;
