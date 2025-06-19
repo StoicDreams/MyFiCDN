@@ -44,7 +44,7 @@ const webuiDialog = function (data) {
                         data = data || defaultDialogOptions;
                         let defaultSet = data.isLoading ? defaultWaitOptions : defaultDialogOptions;
                         if (data.isLoading) {
-                            data = {...defaultWaitOptions, ...data};
+                            data = { ...defaultWaitOptions, ...data };
                         }
                         t._ignoreBackdropClick = !!data.ignoreBackdropClick;
                         t.dialog.style.minWidth = data.minWidth || '';
@@ -74,21 +74,17 @@ const webuiDialog = function (data) {
                             ev.preventDefault();
                             let formData = new FormData(t.form);
                             if (data.onconfirm) {
+                                let result = undefined;
                                 if (data.onconfirm.constructor && data.onconfirm.constructor.name === 'AsyncFunction') {
-                                    let result = await data.onconfirm(formData, t.content);
-                                    if (!result) {
-                                        return;
-                                    }
+                                    result = await data.onconfirm(formData, t.content);
                                 } else {
-                                    let result = data.onconfirm(formData, t.content);
-                                    if (result.then) {
-                                        result = await result;
-                                        if (!result) {
-                                            return;
-                                        }
-                                    } else if (!result) {
-                                        return;
-                                    }
+                                    result = data.onconfirm(formData, t.content);
+                                }
+                                if (result && result.then) {
+                                    result = await result;
+                                }
+                                if (!result) {
+                                    return;
                                 }
                             }
                             resolve(formData, t.content);
@@ -96,7 +92,7 @@ const webuiDialog = function (data) {
                         });
                         t.dialog.showModal();
                     });
-                    promise.close = ()=>{
+                    promise.close = () => {
                         close();
                     };
                     return promise;

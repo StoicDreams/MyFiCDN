@@ -540,12 +540,13 @@ const webui = (() => {
             customElements.define(name, CustomElement, defineOptions);
         }
         async fetchApi(url, data, method = 'POST') {
+            const t = this;
             if (!url.startsWith('http')) {
                 let count = 0;
-                while (!webui.appConfig.appApi && count < 500) {
-                    await webui.wait(10);
+                while (!t.appConfig.appApi && count < 500) {
+                    await t.wait(10);
                 }
-                const api = webui.appConfig.appApi || '';
+                const api = t.appConfig.appApi || '';
                 url = `${api}/${url}`;
             }
             let body = data;
@@ -1219,13 +1220,13 @@ const webui = (() => {
         async loadRoles() {
             let t = this;
             if (t.appConfig && t.appConfig.rolesApi) {
-                let resp = await webui.fetchApi(t.appConfig.rolesApi, null, 'get');
+                let resp = await t.fetchApi(t.appConfig.rolesApi, null, 'get');
                 if (resp.status === 200) {
                     let roles = parseInt(await resp.text());
                     if (roles >= -1) {
-                        webui.setData('session-user-role', roles);
+                        t.setData('session-user-role', roles);
                     } else {
-                        webui.setData('session-user-role', 0);
+                        t.setData('session-user-role', 0);
                     }
                 }
             } else {
