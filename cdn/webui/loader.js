@@ -593,6 +593,13 @@ const webui = (() => {
                 }
             });
         }
+        fromBase64(encoded) {
+            encoded = encoded.replace(/-/g, '+').replace(/_/g, '/');
+            while (encoded.length % 4 !== 0) {
+                encoded = `${encoded}=`;
+            }
+            return atob(encoded);
+        }
         getData(key) {
             key = key.split(':')[0];
             let dataContainer = webui.toSnake(key, '-').startsWith('session-') ? watchedSessionData : watchedAppData;
