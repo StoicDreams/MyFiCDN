@@ -557,6 +557,9 @@ const webui = (() => {
             }
             let body = data;
             headers['Content-Type'] = 'text/plain';
+            if (!headers['x-cookie-age']) {
+                headers['x-cookie-age'] = webui.getData('session-autosignout') || 30;
+            }
             if (['get'].indexOf(method.toLowerCase()) !== -1) {
                 body = undefined;
             } else if (data instanceof FormData) {
