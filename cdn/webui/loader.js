@@ -549,14 +549,19 @@ const webui = (() => {
                 const api = t.appConfig.appApi || '';
                 url = `${api}/${url}`;
             }
+            let headers = {};
+            if (data && data.headers) {
+                headers = data.headers;
+                delete data.headers;
+            }
             let body = data;
-            let ct = 'text/plain';
+            headers['Content-Type'] = 'text/plain';
             if (['get'].indexOf(method.toLowerCase()) !== -1) {
                 body = undefined;
             } else if (data instanceof FormData) {
-                ct = 'multipart/form-data';
+                headers['Content-Type'] = 'multipart/form-data';
             } else if (typeof data !== 'string') {
-                ct = 'application/json';
+                headers['Content-Type'] = 'application/json';
                 body = JSON.stringify(data);
             }
             return await fetch(url, {
@@ -565,9 +570,7 @@ const webui = (() => {
                 mode: 'cors',
                 cache: 'no-cache',
                 body: body,
-                headers: {
-                    'Content-Type': ct
-                }
+                headers: headers
             });
         }
         fetchWithCache(url, isJson) {
