@@ -73,8 +73,8 @@ const webuiDialog = function (data) {
                         t.btnConfirm.addEventListener('click', async (ev) => {
                             ev.preventDefault();
                             let formData = new FormData(t.form);
+                            let result = undefined;
                             if (data.onconfirm) {
-                                let result = undefined;
                                 if (data.onconfirm.constructor && data.onconfirm.constructor.name === 'AsyncFunction') {
                                     result = await data.onconfirm(formData, t.content);
                                 } else {
@@ -87,8 +87,11 @@ const webuiDialog = function (data) {
                                     return;
                                 }
                             }
-                            resolve(formData, t.content);
-                            close(false);
+                            let canClose = result === undefined || result === null || !!result;
+                            if (canClose) {
+                                resolve(formData, t.content);
+                                close(false);
+                            }
                         });
                         t.dialog.showModal();
                     });
