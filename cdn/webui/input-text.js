@@ -64,7 +64,6 @@ webui.define('webui-input-text', {
         }
     },
     formDisabledCallback(isDisabled) {
-        console.log(`formDisabledCallback called. Is disabled? ${isDisabled}`);
         this._field.disabled = isDisabled;
     },
     shadowTemplate: `

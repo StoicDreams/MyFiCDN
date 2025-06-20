@@ -87,10 +87,11 @@ With this storage option, browser data is only stored until you either close you
             build_options();
             if (isDesktopApp) return;
             this.innerHTML = webui.applyAppDataToContent(`
-## Storage Concent
+## Storage Consent
 <webui-page-segment elevation="10">
     <webui-paper>
-        This ${appType} has multiple levels of data storage available for you to choose from, which will determine how data is stored on your device for this ${appType}.
+        <p>This ${appType} has multiple levels of data storage available for you to choose from, which will determine how data is stored on your device for this ${appType}.</p>
+        <p>Please note that modern browsers may persist sessions even after you close the browser. If you are not on your own secured device then please make sure you explicitly sign-out and close this tab when you are done with your session, regardless of which option you choose below.</p>
     </webui-paper>
     <webui-cards card-width="500" data-subscribe="page-storage-consent-options:setCards"></webui-cards>
 </webui-page-segment>
