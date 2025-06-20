@@ -78,7 +78,8 @@ const webui = (() => {
         'session-username': 'Guest',
         'session-full-name': 'Guest',
         'session-first-name': 'Guest',
-        'session-last-name': ''
+        'session-last-name': '',
+        'session-autosignout': 30
     };
     const watchedSessionData = new Proxy(sessionData, getHandler(notifySessionDataChanged));
     const appSettings = {
