@@ -870,7 +870,7 @@ const webui = (() => {
             //clean = md.replace(/\n/g, '\n\n');
             let clean = t.parseWebuiSmartMarkdown(md).trim();
             let html = t.marked.parse(clean, markdownOptions) || '';
-            console.log('webui-markdown');
+            console.log('webui-markdown', preTrim);
             html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
             return html;
         }
@@ -885,7 +885,7 @@ const webui = (() => {
             }
             md = md.replace(/(\n)/mg, '\n');
             let html = t.marked.parse(md, markdownOptions) || '';
-            console.log('markdown');
+            console.log('markdown', preTrim);
             html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
             return html;
         }
