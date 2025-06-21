@@ -11,7 +11,7 @@ const webui = (() => {
     };
     let lastActive = Date.now();
     const minTimeout = 1000 * 60 * 5;
-    async function checkForRoleRefresh() {
+    function checkForRoleRefresh() {
         if (webui.userRoles !== 0) {
             let autoSignout = (webui.getData('session-autosignout') || 30) * 60 * 1000;
             if (autoSignout < minTimeout) {
