@@ -9,6 +9,26 @@ const webui = (() => {
     const map = {
         subs: {}
     };
+    let lastActive = Date.now();
+    const minTimeout = 1000 * 60 * 5;
+    async function checkForRoleRefresh() {
+        if (webui.userRoles !== 0) {
+            let autoSignout = (webui.getData('session-autosignout') || 30) * 60 * 1000;
+            if (autoSignout < minTimeout) {
+                autoSignout = minTimeout;
+            }
+            let expiresAt = lastActive + autoSignout;
+            if (Date.now() < expiresAt) {
+                setTimeout(() => checkForRoleRefresh(), autoSignout);
+                webui.loadRoles();
+            } else {
+                setTimeout(() => checkForRoleRefresh(), minTimeout);
+            }
+        } else {
+            setTimeout(() => checkForRoleRefresh(), minTimeout);
+        }
+    }
+    setTimeout(() => checkForRoleRefresh(), minTimeout);
     const appDataOnce = [];
     const appDataLimit = ['app-name', 'app-company-singular', 'app-company-possessive', 'app-domain', 'app-api', 'app-not-found-html', 'app-data-endpoint', 'app-content-endpoint'];
     const appData = {
@@ -1350,6 +1370,7 @@ const webui = (() => {
         }
         const observerDataStates = (domNode) => {
             const observer = new MutationObserver(mutations => {
+                lastActive = Date.now();
                 mutations.forEach(function (mutation) {
                     if (mutation.target && mutation.target.dataset && mutation.target.dataset.state) {
                         saveState(mutation.target, mutation.attributeName);
