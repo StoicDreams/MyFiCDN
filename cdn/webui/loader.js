@@ -229,6 +229,7 @@ const webui = (() => {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
             let pt = typeof preTrim == 'boolean' ? preTrim : undefined;
             let html = this.parseWebuiMarkdown(this.replaceAppData(content, data), pt);
+            console.log('html', html);
             return html;
         }
         applyDynamicStyles() { }
@@ -874,6 +875,7 @@ const webui = (() => {
             let clean = t.parseWebuiSmartMarkdown(md).trim();
             let html = t.marked.parse(clean, markdownOptions) || '';
             html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
+            console.log('removed p tags', html);
             return html;
         }
         parseMarkdown(md, preTrim) {
