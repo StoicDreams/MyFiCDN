@@ -748,10 +748,6 @@ const webui = (() => {
             changePage(href);
         }
         removeWrappingPTags(html, tagPattern) {
-            html = html.trim();
-            if (html.startsWith('<p>') && !html.startsWith('<p><')) {
-                return html.replace(/^\<p\>(.*)\<\/p\>$/, '$1');
-            }
             while (html.match(`<p><(${tagPattern})[\> ]{1}`)) {
                 let orig = html;
                 html = html.replace(new RegExp(`\<p\>(\<(${tagPattern}).+\<\/\\2\>)\<\/p\>`, 'g'), '$1');
@@ -874,6 +870,7 @@ const webui = (() => {
             //clean = md.replace(/\n/g, '\n\n');
             let clean = t.parseWebuiSmartMarkdown(md).trim();
             let html = t.marked.parse(clean, markdownOptions) || '';
+            console.log('webui-markdown');
             html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
             return html;
         }
@@ -888,6 +885,7 @@ const webui = (() => {
             }
             md = md.replace(/(\n)/mg, '\n');
             let html = t.marked.parse(md, markdownOptions) || '';
+            console.log('markdown');
             html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
             return html;
         }
