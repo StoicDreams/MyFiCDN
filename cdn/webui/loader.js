@@ -751,9 +751,8 @@ const webui = (() => {
         removeWrappingPTags(html, tagPattern) {
             console.log('check', html.startsWith('<p>'), !html.startsWith('<p><'), html);
             if (html.startsWith('<p>') && !html.startsWith('<p><')) {
-                console.log('replacing', html.replace(/^\<p\>(.*)\<\/p\>$/, '$1'));
-                return html.substring(3, html.length - 4);
-                //return html.replace(/^\<p\>(.*)\<\/p\>$/, '$1');
+                console.log('replacing', html.trim().replace(/^\<p\>(.*)\<\/p\>$/, '$1'));
+                return html.trim().replace(/^\<p\>(.*)\<\/p\>$/, '$1');
             }
             while (html.match(`<p><(${tagPattern})[\> ]{1}`)) {
                 let orig = html;
