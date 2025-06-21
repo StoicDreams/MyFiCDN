@@ -3346,6 +3346,7 @@ webui.marked = (function () {
                 return "<input " + (e ? 'checked="" ' : "") + 'disabled="" type="checkbox">'
             }
             paragraph({ tokens: e }) {
+                console.log('paragraph', e);
                 return `<p>${this.parser.parseInline(e)}</p>\n`
             }
             table(e) {
