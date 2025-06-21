@@ -229,7 +229,6 @@ const webui = (() => {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
             let pt = typeof preTrim == 'boolean' ? preTrim : undefined;
             let html = this.parseWebuiMarkdown(this.replaceAppData(content, data), pt);
-            console.log('html', html);
             return html;
         }
         applyDynamicStyles() { }
@@ -749,9 +748,7 @@ const webui = (() => {
             changePage(href);
         }
         removeWrappingPTags(html, tagPattern) {
-            console.log('check', html.startsWith('<p>'), !html.startsWith('<p><'), html);
             if (html.startsWith('<p>') && !html.startsWith('<p><')) {
-                console.log('replacing', html.trim().replace(/^\<p\>(.*)\<\/p\>$/, '$1'));
                 return html.trim().replace(/^\<p\>(.*)\<\/p\>$/, '$1');
             }
             while (html.match(`<p><(${tagPattern})[\> ]{1}`)) {
@@ -877,7 +874,6 @@ const webui = (() => {
             let clean = t.parseWebuiSmartMarkdown(md).trim();
             let html = t.marked.parse(clean, markdownOptions) || '';
             html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
-            console.log('removed p tags', html);
             return html;
         }
         parseMarkdown(md, preTrim) {
