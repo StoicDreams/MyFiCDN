@@ -29,6 +29,12 @@ const webui = (() => {
         }
     }
     setTimeout(() => checkForRoleRefresh(), minTimeout);
+    function updateActivity() {
+        lastActive = Date.now();
+    }
+    window.addEventListener('keydown', updateActivity);
+    window.addEventListener('click', updateActivity);
+    window.addEventListener('scroll', updateActivity);
     const appDataOnce = [];
     const appDataLimit = ['app-name', 'app-company-singular', 'app-company-possessive', 'app-domain', 'app-api', 'app-not-found-html', 'app-data-endpoint', 'app-content-endpoint'];
     const appData = {
