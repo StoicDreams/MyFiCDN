@@ -229,7 +229,6 @@ const webui = (() => {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
             let pt = typeof preTrim == 'boolean' ? preTrim : undefined;
             let html = this.parseWebuiMarkdown(this.replaceAppData(content, data), pt);
-            console.log('html', html);
             return html;
         }
         applyDynamicStyles() { }
