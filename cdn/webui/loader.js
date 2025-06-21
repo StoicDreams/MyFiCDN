@@ -228,7 +228,9 @@ const webui = (() => {
         applyAppDataToContent(content, preTrim) {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
             let pt = typeof preTrim == 'boolean' ? preTrim : undefined;
-            return this.parseWebuiMarkdown(this.replaceAppData(content, data), pt);
+            let html = this.parseWebuiMarkdown(this.replaceAppData(content, data), pt);
+            console.log('html', html);
+            return html;
         }
         applyDynamicStyles() { }
         applyProperties(t) { }
