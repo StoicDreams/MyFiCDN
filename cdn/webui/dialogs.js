@@ -9,6 +9,7 @@ const webuiDialog = function (data) {
     webui.dialog = webuiDialog;
     webui.define("webui-dialogs", {
         preload: 'icon',
+        linkCss: true,
         constructor: (t) => {
             t.dialog = t.template.querySelector('dialog');
             t.form = t.template.querySelector('form');
@@ -139,6 +140,8 @@ const webuiDialog = function (data) {
 </dialog>
 <style type="text/css">
 :host {
+background-color:inherit;
+color:inherit;
 }
 dialog {
 display:none;
@@ -155,6 +158,8 @@ opacity 0.4s ease-out,
 transform 0.4s ease-out,
 overlay 0.4s ease-out allow-discrete,
 display 0.4s ease-out allow-discrete;
+background-color:inherit;
+color:inherit;
 }
 dialog[open] {
 display:flex;
