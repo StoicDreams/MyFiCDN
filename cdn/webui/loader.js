@@ -870,7 +870,6 @@ const webui = (() => {
             //clean = md.replace(/\n/g, '\n\n');
             let clean = t.parseWebuiSmartMarkdown(md).trim();
             let html = t.marked.parse(clean, markdownOptions) || '';
-            console.log('webui-markdown', preTrim, removeWrappingPTags);
             html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
             html = html.trim();
             if (removeWrappingPTags && html.startsWith('<p>') && !html.startsWith('<p><')) {
@@ -889,7 +888,6 @@ const webui = (() => {
             }
             md = md.replace(/(\n)/mg, '\n');
             let html = t.marked.parse(md, markdownOptions) || '';
-            console.log('markdown', preTrim);
             html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
             return html;
         }
@@ -954,7 +952,6 @@ const webui = (() => {
             if (data) {
                 text = this.replaceData(text, data);
             }
-            console.log('replace app data', text, data);
             [watchedAppData, watchedSessionData].forEach(dataContainer => {
                 Object.keys(dataContainer).forEach(key => {
                     let keys = [];
@@ -979,7 +976,6 @@ const webui = (() => {
                     });
                 });
             });
-            console.log('replace app data returns', text);
             return text;
         }
         replaceData(text, data) {
@@ -3352,7 +3348,6 @@ webui.marked = (function () {
                 return "<input " + (e ? 'checked="" ' : "") + 'disabled="" type="checkbox">'
             }
             paragraph({ tokens: e, raw: a, text: b }) {
-                console.log('paragraph', e, a, b);
                 return `<p>${this.parser.parseInline(e)}</p>\n`
             }
             table(e) {
@@ -3474,7 +3469,6 @@ webui.marked = (function () {
                 let n = "";
                 for (let s = 0; s < e.length; s++) {
                     const r = e[s];
-                    console.log('parse', e, s, e[s], t);
                     if (this.options.extensions?.renderers?.[r.type]) {
                         const e = r
                             , t = this.options.extensions.renderers[e.type].call({
