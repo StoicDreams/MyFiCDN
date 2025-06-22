@@ -827,6 +827,7 @@ const webui = (() => {
             el.appendChild(content);
             await webui.wait(100);
             el.classList.add('open');
+            return content;
         }
         parseWebuiSmartMarkdown(raw) {
             const noTrimTags = ['code', 'template', 'webui-code'];
