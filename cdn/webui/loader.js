@@ -225,10 +225,10 @@ const webui = (() => {
                 this.storage.setItem('session-data', JSON.stringify(sessionData));
             });
         }
-        applyAppDataToContent(content, preTrim) {
+        applyAppDataToContent(content, preTrim, removeWrappingPTags) {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
             let pt = typeof preTrim == 'boolean' ? preTrim : undefined;
-            let html = this.parseWebuiMarkdown(this.replaceAppData(content, data), pt);
+            let html = this.parseWebuiMarkdown(this.replaceAppData(content, data), pt, removeWrappingPTags);
             return html;
         }
         applyDynamicStyles() { }
@@ -858,7 +858,7 @@ const webui = (() => {
             }
             return output.join('\n');
         }
-        parseWebuiMarkdown(md, preTrim) {
+        parseWebuiMarkdown(md, preTrim, removeWrappingPTags) {
             const t = this;
             if (typeof md !== 'string') return md;
             md = md.replace(/(\r\n|\r){1}/mg, '\n');
@@ -870,8 +870,12 @@ const webui = (() => {
             //clean = md.replace(/\n/g, '\n\n');
             let clean = t.parseWebuiSmartMarkdown(md).trim();
             let html = t.marked.parse(clean, markdownOptions) || '';
-            console.log('webui-markdown', preTrim);
+            console.log('webui-markdown', preTrim, removeWrappingPTags);
             html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
+            html = html.trim();
+            if (removeWrappingPTags && html.startsWith('<p>') && !html.startsWith('<p><')) {
+                return html.replace(/^\<p\>(.*)\<\/p\>$/, '$1');
+            }
             return html;
         }
         parseMarkdown(md, preTrim) {
@@ -975,6 +979,7 @@ const webui = (() => {
                     });
                 });
             });
+            console.log('replace app data returns', text);
             return text;
         }
         replaceData(text, data) {
@@ -1503,13 +1508,13 @@ const webui = (() => {
                         case 'text':
                         case 'innerText':
                             if (!isNull) {
-                                el.innerText = webui.applyAppDataToContent(value);
+                                el.innerText = webui.applyAppDataToContent(value, false, true);
                             }
                             break;
                         case 'html':
                         case 'innerHTML':
                             if (!isNull) {
-                                el.innerHTML = webui.applyAppDataToContent(value);
+                                el.innerHTML = webui.applyAppDataToContent(value, false, true);
                             }
                             break;
                         default:
