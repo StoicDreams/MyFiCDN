@@ -2,6 +2,7 @@
 /* This script is used to dynamically load Web UI web components (webui-*) from cdn.myfi.ws and app components (app-*) from the local /wc (webui.appSrc) folder as they are encountered in the dom. */
 "use strict"
 const webui = (() => {
+    const domain = location.hostname;
     const AsyncFunction = (async () => { }).constructor;
     const markdownOptions = {
         gfm: true,
@@ -43,7 +44,7 @@ const webui = (() => {
         'app-company-singular': 'Company',
         'app-company-possessive': `Company's`,
         'app-content-endpoint': '/d/en-US',
-        'app-domain': location.hostname.toLowerCase(),
+        'app-domain': domain.toLowerCase(),
         'page-title': '',
         'page-subtitle': '',
         'page-path': location.pathname,
@@ -691,6 +692,11 @@ const webui = (() => {
             if (a !== a && b !== b) return true;
             return JSON.stringify(a) === JSON.stringify(b);
         }
+        get isLocalhost() {
+            if (domain === 'localhost') return true;
+            if (parseInt(domain).toString() !== 'NaN') return true;
+            return false;
+        }
         isTextOverflowing(el) {
             return el.scrollWidth > el.clientWidth + 1;
         }
@@ -807,6 +813,7 @@ const webui = (() => {
                 container.style.flexDirection = 'column';
                 container.style.flexGrow = '1';
                 container.style.overflow = 'auto';
+                container.style.gap = 'var(--padding)';
                 container.innerHTML = content;
                 content = container;
             }

@@ -4,12 +4,45 @@
     const domain = location.hostname;
     const flowGrow = `
 <webui-flex grow></webui-flex>`;
-    const signoutContent = `
-<webui-button name="signout" theme="danger">Sign-Out</webui-button>`;
-    function isLocalHost() {
-        if (domain === 'localhost') return true;
-        if (parseInt(domain).toString() !== 'NaN') return true;
-        return false;
+    const panelBottomButtons = [
+        {
+            name: 'site-settings', theme: 'info', display: 'Site Settings', click: _ => {
+                webui.closeSharedDrawer();
+                webui.dialog({
+                    title: 'Site Settings',
+                    minWidth: '80%',
+                    content: '<webui-site-settings></webui-site-settings>',
+                    cancel: null,
+                    confirm: 'Close'
+                });
+            }
+        },
+        {
+            name: 'signout', theme: 'danger', display: 'Sign-Out', click: async _ => {
+                webui.closeSharedDrawer();
+                if (webui.isLocalhost) {
+                    webui.setData('session-user-role', 0);
+                } else {
+                    await webui.fetchApi('user/signout');
+                    await webui.loadRoles();
+                }
+                webui.alert('You have been signed out.', 'success');
+            }
+        },
+    ];
+    if (webui.isLocalhost) {
+        panelBottomButtons.push({
+            name: 'dev', theme: 'warning', display: 'Dev Settings', click: _ => {
+                webui.closeSharedDrawer();
+                webui.dialog({
+                    title: 'Developer Settings',
+                    minWidth: '80%',
+                    content: '<webui-myfi-dev-settings></webui-myfi-dev-settings>',
+                    cancel: null,
+                    confirm: 'Close'
+                });
+            }
+        });
     }
     webui.define('webui-myfi-info', {
         constructor: (t) => {
@@ -25,29 +58,22 @@
                     if (excludes.indexOf('grow') === -1) {
                         content = `${content}${flowGrow}`;
                     }
-                    if (excludes.indexOf('signout') === -1) {
-                        content = `${content}${signoutContent}`;
-                    }
                     let title = t.getAttribute('header') || 'Account Panel';
                     content = await webui.openSharedDrawer(
                         title,
                         content
                     );
-                    if (excludes.indexOf('signout') === -1) {
-                        let btnSignout = content.querySelector('[name="signout"]');
-                        btnSignout.addEventListener('click', async _ => {
-                            if (isLocalHost()) {
-                                webui.setData('session-user-role', 0);
-                            } else {
-                                await webui.fetchApi('user/signout');
-                                await webui.loadRoles();
-                            }
-                            webui.closeSharedDrawer();
-                            webui.alert('You have been signed out.', 'success');
-                        });
-                    }
+                    console.log(panelBottomButtons);
+                    panelBottomButtons.map(cfg => {
+                        console.log(cfg);
+                        if (excludes.indexOf(cfg.name) === -1) {
+                            var btn = webui.create('webui-button', { theme: cfg.theme, name: cfg.name, html: cfg.display });
+                            btn.addEventListener('click', cfg.click);
+                            content.appendChild(btn);
+                        }
+                    });
                 } else {
-                    if (isLocalHost()) {
+                    if (webui.isLocalhost) {
                         webui.setData('session-user-role', 1);
                         webui.alert('Simulated sign-in for LocalHost testing.', 'success');
                     } else {
@@ -77,7 +103,11 @@
             } else {
                 t._icon.setAttribute('icon', 'signin');
                 t._icon.setAttribute('theme', 'warning');
-                t.setAttribute('title', 'Sign-In through Stoic Dreams account');
+                if (webui.isLocalhost) {
+                    t.setAttribute('title', 'Simulate Sign-In for Dev Testing');
+                } else {
+                    t.setAttribute('title', 'Sign-In through Stoic Dreams account');
+                }
             }
         },
         shadowTemplate: `
