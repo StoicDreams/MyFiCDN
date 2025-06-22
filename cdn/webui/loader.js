@@ -9,6 +9,7 @@ const webui = (() => {
     const map = {
         subs: {}
     };
+    const roles = {};
     let lastActive = Date.now();
     const minTimeout = 1000 * 60 * 5;
     function checkForRoleRefresh() {
@@ -1268,9 +1269,9 @@ const webui = (() => {
             if (t.appConfig && t.appConfig.rolesApi) {
                 let resp = await t.fetchApi(t.appConfig.rolesApi, null, 'get');
                 if (resp.status === 200) {
-                    let roles = parseInt(await resp.text());
-                    if (roles >= -1) {
-                        t.setData('session-user-role', roles);
+                    let r = parseInt(await resp.text());
+                    if (r >= -1) {
+                        t.setData('session-user-role', r);
                     } else {
                         t.setData('session-user-role', 0);
                     }
@@ -1281,6 +1282,9 @@ const webui = (() => {
         }
         hasRole(role) {
             return (this.userRoles & role) === role;
+        }
+        get roles() {
+            return roles;
         }
         get userRoles() {
             return this.getData('session-user-role');
@@ -1321,7 +1325,14 @@ const webui = (() => {
         }
     }
     const webui = new WebUI();
-
+    webui.fetchWithCache('https://cdn.myfi.ws/roles.json', true)
+        .then(r => {
+            Object.assign(roles, r);
+            Object.freeze(roles);
+        })
+        .catch(ex => {
+            webui.log.warn("Failed to load roles: %o", ex);
+        });
     //storage_accepted
     {
         function getNodeKey(node) {
