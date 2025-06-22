@@ -950,6 +950,7 @@ const webui = (() => {
             if (data) {
                 text = this.replaceData(text, data);
             }
+            console.log('replace app data', text, data);
             [watchedAppData, watchedSessionData].forEach(dataContainer => {
                 Object.keys(dataContainer).forEach(key => {
                     let keys = [];
@@ -3345,8 +3346,8 @@ webui.marked = (function () {
             checkbox({ checked: e }) {
                 return "<input " + (e ? 'checked="" ' : "") + 'disabled="" type="checkbox">'
             }
-            paragraph({ tokens: e }) {
-                console.log('paragraph', e);
+            paragraph({ tokens: e, raw: a, text: b }) {
+                console.log('paragraph', e, a, b);
                 return `<p>${this.parser.parseInline(e)}</p>\n`
             }
             table(e) {
@@ -3468,6 +3469,7 @@ webui.marked = (function () {
                 let n = "";
                 for (let s = 0; s < e.length; s++) {
                     const r = e[s];
+                    console.log('parse', e, s, e[s], t);
                     if (this.options.extensions?.renderers?.[r.type]) {
                         const e = r
                             , t = this.options.extensions.renderers[e.type].call({
