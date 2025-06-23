@@ -1,4 +1,4 @@
-# MyFi CDN
+# My Fidelity CDN
 
 [Version: 0.11.34](https://github.com/StoicDreams/MyFiCDN)
 

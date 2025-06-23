@@ -1,4 +1,4 @@
-/* Display button for opening MyFi Account Info panel. */
+/* Display button for opening My Fidelity Account Info panel. */
 "use strict"
 {
     const domain = location.hostname;

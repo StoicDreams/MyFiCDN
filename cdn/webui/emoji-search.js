@@ -1,6 +1,6 @@
 "use strict"
 {
-    const emojiSource = webui.getData('appName') === 'MyFi CDN' ? '/i/emojis.json/' : 'https://cdn.myfi.ws/i/emojis.json';
+    const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json/' : 'https://cdn.myfi.ws/i/emojis.json';
     webui.define("webui-emoji-search", {
         linkCss: false,
         preload: 'input-range grid input-text',
@@ -9,7 +9,7 @@
             t._size = t.template.querySelector('[label="Size"]');
             t._grid = t.template.querySelector('.grid');
         },
-        attr: ['height','max-height'],
+        attr: ['height', 'max-height'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'height':
@@ -21,31 +21,31 @@
             }
         },
         connected: function (t) {
-            webui.fetchWithCache(emojiSource, true).then(emojis=>{
+            webui.fetchWithCache(emojiSource, true).then(emojis => {
                 t.emojis = emojis;
                 t.render();
             });
-            t._search.addEventListener('input', _=>{
+            t._search.addEventListener('input', _ => {
                 t._filter = t._search.value.trim();
                 t.render();
             });
-            t._size.addEventListener('change', _=>{
+            t._size.addEventListener('change', _ => {
                 t.style.setProperty('--font-size', `${t._size.value}em`);
             });
-            setTimeout(()=>{
+            setTimeout(() => {
                 t._size.value = '2';
-            },100);
+            }, 100);
         },
-        render: function() {
+        render: function () {
             const t = this;
             if (!t.emojis) { return; }
             t._grid.innerText = '';
-            Object.keys(t.emojis).forEach(key=>{
+            Object.keys(t.emojis).forEach(key => {
                 if (t._filter && key.indexOf(t._filter.toLowerCase()) === -1) return;
                 const code = `:${key}:`;
-                let el=webui.create('a', {title:code, html:t.emojis[key]});
+                let el = webui.create('a', { title: code, html: t.emojis[key] });
                 t._grid.appendChild(el);
-                el.addEventListener('click', ev=>{
+                el.addEventListener('click', ev => {
                     ev.stopPropagation();
                     ev.preventDefault();
                     webui.copyToClipboard(code);

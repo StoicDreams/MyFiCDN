@@ -1,6 +1,6 @@
 "use strict"
 {
-    const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
+    const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     webui.define('webui-icon-search', {
         pipedValue: '',
         preload: "icon dropdown input-range input-text input-message",
@@ -102,7 +102,7 @@
             t._rotate = webui.create('webui-input-range', { label: 'Rotation', min: 0, max: 355, step: 5 });
             inputsColumn.appendChild(t._rotate);
             {
-                function inputUpdated(){
+                function inputUpdated() {
                     let value = t._rotate.value;
                     icons.forEach(icon => {
                         if (value > 0) {
@@ -158,30 +158,30 @@
             })
             t.pipedValue = pipeData.join('|');
             t._codeSamplePiped.value = `<webui-icon icon="${t.pipedValue}"></webui-icon>`;
-            let ev = new CustomEvent('icon-update',{detail: t.pipedValue});
+            let ev = new CustomEvent('icon-update', { detail: t.pipedValue });
             t.dispatchEvent(ev);
         },
-        resetOptions: function() {
-            let t=this;
-            ['_backingToggle','_sharpToggle','_fillToggle','_borderedToggle','_banToggle','_invertedToggle'].forEach(toggle=>{
+        resetOptions: function () {
+            let t = this;
+            ['_backingToggle', '_sharpToggle', '_fillToggle', '_borderedToggle', '_banToggle', '_invertedToggle'].forEach(toggle => {
                 if (!t[toggle]) return;
                 t[toggle].value = false;
             });
-            ['_theme','_shape','_stroke','_shade'].forEach(dd=>{
+            ['_theme', '_shape', '_stroke', '_shade'].forEach(dd => {
                 if (!t[dd]) return;
                 t[dd].value = '';
             });
             t._rotate.value = 0;
         },
-        setIconFromCode: function(pipedValue) {
+        setIconFromCode: function (pipedValue) {
             const t = this;
             t.resetOptions();
             let pipedData = pipedValue.split('|');
-            let icon=pipedData.shift();
+            let icon = pipedData.shift();
             t.setIcon(icon);
-            pipedData.forEach(segment=>{
+            pipedData.forEach(segment => {
                 if (segment.indexOf(':') !== -1) {
-                    let kv=segment.split(':');
+                    let kv = segment.split(':');
                     let dd = t[`_${kv[0]}`];
                     if (dd) {
                         dd.value = kv[1];

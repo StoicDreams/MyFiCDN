@@ -1,4 +1,4 @@
-name: Deploy MyFi CDN
+name: Deploy My Fidelity CDN
 
 on:
   push:

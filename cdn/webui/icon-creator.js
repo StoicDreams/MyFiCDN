@@ -1,7 +1,7 @@
 "use strict"
 {
     const dCoordCount = 12;
-    const srcRoot = webui.getData('appName') === 'MyFi CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
+    const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     const previewHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
 <!--! Stoic Dreams - https://webui.stoicdreams.com License - https://webui.stoicdreams.com/license Copyright 2024 Stoic Dreams Inc. -->
 <path d=""></path></svg>`;

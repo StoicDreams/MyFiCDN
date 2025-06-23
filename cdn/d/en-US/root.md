@@ -1,7 +1,7 @@
 <webui-data data-page-title="{APP_COMPANY_SINGULAR} Content Delivery" data-page-subtitle="">
     <template slot="json" name="page-next-page">
         {
-            "name":"About MyFi CDN",
+            "name":"About My Fidelity CDN",
             "href":"/about"
         }
     </template>
