@@ -36,7 +36,7 @@ webui.define('webui-nav', {
     buildLink: function (parent, link) {
         const t = this;
         let el = null;
-        if (link.role && link.role > 0 && link.role & t.userRole === 0) {
+        if (link.role && link.role > 0 && (link.role & t.userRole) === 0) {
             return;
         }
         if (link.url) {
@@ -63,7 +63,7 @@ webui.define('webui-nav', {
     buildNav: function (navJson) {
         if (!navJson) return;
         let nav = typeof navJson === 'string' ? JSON.parse(navJson) : typeof navJson.forEach === 'function' ? navJson : [];
-            const t = this;
+        const t = this;
         t._navData = nav;
         t._buildNav();
     },
