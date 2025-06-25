@@ -20,7 +20,7 @@
     </webui-flex>
 </webui-side-by-side>
 
-<webui-page-segment>
+<webui-page-segment elevation="10">
 
 <app-test></app-test>
 

@@ -1,4 +1,4 @@
-<webui-page-segment>
+<webui-page-segment elevation="10">
     General digital goods - such as apps, games, add-on content, and books - are not eligible for a return unless applicable law states that you're eligible for a refund.
     We strive to ensure your satisfaction with our subscription services. If you wish to cancel your subscription, please review the following refund policy:
     Subscription services may be cancelled at any time.

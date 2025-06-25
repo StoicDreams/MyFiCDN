@@ -11,7 +11,7 @@
 
 ##### Empowering Developers to Build Better, Faster
 
-<webui-page-segment>
+<webui-page-segment elevation="10">
 
 Stoic Dreams is a forward-thinking software development studio built by developers, for developers. We understand the frustrations and challenges that come with building high-quality software, and we're passionate about creating solutions that make the process smoother, faster, and more rewarding. Our primary focus is on delivering tools and best practices that empower developers to work more efficiently and effectively.
 
@@ -23,7 +23,7 @@ At Stoic Dreams, we're not just building software; we're building the future of 
 
 #### About Web UI Framework
 
-<webui-page-segment>
+<webui-page-segment elevation="10">
 
 The Stoic Dreams Web UI Framework is as an early-stage initiative focused on providing developers with tools to rapidly build websites or other software that can utilize web technologies. It emphasizes the integration of Material UI standards, aiming to minimize the amount of boilerplate code required when starting new web projects . The framework is being created by Erik Gassler with Stoic Dreams, and consists of a pure Vanilla JavaScript framework of Web Components to provide broader accessibility and compatibility within the web development ecosystem.
 

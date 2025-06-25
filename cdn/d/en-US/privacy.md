@@ -22,7 +22,7 @@ This privacy notice discloses the privacy practices for this application {APP_NA
 
 ## Information Collection, Use, and Sharing
 
-<webui-page-segment>
+<webui-page-segment elevation="10">
 
 We are the sole owners of the information collected on {APP_NAME} and our associated platforms. We only have access to collect information that you voluntarily give us via use of {APP_NAME} and our associated platforms, email, or other direct contact from you. We will not share, sell, or rent any personally identifiable information to anyone.
 
@@ -38,7 +38,7 @@ When you explicitely opt-in, we may contact you via email, sms, or notification 
 
 ## Your Access to and Control Over Information
 
-<webui-page-segment>
+<webui-page-segment elevation="10">
 
 **Personal Data:** Personal data is any data you submit through forms or other input methods through our applications or websites. This may include your email, password, name, etc.
 
@@ -56,7 +56,7 @@ When you explicitely opt-in, we may contact you via email, sms, or notification 
 
 ## Security
 
-<webui-page-segment>
+<webui-page-segment elevation="10">
 
 At {APP_COMPANY_SINGULAR}, we take precautions to protect your information. When you submit sensitive information via {APP_NAME}, your information is protected both online and offline.
 
@@ -68,7 +68,7 @@ While we use encryption to protect information transmitted online, we also prote
 
 ## Registration
 
-<webui-page-segment>
+<webui-page-segment elevation="10">
 
 Some of our features and services may require registration. Registration requires certain information, such as name and email address. This information is used to securily identify you and potentially contact you about the products or services on {APP_NAME} or other {APP_COMPANY_SINGULAR} platforms in which you have expressed interest. At your option, you may also provide other information about yourself, but it is not required for reqistration.
 
@@ -76,7 +76,7 @@ Some of our features and services may require registration. Registration require
 
 ## Cookies
 
-<webui-page-segment>
+<webui-page-segment elevation="10">
 
 We use "cookies" on our websites. A cookie is a piece of data stored on a site visitor's hard drive to help us improve your access to our site and identify repeat visitors to our site. For instance, when we use a cookie to identify you, you would not have to log in a password more than once, thereby saving time while on our site. Cookies can also enable us to track and target the interests of our users to enhance the experience on our site.
 
@@ -86,7 +86,7 @@ Some of our business partners may use cookies on our websites. However, we have 
 
 ## Sharing
 
-<webui-page-segment>
+<webui-page-segment elevation="10">
 
 We use Google Analytics to track site usage.
 
@@ -98,7 +98,7 @@ We may partner with other parties to provide specific services. When the user si
 
 ## Links
 
-<webui-page-segment>
+<webui-page-segment elevation="10">
 
 Our websites and applications may contain links to other third-party websites. Please be aware that we are not responsible for the content or privacy practices of such other third-party websites. We encourage our users to be aware when they leave our site and to read the privacy statements of any other site that collects personally identifiable information.
 
@@ -106,7 +106,7 @@ Our websites and applications may contain links to other third-party websites. P
 
 ## Surveys
 
-<webui-page-segment>
+<webui-page-segment elevation="10">
 
 From time-to-time we may request information via surveys. Participation in these surveys is completely voluntary, and you may choose whether or not to participate and therefore disclose this information. Any information obtained in these surveys will be aggregated and not linked directly to any individual person, except when an explicit opt-in is permitted to allow contact in response to survey.
 
