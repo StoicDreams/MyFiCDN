@@ -5,7 +5,7 @@
 "use strict"
 {
     webui.define("webui-restrict-to-role", {
-        content: true,
+        content: false,
         constructor: (t) => {
             t._slotValid = t.template.querySelector('slot[name="valid"]');
             t._slotInvalid = t.template.querySelector('slot[name="invalid"]');
