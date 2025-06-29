@@ -1276,11 +1276,9 @@ const webui = (() => {
             if (t.appConfig && t.appConfig.rolesApi) {
                 let resp = await t.fetchApi(t.appConfig.rolesApi, null, 'get');
                 if (resp.status === 200) {
-                    let cookieAge = parseInt(resp.headers.get('X-Cookie-Age'), 30);
-                    console.log('Cookie Age', cookieAge, resp.headers);
+                    let cookieAge = parseInt(resp.headers.get('X-Cookie-Age') || '') || 30;
                     if (cookieAge > 0) {
                         t.setData('session-autosignout', cookieAge);
-                        console.log('Auto-signout updated', cookieAge);
                     }
                     let r = parseInt(await resp.text());
                     if (r >= -1) {
