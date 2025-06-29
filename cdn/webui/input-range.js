@@ -23,14 +23,18 @@ webui.define('webui-input-range', {
             t.setValue(t._field.value);
         });
     },
-    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'placeholder', 'min', 'max', 'step'],
+    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'placeholder', 'min', 'max', 'step', 'onrender'],
     attrChanged: (t, property, value) => {
         switch (property) {
+            case 'onrender':
+                t.onRender = webui.resolveFunctionFromString(value);
+                break;
             case 'id':
                 if (value) {
                     t.removeAttribute('id');
                     t._field.setAttribute('id', value);
                 }
+                break;
             case 'label':
                 t._label.innerHTML = value;
                 break;
@@ -45,7 +49,7 @@ webui.define('webui-input-range', {
                 break;
             case 'value':
                 t._field.value = value;
-                t._valueDisplay.innerText = t._field.value;
+                t.renderValue();
                 break;
             case 'min':
                 t._field.setAttribute('min', value);
@@ -69,16 +73,24 @@ webui.define('webui-input-range', {
         value = webui.getDefined(value, '');
         if (value === t._value) return;
         t._value = value;
-        t._valueDisplay.innerText = value;
         if (t._field.value !== value) {
             t._field.value = value;
         }
+        t.renderValue();
         t.setAttribute('value', t._field.value);
         t.dispatchEvent(new Event('change', { bubbles: true }));
         t.dispatchEvent(new Event('input', { bubbles: true }));
     },
     connected: (t) => {
-        t._valueDisplay.innerText = t._field.value;
+        t.renderValue();
+    },
+    renderValue() {
+        const t = this;
+        if (typeof t.onRender === 'function') {
+            t._valueDisplay.innerText = t.onRender(t._field.value);
+        } else {
+            t._valueDisplay.innerText = t._field.value;
+        }
     },
     shadowTemplate: `
 <label></label>
@@ -96,6 +108,7 @@ align-items:center;
 overflow:auto;
 background-color:var(--theme-color);
 color:var(--theme-color-offset);
+padding-bottom:1em;
 }
 :host([vertical]),
 :host([compact]) {
@@ -132,6 +145,12 @@ font:inherit;
 }
 label:empty {
 display:none;
+}
+span {
+position:absolute;
+right:0;
+bottom:0.2em;
+font-size:0.9em;
 }
 @container (max-width:400px) {
 :host {

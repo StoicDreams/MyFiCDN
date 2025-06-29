@@ -569,6 +569,49 @@ const webui = (() => {
             }
             customElements.define(name, CustomElement, defineOptions);
         }
+        displaySeconds(value, onZero = '0 seconds') {
+            let seconds = parseFloat(value) || 0;
+            if (seconds === 0) return onZero;
+            if (seconds < 60) return `${value} seconds`;
+            let min = Math.floor(seconds / 60);
+            seconds = seconds % 60;
+            if (min < 60) return `${min} min, ${seconds} sec`;
+            let hr = Math.floor(min / 60);
+            min = min % 60;
+            if (hr < 24) return `${(hr)} hr${hr > 1 ? 's' : ''}, ${min} min, ${seconds} sec`;
+            let days = Math.floor(hr / 24);
+            hr = hr % 24;
+            let result = [];
+            result.push(`${days} day${days > 1 ? 's' : ''}`);
+            min = min + (hr * 60);
+            seconds = seconds + (min * 60);
+            if (seconds > 0) {
+                result.push(webui.displaySeconds(seconds));
+            }
+            return result.join(' ');
+        }
+        displayMinutes(value, onZero = '0 minutes') {
+            let min = parseFloat(value) || 0;
+            if (min === 0) return onZero;
+            if (min < 60) return `${(min)} minutes`;
+            let hr = Math.floor(min / 60);
+            min = min % 60;
+            if (hr < 24) return `${hr} hr${hr > 1 ? 's' : ''}, ${min} min`;
+            let days = Math.floor(hr / 24);
+            hr = hr % 24;
+            let result = [];
+            result.push(`${days} day${days > 1 ? 's' : ''}`);
+            min = min + (hr * 60);
+            if (min > 0) {
+                result.push(webui.displayMinutes(min));
+            }
+            return result.join(' ');
+        }
+        displayLeadingZero(number, count = 1) {
+            let pad = 1 + count - `${number}`.length;
+            if (pad <= 0) return `${number}`;
+            return `${'0'.repeat(pad)}${number}`;
+        }
         async fetchApi(url, data, method = 'POST') {
             const t = this;
             if (!url.startsWith('http')) {
@@ -1008,6 +1051,25 @@ const webui = (() => {
                 }
             });
             return text;
+        }
+        resolveFunctionFromString(value, context = window) {
+            let t = this;
+            const parts = value.split('.');
+            if (parts.length === 0) return undefined;
+            if (parts[0] === 'webui') {
+                context = t;
+                parts.shift();
+            }
+            let func = parts.reduce((acc, part) => {
+                if (acc && typeof acc === 'object' && part in acc) {
+                    return acc[part];
+                }
+                return undefined;
+            }, context);
+            if (typeof func === 'function') {
+                return func;
+            }
+            return null;
         }
         setApp(app) {
             appSettings.app = app;
