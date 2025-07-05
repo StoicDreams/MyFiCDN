@@ -365,6 +365,14 @@ const webui = (() => {
                     const t = this;
                     if (isInput) {
                         t.internals_ = t.attachInternals();
+                        t.addEventListener('keyup', ev => {
+                            if (ev.key === 'Enter' && !ev.ctrlKey && !ev.shiftKey) {
+                                let form = t.internals_.form;
+                                ev.preventDefault();
+                                ev.stopPropagation();
+                                form?.requestSubmit();
+                            }
+                        });
                     }
                     if (options.props) {
                         Object.keys(options.props).forEach(key => {

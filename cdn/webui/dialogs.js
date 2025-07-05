@@ -20,6 +20,9 @@ const webuiDialog = function (data) {
             t.btnConfirm = t.template.querySelector('#dlg-confirm');
             t.btnCancel = t.template.querySelector('#dlg-cancel');
             let close = () => { };
+            t.form.addEventListener('submit', ev => {
+                t._onsubmit();
+            });
             document.body.addEventListener('keyup', ev => {
                 if (ev.key === 'Escape') {
                     close(true);
@@ -47,6 +50,28 @@ const webuiDialog = function (data) {
                         if (data.isLoading) {
                             data = { ...defaultWaitOptions, ...data };
                         }
+                        t._onsubmit = async function () {
+                            let formData = new FormData(t.form);
+                            let result = undefined;
+                            if (data.onconfirm) {
+                                if (data.onconfirm.constructor && data.onconfirm.constructor.name === 'AsyncFunction') {
+                                    result = await data.onconfirm(formData, t.content);
+                                } else {
+                                    result = data.onconfirm(formData, t.content);
+                                }
+                                if (result && result.then) {
+                                    result = await result;
+                                }
+                                if (!result) {
+                                    return;
+                                }
+                            }
+                            let canClose = result === undefined || result === null || !!result;
+                            if (canClose) {
+                                resolve(formData, t.content);
+                                close(false);
+                            }
+                        };
                         t._ignoreBackdropClick = !!data.ignoreBackdropClick;
                         t.dialog.style.minWidth = data.minWidth || '';
                         setContent(t.content, data.content || defaultSet.content);
@@ -71,28 +96,9 @@ const webuiDialog = function (data) {
                         };
                         t.btnClose.addEventListener('click', () => close(true));
                         t.btnCancel.addEventListener('click', () => close(true));
-                        t.btnConfirm.addEventListener('click', async (ev) => {
+                        t.btnConfirm.addEventListener('click', ev => {
                             ev.preventDefault();
-                            let formData = new FormData(t.form);
-                            let result = undefined;
-                            if (data.onconfirm) {
-                                if (data.onconfirm.constructor && data.onconfirm.constructor.name === 'AsyncFunction') {
-                                    result = await data.onconfirm(formData, t.content);
-                                } else {
-                                    result = data.onconfirm(formData, t.content);
-                                }
-                                if (result && result.then) {
-                                    result = await result;
-                                }
-                                if (!result) {
-                                    return;
-                                }
-                            }
-                            let canClose = result === undefined || result === null || !!result;
-                            if (canClose) {
-                                resolve(formData, t.content);
-                                close(false);
-                            }
+                            t._onsubmit();
                         });
                         t.dialog.showModal();
                     });
@@ -128,13 +134,13 @@ const webuiDialog = function (data) {
 <form method="dialog">
 <header>
 <section></section>
-<button id="dlg-close" value="cancel" formmethod="dialog"><webui-icon icon="xmark"></webui-icon></button>
+<button id="dlg-close" value="cancel" type="button" formmethod="dialog"><webui-icon icon="xmark"></webui-icon></button>
 </header>
 <section></section>
 <footer>
-<button id="dlg-cancel" value="cancel" formmethod="dialog" formnovalidate></button>
+<button id="dlg-cancel" value="cancel" type="button" formmethod="dialog" formnovalidate></button>
 <span></span>
-<button id="dlg-confirm" value="confirm" formmethod="dialog"></button>
+<button id="dlg-confirm" value="confirm" type="submit" formmethod="dialog"></button>
 </footer>
 </form>
 </dialog>

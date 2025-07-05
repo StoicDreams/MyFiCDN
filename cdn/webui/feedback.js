@@ -23,20 +23,20 @@
                             let alert = content.querySelector('#alert');
                             let input = content.querySelector('webui-input-message');
                             alert.removeAttribute('show');
-                            let body = input.value;
+                            let body = input.value.trim();
                             let ct = 'text/plain';
                             if (t.dataset.jsonName) {
                                 ct = 'application/json';
                                 let o = {};
-                                o[t.dataset.jsonName] = input.value;
+                                o[t.dataset.jsonName] = body;
                                 body = JSON.stringify(o);
                             }
                             else if (t.dataset.formName) {
                                 ct = 'multipart/form-data';
-                                data.append(t.dataset.formName, input.value);
+                                data.append(t.dataset.formName, body);
                                 body = data;
                             }
-                            if (input.value) {
+                            if (body) {
                                 fetch(postUrl, {
                                     method: 'POST',
                                     credentials: 'include',
