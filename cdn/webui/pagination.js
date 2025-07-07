@@ -306,6 +306,9 @@ border-radius:var(--corners);
 cursor:default;
 pointer-events:none;
 }
+:host([page-count="1"]) .pages {
+display:none;
+}
 pre {display:none;}
 </style>`
     });

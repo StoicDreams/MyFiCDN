@@ -82,7 +82,7 @@ We use "cookies" on our websites. A cookie is a piece of data stored on a site v
 
 Some of our business partners may use cookies on our websites. However, we have no access to or control over these cookies.
 
-</setion>
+</webui-page-segment>
 
 ## Sharing
 

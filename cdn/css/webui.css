@@ -439,36 +439,50 @@ h6 {
     padding: var(--padding);
     border-radius: var(--corners) var(--corners) 0 0;
     gap: 0.6ch;
+    background-color: transparent;
+    color: inherit;
 }
 
-h1 {
-    background-color: var(--theme-color, var(--color-title));
-    color: var(--theme-color-offset, var(--color-title-offset));
+webui-app>h1:not([theme]),
+webui-content>h1:not([theme]),
+.content>h1:not([theme]) {
+    --theme-color: var(--color-title);
+    --theme-color-offset: var(--color-title-offset);
 }
 
-h2 {
-    background-color: var(--theme-color, var(--color-primary));
-    color: var(--theme-color-offset, var(--color-primary-offset));
+webui-app>h2:not([theme]),
+webui-content>h2:not([theme]),
+.content>h2:not([theme]) {
+    --theme-color: var(--color-primary);
+    --theme-color-offset: var(--color-primary-offset);
 }
 
-h3 {
-    background-color: var(--theme-color, var(--color-secondary));
-    color: var(--theme-color-offset, var(--color-secondary-offset));
+webui-app>h3:not([theme]),
+webui-content>h3:not([theme]),
+.content>h3:not([theme]) {
+    --theme-color: var(--color-secondary);
+    --theme-color-offset: var(--color-secondary-offset);
 }
 
-h4 {
-    background-color: var(--theme-color, var(--color-tertiary));
-    color: var(--theme-color-offset, var(--color-tertiary-offset));
+webui-app>h4:not([theme]),
+webui-content>h4:not([theme]),
+.content>h4:not([theme]) {
+    --theme-color: var(--color-tertiary);
+    --theme-color-offset: var(--color-tertiary-offset);
 }
 
-h5 {
-    background-color: var(--theme-color, var(--color-info));
-    color: var(--theme-color-offset, var(--color-info-offset));
+webui-app>h5:not([theme]),
+webui-content>h5:not([theme]),
+.content>h5:not([theme]) {
+    --theme-color: var(--color-info);
+    --theme-color-offset: var(--color-info-offset);
 }
 
-h6 {
-    background-color: var(--theme-color, var(--color-success));
-    color: var(--theme-color-offset, var(--color-success-offset));
+webui-app>h6:not([theme]),
+webui-content>h6:not([theme]),
+.content>h6:not([theme]) {
+    --theme-color: var(--color-success);
+    --theme-color-offset: var(--color-success-offset);
 }
 
 header[slot="header"] h1,
