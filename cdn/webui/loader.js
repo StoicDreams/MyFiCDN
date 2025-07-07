@@ -701,7 +701,7 @@ const webui = (() => {
             let data = dataContainer[skey];
             while (segments.length > 0) {
                 if (!data) return undefined;
-                skey = webui.toSnake(segments.shift(), '-');
+                skey = segments.shift();
                 data = data[skey];
             }
             return structuredClone(data);

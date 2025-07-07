@@ -48,8 +48,9 @@ webui.define('webui-input-range', {
                 t._field.setAttribute('placeholder', value);
                 break;
             case 'value':
-                t._field.value = value;
-                t.renderValue();
+                if (value === undefined) return;
+                if (value = t.value) return;
+                t.setValue(value);
                 break;
             case 'min':
                 t._field.setAttribute('min', value);
@@ -69,7 +70,8 @@ webui.define('webui-input-range', {
         }
     },
     setValue: function (value) {
-        let t = this;
+        if (value === undefined) return;
+        const t = this;
         value = webui.getDefined(value, '');
         if (value === t._value) return;
         t._value = value;

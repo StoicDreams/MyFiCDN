@@ -45,7 +45,7 @@
             t._tableActions = t.innerHTML;
         },
         flags: ['bordered'],
-        attr: ['height', 'max-height', 'label', 'api', 'per-page', 'columns', 'append-columns', 'sort-order', 'sort-column', 'theme'],
+        attr: ['height', 'max-height', 'label', 'api', 'per-page', 'columns', 'append-columns', 'sort-order', 'sort-column', 'theme', 'filters'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'api':
@@ -91,39 +91,46 @@
                 sortColumn: t.sortColumn,
                 sortOrder: t.sortOrder
             };
+            if (t.filters) {
+                let filters = webui.getData(t.filters);
+                Object.assign(request, filters);
+            }
             let json = JSON.stringify(request);
             if (t._req === json) return;
             t._req = json;
-            webui.fetchApi(t.api, request)
-                .then(async resp => {
-                    if (t._req !== json) return;
-                    if (resp.status === 200) {
-                        const data = await resp.json();
-                        if (!t.columns && data.columns) {
-                            if (t.appendColumns) {
-                                t._table.setAttribute('columns', `${data.columns};${t.appendColumns}`);
-                            } else {
-                                t._table.setAttribute('columns', data.columns);
+            setTimeout(() => {
+                if (t._req !== json) return;
+                webui.fetchApi(t.api, request)
+                    .then(async resp => {
+                        if (t._req !== json) return;
+                        if (resp.status === 200) {
+                            const data = await resp.json();
+                            if (!t.columns && data.columns) {
+                                if (t.appendColumns) {
+                                    t._table.setAttribute('columns', `${data.columns};${t.appendColumns}`);
+                                } else {
+                                    t._table.setAttribute('columns', data.columns);
+                                }
                             }
+                            t._table.setData(data.items);
+                            t._pag.forEach(p => {
+                                p.perPage = t.perPage;
+                                p.pageCount = data.pageCount;
+                                p.totalCount = data.total;
+                                p.setValue(data.page);
+                            });
+                        } else {
+                            let ex = await resp.text();
+                            if (!ex && resp.status === 401) {
+                                ex = 'You are not authorized to view this report';
+                            }
+                            t.appendChild(createError(`API Error: ${ex}`));
                         }
-                        t._table.setData(data.items);
-                        t._pag.forEach(p => {
-                            p.perPage = t.perPage;
-                            p.pageCount = data.pageCount;
-                            p.totalCount = data.total;
-                            p.setValue(data.page);
-                        });
-                    } else {
-                        let ex = await resp.text();
-                        if (!ex && resp.status === 401) {
-                            ex = 'You are not authorized to view this report';
-                        }
+                    })
+                    .catch(ex => {
                         t.appendChild(createError(`API Error: ${ex}`));
-                    }
-                })
-                .catch(ex => {
-                    t.appendChild(createError(`API Error: ${ex}`));
-                });
+                    });
+            }, 400);
         },
         setPage: function (page) {
             const t = this;
@@ -137,7 +144,12 @@
             t.loadData();
             t._table = t.querySelector('webui-table');
             t._pag = t.querySelectorAll('webui-pagination');
-            t.setAttribute('data-subscribe', `pag-${t._id}-index:setPage`);
+            let ds = [];
+            ds.push(`pag-${t._id}-index:setPage`);
+            if (t.filters) {
+                ds.push(`${t.filters}:loadData`);
+            }
+            t.setAttribute('data-subscribe', ds.join('|'));
             t._isRendered = true;
         }
     });

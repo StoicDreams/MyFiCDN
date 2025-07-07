@@ -56,6 +56,7 @@
                 set(v) {
                     this._totalCount = v;
                     this._total.innerText = v.toLocaleString('en-US');
+                    this.process();
                 }
             },
             'pageCount': {
@@ -63,6 +64,7 @@
                 set(v) {
                     this._pageCount = v;
                     this.setAttribute('page-count', v);
+                    this.process();
                 }
             }
         },
@@ -169,8 +171,8 @@
             t._input.value = t.page || 1;
             let cw = `${t.page}`.length + 5;
             t._input.style.width = `${cw}ch`;
+            t._pages.querySelectorAll('webui-button').forEach(b => b.remove());
             if (!t.hidePages && t.maxPages !== 0) {
-                t._pages.querySelectorAll('webui-button').forEach(b => b.remove());
                 let mp = t.maxPages === undefined ? 10 : Math.abs(t.maxPages);
                 let pl = Math.floor(mp / 2);
                 let ps = t.page - pl;
@@ -184,7 +186,6 @@
                         ps = Math.max(1, pr - (mp - 1));
                     }
                 }
-
                 for (let pn = ps; pn <= pr; ++pn) {
                     if (pn === t.page) {
                     } else {
