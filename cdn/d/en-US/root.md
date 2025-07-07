@@ -42,6 +42,8 @@
     <webui-content slot="content" src="/d/en-US/content/lists.md"></webui-content>
     <webui-button align="left" slot="tabs">Data Table</webui-button>
     <webui-content slot="content" src="/d/en-US/content/table.md"></webui-content>
+    <webui-button align="left" slot="tabs">Mock Report</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/mock-report.md"></webui-content>
     <webui-button align="left" slot="tabs">Grid</webui-button>
     <webui-content slot="content" src="/d/en-US/content/grid.md"></webui-content>
     <webui-button align="left" slot="tabs">Dynamic Tabs</webui-button>

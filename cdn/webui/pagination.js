@@ -12,7 +12,8 @@
             t._btnPrev = t.template.querySelector('webui-button.prev');
             t._btnNext = t.template.querySelector('webui-button.next');
             t._btnLast = t.template.querySelector('webui-button.last');
-            t._data = [];
+            t._total = t.template.querySelector('.total > strong');
+            t._data = undefined;
             t.perPage = 1;
             t._index = 0;
             t.page = 1;
@@ -48,6 +49,22 @@
                     }
                 }
             });
+        },
+        props: {
+            'totalCount': {
+                get() { return this._totalCount; },
+                set(v) {
+                    this._totalCount = v;
+                    this._total.innerText = v.toLocaleString('en-US');
+                }
+            },
+            'pageCount': {
+                get() { return this._pageCount; },
+                set(v) {
+                    this._pageCount = v;
+                    this.setAttribute('page-count', v);
+                }
+            }
         },
         attr: ['data-current', 'data-subscribe', 'value', 'page', 'per-page', 'hide-prev-next-buttons', 'hide-pages', 'loop', 'max-pages'],
         attrChanged: (t, property, value) => {
@@ -101,33 +118,35 @@
         },
         process: function () {
             const t = this;
-            if (!t._data || !t._data.forEach) return;
-            let current = t._currentData || {};
-            if (t._data.length === 0) {
-                t.pageCount = 0;
-                if (t.dataCurrent) {
-                    webui.setData(t.dataCurrent, current);
+            if (t._data && t._data.forEach) {
+                let current = t._currentData || {};
+                if (t._data.length === 0) {
+                    t.pageCount = 0;
+                    t.totalCount = 0;
+                    if (t.dataCurrent) {
+                        webui.setData(t.dataCurrent, current);
+                    }
+                    return;
                 }
-                return;
-            }
-            t.page = t.page;
-            t.pageCount = Math.ceil(t._data.length / t.perPage);
-            t.setAttribute('page-count', t.pageCount);
-            if (t.page > t.pageCount) {
-                t.page = t.pageCount;
-                t._index = t.page - 1;
-                t.value = t.page;
-            }
-            if (t.perPage === 1) {
-                current = t._data[t._index];
-            } else {
-                current = [];
-                for (let index = t._index; index < t._data.length; ++index) {
-                    current.push(t._data[index]);
+                t.page = t.page;
+                t.pageCount = Math.ceil(t._data.length / t.perPage);
+                t.totalCount = t._data.length;
+                if (t.page > t.pageCount) {
+                    t.page = t.pageCount;
+                    t._index = t.page - 1;
+                    t.value = t.page;
                 }
+                if (t.perPage === 1) {
+                    current = t._data[t._index];
+                } else {
+                    current = [];
+                    for (let index = t._index; index < t._data.length; ++index) {
+                        current.push(t._data[index]);
+                    }
+                }
+                t._currentData = current;
+                webui.setData(t.dataCurrent, current);
             }
-            t._currentData = current;
-            webui.setData(t.dataCurrent, current);
             if (t.dataset.subscribe) {
                 t.dataset.subscribe.split('|').forEach(ds => {
                     let dk = ds.split(':');
@@ -182,6 +201,7 @@
                     }
                 }
             }
+            t._hasRendered = true;
         },
         setValue: function (value, key, toSet) {
             const t = this;
@@ -194,7 +214,7 @@
             if (value < 1) {
                 value = 1;
             }
-            if (value === t.page) return;
+            if (value === t.page && t._hasRendered) return;
             t.page = value;
             t._index = t.page - 1;
             t.value = t.page;
@@ -206,6 +226,7 @@
                 try {
                     if (!value) {
                         t._data = [];
+                        t.totalCount = 0;
                     } else {
                         value = JSON.parse(value);
                     }
@@ -214,7 +235,7 @@
                 }
             }
             if (value === undefined || value === null) {
-                t._data = [];
+                t._data = undefined;
                 t.process();
                 return;
             }
@@ -239,6 +260,7 @@
 <webui-button class="last" start-icon="right-to-line"></webui-button>
 </div>
 <div class="spacer-right"></div>
+<div class="total"><span>Total: </span><strong>0</strong></div>
 <pre><slot></slot></pre>
 <style type="text/css">
 :host {
@@ -263,6 +285,12 @@ div.pages,
 div.next {
 display:flex;
 gap:var(--padding);
+}
+div.total {
+display:flex;
+grid-column:1/5;
+align-items: center;
+justify-content: right;
 }
 input[type="number"] {
 background-color:color-mix(in srgb, var(--theme-color) 80%, white);

@@ -10,6 +10,8 @@ const webui = (() => {
     const map = {
         subs: {}
     };
+    // TODO: Temp debug
+    window.subs = map.subs;
     const roles = {};
     let lastActive = Date.now();
     const minTimeout = 1000 * 60 * 5;
@@ -1131,11 +1133,13 @@ const webui = (() => {
                     segment[skey] = value;
                 }
             }
-            if (map.subs[baseKey] && map.subs[baseKey].forEach) {
-                map.subs[baseKey].forEach(node => {
-                    setDataToEl(node, baseKey);
+            Object.keys(map.subs).forEach(skey => {
+                let bkey = skey.split('.')[0];
+                if (bkey !== baseKey) return;
+                map.subs[skey].forEach(node => {
+                    setDataToEl(node, skey);
                 });
-            }
+            });
             /*
             webui.querySelectorAll(`[data-subscribe*="${baseKey}"]`).forEach(sub => {
                 setDataToEl(sub, baseKey);
@@ -1226,14 +1230,14 @@ const webui = (() => {
             }
         }
         toSnake(key, delim = '_') {
-            return this.toCamel(key).replace(/[A-Z]/g, letter => `${delim}${letter.toLowerCase()}`);
+            return key.trim().replace(/[A-Z]{1}/g, letter => `${delim}${letter.toLowerCase()}`).replace(/[-_ ]+/g, _ => delim);
         }
         toCamel(key) {
-            return key.replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })
+            return key.trim().replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })
                 .replace(/^[A-Z]{1}/, a => { return a.toLowerCase(); });
         }
         toPascel(key) {
-            return key.replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })
+            return key.trim().replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })
                 .replace(/^[A-Z]{1}/, a => { return a.toUpperCase(); });
         }
         transferChildren(from, to) {
@@ -2092,6 +2096,7 @@ const webui = (() => {
 
     function checkAddedNode(el) {
         applyAttributeSettings(el);
+        //checkForSubscription(el);
         if (el.shadowRoot) {
             if (!el._isObserved) {
                 el._isObserved = 1;
@@ -2132,6 +2137,8 @@ const webui = (() => {
         });
         startObserving(document.body);
         loadPage();
+        loadWebUIComponent('alert');
+        loadWebUIComponent('content');
     });
     window.addEventListener('resize', _ev => {
         webui.applyDynamicStyles();

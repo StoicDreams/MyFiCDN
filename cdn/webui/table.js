@@ -14,6 +14,8 @@
         return [val.trim(), flagStart ? flagEnd ? 'text-center' : 'text-left' : flagEnd ? 'text-right' : 'text-justify'];
     }
     webui.define('webui-table', {
+        _columns: [],
+        linkCss: true,
         constructor: (t) => {
             t._table = webui.create('table');
             t._columnTemplates = {};
@@ -45,10 +47,12 @@
             const t = this;
             data = data || {};
             if (typeof data === 'string') {
-                t._data = JSON.parse(data);
-            } else {
-                t._data = data;
+                data = JSON.parse(data);
             }
+            let json = JSON.stringify(data);
+            if (t._dataJson === json) return;
+            t._dataJson = json;
+            t._data = data;
             t.render();
         },
         render: function () {
