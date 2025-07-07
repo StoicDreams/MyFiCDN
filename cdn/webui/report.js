@@ -114,7 +114,10 @@
                             p.setValue(data.page);
                         });
                     } else {
-                        const ex = await resp.text();
+                        let ex = await resp.text();
+                        if (!ex && resp.status === 401) {
+                            ex = 'You are not authorized to view this report';
+                        }
                         t.appendChild(createError(`API Error: ${ex}`));
                     }
                 })
