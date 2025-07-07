@@ -25,7 +25,7 @@ At Stoic Dreams, we're not just building software; we're building the future of 
 
 <webui-page-segment elevation="10">
 
-The Stoic Dreams Web UI Framework is an early-stage initiative focused on providing developers with tools to rapidly build websites or other software that can utilize web technologies. It emphasizes the integration of Material UI standards, aiming to minimize the amount of boilerplate code required when starting new web projects . The framework is being created by Erik Gassler with Stoic Dreams, and consists of a pure Vanilla JavaScript framework of Web Components to provide broader accessibility and compatibility within the web development ecosystem.
+The Stoic Dreams Web UI Framework is an early-stage initiative focused on providing developers with tools to rapidly build websites or other software that can utilize web technologies. It emphasizes the integration of consistent UI standards, aiming to minimize the amount of boilerplate code required when starting new web projects . The framework is being created by Erik Gassler with Stoic Dreams, and consists of a pure Vanilla JavaScript framework of Web Components to provide broader accessibility and compatibility within the web development ecosystem.
 
 Some of the goals of the Web UI framework include:
 
