@@ -62,7 +62,7 @@
                 }
                 t._label.innerHTML = label;
             }
-            t.dispatchEvent(new Event('change', { bubbles: true }));
+            t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         },
         attr: ['label', 'data-trigger', 'accept', 'multiple', 'content-type', 'label-limit'],
         attrChanged: (t, property, value) => {

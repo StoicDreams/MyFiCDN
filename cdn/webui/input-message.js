@@ -98,8 +98,8 @@
         setValue: function (value) {
             const t = this;
             t._field.value = value;
-            t._field.dispatchEvent(new Event('input', { bubbles: true }));
-            t._field.dispatchEvent(new Event('change', { bubbles: true }));
+            t._field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+            t._field.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         },
         connected: (t) => {
             let id = webui.uuid();

@@ -51,7 +51,7 @@ webui.define('webui-input-text', {
             get() { return webui.getDefined(this._field.value, ''); },
             set(v) {
                 this._field.value = webui.getDefined(v, '');
-                this.dispatchEvent(new Event('change', { bubbles: true }));
+                this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
             }
         }
     },

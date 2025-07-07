@@ -69,9 +69,10 @@
             t._size.addEventListener('change', _ => {
                 t.style.setProperty('--font-size', `${t._size.value}em`);
             });
-            setTimeout(() => {
-                t._size.value = '2';
-            }, 100);
+            let size = webui.getData('session-emoji-search-size');
+            if (!size) {
+                webui.setData('session-emoji-search-size', 2);
+            }
             t.setAttribute('data-subscribe', 'session-emoji-search-index:page');
         },
         applyFilter: function () {
@@ -111,7 +112,7 @@
         shadowTemplate: `
 <webui-flex gap="10">
 <webui-input-text label="Search"></webui-input-text>
-<webui-input-range label="Size" min="1" max="5" step="0.5"></webui-input-range>
+<webui-input-range label="Size" min="1" max="5" step="0.5" data-subscribe="session-emoji-search-size:setValue" data-trigger="session-emoji-search-size"></webui-input-range>
 </webui-flex>
 <webui-pagination class="my-a" data-subscribe="session-emoji-search-index:setValue" loop max-pages="3"></webui-pagination>
 <webui-flex wrap gap="20" justify="center" class="pa-1 grid" theme="inherit"></webui-flex>

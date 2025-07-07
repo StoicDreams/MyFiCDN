@@ -6,18 +6,18 @@
         }
         if (!options) return [];
         if (typeof options === 'string') {
-            try{
+            try {
                 let items = JSON.parse(options);
                 if (!items || typeof items.forEach !== 'function') {
                     console.error('Invalid dropdown options', items, options);
                     return [];
                 }
                 return items;
-            }catch(ex) {
+            } catch (ex) {
                 let items = options.split(',');
-                return items.map(item=>{
-                    item=item.trim();
-                    return {id:item,value:item,display:item};
+                return items.map(item => {
+                    item = item.trim();
+                    return { id: item, value: item, display: item };
                 });
             }
         }
@@ -45,7 +45,7 @@
             t._endIcon = t.template.querySelector('webui-icon.end');
             t._datasub = webui.create('webui-data');
             t._select.addEventListener('change', _ => {
-                t.dispatchEvent(new Event('change', { bubbles: true }));
+                t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
                 if (!t._optionsSet) return;
                 t.applyDataChange();
             });
@@ -156,8 +156,8 @@
             });
             let dn = t.dataset.name;
             if (dn) {
-                let check=webui.getData(dn);
-                if(check !== undefined) {
+                let check = webui.getData(dn);
+                if (check !== undefined) {
                     value = webui.getDefined(check[t.dataset.id], check.id, check.value);
                 }
             }
@@ -174,14 +174,14 @@
             const t = this;
             if (!t._isConnected || !t._optionsSet) return;
             value = `${value}`;
-            let o = t._select.querySelector(`option[value="${value.replace(/\\/g,'\\\\')}"]`);
+            let o = t._select.querySelector(`option[value="${value.replace(/\\/g, '\\\\')}"]`);
             if (!o) {
                 return;
             }
             t._select.value = value;
             o.selected = true;
             t.applyDataChange();
-            t.dispatchEvent(new Event('change', { bubbles: true }));
+            t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         },
         shadowTemplate: `
 <label class="hide">

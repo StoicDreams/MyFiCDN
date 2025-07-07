@@ -42,7 +42,7 @@
             } else {
                 t.setAttribute('enabled', true);
             }
-            t.dispatchEvent(new Event('change', { bubbles: true }));
+            t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
             t.updateElements();
         },
         getIconOn: function () { return this.iconOn || this.getAttribute('icon-on') || this.icon || 'toggle-on'; },

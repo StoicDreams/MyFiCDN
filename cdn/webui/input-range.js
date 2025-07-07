@@ -70,18 +70,18 @@ webui.define('webui-input-range', {
         }
     },
     setValue: function (value) {
-        if (value === undefined) return;
         const t = this;
+        if (value === undefined) return;
         value = webui.getDefined(value, '');
-        if (value === t._value) return;
-        t._value = value;
+        if (value === t._eventValue) return;
+        t._eventValue = value;
         if (t._field.value !== value) {
             t._field.value = value;
         }
         t.renderValue();
         t.setAttribute('value', t._field.value);
-        t.dispatchEvent(new Event('change', { bubbles: true }));
-        t.dispatchEvent(new Event('input', { bubbles: true }));
+        t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+        t.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     },
     connected: (t) => {
         t.renderValue();
