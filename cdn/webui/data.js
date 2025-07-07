@@ -12,7 +12,7 @@
         let value = template.innerHTML.replace(/\<p\>/g, '').replace(/\<\/p\>/g, '');
         try {
             value = JSON.parse(value);
-            return {key,value};
+            return { key, value };
         } catch (ex) { console.error('Failed to parse JSON from template data', value, t); }
     }
     function extractHTML(template, key) {
@@ -24,7 +24,7 @@
         if (current) return;
         let value = template.innerHTML;
         value = webui.trimLinePreWhitespce(value);
-        return {key, value};
+        return { key, value };
     }
     function extractText(template, key) {
         if (!key) {
@@ -36,7 +36,7 @@
         // TODO: Update me once I can rewrite the markdown parser to ignore template content
         let value = template.innerHTML.replace(/\<p\>/g, '').replace(/\<\/p\>/g, '');
         value = webui.trimLinePreWhitespce(value);
-        return {key, value};
+        return { key, value };
     }
     webui.define("webui-data", {
         constructor: (t) => {
@@ -46,12 +46,12 @@
             t._slotJson = t.template.querySelector('slot[name="json"]');
         },
         connected: (t) => {
-            if (t.parentNode.nodeName === 'BODY') {
+            if (t.parentNode && t.parentNode.nodeName === 'BODY') {
                 t.setAttribute('init', true);
             }
             t._slotText.assignedElements().forEach(template => {
                 if (t.hasAttribute('init') || template.hasAttribute('init')) {
-                    let {key, value} = extractText(template);
+                    let { key, value } = extractText(template);
                     if (key && value) {
                         webui.setData(key, value);
                     }
@@ -59,7 +59,7 @@
             });
             t._slotHtml.assignedElements().forEach(template => {
                 if (t.hasAttribute('init') || template.hasAttribute('init')) {
-                    let {key, value} = extractHTML(template);
+                    let { key, value } = extractHTML(template);
                     if (key && value) {
                         webui.setData(key, value);
                     }
@@ -67,7 +67,7 @@
             });
             t._slotJson.assignedElements().forEach(template => {
                 if (t.hasAttribute('init') || template.hasAttribute('init')) {
-                    let {key, value} = extractJSON(template);
+                    let { key, value } = extractJSON(template);
                     if (key && value) {
                         webui.setData(key, value);
                     }
