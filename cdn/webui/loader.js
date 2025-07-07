@@ -1587,6 +1587,10 @@ const webui = (() => {
                                 el[field](value, key);
                             } else if (typeof el.setValue === 'function' && a > 1) {
                                 el.setValue(value, key);
+                            } else if (['number', 'string', 'object'].indexOf(typeof el[fsetter]) !== -1) {
+                                el[fsetter] = value;
+                            } else if (['number', 'string', 'object'].indexOf(typeof el[field]) !== -1) {
+                                el[field] = value;
                             } else {
                                 if (a++ < 5) {
                                     setTimeout(() => {
@@ -1613,6 +1617,8 @@ const webui = (() => {
                         default:
                             if (typeof el[toSet] === 'function') {
                                 el[toSet](value, key);
+                            } else if (['number', 'string', 'object'].indexOf(typeof el[toSet]) !== -1) {
+                                el[toSet] = value;
                             } else {
                                 if (a++ < 4) {
                                     setTimeout(() => {
