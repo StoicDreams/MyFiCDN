@@ -2,14 +2,18 @@
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://cdn.myfi.ws/</loc>
-		<lastmod>2025-05-09</lastmod>
+		<lastmod>2025-07-08</lastmod>
 	</url>
 	<url>
-		<loc>https://cdn.myfi.ws/test</loc>
-		<lastmod>2025-05-09</lastmod>
+		<loc>https://cdn.myfi.ws/notfound</loc>
+		<lastmod>2025-07-08</lastmod>
 	</url>
 	<url>
 		<loc>https://cdn.myfi.ws/under-construction</loc>
-		<lastmod>2025-05-09</lastmod>
+		<lastmod>2025-07-08</lastmod>
+	</url>
+	<url>
+		<loc>https://cdn.myfi.ws/test/hello</loc>
+		<lastmod>2025-07-08</lastmod>
 	</url>
 </urlset>
