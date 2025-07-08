@@ -3,7 +3,7 @@
         "name": "Web UI",
         "avatar": "https://webui.stoicdreams.com/Logo.svg",
         "link": "https://webui.stoicdreams.com",
-        "body": "Started out as our first Rust project. We recently reconceptualized the idea to be a Vanilla JavaScript Web Component Library that also has a Rust WebAssembly plugin.\n\nThis framework is being developed and used to power all of Stoic Dreams' in-house website projects and our Task Proxy desktop application."
+        "body": "A Vanilla JavaScript Web Component Library with an optional Rust WebAssembly plugin.\n\nThis framework is being developed and used to power all of Stoic Dreams' in-house website projects and our Task Proxy desktop application."
     },
     {
         "name": "My Fidelity",
@@ -15,7 +15,7 @@
         "name": "Gassler Design",
         "avatar": "https://www.gassler.design/Logo.svg",
         "link": "https://www.gassler.design",
-        "body": "Company website for Gassler Design, interior design specialists with a focus on providing inspiring visualizations through 3d renderings."
+        "body": "Company website for Gassler Design - interior design specialists with a focus on providing inspiring visualizations through 3d renderings."
     },
     {
         "name": "Task Proxy",
