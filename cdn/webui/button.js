@@ -40,7 +40,7 @@ webui.define("webui-button", {
             }
         });
     },
-    attr: ['label', 'align', 'href', 'start-icon', 'end-icon', 'start-icon-family', 'end-icon-family', 'start-icon-class', 'end-icon-class', 'elevation', 'submit'],
+    attr: ['label', 'align', 'href', 'start-icon', 'end-icon', 'start-icon-class', 'end-icon-class', 'elevation', 'submit'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'label':

@@ -45,9 +45,12 @@
             t._tableActions = t.innerHTML;
         },
         flags: ['bordered'],
-        attr: ['height', 'max-height', 'label', 'api', 'per-page', 'columns', 'append-columns', 'sort-order', 'sort-column', 'theme', 'filters'],
+        attr: ['height', 'max-height', 'label', 'api', 'per-page', 'columns', 'append-columns', 'sort-order', 'sort-column', 'theme', 'filters', 'sortable'],
         attrChanged: (t, property, value) => {
             switch (property) {
+                case 'sortable':
+
+                    break;
                 case 'api':
                     if (t._isRendered) {
                         setTimeout(() => {
@@ -151,6 +154,12 @@
             }
             t.setAttribute('data-subscribe', ds.join('|'));
             t._isRendered = true;
+            if (t.sortable) {
+                console.log('sortable', t.sortable);
+                t.sortable.split(',').forEach(col => {
+                    console.log('col', col);
+                });
+            }
         }
     });
 }

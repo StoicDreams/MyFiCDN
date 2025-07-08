@@ -576,6 +576,35 @@ const webui = (() => {
                     this.style.height = num;
                     this.style.minHeight = num;
                 }
+                snapshot() {
+                    const t = this;
+                    let snapshot = {};
+                    if (t.options?.attr?.length) {
+                        t.options.attr.forEach(attr => {
+                            let key = webui.toCamel(attr);
+                            snapshot[key] = t[key];
+                        });
+                    }
+                    if (t.props) {
+                        Object.keys(t.props).forEach(key => {
+                            snapshot[key] = t[key];
+                        });
+                    }
+                    if (typeof t.value !== 'undefined') {
+                        snapshot.value = t.value;
+                    }
+                    snapshot.classList = Array.from(t.classList).sort();
+                    t._snapshot = JSON.stringify(snapshot);
+                    return t._snapshot;
+                }
+                get hasChanges() {
+                    let a = this._snapshot;
+                    let b = this.snapshot();
+                    if (a === undefined) {
+                        return true;
+                    }
+                    return a !== b;
+                }
             }
             customElements.define(name, CustomElement, defineOptions);
         }

@@ -2,6 +2,8 @@
 {
     webui.define('webui-pagination', {
         preload: "button",
+        _pageCount: 0,
+        _totalCount: 0,
         constructor: (t) => {
             t._input = t.template.querySelector('input');
             t._slot = t.template.querySelector('slot');
@@ -54,6 +56,7 @@
             'totalCount': {
                 get() { return this._totalCount; },
                 set(v) {
+                    if (this._totalCount === v) return;
                     this._totalCount = v;
                     this._total.innerText = v.toLocaleString('en-US');
                     this.process();
@@ -62,6 +65,7 @@
             'pageCount': {
                 get() { return this._pageCount; },
                 set(v) {
+                    if (this._pageCount === v) return;
                     this._pageCount = v;
                     this.setAttribute('page-count', v);
                     this.process();
@@ -158,6 +162,11 @@
                     }
                 });
             }
+            t.render();
+        },
+        render: function () {
+            const t = this;
+            if (!t.hasChanges) return;
             if (t.page === 1) {
                 t._btnFirst.setAttribute('disabled', 'true');
             } else {
@@ -236,16 +245,20 @@
                 }
             }
             if (value === undefined || value === null) {
-                t._data = undefined;
-                t.process();
+                if (t._data !== undefined) {
+                    t._data = undefined;
+                    t.process();
+                }
                 return;
             }
             if (!value.forEach) {
                 value = [value];
             }
             if (JSON.stringify(t._data) === JSON.stringify(value)) return;
-            t._data = value;
-            t.process();
+            if (t._data !== value) {
+                t._data = value;
+                t.process();
+            }
         },
         shadowTemplate: `
 <div class="spacer-left"></div>
