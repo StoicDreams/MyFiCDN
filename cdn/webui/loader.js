@@ -651,6 +651,16 @@ const webui = (() => {
             if (pad <= 0) return `${number}`;
             return `${'0'.repeat(pad)}${number}`;
         }
+        escapeForHTML(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;")
+                .replace(/\//g, "&#x2F;")
+                .replace(/`/g, "&#96;");
+        }
         async fetchApi(url, data, method = 'POST') {
             const t = this;
             if (!url.startsWith('http')) {
@@ -1070,6 +1080,12 @@ const webui = (() => {
             return text;
         }
         replaceData(text, data) {
+            if (text.indexOf("{TEMPLATE_ROWDATA}") !== -1) {
+                let rowData = webui.escapeForHTML(JSON.stringify(data));
+                while (text.indexOf("{TEMPLATE_ROWDATA}") !== -1) {
+                    text = text.replace('{TEMPLATE_ROWDATA}', rowData);
+                }
+            }
             Object.keys(data).forEach(key => {
                 let keyName = `${key.replace(/-/g, '_').toUpperCase()}`;
                 let rkey = `{${keyName}}`;
