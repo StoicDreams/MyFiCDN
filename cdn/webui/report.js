@@ -155,9 +155,14 @@
             t.setAttribute('data-subscribe', ds.join('|'));
             t._isRendered = true;
             if (t.sortable) {
-                console.log('sortable', t.sortable);
-                t.sortable.split(',').forEach(col => {
-                    console.log('col', col);
+                t._table.setAttribute('sortable', t.sortable);
+                t._table.addEventListener('update-sort', ev => {
+                    let sort = ev.target?.currentSort;
+                    let sortDir = ev.target?.currentSortDir;
+                    if (!sort || !sortDir) return;
+                    t.sortColumn = sort;
+                    t.sortOrder = sortDir;
+                    t.loadData();
                 });
             }
         }

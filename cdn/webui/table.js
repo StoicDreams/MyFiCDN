@@ -25,7 +25,7 @@
                 t._columnTemplates[key] = n.innerHTML;
             });
         },
-        attr: ['bordered', 'columns'],
+        attr: ['bordered', 'columns', 'sortable', 'current-sort', 'current-sort-dir'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'bordered':
@@ -60,11 +60,52 @@
             t._table.innerHTML = '';
             let h = webui.create('tr');
             t._table.appendChild(h);
+            let sortable = {};
+            if (t.sortable) {
+                t.sortable.split(';').forEach(col => {
+                    col = col.split(':');
+                    let dsb = col.length > 1 ? col[1] : 'asc';
+                    if (col.length > 2) {
+                        t.defaultSort = col[0];
+                        t.defaultSortDir = dsb;
+                    }
+                    col = col[0];
+                    sortable[col] = dsb;
+                    if (!t.defaultSort) {
+                        t.defaultSort = col;
+                        t.defaultSortDir = dsb;
+                    }
+                });
+                if (t.defaultSort && !t.currentSort) {
+                    t.currentSort = t.defaultSort;
+                    t.currentSortDir = t.defaultSortDir;
+                }
+            }
             t._columns.forEach(col => {
-                let cd = col.split('|')[0].trim();
-                let [display, align] = getAlign(cd);
+                let cs = col.split('|');
+                let [display, align] = getAlign(cs[0].trim());
+                let key = cs.length > 1 ? cs[1].trim() : display;
                 let th = webui.create('th', { 'class': align });
-                th.innerHTML = webui.replaceAppData(display);
+                let isSortable = sortable[key];
+                if (isSortable) {
+                    let flexAlign = align === 'text-center' ? 'center' : align === 'text-right' ? 'right' : 'left';
+                    let c = webui.create('webui-flex', { align: 'center', justify: flexAlign, gap: 1, class: 'no-select' });
+                    c.style.cursor = 'pointer';
+                    c.appendChild(webui.create('span', { html: display }));
+                    if (t.currentSort === key) {
+                        let ico = webui.create('webui-icon', { icon: t.currentSortDir === 'asc' ? "caret|has-shadow:true|fill|rotate:0" : "caret|has-shadow:true|fill|rotate:180" });
+                        c.appendChild(ico);
+                    }
+                    c.addEventListener('click', _ => {
+                        let sortDir = t.currentSort === key ? t.currentSortDir === 'asc' ? 'desc' : 'asc' : sortable[key];
+                        t.currentSort = key;
+                        t.currentSortDir = sortDir;
+                        t.dispatchEvent(new Event('update-sort', { bubbles: true, composed: true }));
+                    });
+                    th.appendChild(c);
+                } else {
+                    th.innerHTML = webui.replaceAppData(display);
+                }
                 h.appendChild(th);
             });
             if (t._data && t._data.forEach) {
