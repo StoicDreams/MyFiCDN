@@ -91,6 +91,7 @@
                                 .then(async resp => {
                                     let message = await resp.text();
                                     console.log('resp', resp);
+                                    window.resp = resp;
                                     if (resp.status < 300) {
                                         resolve(true);
                                         if (t.jsonSuccess) {
