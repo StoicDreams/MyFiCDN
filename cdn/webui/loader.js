@@ -669,7 +669,7 @@ const webui = (() => {
                     await t.wait(10);
                 }
                 const api = t.appConfig.appApi || '';
-                url = `${api}/${url}`;
+                url = url[0] === '/' ? `${api}${url}` : `${api}/${url}`;
             }
             let headers = {};
             if (data && data.headers) {
