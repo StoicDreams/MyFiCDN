@@ -690,7 +690,7 @@ const webui = (() => {
                 body = JSON.stringify(data);
             }
             return await fetch(url, {
-                method: method,
+                method: method.toUpperCase(),
                 credentials: 'include',
                 mode: 'cors',
                 cache: 'no-cache',
