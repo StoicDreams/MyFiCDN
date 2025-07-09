@@ -29,6 +29,7 @@
     }
     webui.define("webui-dropdown", {
         preload: 'icon',
+        apiMethod: 'GET',
         constructor: (t) => {
             t._template = t.template.querySelector('slot[name="template"]');
             let optionTemplate = t.querySelector('[slot="template"]');
@@ -50,9 +51,21 @@
                 t.applyDataChange();
             });
         },
-        attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'data-options'],
+        attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'data-options', 'api'],
         attrChanged: (t, property, value) => {
             switch (property) {
+                case 'api':
+                    let segments = value.split('|');
+                    let api = value;
+                    if (segments.length > 1 && ['get', 'post', 'put', 'delete', 'patch'].indexOf(segments[0].toLowerCase()) !== -1) {
+                        t.apiMethod = segments[0].toUpperCase();
+                        api = segments[1];
+                    }
+                    if (api) {
+                        t.apiUrl = api;
+                    }
+                    t.loadData();
+                    break;
                 case 'dataOptions':
                     t._datasub.setValue = (val) => {
                         t.setOptions(val);
@@ -90,6 +103,45 @@
                     t.setValue(value);
                     break;
             }
+        },
+        loadData: function () {
+            const t = this;
+            if (!t.apiUrl) return;
+            let method = t.apiMethod;
+            let url = t.apiUrl;
+            let ct = t.contentType || 'application/json';
+            let fetchData = null;
+            if (method.toLowerCase() !== 'get') {
+                if (ct === 'multipart/form-data') {
+                    fetchData = data;
+                } else {
+                    fetchData = Object.fromEntries(data);
+                    if (Object.keys(fetchData).length === 0) {
+                        Object.assign(fetchData, value);
+                    }
+                    fetchData.headers = {
+                        'Content-Type': ct
+                    };
+                }
+            }
+            webui.fetchApi(url, fetchData, method)
+                .then(async resp => {
+                    let message = await resp.text();
+                    if (resp.status < 300) {
+                        let json = await JSON.parse(message);
+                        t.setOptions(json);
+                    } else {
+                        if (t.headerMessage) {
+                            message = webui.getResponseHeader(resp, ...t.headerMessage.split('|')) || message;
+                        }
+                        if (message) {
+                            webui.log.error(message);
+                        }
+                    }
+                })
+                .catch(ex => {
+                    webui.log.error(ex);
+                });
         },
         connected: (t) => {
             let id = webui.uuid();
