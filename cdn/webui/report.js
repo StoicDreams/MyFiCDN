@@ -43,6 +43,7 @@
         constructor: (t) => {
             t._id = webui.uuid();
             t._tableActions = t.innerHTML;
+            t._preSubscribe = t.getAttribute('data-subscribe');
         },
         flags: ['bordered'],
         attr: ['height', 'max-height', 'label', 'api', 'per-page', 'columns', 'append-columns', 'sort-order', 'sort-column', 'theme', 'filters', 'sortable'],
@@ -101,6 +102,9 @@
             let json = JSON.stringify(request);
             if (!refresh && t._req === json) return;
             t._req = json;
+            if (refresh && t._preSubscribe) {
+                webui.setData(t._preSubscribe.split(':')[0], undefined);
+            }
             setTimeout(() => {
                 if (t._req !== json) return;
                 webui.fetchApi(t.api, request)
@@ -151,6 +155,9 @@
             ds.push(`pag-${t._id}-index:setPage`);
             if (t.filters) {
                 ds.push(`${t.filters}:loadData`);
+            }
+            if (t._preSubscribe) {
+                ds.push(t._preSubscribe);
             }
             t.setAttribute('data-subscribe', ds.join('|'));
             t._isRendered = true;
