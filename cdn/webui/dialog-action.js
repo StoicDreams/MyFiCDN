@@ -25,7 +25,7 @@
                 case 'api':
                     let segments = value.split('|');
                     let api = value;
-                    if (segments.length > 1 && ['get', 'post', 'put', 'delete', 'patch'].indexOf(segments[0].toLowercase()) !== -1) {
+                    if (segments.length > 1 && ['get', 'post', 'put', 'delete', 'patch'].indexOf(segments[0].toLowerCase()) !== -1) {
                         t.apiMethod = segments[0];
                         api = segments[1];
                     }
@@ -74,7 +74,7 @@
                         if (url) {
                             let ct = t.contentType || 'application/json';
                             let fetchData = null;
-                            if (method.toLowercase() !== 'get') {
+                            if (method.toLowerCase() !== 'get') {
                                 if (ct === 'multipart/form-data') {
                                     fetchData = data;
                                 } else {
