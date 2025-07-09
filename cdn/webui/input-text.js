@@ -18,7 +18,7 @@ webui.define('webui-input-text', {
             t.setAttribute('value', t._field.value);
         });
     },
-    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'type', 'placeholder'],
+    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'type', 'placeholder', 'maxlength', 'minlength'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'id':
@@ -43,6 +43,12 @@ webui.define('webui-input-text', {
                 break;
             case 'value':
                 t._field.value = value;
+                break;
+            case 'minlength':
+                t._field.setAttribute('minlength', value);
+                break;
+            case 'maxlength':
+                t._field.setAttribute('maxlength', value);
                 break;
         }
     },
