@@ -19,7 +19,7 @@
             }
         },
         flags: [],
-        attr: ['api', 'confirm', 'content-type'],
+        attr: ['api', 'confirm', 'content-type', 'data-success', 'data-exception', 'json-success', 'header-message'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'api':
@@ -90,13 +90,31 @@
                             webui.fetchApi(url, fetchData, method)
                                 .then(async resp => {
                                     let message = await resp.text();
+                                    console.log('resp', resp);
                                     if (resp.status < 300) {
                                         resolve(true);
+                                        if (t.jsonSuccess) {
+                                            let json = await JSON.parse(message);
+                                            message = json[t.jsonSuccess] || json.message || message;
+                                            if (t.dataset.success) {
+                                                webui.setData(t.dataset.success, json);
+                                            }
+                                        } else {
+                                            if (t.dataset.success) {
+                                                webui.setData(t.dataset.success, message);
+                                            }
+                                        }
+                                        if (t.headerMessage) {
+                                            // todo
+                                        }
                                         if (message) {
                                             webui.alert(message, 'success');
                                         }
                                     } else {
                                         resolve(false);
+                                        if (t.headerMessage) {
+                                            // todo
+                                        }
                                         if (message) {
                                             webui.alert(message);
                                         }
