@@ -103,8 +103,8 @@
                                 .catch(ex => {
                                     resolve(false);
                                 });
-                            return true;
                         } else {
+                            webui.log.warn('API is not set for webui-dialog-action');
                             resolve(true);
                         }
                     });
