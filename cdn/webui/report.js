@@ -75,7 +75,7 @@
             const t = this;
             t.render();
         },
-        loadData: function () {
+        loadData: function (refresh) {
             const t = this;
             if (!t.sortColumn) {
                 t.appendChild(createError('Report is missing default sort-column'));
@@ -99,7 +99,7 @@
                 Object.assign(request, filters);
             }
             let json = JSON.stringify(request);
-            if (t._req === json) return;
+            if (!refresh && t._req === json) return;
             t._req = json;
             setTimeout(() => {
                 if (t._req !== json) return;
