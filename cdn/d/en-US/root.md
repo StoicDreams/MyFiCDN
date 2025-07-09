@@ -60,6 +60,6 @@
 
 ## Current Web UI Projects :tada:
 
-Sample of our current projects to demonstrate our `webui-cards` and `webui-card` components.
+Our top priority projects we are currently working on.
 
 <webui-cards src="https://webui.stoicdreams.com/cards/webui-powered-websites.json" card-width="500"></webui-cards>
