@@ -32,6 +32,7 @@
                     if (api) {
                         t.apiUrl = api;
                     }
+                    console.log('debug', api, segments, t.apiUrl);
                     break;
                 case 'maxHeight':
                     t.style.maxHeight = webui.pxIfNumber(value);
@@ -69,6 +70,7 @@
                     return new Promise((resolve) => {
                         let method = t.apiMethod;
                         let url = t.apiUrl;
+                        console.log('confirm', method, url);
                         if (url) {
                             let ct = t.contentType || 'application/json';
                             let fetchData = null;
