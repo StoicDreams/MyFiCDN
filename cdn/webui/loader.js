@@ -775,6 +775,14 @@ const webui = (() => {
             if (!key) return dict;
             return dict[key];
         }
+        getResponseHeader(resp, ...keys) {
+            let message = undefined;
+            keys.forEach(key => {
+                if (message) return;
+                message = resp.headers.get(key);
+            });
+            return message;
+        }
         getSearchData(key) {
             return webui.getQueryData(key);
         }
