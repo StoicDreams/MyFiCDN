@@ -306,6 +306,9 @@ grid-column:1/5;
 align-items: center;
 justify-content: right;
 }
+div.total > span {
+padding: 0 0.5ch 0 0;
+}
 input[type="number"] {
 background-color:color-mix(in srgb, var(--theme-color) 80%, white);
 color:var(--theme-color-offset);
