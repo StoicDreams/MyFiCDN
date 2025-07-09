@@ -32,7 +32,6 @@
                     if (api) {
                         t.apiUrl = api;
                     }
-                    console.log('debug', api, segments, t.apiUrl);
                     break;
                 case 'maxHeight':
                     t.style.maxHeight = webui.pxIfNumber(value);
@@ -46,9 +45,7 @@
             if (t.dataset.subscribe) {
                 webui.setData(t.dataset.subscribe, undefined);
             }
-            console.log('assigned', t._slotMain.assignedElements());
             t._slotMain.assignedElements().forEach(node => {
-                console.log('node', node, node.nodeName);
                 switch (node.nodeName) {
                     case 'TEMPLATE':
                         content = `${content}${node.innerHTML}`;
@@ -60,6 +57,7 @@
                         break;
                 }
             });
+            content = `${content}<webui-alert></webui-alert>`;
             webui.dialog({
                 confirm: t.confirm || 'Confirm',
                 cancel: 'Cancel',
@@ -67,10 +65,10 @@
                 title: t.title || 'Action',
                 minWidth: '80%',
                 onconfirm: (data, content) => {
+                    let alert = content.querySelector('webui-alert');
                     return new Promise((resolve) => {
                         let method = t.apiMethod;
                         let url = t.apiUrl;
-                        console.log('confirm', method, url);
                         if (url) {
                             let ct = t.contentType || 'application/json';
                             let fetchData = null;
@@ -115,7 +113,7 @@
                                             message = webui.getResponseHeader(resp, ...t.headerMessage.split('|')) || message;
                                         }
                                         if (message) {
-                                            webui.alert(message);
+                                            alert.setValue(message, 'danger');
                                         }
                                     }
                                 })
@@ -123,8 +121,8 @@
                                     resolve(false);
                                 });
                         } else {
-                            webui.log.warn('API is not set for webui-dialog-action');
-                            resolve(true);
+                            alert.setValue('API is not set for this webui-dialog-action', 'danger');
+                            resolve(false);
                         }
                     });
                 }

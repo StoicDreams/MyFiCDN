@@ -27,18 +27,21 @@ webui.define("webui-alert", {
             t.removeAttribute('show');
         }
     },
-    setValue: function (options) {
+    setValue: function (options, variant) {
         const t = this;
         if (typeof options === 'string') {
             try {
                 options = JSON.parse(options);
             } catch {
-                options = {text:options};
+                options = { text: options };
             }
         }
         if (!options) {
             t.removeAttribute('show');
             return;
+        }
+        if (variant) {
+            options.variant = variant;
         }
         if (options.theme) {
             t.setVariant(options.theme);
