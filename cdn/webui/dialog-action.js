@@ -90,8 +90,6 @@
                             webui.fetchApi(url, fetchData, method)
                                 .then(async resp => {
                                     let message = await resp.text();
-                                    console.log('resp', resp);
-                                    window.resp = resp;
                                     if (resp.status < 300) {
                                         resolve(true);
                                         if (t.jsonSuccess) {
@@ -106,7 +104,7 @@
                                             }
                                         }
                                         if (t.headerMessage) {
-                                            // todo
+                                            message = webui.getResponseHeader(resp, ...t.headerMessage.split('|')) || message;
                                         }
                                         if (message) {
                                             webui.alert(message, 'success');
@@ -114,7 +112,7 @@
                                     } else {
                                         resolve(false);
                                         if (t.headerMessage) {
-                                            // todo
+                                            message = webui.getResponseHeader(resp, ...t.headerMessage.split('|')) || message;
                                         }
                                         if (message) {
                                             webui.alert(message);
