@@ -737,6 +737,7 @@ const webui = (() => {
                 });
                 return result;
             }
+            console.log('debug ', args[0], args);
             let key = args[0].split(':')[0];
             let dataContainer = webui.toSnake(key, '-').startsWith('session-') ? watchedSessionData : watchedAppData;
             let segments = key.split('.');
