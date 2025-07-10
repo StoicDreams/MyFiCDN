@@ -115,6 +115,9 @@
             }
             let json = JSON.stringify(request);
             if (!refresh && t._req === json) return;
+            if (refresh) {
+                t._req = undefined;
+            }
             if (refresh && t._preSubscribe) {
                 t._preSubscribe.split('|').forEach(key => {
                     key = key.split(':')[0];
