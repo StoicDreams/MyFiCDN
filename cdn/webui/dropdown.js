@@ -234,6 +234,7 @@
                 if (!o) return;
                 value = o.value;
             }
+            console.log('dd setValue', t.value, t.value === value, value);
             if (t.value === value) return;
             t._select.value = value;
             o.selected = true;
