@@ -53,6 +53,25 @@ const webui = (() => {
     };
     const notifyForAppDataChanges = [];
     const notifyForSessionDataChanges = [];
+    function watchProperty(el, prop, onChange) {
+        if (!el._watching) { el._watching = {}; }
+        if (el._watching[prop]) return;
+        el._watching[prop] = true;
+        let old = `__${prop}`;
+        el[old] = el[prop];
+        Object.defineProperty(input, 'value', {
+            get() {
+                return el[old];
+            },
+            set(newValue) {
+                if (newValue !== el[old]) {
+                    el[old] = newValue;
+                    console.log('Hidden input value changed to:', newValue);
+                    onChange(el);
+                }
+            }
+        });
+    }
     function notifyAppDataChanged(changeDetails) {
         notifyForAppDataChanges.forEach(handler => {
             if (!handler) return;
@@ -1539,6 +1558,7 @@ const webui = (() => {
                     Array.from(mutation.addedNodes).forEach(el => {
                         if (el && el.nodeName === 'INPUT' && el.getAttribute('type') === 'hidden') {
                             console.log('add hidden', el);
+                            watchProperty(el, 'value', handleDataTrigger);
                         }
                         if (el.dataset && el.dataset.state) {
                             loadState(el);
@@ -1962,6 +1982,7 @@ const webui = (() => {
                 Array.from(mutation.addedNodes).forEach(el => {
                     if (el && el.nodeName === 'INPUT' && el.getAttribute('type') === 'hidden') {
                         console.log('add hidden', el);
+                        watchProperty(el, 'value', handleDataTrigger);
                     }
                     applyAttributeSettings(el);
                     checkForSubscriptionAttr(el);
@@ -2161,6 +2182,7 @@ const webui = (() => {
         Array.from(mutation.addedNodes).forEach(el => {
             if (el && el.nodeName === 'INPUT' && el.getAttribute('type') === 'hidden') {
                 console.log('add hidden', el);
+                watchProperty(el, 'value', handleDataTrigger);
             }
             checkAddedNode(el);
         });
