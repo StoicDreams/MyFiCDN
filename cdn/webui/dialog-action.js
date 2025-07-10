@@ -57,7 +57,7 @@
                         break;
                 }
             });
-            content = `${content}<webui-alert></webui-alert>`;
+            content = webui.replaceAppData(`${content}<webui-alert></webui-alert>`);
             webui.dialog({
                 confirm: t.confirm || 'Confirm',
                 cancel: 'Cancel',
