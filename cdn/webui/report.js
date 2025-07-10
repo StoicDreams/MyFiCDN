@@ -120,7 +120,12 @@
             if (!refresh && t._req === json) return;
             t._req = json;
             if (refresh && t._preSubscribe) {
-                webui.setData(t._preSubscribe.split(':')[0], undefined);
+                t._preSubscribe.split('|').forEach(key => {
+                    key = key.split(':')[0];
+                    if (key.indexOf('refresh') === 0) {
+                        webui.setData(t._preSubscribe.split(':')[0], undefined);
+                    }
+                });
             }
             const reqid = webui.uuid();
             t.__reqid = reqid;
