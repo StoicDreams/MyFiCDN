@@ -1537,6 +1537,9 @@ const webui = (() => {
                         saveState(mutation.target, mutation.attributeName);
                     }
                     Array.from(mutation.addedNodes).forEach(el => {
+                        if (el && el.nodeName === 'INPUT' && el.getAttribute('type') === 'hidden') {
+                            console.log('add hidden', el);
+                        }
                         if (el.dataset && el.dataset.state) {
                             loadState(el);
                         }
@@ -1955,6 +1958,9 @@ const webui = (() => {
                     checkForSubscription(mutation.target);
                 }
                 Array.from(mutation.addedNodes).forEach(el => {
+                    if (el && el.nodeName === 'INPUT' && el.getAttribute('type') === 'hidden') {
+                        console.log('add hidden', el);
+                    }
                     applyAttributeSettings(el);
                     checkForSubscriptionAttr(el);
                 });
@@ -2151,6 +2157,9 @@ const webui = (() => {
             componentPreload(mutation.target);
         }
         Array.from(mutation.addedNodes).forEach(el => {
+            if (el && el.nodeName === 'INPUT' && el.getAttribute('type') === 'hidden') {
+                console.log('add hidden', el);
+            }
             checkAddedNode(el);
         });
     }
