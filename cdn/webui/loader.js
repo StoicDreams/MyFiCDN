@@ -728,8 +728,16 @@ const webui = (() => {
             }
             return atob(encoded);
         }
-        getData(key) {
-            key = key.split(':')[0];
+        getData(...args) {
+            if (args.length === 0) return undefined;
+            if (args.length > 0) {
+                let result = [];
+                args.forEach(key => {
+                    result.push(webui.getData(key));
+                });
+                return result;
+            }
+            let key = args[0].split(':')[0];
             let dataContainer = webui.toSnake(key, '-').startsWith('session-') ? watchedSessionData : watchedAppData;
             let segments = key.split('.');
             if (segments.length === 1) {
