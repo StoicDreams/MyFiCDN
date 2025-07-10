@@ -121,8 +121,11 @@
             if (refresh && t._preSubscribe) {
                 webui.setData(t._preSubscribe.split(':')[0], undefined);
             }
+            const reqid = webui.uuid();
+            t.__reqid = reqid;
             setTimeout(() => {
-                if (t._req !== json) return;
+                console.log('ready fetch', t.__reqid !== reqid);
+                if (t.__reqid !== reqid || t._req !== json) return;
                 webui.fetchApi(t.api, request)
                     .then(async resp => {
                         if (t._req !== json) return;
