@@ -1871,7 +1871,7 @@ const webui = (() => {
     function checkAttributeMutations(mutation) {
         if (mutation.type !== 'attributes') return;
         if (mutation.target && mutation.target.nodeName === 'INPUT' && mutation.target.getAttribute('type') === 'hidden' && mutation.attributeName === 'value') {
-            console.log('attr mutation', mutation);
+            console.log('attr mutation', mutation.target.value, mutation);
         }
         let t = mutation.target;
         applyAttributeSettings(t, mutation.attributeName);
