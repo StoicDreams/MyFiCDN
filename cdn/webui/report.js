@@ -129,9 +129,10 @@
             }
             const reqid = webui.uuid();
             t.__reqid = reqid;
+            t.__json = json;
             setTimeout(() => {
                 console.log('ready fetch', t.__reqid !== reqid);
-                if (t.__reqid !== reqid || t._req !== json) return;
+                if (t.__reqid !== reqid || t.__json !== json || t._req === json) return;
                 t._req = json;
                 webui.fetchApi(t.api, request)
                     .then(async resp => {
