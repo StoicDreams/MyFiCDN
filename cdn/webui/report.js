@@ -120,7 +120,7 @@
                     key = key.split(':')[0];
                     if (key.indexOf('refresh') === 0) {
                         console.log('clear refresh data', key, refresh);
-                        webui.setData(t._preSubscribe.split(':')[0], undefined);
+                        webui.setData(key, undefined);
                     }
                 });
             }
