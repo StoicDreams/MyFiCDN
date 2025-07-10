@@ -51,6 +51,7 @@
                 t.applyDataChange();
             });
         },
+        flags: ['multiple'],
         attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'data-options', 'api'],
         attrChanged: (t, property, value) => {
             switch (property) {
@@ -153,7 +154,7 @@
             const t = this;
             let dn = t.dataset.name;
             if (!dn || !t._optionsSet) { return; }
-            if (t.hasAttribute('multiple')) {
+            if (t.multiple) {
                 let s = [];
                 t._select.querySelectorAll('option:checked').forEach(option => {
                     let ds = option.dataset.data || '{}';
@@ -232,7 +233,11 @@
             let o = t._select.querySelector(`option[value="${value.replace(/\\/g, '\\\\')}"]`);
             console.log('found option?', o, t._select.querySelector('option'), t._select.innerHTML);
             if (!o) {
-                return;
+                if (t.multiple) return;
+                o = t._select.querySelector('option');
+                if (!o) return;
+                console.log('set default value', o.value, o);
+                value = o.value;
             }
             t._select.value = value;
             o.selected = true;
