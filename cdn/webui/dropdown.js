@@ -151,7 +151,7 @@
         },
         applyDataChange: function () {
             const t = this;
-            let dn = t.dataset.name || t.getAttribute('name');
+            let dn = t.dataset.name;
             if (!dn || !t._optionsSet) { return; }
             if (t.hasAttribute('multiple')) {
                 let s = [];
@@ -226,7 +226,7 @@
         },
         setValue: function (value) {
             const t = this;
-            console.log('dropdown set value', value, t, t._isConnected);
+            console.log('dropdown set value a', value, t, t._isConnected);
             if (!t._isConnected || !t._optionsSet) return;
             value = `${value}`;
             let o = t._select.querySelector(`option[value="${value.replace(/\\/g, '\\\\')}"]`);
@@ -236,7 +236,7 @@
             t._select.value = value;
             o.selected = true;
             t.applyDataChange();
-            console.log('dropdown set value', value, t);
+            console.log('dropdown set value b', value, t);
             t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         },
         shadowTemplate: `
