@@ -737,7 +737,10 @@ const webui = (() => {
                 });
                 return result;
             }
-            console.log('debug ', args[0], args);
+            if (typeof args[0] !== 'string') {
+                console.error('Invalid key for webui.getData', args[0], args);
+                return;
+            }
             let key = args[0].split(':')[0];
             let dataContainer = webui.toSnake(key, '-').startsWith('session-') ? watchedSessionData : watchedAppData;
             let segments = key.split('.');
@@ -811,7 +814,7 @@ const webui = (() => {
         }
         get isSignedIn() {
             const t = this;
-            let role = t.getDefined(t.getData('session-user-role', 0));
+            let role = t.getDefined(t.getData('session-user-role'), 0);
             return !!((role && 1) !== 0);
         }
         limitChars(text, limit) {
@@ -1619,6 +1622,10 @@ const webui = (() => {
         });
     }
     function setDataToEl(el, key) {
+        if (typeof key !== 'string') {
+            console.error('Invalid key for webui.setDataToEl', key, el);
+            return;
+        }
         function getToSet(key) {
             let toSet = 'setter';
             el.dataset.subscribe.split('|').forEach(ds => {
