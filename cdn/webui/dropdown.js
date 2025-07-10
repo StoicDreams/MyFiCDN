@@ -226,10 +226,11 @@
         },
         setValue: function (value) {
             const t = this;
-            console.log('dropdown set value a', value, t, t._isConnected);
+            console.log('dropdown set value a', value, t, t._isConnected, t._optionsSet);
             if (!t._isConnected || !t._optionsSet) return;
             value = `${value}`;
             let o = t._select.querySelector(`option[value="${value.replace(/\\/g, '\\\\')}"]`);
+            console.log('found option?', o, t._select.querySelector('option'), t._select.innerHTML);
             if (!o) {
                 return;
             }
