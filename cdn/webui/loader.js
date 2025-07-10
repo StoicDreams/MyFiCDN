@@ -1568,6 +1568,7 @@ const webui = (() => {
     }
     async function handleDataTrigger(ev) {
         let el = ev.srcElement || ev.target || ev;
+        console.log('handle data trigger', el, ev);
         if (ev.composedPath) {
             for (let path of ev.composedPath()) {
                 if (path.dataset && path.dataset.trigger) {

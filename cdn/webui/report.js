@@ -96,8 +96,11 @@
                 sortOrder: t.sortOrder
             };
             if (t.filters) {
-                let filters = webui.getData(t.filters);
-                Object.assign(request, filters);
+                t.filters.split(';').forEach(filter => {
+                    let data = webui.getData(filter);
+                    if (data === undefined) return;
+                    Object.assign(request, data);
+                });
             }
             let json = JSON.stringify(request);
             if (!refresh && t._req === json) return;
