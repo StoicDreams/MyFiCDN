@@ -1151,6 +1151,7 @@ const webui = (() => {
         }
         setData(key, value) {
             if (!key) return;
+            console.log('set data', key, value);
             key = key.split(':')[0];
             let sections = key.split('.');
             let baseKey = webui.toSnake(sections[0], '-');
