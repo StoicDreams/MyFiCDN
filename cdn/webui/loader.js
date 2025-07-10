@@ -1600,6 +1600,7 @@ const webui = (() => {
                 }
             }
         }
+        console.log('handle data trigger', el, el.dataset.trigger);
         let tick = 0;
         if (el.nodeName.startsWith('APP-') || el.nodeName.startsWith('WEBUI-')) {
             while (el._isConnected === undefined && ++tick < 100) {
@@ -1624,6 +1625,7 @@ const webui = (() => {
                 }
             } else {
                 let value = webui.getDefined(typeof el.getValue === 'function' ? el.getValue() : undefined, el.value, el.dataset.value);
+                console.log('trigger data', key, value);
                 if (oldData !== value) {
                     webui.setData(key, value);
                 }
