@@ -1580,7 +1580,6 @@ const webui = (() => {
     }
     async function handleDataTrigger(ev) {
         let el = ev.srcElement || ev.target || ev;
-        console.log('handle data trigger', el, ev);
         if (ev.composedPath) {
             for (let path of ev.composedPath()) {
                 if (path.dataset && path.dataset.trigger) {
@@ -1589,7 +1588,6 @@ const webui = (() => {
                 }
             }
         }
-        console.log('handle data trigger', el, el.dataset.trigger);
         let tick = 0;
         if (el.nodeName.startsWith('APP-') || el.nodeName.startsWith('WEBUI-')) {
             while (el._isConnected === undefined && ++tick < 100) {
@@ -1614,7 +1612,6 @@ const webui = (() => {
                 }
             } else {
                 let value = webui.getDefined(typeof el.getValue === 'function' ? el.getValue() : undefined, el.value, el.dataset.value);
-                console.log('trigger data', key, value);
                 if (oldData !== value) {
                     webui.setData(key, value);
                 }
@@ -1886,7 +1883,6 @@ const webui = (() => {
     function checkAttributeMutations(mutation) {
         if (mutation.type !== 'attributes') return;
         if (mutation.target && mutation.target.nodeName === 'INPUT' && mutation.target.getAttribute('type') === 'hidden' && mutation.attributeName === 'value') {
-            console.log('attr mutation', mutation.target, mutation.target.getAttribute('value'), mutation.target['value'], mutation.target.value, mutation);
             handleDataTrigger(mutation.target);
         }
         let t = mutation.target;

@@ -40,17 +40,18 @@
         columns: '',
         sortOrder: 'asc',
         sortColumn: '',
+        requiredFilters: [],
         constructor: (t) => {
             t._id = webui.uuid();
             t._tableActions = t.innerHTML;
             t._preSubscribe = t.getAttribute('data-subscribe');
         },
         flags: ['bordered'],
-        attr: ['height', 'max-height', 'label', 'api', 'per-page', 'columns', 'append-columns', 'sort-order', 'sort-column', 'theme', 'filters', 'sortable'],
+        attr: ['height', 'max-height', 'label', 'api', 'per-page', 'columns', 'append-columns', 'sort-order', 'sort-column', 'theme', 'filters', 'sortable', 'required-filters'],
         attrChanged: (t, property, value) => {
             switch (property) {
-                case 'sortable':
-
+                case 'requiredFilters':
+                    t.requiredFilters = value?.replace(/;/g, '|').split('|') || [];
                     break;
                 case 'api':
                     if (t._isRendered) {
@@ -104,6 +105,15 @@
                     Object.assign(request, data);
                     console.log('assigned', request, data);
                 });
+            }
+            let hasRequiredFilters = true;
+            t.requiredFilters.forEach(key => {
+                if (request[key] === undefined) {
+                    hasRequiredFilters = false;
+                }
+            });
+            if (!hasRequiredFilters) {
+                return;
             }
             let json = JSON.stringify(request);
             if (!refresh && t._req === json) return;

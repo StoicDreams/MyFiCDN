@@ -177,11 +177,9 @@
             const t = this;
             options = extractOptions(options);
             let oJson = JSON.stringify(options);
-            console.log('set options 1st', options, oJson, t._oJson, t);
             if (oJson === t._oJson) return;
             t._oJson = oJson;
             let data = options.forEach ? options : JSON.parse(options);
-            console.log('set options 2nd', !data.forEach, data);
             if (!data.forEach) {
                 console.error('webui-dropdown data error: Invalid data loaded - Expecting an array of data.');
                 return;
@@ -227,22 +225,18 @@
         },
         setValue: function (value) {
             const t = this;
-            console.log('dropdown set value a', value, t, t._isConnected, t._optionsSet);
             if (!t._isConnected || !t._optionsSet) return;
             value = `${value}`;
             let o = t._select.querySelector(`option[value="${value.replace(/\\/g, '\\\\')}"]`);
-            console.log('found option?', o, t._select.querySelector('option'), t._select.innerHTML);
             if (!o) {
                 if (t.multiple) return;
                 o = t._select.querySelector('option');
                 if (!o) return;
-                console.log('set default value', o.value, o);
                 value = o.value;
             }
             t._select.value = value;
             o.selected = true;
             t.applyDataChange();
-            console.log('dropdown set value b', value, t);
             t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         },
         shadowTemplate: `
