@@ -176,9 +176,11 @@
             const t = this;
             options = extractOptions(options);
             let oJson = JSON.stringify(options);
+            console.log('set options 1st', options, oJson, t._oJson, t);
             if (oJson === t._oJson) return;
             t._oJson = oJson;
             let data = options.forEach ? options : JSON.parse(options);
+            console.log('set options 2nd', !data.forEach, data);
             if (!data.forEach) {
                 console.error('webui-dropdown data error: Invalid data loaded - Expecting an array of data.');
                 return;
@@ -224,6 +226,7 @@
         },
         setValue: function (value) {
             const t = this;
+            console.log('dropdown set value', value, t, t._isConnected);
             if (!t._isConnected || !t._optionsSet) return;
             value = `${value}`;
             let o = t._select.querySelector(`option[value="${value.replace(/\\/g, '\\\\')}"]`);
