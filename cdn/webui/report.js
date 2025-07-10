@@ -118,7 +118,6 @@
             }
             let json = JSON.stringify(request);
             if (!refresh && t._req === json) return;
-            t._req = json;
             if (refresh && t._preSubscribe) {
                 t._preSubscribe.split('|').forEach(key => {
                     key = key.split(':')[0];
@@ -132,6 +131,7 @@
             setTimeout(() => {
                 console.log('ready fetch', t.__reqid !== reqid);
                 if (t.__reqid !== reqid || t._req !== json) return;
+                t._req = json;
                 webui.fetchApi(t.api, request)
                     .then(async resp => {
                         if (t._req !== json) return;
