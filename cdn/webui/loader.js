@@ -1867,6 +1867,7 @@ const webui = (() => {
 
     function checkAttributeMutations(mutation) {
         if (mutation.type !== 'attributes') return;
+        console.log('attr mutation', mutation);
         let t = mutation.target;
         applyAttributeSettings(t, mutation.attributeName);
     }
