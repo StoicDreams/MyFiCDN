@@ -78,6 +78,7 @@
             t.render();
         },
         loadData: function (refresh) {
+            console.log('load data', refresh);
             const t = this;
             if (!t.sortColumn) {
                 t.appendChild(createError('Report is missing default sort-column'));
