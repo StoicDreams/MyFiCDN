@@ -730,7 +730,7 @@ const webui = (() => {
         }
         getData(...args) {
             if (args.length === 0) return undefined;
-            if (args.length > 0) {
+            if (args.length > 1) {
                 let result = [];
                 args.forEach(key => {
                     result.push(webui.getData(key));
