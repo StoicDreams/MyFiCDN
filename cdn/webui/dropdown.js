@@ -30,6 +30,7 @@
     webui.define("webui-dropdown", {
         preload: 'icon',
         apiMethod: 'GET',
+        _value: undefined,
         constructor: (t) => {
             t._template = t.template.querySelector('slot[name="template"]');
             let optionTemplate = t.querySelector('[slot="template"]');
@@ -235,7 +236,8 @@
                 value = o.value;
             }
             console.log('dd setValue', t.value, t.value === value, value);
-            if (t.value === value) return;
+            if (t.value === value && t._value === value) return;
+            t._value = value;
             t._select.value = value;
             o.selected = true;
             t.applyDataChange();
