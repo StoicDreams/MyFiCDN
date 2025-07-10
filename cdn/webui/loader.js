@@ -59,7 +59,7 @@ const webui = (() => {
         el._watching[prop] = true;
         let old = `__${prop}`;
         el[old] = el[prop];
-        Object.defineProperty(input, 'value', {
+        Object.defineProperty(el, 'value', {
             get() {
                 return el[old];
             },
