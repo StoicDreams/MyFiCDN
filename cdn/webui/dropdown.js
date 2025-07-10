@@ -234,6 +234,7 @@
                 if (!o) return;
                 value = o.value;
             }
+            if (t.value === value) return;
             t._select.value = value;
             o.selected = true;
             t.applyDataChange();
