@@ -61,7 +61,12 @@ const webui = (() => {
         el[old] = el[prop];
         Object.defineProperty(el, 'value', {
             get() {
-                return el[old];
+                let value = el[old];
+                if (value === undefined) {
+                    value = el.getAttribute('value');
+                    el[old] = value;
+                }
+                return value;
             },
             set(newValue) {
                 if (newValue !== el[old]) {
