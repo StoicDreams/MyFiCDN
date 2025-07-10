@@ -102,6 +102,7 @@
                     t._endIcon.setAttribute('icon', value);
                     break;
                 case 'value':
+                    console.log('attr update', value);
                     t.setValue(value);
                     break;
             }
@@ -216,16 +217,18 @@
                 }
             }
             t._optionsSet = true;
+            console.log('set options set value', value);
             t.setValue(value);
         },
         props: {
             'value': {
                 get() { return webui.getDefined(this._select.value, ''); },
-                set(v) { this.setValue(v); }
+                set(v) { console.log('value setter', v); this.setValue(v); }
             }
         },
         setValue: function (value) {
             const t = this;
+            console.log('setValue', value, t._isConnected, t._optionsSet);
             if (!t._isConnected || !t._optionsSet) return;
             value = `${value}`;
             let o = t._select.querySelector(`option[value="${value.replace(/\\/g, '\\\\')}"]`);
