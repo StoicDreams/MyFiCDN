@@ -237,6 +237,7 @@
             t._select.value = value;
             o.selected = true;
             t.applyDataChange();
+            console.log('dd set value', value);
             t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         },
         shadowTemplate: `
