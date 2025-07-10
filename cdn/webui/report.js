@@ -96,7 +96,7 @@
                 sortOrder: t.sortOrder
             };
             if (t.filters) {
-                console.log('check filters'.t.filters);
+                console.log('check filters', t.filters);
                 t.filters.split(';').forEach(filter => {
                     let data = webui.getData(filter);
                     console.log('check filter result', filter, data);
