@@ -151,7 +151,7 @@
         },
         applyDataChange: function () {
             const t = this;
-            let dn = t.dataset.name;
+            let dn = t.dataset.name || t.getAttribute('name');
             if (!dn || !t._optionsSet) { return; }
             if (t.hasAttribute('multiple')) {
                 let s = [];
