@@ -58,9 +58,10 @@
                 }
             });
             content = webui.replaceAppData(`${content}<webui-alert></webui-alert>`);
+            let url = t.apiUrl;
             webui.dialog({
                 confirm: t.confirm || 'Confirm',
-                cancel: 'Cancel',
+                cancel: url ? 'Cancel' : null,
                 content: content,
                 title: t.title || 'Action',
                 minWidth: '80%',
@@ -68,7 +69,6 @@
                     let alert = content.querySelector('webui-alert');
                     return new Promise((resolve) => {
                         let method = t.apiMethod;
-                        let url = t.apiUrl;
                         if (url) {
                             let ct = t.contentType || 'application/json';
                             let fetchData = null;
@@ -121,8 +121,7 @@
                                     resolve(false);
                                 });
                         } else {
-                            alert.setValue('API is not set for this webui-dialog-action', 'danger');
-                            resolve(false);
+                            resolve(true);
                         }
                     });
                 }
