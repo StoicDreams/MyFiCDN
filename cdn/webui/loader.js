@@ -1215,7 +1215,7 @@ const webui = (() => {
                 if (bkey !== baseKey) return;
                 map.subs[skey].forEach(node => {
                     console.log('sub set data', node, skey);
-                    setDataToEl(node, skey);
+                    setDataToEl(node, skey, value);
                 });
             });
             /*
@@ -1631,7 +1631,7 @@ const webui = (() => {
             }
         });
     }
-    function setDataToEl(el, key) {
+    function setDataToEl(el, key, value) {
         if (typeof key !== 'string') {
             console.error('Invalid key for webui.setDataToEl', key, el);
             return;
@@ -1657,7 +1657,9 @@ const webui = (() => {
                         key = key.split(':')[0];
                     }
                     if (toSet === 'click') return;
-                    let value = webui.getData(key);
+                    if (value === undefined) {
+                        value = webui.getData(key);
+                    }
                     let isNull = value === null || value === undefined;
                     switch (toSet) {
                         case 'setter':
