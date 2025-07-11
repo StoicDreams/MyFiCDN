@@ -798,6 +798,18 @@ const webui = (() => {
         getSearchData(key) {
             return webui.getQueryData(key);
         }
+        hasSetter(el, field) {
+            if (!el || typeof field !== 'string') return false;
+            let proto = el;
+            while (proto) {
+                const descriptor = Object.getOwnPropertyDescriptor(proto, field);
+                if (descriptor && typeof descriptor.set === 'function') {
+                    return true;
+                }
+                proto = Object.getPrototypeOf(proto);
+            }
+            return false;
+        }
         isEqual(a, b) {
             if (a === b) return true;
             if (typeof a !== typeof b) return false;
@@ -1151,7 +1163,6 @@ const webui = (() => {
         }
         setData(key, value) {
             if (!key) return;
-            console.log('set data', key, value);
             key = key.split(':')[0];
             let sections = key.split('.');
             let baseKey = webui.toSnake(sections[0], '-');
@@ -1647,7 +1658,6 @@ const webui = (() => {
                     if (toSet === 'click') return;
                     let value = webui.getData(key);
                     let isNull = value === null || value === undefined;
-                    console.log('set data to el', el, toSet, key, value);
                     switch (toSet) {
                         case 'setter':
                             let field = webui.toCamel(key);
@@ -1674,9 +1684,8 @@ const webui = (() => {
                                     setTimeout(() => {
                                         attempt();
                                     }, Math.min(1000, Math.pow(2, a)));
-                                } else {
-                                    //console.error(`Element is missing expected setter (${field}|${fsetter}|setValue): typeof == (${typeof el[field]}|${typeof el[fsetter]}|${typeof el.setValue})`, a, el, el._isConnected, el.nodeName, el.parentNode);
-                                    //console.dir(el);
+                                } else if (webui.hasSetter(el, 'value')) {
+                                    el.value = value;
                                 }
                             }
                             break;
