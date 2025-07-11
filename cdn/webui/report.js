@@ -78,7 +78,6 @@
             t.render();
         },
         loadData: function (refresh) {
-            console.log('load data', refresh);
             const t = this;
             if (!t.sortColumn) {
                 t.appendChild(createError('Report is missing default sort-column'));
@@ -122,7 +121,6 @@
                 t._preSubscribe.split('|').forEach(key => {
                     key = key.split(':')[0];
                     if (key.indexOf('refresh') === 0) {
-                        console.log('clear refresh data', key, refresh);
                         webui.setData(key, undefined);
                     }
                 });
@@ -131,7 +129,6 @@
             t.__reqid = reqid;
             t.__json = json;
             setTimeout(() => {
-                console.log('ready fetch', t.__reqid !== reqid);
                 if (t.__reqid !== reqid || t.__json !== json || t._req === json) return;
                 t._req = json;
                 webui.fetchApi(t.api, request)
