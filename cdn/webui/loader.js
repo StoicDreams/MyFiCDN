@@ -1214,7 +1214,6 @@ const webui = (() => {
                 let bkey = skey.split('.')[0];
                 if (bkey !== baseKey) return;
                 map.subs[skey].forEach(node => {
-                    console.log('sub set data', node, skey);
                     setDataToEl(node, skey, value);
                 });
             });
