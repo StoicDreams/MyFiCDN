@@ -1647,6 +1647,7 @@ const webui = (() => {
                     if (toSet === 'click') return;
                     let value = webui.getData(key);
                     let isNull = value === null || value === undefined;
+                    console.log('set data to el', el, key, value);
                     switch (toSet) {
                         case 'setter':
                             let field = webui.toCamel(key);
