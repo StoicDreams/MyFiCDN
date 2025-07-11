@@ -102,7 +102,6 @@
                     t._endIcon.setAttribute('icon', value);
                     break;
                 case 'value':
-                    console.log('attr update', value);
                     t.setValue(value);
                     break;
             }
@@ -217,18 +216,16 @@
                 }
             }
             t._optionsSet = true;
-            console.log('set options set value', value);
             t.setValue(value);
         },
         props: {
             'value': {
                 get() { return webui.getDefined(this._select.value, ''); },
-                set(v) { console.log('value setter', v); this.setValue(v); }
+                set(v) { this.setValue(v); }
             }
         },
         setValue: function (value) {
             const t = this;
-            console.log('setValue', value, t._isConnected, t._optionsSet);
             if (!t._isConnected || !t._optionsSet) return;
             value = `${value}`;
             let o = t._select.querySelector(`option[value="${value.replace(/\\/g, '\\\\')}"]`);
@@ -238,13 +235,11 @@
                 if (!o) return;
                 value = o.value;
             }
-            console.log('dd setValue', t.value, t.value === value, value);
             if (t.value === value && t._value === value) return;
             t._value = value;
             t._select.value = value;
             o.selected = true;
             t.applyDataChange();
-            console.log('dd set value', value);
             t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         },
         shadowTemplate: `
