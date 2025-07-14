@@ -111,7 +111,7 @@
             }
         },
         shadowTemplate: `
-<webui-icon icon="signin" fill></webui-icon>
+<webui-icon icon="arrow-side-into-square|has-shadow:true|rotate:180" fill></webui-icon>
 <slot name="panel-content"></slot>
 <style type="text/css">
 :host {
