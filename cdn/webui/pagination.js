@@ -263,15 +263,15 @@
         shadowTemplate: `
 <div class="spacer-left"></div>
 <div class="prev">
-<webui-button class="first" start-icon="left-to-line"></webui-button>
-<webui-button class="prev" start-icon="left"></webui-button>
+<webui-button class="first" start-icon="caret-line|has-shadow:true|rotate:270|fill"></webui-button>
+<webui-button class="prev" start-icon="caret|has-shadow:true|rotate:270|fill"></webui-button>
 </div>
 <div class="pages">
 <input type="number" value="1" min="1" />
 </div>
 <div class="next">
-<webui-button class="next" start-icon="right"></webui-button>
-<webui-button class="last" start-icon="right-to-line"></webui-button>
+<webui-button class="next" start-icon="caret|has-shadow:true|rotate:90|fill"></webui-button>
+<webui-button class="last" start-icon="caret-line|has-shadow:true|fill|rotate:90"></webui-button>
 </div>
 <div class="spacer-right"></div>
 <div class="total"><span>Total: </span><strong>0</strong></div>

@@ -237,47 +237,15 @@ const webui = (() => {
         }
         applyDynamicStyles() { }
         applyProperties(t) { }
-        clone(data, seen = new WeakMap) {
-            if (data === null || typeof data !== 'object') return data;
-            if (seen.has(data)) return seen.get(data);
-            let copy;
-            if (data instanceof Date) {
-                copy = new Date(data);
-            } else if (data instanceof RegExp) {
-                copy = new RegExp(data.source, data.flags);
-            } else if (data instanceof Map) {
-                copy = new Map();
-                seen.set(data, copy);
-                data.forEach((value, key) => {
-                    copy.set(webui.clone(key, seen), webui.clone(value, seen));
-                });
-            } else if (data instanceof Set) {
-                copy = new Set();
-                seen.set(data, copy);
-                data.forEach(value => {
-                    copy.add(webui.clone(value, seen));
-                });
-            } else if (Array.isArray(data)) {
-                copy = [];
-                seen.set(data, copy);
-                data.forEach((item, index) => {
-                    copy[index] = webui.clone(item, seen);
-                });
-            } else if (ArrayBuffer.isView(data)) {
-                copy = new data.constructor(data);
-            } else if (data instanceof ArrayBuffer) {
-                copy = data.slice(0);
-            } else {
-                copy = {};
-                seen.set(data, copy);
-                Object.keys(data).forEach(key => {
-                    copy[key] = webui.clone(data[key], seen);
-                });
-                Object.getOwnPropertySymbols(data).forEach(sym => {
-                    copy[sym] = webui.clone(data[sym], seen);
-                });
+        clone(data) {
+            if (data === undefined || data === null) return data;
+            if (typeof data !== 'object') return data;
+            try {
+                return structuredClone(data);
+            } catch {
+                data = { ...data };
+                return structuredClone(data);
             }
-            return copy;
         }
         create(name, attr) {
             let el = document.createElement(name);
@@ -743,19 +711,28 @@ const webui = (() => {
             }
             let key = args[0].split(':')[0];
             let dataContainer = webui.toSnake(key, '-').startsWith('session-') ? watchedSessionData : watchedAppData;
+            let data = webui.getNestedData(key, dataContainer);
+            if (data === undefined) return undefined;
+            if (typeof data !== 'object') return data;
+            return webui.clone(data);
+        }
+        getNestedData(key, data) {
             let segments = key.split('.');
+            if (!data) return undefined;
             if (segments.length === 1) {
-                key = webui.toSnake(key, '-');
-                return structuredClone(dataContainer[key]);
+                let skey = webui.toSnake(key, '-');
+                return webui.getDefined(data[skey], data[key], undefined);
             }
-            let skey = webui.toSnake(segments.shift(), '-');
-            let data = dataContainer[skey];
+            key = segments.shift();
+            let skey = webui.toSnake(key, '-');
+            data = webui.getDefined(data[skey], data[key], undefined);
             while (segments.length > 0) {
                 if (!data) return undefined;
-                skey = segments.shift();
-                data = data[skey];
+                key = segments.shift();
+                skey = webui.toSnake(key, '-');
+                data = webui.getDefined(data[skey], data[key], undefined);
             }
-            return structuredClone(data);
+            return data;
         }
         getDefined(...args) {
             for (let index = 0; index < args.length; ++index) {
@@ -1174,7 +1151,7 @@ const webui = (() => {
                 appDataOnce.push(baseKey);
             }
             let dataContainer = key.startsWith('session-') ? watchedSessionData : watchedAppData;
-            value = structuredClone(value);
+            value = webui.clone(value);
             if (sections.length === 1) {
                 key = webui.toSnake(key, '-');
                 if (JSON.stringify(dataContainer[key]) === JSON.stringify(value)) {
@@ -1213,15 +1190,12 @@ const webui = (() => {
             Object.keys(map.subs).forEach(skey => {
                 let bkey = skey.split('.')[0];
                 if (bkey !== baseKey) return;
+                let subkey = skey.substring(skey.indexOf('.') + 1);
+                let svalue = subkey !== skey ? webui.getNestedData(skey, value) : value;
                 map.subs[skey].forEach(node => {
-                    setDataToEl(node, skey, value);
+                    setDataToEl(node, skey, svalue);
                 });
             });
-            /*
-            webui.querySelectorAll(`[data-subscribe*="${baseKey}"]`).forEach(sub => {
-                setDataToEl(sub, baseKey);
-            });
-            */
         }
         querySelectorAll(selector, rootNode = document) {
             const results = [];
@@ -1658,6 +1632,8 @@ const webui = (() => {
                     if (toSet === 'click') return;
                     if (value === undefined) {
                         value = webui.getData(key);
+                    } else if (key.indexOf('.') !== -1) {
+                        value = webui.getNestedData(key, value);
                     }
                     let isNull = value === null || value === undefined;
                     switch (toSet) {

@@ -127,6 +127,8 @@
             inputsColumn.appendChild(webui.create('p', { html: `Icon components also accept pipe delimited configurations, useful when passing icon data to parent components that pass icon values to child webui-icon components.` }));
             t._codeSamplePiped = webui.create('webui-code', { 'lang': 'html', 'label': `Icon Code Piped` });
             inputsColumn.appendChild(t._codeSamplePiped);
+            t._codePipedAttr = webui.create('webui-code', { 'lang': 'html', 'label': `Icon Code Piped` });
+            inputsColumn.appendChild(t._codePipedAttr);
             t._bottomGrid = webui.create('webui-grid', { gap: '1', theme: 'white', width: '100', height: '100' });
             t.appendChild(t._bottomGrid);
             t.loadIcons();
@@ -158,6 +160,7 @@
             })
             t.pipedValue = pipeData.join('|');
             t._codeSamplePiped.value = `<webui-icon icon="${t.pipedValue}"></webui-icon>`;
+            t._codePipedAttr.value = t.pipedValue;
             let ev = new CustomEvent('icon-update', { detail: t.pipedValue });
             t.dispatchEvent(ev);
         },
