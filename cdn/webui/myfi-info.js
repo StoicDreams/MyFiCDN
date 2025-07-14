@@ -63,7 +63,6 @@
                         title,
                         content
                     );
-                    console.log(panelBottomButtons);
                     panelBottomButtons.map(cfg => {
                         console.log(cfg);
                         if (excludes.indexOf(cfg.name) === -1) {
@@ -101,7 +100,7 @@
                 t._icon.setAttribute('theme', 'success');
                 t.setAttribute('title', 'Toggle Account Panel');
             } else {
-                t._icon.setAttribute('icon', 'signin');
+                t._icon.setAttribute('icon', 'arrow-side-into-square|has-shadow:true|rotate:180');
                 t._icon.setAttribute('theme', 'warning');
                 if (webui.isLocalhost) {
                     t.setAttribute('title', 'Simulate Sign-In for Dev Testing');
