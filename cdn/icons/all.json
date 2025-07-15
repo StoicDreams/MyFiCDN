@@ -116,6 +116,10 @@
         "tags": "notes"
     },
     {
+        "name": "pencil",
+        "tags": "edits"
+    },
+    {
         "name": "person",
         "tags": "accounts users"
     },
