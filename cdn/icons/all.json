@@ -116,6 +116,10 @@
         "tags": "notes"
     },
     {
+        "name": "person",
+        "tags": "accounts users"
+    },
+    {
         "name": "plus",
         "tags": "math add"
     },
