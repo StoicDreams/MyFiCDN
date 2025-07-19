@@ -101,7 +101,12 @@
                 t.filters.split(';').forEach(filter => {
                     let data = webui.getData(filter);
                     if (data === undefined) return;
-                    Object.assign(request, data);
+                    if (typeof data === 'object') {
+                        Object.assign(request, data);
+                    } else {
+                        let key = filter.split('.').pop();
+                        request[key] = data;
+                    }
                 });
             }
             let hasRequiredFilters = true;
