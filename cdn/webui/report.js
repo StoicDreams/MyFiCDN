@@ -203,6 +203,8 @@
             t._isRendered = true;
             if (t.sortable) {
                 t._table.setAttribute('sortable', t.sortable);
+                t._table.setAttribute('current-sort', t.sortColumn);
+                t._table.setAttribute('current-sort-dir', t.sortOrder);
                 t._table.addEventListener('update-sort', ev => {
                     let sort = ev.target?.currentSort;
                     let sortDir = ev.target?.currentSortDir;
