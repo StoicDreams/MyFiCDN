@@ -41,13 +41,14 @@
         sortOrder: 'asc',
         sortColumn: '',
         requiredFilters: [],
+        columnFormats: '',
         constructor: (t) => {
             t._id = webui.uuid();
             t._tableActions = t.innerHTML;
             t._preSubscribe = t.getAttribute('data-subscribe');
         },
         flags: ['bordered'],
-        attr: ['height', 'max-height', 'label', 'api', 'per-page', 'columns', 'append-columns', 'sort-order', 'sort-column', 'theme', 'filters', 'sortable', 'required-filters'],
+        attr: ['height', 'max-height', 'label', 'api', 'per-page', 'columns', 'append-columns', 'sort-order', 'sort-column', 'theme', 'filters', 'sortable', 'required-filters', 'column-formats'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'requiredFilters':
@@ -128,6 +129,10 @@
             const reqid = webui.uuid();
             t.__reqid = reqid;
             t.__json = json;
+            let ac = t.appendColumns || '';
+            ac = ac.split(':').filter(i => !!i).map(i => `${i}:html`).join(';').split('|').join(';');
+            let cf = t.columnFormats || '';
+            cf = [ac, cf].join(';').split(';').filter(i => !!i).join(';');
             setTimeout(() => {
                 if (t.__reqid !== reqid || t.__json !== json || t._req === json) return;
                 t._req = json;
@@ -142,6 +147,12 @@
                                 } else {
                                     t._table.setAttribute('columns', data.columns);
                                 }
+                            }
+                            if (data.columnFormats) {
+                                cf = [cf, data.columnFormats].join(';').split(';').filter(i => !!i).join(';');
+                            }
+                            if (cf) {
+                                t._table.setAttribute('column-formats', cf);
                             }
                             t._table.setData(data.items);
                             t._pag.forEach(p => {

@@ -16,6 +16,7 @@
     webui.define('webui-table', {
         _columns: [],
         linkCss: true,
+        columnFormats: {},
         constructor: (t) => {
             t._table = webui.create('table');
             t._columnTemplates = {};
@@ -25,11 +26,22 @@
                 t._columnTemplates[key] = n.innerHTML;
             });
         },
-        attr: ['bordered', 'columns', 'sortable', 'current-sort', 'current-sort-dir'],
+        attr: ['bordered', 'columns', 'sortable', 'current-sort', 'current-sort-dir', 'column-formats'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'bordered':
                     t._table.classList.add('bordered');
+                    break;
+                case 'columnFormats':
+                    t.columnFormats = {};
+                    if (typeof value === 'string') {
+                        let cf = {};
+                        value.split(';').forEach(c => {
+                            let cv = c.split(':');
+                            cf[cv[0]] = cv[1] || 'text';
+                        });
+                        Object.assign(t.columnFormats, cf);
+                    }
                     break;
                 case 'columns':
                     t._columns = [];
@@ -127,15 +139,25 @@
                         let pc = webui.toPascel(cm);
                         let td = webui.create('td', { class: align });
                         tr.appendChild(td);
+                        let content = '';
                         if (t._columnTemplates[cm]) {
-                            td.innerHTML = webui.replaceAppData(t._columnTemplates[cm], row);
+                            content = webui.replaceAppData(t._columnTemplates[cm], row);
                         } else if (t._columnTemplates[cc]) {
-                            td.innerHTML = webui.replaceAppData(t._columnTemplates[cc], row);
+                            content = webui.replaceAppData(t._columnTemplates[cc], row);
                         } else if (t._columnTemplates[pc]) {
-                            td.innerHTML = webui.replaceAppData(t._columnTemplates[pc], row);
+                            content = webui.replaceAppData(t._columnTemplates[pc], row);
                         } else {
                             let data = webui.getDefined(row[cm], row[cc], row[pc], '');
-                            td.innerHTML = webui.replaceAppData(`${data}`);
+                            content = webui.replaceAppData(`${data}`);
+                        }
+                        let cf = webui.getDefined(t.columnFormats[cm], t.columnFormats[cc], t.columnFormats[pc], undefined);
+                        switch (cf) {
+                            case 'html':
+                                td.innerHTML = content;
+                                break;
+                            default:
+                                td.innerText = content;
+                                break;
                         }
                     });
                 });
