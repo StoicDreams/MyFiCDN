@@ -108,7 +108,7 @@
         },
         getApiData: function () {
             const t = this;
-            const key = t.dataset.api;
+            let key = t.dataset.api;
             if (!key || typeof key !== 'string') return {};
             let data = webui.getData(key);
             if (typeof data !== 'object') {
