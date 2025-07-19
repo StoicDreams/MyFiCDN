@@ -106,6 +106,19 @@
                     break;
             }
         },
+        getApiData: function () {
+            const t = this;
+            const key = t.dataset.api;
+            if (!key || typeof key !== 'string') return {};
+            let data = webui.getData(key);
+            if (typeof data !== 'object') {
+                key = key.split('.').pop();
+                let d = {};
+                d[key] = data;
+                return d;
+            }
+            return data;
+        },
         loadData: function () {
             const t = this;
             if (!t.apiUrl) return;
@@ -113,17 +126,30 @@
             let url = t.apiUrl;
             let ct = t.contentType || 'application/json';
             let fetchData = null;
-            if (method.toLowerCase() !== 'get') {
-                if (ct === 'multipart/form-data') {
-                    fetchData = data;
+            const data = t.getApiData();
+            if (data) {
+                if (method.toLowerCase() === 'get') {
+                    let q = [];
+                    Object.keys(data).forEach(key => {
+                        let value = `${data[key]}`
+                        q.push(`${key}=${encodeURIComponent(value)}`);
+                    });
+                    url = `${url}?${q.join('&')}`;
                 } else {
-                    fetchData = Object.fromEntries(data);
-                    if (Object.keys(fetchData).length === 0) {
-                        Object.assign(fetchData, value);
+                    if (ct === 'multipart/form-data') {
+                        const formData = new FormData();
+                        for (const key in data) {
+                            if (data.hasOwnProperty(key)) {
+                                formData.append(key, data[key]);
+                            }
+                        }
+                        fetchData = formData;
+                    } else {
+                        fetchData = data;
+                        fetchData.headers = {
+                            'Content-Type': ct
+                        };
                     }
-                    fetchData.headers = {
-                        'Content-Type': ct
-                    };
                 }
             }
             webui.fetchApi(url, fetchData, method)
