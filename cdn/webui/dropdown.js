@@ -127,6 +127,7 @@
             let ct = t.contentType || 'application/json';
             let fetchData = null;
             const data = t.getApiData();
+            console.log('data', data, typeof data);
             if (data) {
                 if (method.toLowerCase() === 'get') {
                     let q = [];
@@ -168,7 +169,7 @@
                     }
                 })
                 .catch(ex => {
-                    webui.log.error(ex);
+                    webui.log.error('Fetch API Error:', ex);
                 });
         },
         connected: (t) => {
