@@ -124,7 +124,7 @@ font:inherit;
 label:empty {
 display:none;
 }
-@container (max-width:400px) {
+@container container (max-width:400px) {
 :host {
 display:grid;
 gap:0.1em;

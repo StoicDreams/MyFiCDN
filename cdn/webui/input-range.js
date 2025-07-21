@@ -154,7 +154,7 @@ right:0;
 bottom:0.2em;
 font-size:0.9em;
 }
-@container (max-width:400px) {
+@container container (max-width:400px) {
 :host {
 display:grid;
 gap:0.1em;

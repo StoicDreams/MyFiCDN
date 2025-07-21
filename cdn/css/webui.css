@@ -1484,6 +1484,7 @@ webui-side-by-side>webui-flex[align="center"] {
 
 .container {
     container-type: inline-size;
+    container-name: container;
 }
 
 @media (max-width: 1200px) {
