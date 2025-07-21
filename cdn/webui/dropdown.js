@@ -109,18 +109,18 @@
         getApiData: function () {
             const t = this;
             let key = t.dataset.api;
-            if (!key || typeof key !== 'string') return {};
+            if (!key || typeof key !== 'string') return [true, {}];
             let data = webui.getData(key);
             if (data === undefined) {
-                return undefined;
+                return [false, {}];
             }
             if (typeof data !== 'object') {
                 key = key.split('.').pop();
                 let d = {};
                 d[key] = data;
-                return d;
+                return [true, d];
             }
-            return data;
+            return [true, data];
         },
         loadData: function () {
             const t = this;
@@ -129,8 +129,11 @@
             let url = t.apiUrl;
             let ct = t.contentType || 'application/json';
             let fetchData = null;
-            const data = t.getApiData();
-            console.log('data', data, typeof data);
+            const [hasRequiredData, data] = t.getApiData();
+            if (!hasRequiredData) {
+                t.setOptions([]);
+                return;
+            };
             if (data) {
                 if (method.toLowerCase() === 'get') {
                     let q = [];
