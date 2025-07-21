@@ -5,7 +5,7 @@ webui.define('webui-flex', {
     constructor: (t) => {
         t._style = t.template.querySelector('style');
     },
-    attr: ['gap', 'grow', 'column', 'align', 'justify'],
+    attr: ['gap', 'grow', 'column', 'align', 'justify', 'wrap-at'],
     attrChanged: (t, _property, _value) => {
         t.setStyles();
     },
@@ -20,6 +20,29 @@ webui.define('webui-flex', {
         if (!!a.align) { t.style.alignItems = `${a.align.value}`; }
         if (a.gap && a.gap.value) { t.style.gap = `${t.getDim(t.attributes.gap.value)}`; }
         else { t.style.gap = 'var(--flexgap,var(--padding,1em))'; }
+    },
+    connected: function (t) {
+        const wrapAt = parseInt(t.getAttribute('wrap-at'));
+        if (Number.isFinite(wrapAt)) {
+            const observer = new ResizeObserver(entries => {
+                for (const entry of entries) {
+                    const width = entry.contentRect.width;
+                    if (width < wrapAt) {
+                        t.setAttribute('wrap', '');
+                    } else {
+                        t.removeAttribute('wrap');
+                    }
+                }
+            });
+            observer.observe(t);
+            t._wrapObserver = observer;
+        }
+    },
+    disconnected: function (t) {
+        if (t._wrapObserver) {
+            t._wrapObserver.disconnect();
+            t._wrapObserver = null;
+        }
     },
     shadowTemplate: `
 <slot></slot>
