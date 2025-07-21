@@ -68,6 +68,10 @@
         "tags": "alert warning danger"
     },
     {
+        "name": "eye",
+        "tags": "pupil look view see"
+    },
+    {
         "name": "facebook",
         "tags": "brands social"
     },
