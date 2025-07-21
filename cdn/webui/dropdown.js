@@ -325,7 +325,7 @@ padding:var(--padding,1rem);
 }
 webui-icon:not([icon]),
 slot[name="template"] {display:none;}
-@container container (max-width:400px) {
+@container container (max-width:600px) {
 :host {
 display:grid;
 gap:0.1em;
