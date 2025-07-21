@@ -111,6 +111,9 @@
             let key = t.dataset.api;
             if (!key || typeof key !== 'string') return {};
             let data = webui.getData(key);
+            if (data === undefined) {
+                return undefined;
+            }
             if (typeof data !== 'object') {
                 key = key.split('.').pop();
                 let d = {};
