@@ -26,7 +26,6 @@ webui.define('webui-flex', {
 <style type="text/css">
 :host {
 display: flex!important;
-container-type:normal;
 }
 :host([grow]) {
 flex-grow:1;
