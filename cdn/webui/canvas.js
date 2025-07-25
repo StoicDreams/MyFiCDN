@@ -16,7 +16,7 @@
             t._contentHeight = 0;
         },
         flags: ['line-numbers'],
-        attr: ['height','max-height', 'alt-color'],
+        attr: ['height', 'max-height', 'alt-color'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'height':
@@ -38,28 +38,28 @@
             t.updateCanvas();
             t.setScroll(0);
         },
-        setFromText: function(text) {
-            const t=this;
+        setFromText: function (text) {
+            const t = this;
             if (text === t._textLines) return;
             text = text || '';
-            let lines = text.split(/\r?\n/).map(line=>{
-                return {line:line};
+            let lines = text.split(/\r?\n/).map(line => {
+                return { line: line };
             });
             t.setLines(lines);
         },
-        setFromHTML: function(html){
-            const t=this;
+        setFromHTML: function (html) {
+            const t = this;
             const div = webui.create('div');
             div.innerHTML = html;
             let text = div.textContent || div.innerText || '';
             if (text === t._textLines) return;
-            let lines = text.split(/\r?\n/).map(line=>{
-                return {line:line};
+            let lines = text.split(/\r?\n/).map(line => {
+                return { line: line };
             });
             t.setLines(lines);
         },
-        render: function() {
-            const t=this;
+        render: function () {
+            const t = this;
             t.wrapAllLines();
             t._contentHeight = t._wrappedLines.length * t._lineHeight;
             t.updateCanvas();
@@ -99,7 +99,7 @@
                 }
             }
         },
-        updateCanvas: function() {
+        updateCanvas: function () {
             const t = this;
             if (!t._wrappedLines) return;
             const ctx = t._ctx;
@@ -110,7 +110,7 @@
             const endLine = Math.min(startLine + t._visibleLines, t._wrappedLines.length);
             ctx.font = getComputedStyle(t).font;
             let digits = t._lines.length.toString().length;
-            let padLeft = t.lineNumbers ? t._ctx.measureText(webui.repeat('0',digits)).width + 10 : 5;
+            let padLeft = t.lineNumbers ? t._ctx.measureText(webui.repeat('0', digits)).width + 10 : 5;
             function correctColor(color) {
                 if (!color) return color;
                 if (color.startsWith('--')) {
@@ -125,7 +125,7 @@
                 const entry = t._wrappedLines[i];
                 const textColor = entry.isFiller ? '#00000000' : correctColor(entry.color || '--theme-color-offset');
                 if (entry.lineNumber) {
-                    useAlt = entry.lineNumber%2 == 1;
+                    useAlt = entry.lineNumber % 2 == 1;
                 }
                 const backgroundColor = correctColor(entry.background || (!entry.isFiller && useAlt ? t.altColor || '--theme-color' : '--theme-color'));
                 const showLineNumber = t.lineNumbers && entry.text !== undefined && !entry.isFiller;
@@ -155,19 +155,19 @@
                 ctx.fillRect(scrollbarX, scrollbarY, 14, scrollbarHeight);
             }
         },
-        getScroll: function() {
-            const t=this;
+        getScroll: function () {
+            const t = this;
             return t._scrollTop;
         },
-        setScroll: function(value) {
-            const t=this;
+        setScroll: function (value) {
+            const t = this;
             t._scrollTop = value || 0;
             const maxScroll = Math.max(0, t._contentHeight - t._canvas.height);
             if (t._scrollTop < 0) t._scrollTop = 0;
             if (t._scrollTop > maxScroll) t._scrollTop = maxScroll;
             t.updateCanvas();
             if (t.dataset.trigger) {
-                t.dispatchEvent(new Event('change', {bubbles:true}));
+                t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
             }
         },
         copyText() {
@@ -181,8 +181,8 @@
             let multi = e.shiftKey && e.ctrlKey ? 4 : e.ctrlKey ? 3 : e.shiftKey ? 2 : 0.2;
             t.setScroll(t._scrollTop + (e.deltaY * multi));
         },
-        checkDimensions: function() {
-            const t=this;
+        checkDimensions: function () {
+            const t = this;
             const rect = t.getBoundingClientRect();
             let height = Math.floor(rect.height);
             let width = Math.floor(rect.width);
@@ -193,7 +193,7 @@
             t.wrapAllLines();
             t._contentHeight = t._wrappedLines.length * t._lineHeight;
             t.updateCanvas();
-            setTimeout(()=>{t.checkDimensions();},100);
+            setTimeout(() => { t.checkDimensions(); }, 100);
         },
         connected: function (t) {
             const resizeObserver = new ResizeObserver(() => {
@@ -201,7 +201,7 @@
             });
             resizeObserver.observe(t);
             t._resizeObserver = resizeObserver;
-            t.addEventListener('click',_=>{
+            t.addEventListener('click', _ => {
                 t.checkDimensions();
             });
             t._boundOnWheel = (e) => t.onWheel(e);

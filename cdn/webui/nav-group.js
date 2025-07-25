@@ -13,7 +13,7 @@ webui.define('webui-nav-group', {
         t._caret.setAttribute('rotate', "180");
         t._anchor.appendChild(t._caret);
         t._anchor.addEventListener('click', ev => {
-            if(webui.closest(t, 'webui-drawer')) {
+            if (webui.closest(t, 'webui-drawer')) {
                 ev.stopPropagation();
                 ev.preventDefault();
             }
@@ -21,8 +21,13 @@ webui.define('webui-nav-group', {
             t.setShow(!t.open);
         });
     },
-    setShow: function(value) {
-        let t=this;
+    props: {
+        'isOpen': {
+            get() { return this._anchor.classList.contains('show'); }
+        }
+    },
+    setShow: function (value) {
+        let t = this;
         t.open = value;
         t._caret.setAttribute('rotate', t.open ? '0' : '180');
         if (t.open) {
@@ -30,6 +35,7 @@ webui.define('webui-nav-group', {
         } else {
             t._anchor.classList.remove('show');
         }
+        t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
     },
     flags: ['show'],
     attr: ['icon', 'name'],
