@@ -50,7 +50,13 @@
                     show[link.name] = true;
                 }
                 if (show[link.name]) {
-                    el.setShow(true);
+                    if (typeof el.setShow === 'function') {
+                        el.setShow(true);
+                    } else {
+                        setTimeout(() => {
+                            el.setShow(true);
+                        }, 100);
+                    }
                 }
                 el.addEventListener('change', _ => {
                     show[link.name] = el.isOpen;
@@ -83,9 +89,11 @@
             let nav = t._navData;
             if (!nav) return;
             t.innerHTML = '';
+            t.classList.add('building');
             nav.forEach(link => {
                 t.buildLink(t, link);
             });
+            t.classList.remove('building');
         }
     });
 

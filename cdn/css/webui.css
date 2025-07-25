@@ -1687,6 +1687,15 @@ webui-nav-group>webui-nav-group>*,
     margin-top: -100%;
 }
 
+webui-nav.building webui-nav-group>webui-nav-link,
+webui-nav.building webui-nav-group>webui-nav-group,
+webui-nav.building .nav-group>section,
+webui-nav.building webui-nav-group>webui-nav-link>*,
+webui-nav.building webui-nav-group>webui-nav-group>*,
+webui-nav.building .nav-group>section>* {
+    transition: all 0ms linear;
+}
+
 webui-nav-group>.navlink.show~webui-nav-link>*,
 webui-nav-group>.navlink.show~webui-nav-group>*,
 .nav-group>.navlink.show~section>* {
