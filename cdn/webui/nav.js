@@ -46,6 +46,9 @@
                 el.setAttribute('url', link.url);
             } else if (link.children) {
                 el = webui.create('webui-nav-group');
+                if (show[link.name] === undefined) {
+                    show[link.name] = true;
+                }
                 if (show[link.name]) {
                     el.setShow(true);
                 }
