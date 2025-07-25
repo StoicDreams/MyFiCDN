@@ -88,12 +88,14 @@
             const t = this;
             let nav = t._navData;
             if (!nav) return;
-            t.innerHTML = '';
             t.classList.add('building');
+            t.innerHTML = '';
             nav.forEach(link => {
                 t.buildLink(t, link);
             });
-            t.classList.remove('building');
+            setTimeout(() => {
+                t.classList.remove('building');
+            }, 100);
         }
     });
 
