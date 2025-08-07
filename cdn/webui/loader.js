@@ -393,7 +393,8 @@ const webui = (() => {
                         let observer = new IntersectionObserver(onIntersection, {
                             root: null,   // default is the viewport
                             scrollMargin: '30px',
-                            threshold: 0 // percentage of target's visible area. Triggers "onIntersection"
+                            threshold: 0, // percentage of target's visible area. Triggers "onIntersection"
+                            delay: 100
                         });
 
                         // callback is called on intersection change
