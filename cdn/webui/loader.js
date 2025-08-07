@@ -1,5 +1,11 @@
-
-/* This script is used to dynamically load Web UI web components (webui-*) from cdn.myfi.ws and app components (app-*) from the local /wc (webui.appSrc) folder as they are encountered in the dom. */
+/*!
+ * Web UI Loader - https://webui.stoicdreams.com
+ * This script is used to dynamically load Web UI web components (webui-*) from cdn.myfi.ws and app components (app-*) from the local /wc (webui.appSrc) folder as they are encountered in the dom.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
+/*  */
 "use strict"
 const webui = (() => {
     const markdownSrc = location.host === '127.0.0.1:3180' ? '/js/mdparse.min.js' : 'https://cdn.myfi.ws/js/mdparse.min.js';

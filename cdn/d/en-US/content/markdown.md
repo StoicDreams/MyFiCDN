@@ -1,6 +1,8 @@
-# Markdown Cheat Sheet
+# Web UI Markdown Cheat Sheet
 
-This Markdown cheat sheet provides a quick overview of all the syntax elements supported by standard Markdown.
+Web UI is designed to use a tweaked version of Markdown when loading site content.
+
+This Markdown cheat sheet provides a quick overview of all the syntax elements supported by Web UI Markdown.
 
 ## Headings
 
@@ -55,6 +57,16 @@ Before blockquote
 > Back to parent
 After blockquote
 ```
+
+```markdown
+Before blockquote
+> [success] This is a blockquote.
+>> [warning] Nested blockquote.
+>> Continue Nested
+>>> [danger] More Nested
+> Back to parent
+After blockquote
+```
 </webui-page-segment>
 <webui-page-segment elevation="10">
 Before blockquote
@@ -62,6 +74,14 @@ Before blockquote
 >> Nested blockquote.
 >> Continue Nested
 >>> More Nested
+> Back to parent
+After blockquote
+
+Before blockquote
+> [success] This is a blockquote.
+>> [warning] Nested blockquote.
+>> Continue Nested
+>>> [danger] More Nested
 > Back to parent
 After blockquote
 </webui-page-segment>
@@ -197,17 +217,29 @@ function test() {
 <webui-side-by-side>
 <webui-page-segment elevation="10">
 ```markdown
-| Header 1 | Header 2 |
-|----------|----------|
-| Cell 1   | Cell 2   |
-| Cell 3   | Cell 4   |
+| Header 1 | Header 2 | H-Left | H-Center | H-Right |
+|----------|----------|:-------|:--------:|--------:|
+| Cell 1   | Cell 2   | Cell 3 | Cell 4   | Cell 5  |
+| Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10 |
+```
+
+```markdown
+Header 1 | Header 2 | H-Left | H-Center | H-Right
+---------|----------|:-------|:--------:|--------:
+Cell 1   | Cell 2   | Cell 3 | Cell 4   | Cell 5
+Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10
 ```
 </webui-page-segment>
 <webui-page-segment elevation="10">
-| Header 1 | Header 2 |
-|----------|----------|
-| Cell 1   | Cell 2   |
-| Cell 3   | Cell 4   |
+| Header 1 | Header 2 | H-Left | H-Center | H-Right |
+|----------|----------|:-------|:--------:|--------:|
+| Cell 1   | Cell 2   | Cell 3 | Cell 4   | Cell 5  |
+| Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10 |
+
+Header 1 | Header 2 | H-Left | H-Center | H-Right
+---------|----------|:-------|:--------:|--------:
+Cell 1   | Cell 2   | Cell 3 | Cell 4   | Cell 5
+Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10
 </webui-page-segment>
 </webui-side-by-side>
 

@@ -1,3 +1,10 @@
+/*!
+ * MDParse - https://webui.stoicdreams.com
+ * Web UI Specific Markdown Parser
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 export class MarkdownParser {
     emojiMap = {};
