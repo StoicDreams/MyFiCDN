@@ -9,9 +9,6 @@ const webui = (() => {
     });
     const domain = location.hostname;
     const AsyncFunction = (async () => { }).constructor;
-    const markdownOptions = {
-        gfm: true,
-    };
     const map = {
         subs: {}
     };
@@ -235,11 +232,10 @@ const webui = (() => {
                 this.storage.setItem('session-data', JSON.stringify(sessionData));
             });
         }
-        applyAppDataToContent(content, preTrim, removeWrappingPTags) {
+        applyAppDataToContent(content, preTrim) {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
             let pt = typeof preTrim == 'boolean' ? preTrim : undefined;
-            let html = this.parseWebuiMarkdown(this.replaceAppData(content, data), pt, removeWrappingPTags);
-            return html;
+            return this.parseWebuiMarkdown(this.replaceAppData(content, data), pt);
         }
         applyDynamicStyles() { }
         applyProperties(t) { }
@@ -944,68 +940,16 @@ const webui = (() => {
             el.classList.add('open');
             return content;
         }
-        parseWebuiSmartMarkdown(raw) {
-            const noTrimTags = ['code', 'template', 'webui-code'];
-            const insideBlock = { codeBlock: false, htmlBlock: false, tagStack: [] };
-            const lines = raw.split(/\r?\n/);
-            const output = [];
-            for (let line of lines) {
-                if (line.trim().startsWith('```')) {
-                    insideBlock.codeBlock = !insideBlock.codeBlock;
-                    output.push(line);
-                    continue;
-                }
-                if (insideBlock.codeBlock) {
-                    output.push(line);
-                    continue;
-                }
-                const openTag = line.match(/^<([a-zA-Z0-9-_]+)(\s|>|\/)/);
-                const closeTag = line.match(/^<\/([a-zA-Z0-9-_]+)>/);
-                if (openTag && noTrimTags.includes(openTag[1])) {
-                    insideBlock.tagStack.push(openTag[1]);
-                } else if (closeTag && insideBlock.tagStack.includes(closeTag[1])) {
-                    insideBlock.tagStack.pop();
-                }
-                if (/^<\w/.test(line) && insideBlock.tagStack.length === 0) {
-                    output.push(line.replace(/^\s+/, ''));
-                } else {
-                    output.push(line);
-                }
-            }
-            return output.join('\n');
-        }
-        parseWebuiMarkdown(md, preTrim, removeWrappingPTags) {
-            const t = this;
-            if (typeof md !== 'string') return md;
-            md = md.replace(/(\r\n|\r){1}/mg, '\n');
-            if (preTrim) {
-                md = this.trimLinePreWhitespce(md);
-            } else {
-                md = this.trimLinePreTabs(md);
-            }
-            //clean = md.replace(/\n/g, '\n\n');
-            let clean = t.parseWebuiSmartMarkdown(md).trim();
-            let html = t.marked.parse(clean, markdownOptions) || '';
-            html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
-            html = html.trim();
-            if (removeWrappingPTags && html.startsWith('<p>') && !html.startsWith('<p><')) {
-                return html.replace(/^\<p\>(.*)\<\/p\>$/, '$1');
-            }
-            return html;
+        parseWebuiMarkdown(md, preTrim) {
+            return this.parseMarkdown(md, preTrim);
         }
         parseMarkdown(md, preTrim) {
             const t = this;
             if (typeof md !== 'string') return md;
-            md = md.replace(/(\r\n|\r){1}/mg, '\n');
             if (preTrim) {
-                md = this.trimLinePreWhitespce(md);
-            } else {
-                md = this.trimLinePreTabs(md);
+                md = t.trimLinePreWhitespce(md);
             }
-            md = md.replace(/(\n)/mg, '\n');
-            let html = t.marked.parse(md, markdownOptions) || '';
-            html = t.removeWrappingPTags(html, 'webui-[A-Za-z-]+|app-[A-Za-z-]+|select|option|div|label|section|article|footer|header');
-            return html;
+            return t.marked.parse(md) || '';
         }
         removeFromParentPTag(el) {
             if (el.parentNode && el.parentNode.nodeName === 'P') {

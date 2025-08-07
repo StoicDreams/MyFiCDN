@@ -197,7 +197,7 @@ export class MarkdownParser {
         if (text === undefined || text === null || text === '') return '';
         const t = this;
         if (t.cache[text]) return t.cache[text];
-        const tokens = t.tokenize(text);
+        const tokens = t.tokenize(t.trimLinePreTabs(text));
         let html = t.render(tokens);
         t.cache[text] = html;
         return html;
@@ -307,6 +307,30 @@ export class MarkdownParser {
         }
         commands.closeListsAbove(0);
         return html;
+    }
+    trimLinePreTabs(html, tabLength = 4) {
+        let lines = [], ls = 0;
+        let tabRepl = webui.repeat(' ', tabLength);
+        let startLines = html.replace(/\t/g, tabRepl).split('\n');
+        let tabLen = 999;
+        let index = 0;
+        for (let line of startLines) {
+            if (index++ == 0) continue;
+            let m = line.match(/^([ ]*)/)[0].length;
+            if (m === 0) return html;
+            if (m < tabLen) {
+                tabLen = m;
+            }
+        };
+        if (tabLen === 999) {
+            tabLen = 0;
+        }
+        if (tabLen === 0) return html;
+        let rgx = new RegExp(`^[ ]{1,${tabLen}}`);
+        for (let line of startLines) {
+            lines.push(line.replace(rgx, ''));
+        }
+        return lines.join('\n');
     }
     renderInline(text) {
         return text
