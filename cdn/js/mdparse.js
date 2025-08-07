@@ -53,7 +53,9 @@ export class MarkdownParser {
             }
             return html + `<li>${commands.renderInline(token.content)}</li>\n`;
         };
-        t.addRule('line-break', /^[\s]*---.*/, (line, state) => {
+        t.addRule('line-break', (line, state) => {
+            return /^[\s]*---.*/.test(line) && state.tableBuffer.length === 0;
+        }, (line, state) => {
             const res = line.match(/^[\s]*[-]+([^-]+).*/);
             if (res) {
                 const [, theme] = res;
@@ -202,13 +204,27 @@ export class MarkdownParser {
             state.tableBuffer.push(line);
             return false;
         }, (html, token, commands) => {
-            const rows = token.rows.map(r => r.split("|").slice(1, -1).map(c => c.trim()));
+            const rows = token.rows.map(r => r.trim().replace(/^\|/, '').replace(/\|$/, '').split("|").map(c => c.trim()));
             const head = rows[0];
-            const align = rows[1] || [];
+            const alignments = (rows[1] || []).map(cell => {
+                const trimmed = cell.trim();
+                if (/^:-+:$/.test(trimmed)) return 'center';
+                if (/^-+:$/.test(trimmed)) return 'right';
+                if (/^:-+$/.test(trimmed)) return 'justify';
+                return 'justify';
+            });
             const body = rows.slice(2);
-            html += "<table><thead><tr>" + head.map(h => `<th>${commands.renderInline(h)}</th>`).join('') + "</tr></thead><tbody>";
+            html += `<table class="bordered" theme="info"><thead><tr>` + head.map((h, i) => {
+                const align = alignments[i];
+                const cls = align ? ` class="text-${align}"` : '';
+                return `<th${cls}>${commands.renderInline(h)}</th>`;
+            }).join('') + "</tr></thead><tbody>";
             for (const row of body) {
-                html += "<tr>" + row.map(c => `<td>${commands.renderInline(c)}</td>`).join('') + "</tr>";
+                html += "<tr>" + row.map((c, i) => {
+                    const align = alignments[i];
+                    const cls = align ? ` class="text-${align}"` : '';
+                    return `<td${cls}>${commands.renderInline(c)}</td>`;
+                }).join('') + "</tr>";
             }
             return `${html}</tbody></table>\n`;
         });
