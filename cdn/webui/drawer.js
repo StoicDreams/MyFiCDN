@@ -47,10 +47,21 @@
             setTimeout(() => {
                 t.setAttribute('id', t._id);
             }, 100);
+            t._resizeHandler = () => t.checkResponsiveDocking();
+            window.addEventListener('resize', t._resizeHandler);
+            t.checkResponsiveDocking();
+        },
+        disconnected: (t) => {
+            window.removeEventListener('resize', t._resizeHandler);
         },
         attr: ['position', 'docked', 'data-dockable', 'data-moveable'],
         attrChanged: (t, property, value) => {
             switch (property) {
+                case 'docked':
+                    if (!t._forceUndocked) {
+                        t._cacheDocked = !!value;
+                    }
+                    break;
                 case 'dataDockable':
                     t.dataDockable = true;
                     t.buildFooterContent();
@@ -68,9 +79,22 @@
             fb.setAttribute('justify', 'center');
             fb.setAttribute('slot', 'footer');
             if (this.dataMoveable) { content += moveableTemplate.split('[ID]').join(this._idselector); }
-            if (this.dataDockable) { content += dockableTemplate.split('[ID]').join(this._idselector); }
+            if (this.dataDockable && !this._forceUndocked) { content += dockableTemplate.split('[ID]').join(this._idselector); }
             fb.innerHTML = content;
             this.appendChild(fb);
+        },
+        checkResponsiveDocking: function () {
+            const isNarrow = window.innerWidth < 900;
+            const t = this;
+            t._forceUndocked = isNarrow;
+            if (isNarrow) {
+                if (t.hasAttribute('docked')) {
+                    t.removeAttribute('docked');
+                }
+            } else if (t._cacheDocked && !t.hasAttribute('docked')) {
+                t.setAttribute('docked', true);
+            }
+            t.buildFooterContent();
         },
         shadowTemplate: `
 <slot name="header"></slot>
