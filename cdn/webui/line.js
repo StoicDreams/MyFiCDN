@@ -7,13 +7,13 @@
         isInput: false,
         preload: '',
         constructor: (t) => {
-         },
+        },
         flags: [],
         attr: ['size'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'size':
-                    t.style.setProperty('--line-size',webui.pxIfNumber(value));
+                    t.style.setProperty('--line-size', webui.pxIfNumber(value));
                     break;
             }
         },
@@ -24,7 +24,10 @@
 :host {
 padding:var(--padding);
 --line-size:calc(0.5 * var(--padding));
---line-color:var(--color-title);
+--line-color:var(--theme-color-offset, --color-title);
+}
+:host([theme]) {
+--line-color:var(--theme-color, --color-title);
 }
 div {
 display:block;

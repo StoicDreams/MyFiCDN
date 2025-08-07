@@ -713,8 +713,8 @@ pre,
 .auto_message_box {
     display: grid;
     position: relative;
-    background-color: var(--theme-color, var(--color-black));
-    color: var(--theme-color-offset, var(--color-white));
+    background-color: var(--color-black);
+    color: var(--color-white);
 }
 
 webui-code {
@@ -779,8 +779,8 @@ main>.paper>pre {
 
 code {
     display: inline;
-    background-color: var(--theme-color, inherit);
-    color: var(--theme-color-offset, inherit);
+    background-color: inherit;
+    color: inherit;
     border-radius: var(--corners);
     outline: 1.5px solid var(--theme);
     white-space: pre-wrap;
@@ -793,8 +793,8 @@ pre>code {
     position: relative;
     z-index: 1;
     padding: var(--padding);
-    background-color: var(--theme-color, inherit);
-    color: var(--theme-color-offset, inherit);
+    background-color: inherit;
+    color: inherit;
     height: 100%;
     overflow: auto;
     --line-height: 1.3em;

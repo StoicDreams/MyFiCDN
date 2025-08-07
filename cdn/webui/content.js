@@ -50,7 +50,7 @@ webui.define("webui-content", {
 
         }
     },
-    setHtml: function(html) {
+    setHtml: function (html) {
         const t = this;
         t.src = 'html';
         t._contentLoaded = 'html';
@@ -58,11 +58,11 @@ webui.define("webui-content", {
         t.classList.add('loaded');
         t.innerHTML = html;
     },
-    setSrc: function(value) {
-      let t=this;
-      t.src = value;
-      t._contentLoaded = false;
-      t.fetchContent();
+    setSrc: function (value) {
+        let t = this;
+        t.src = value;
+        t._contentLoaded = false;
+        t.fetchContent();
     },
     fetchContent: async function () {
         const t = this;
@@ -123,6 +123,10 @@ webui.define("webui-content", {
 :host {
 --scroll-color: color-mix(in srgb, var(--theme-color) 20%, transparent);
 --scroll-shadow: -4px 0 -4px rgba(255, 255, 255, 0.2) inset;
+}
+:host(:not([theme])) {
+--theme-color: var(--color-background);
+--theme-color-offset: var(--color-background-offset);
 }
 :host(:not(.loaded)) slot,
 :host(:not([visible])) slot {

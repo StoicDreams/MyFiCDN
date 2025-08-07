@@ -55,5 +55,10 @@ async function onFetch(event) {
 			return cachedResponse || Response.error();
 		}
 	}
-	return fetch(request);
+	try {
+		return fetch(request);
+	} catch (ex) {
+		console.error(ex);
+		return Response.error();
+	}
 }

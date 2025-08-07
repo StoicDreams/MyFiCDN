@@ -16,6 +16,8 @@
 <webui-tabs pad="var(--padding)" vertical transition-timing="200" data-subscribe="session-home-tab-index:setTab">
     <webui-button align="left" slot="tabs">Welcome</webui-button>
     <webui-content slot="content" src="/d/en-US/content/welcome.md"></webui-content>
+    <webui-button align="left" slot="tabs">Markdown</webui-button>
+    <webui-content slot="content" src="/d/en-US/content/markdown.md"></webui-content>
     <webui-button align="left" slot="tabs">Icon Search</webui-button>
     <webui-content slot="content" src="/d/en-US/content/icon-search.md"></webui-content>
     <webui-button align="left" slot="tabs">Icon Creator</webui-button>
