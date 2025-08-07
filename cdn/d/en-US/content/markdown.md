@@ -341,10 +341,10 @@ Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10
 <webui-side-by-side>
 <webui-page-segment elevation="10">
 ```markdown
-:100:
+:100: :+1: :-1: :angel: :scream: :trumpet:
 ```
 </webui-page-segment>
 <webui-page-segment elevation="10">
-:100:
+:100: :+1: :-1: :angel: :scream: :trumpet:
 </webui-page-segment>
 </webui-side-by-side>
