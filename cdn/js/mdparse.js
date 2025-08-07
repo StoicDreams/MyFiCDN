@@ -376,17 +376,17 @@ export class MarkdownParser {
     }
     renderInline(text) {
         return text
+            .replace(/:([a-zA-Z0-9_+-]+):/g, '<webui-emoji emoji="$1"></webui-emoji>')
+            .replace(/!\[(.*?)\]\((.*?) "(.*)"\)/g, '<img alt="$1" src="$2" title="$3" />')
+            .replace(/\[(.*?)\]\((.*?) "(.*)"\)/g, '<a href="$2" title="$3">$1</a>')
+            .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" />')
+            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
             .replace(/\\\*/g, '&ast;')
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\*(.*?)\*/g, '<em>$1</em>')
             .replace(/__(.*?)__/g, '<strong>$1</strong>')
             .replace(/_(.*?)_/g, '<em>$1</em>')
-            .replace(/`([^`]+)`/g, '<code>$1</code>')
-            .replace(/!\[(.*?)\]\((.*?) "(.*)"\)/g, '<img alt="$1" src="$2" title="$3" />')
-            .replace(/\[(.*?)\]\((.*?) "(.*)"\)/g, '<a href="$2" title="$3">$1</a>')
-            .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" />')
-            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
-            .replace(/:([a-zA-Z0-9_+-]+):/g, '<webui-emoji emoji="$1"></webui-emoji>');
+            .replace(/`([^`]+)`/g, '<code>$1</code>');
     }
     escapeQuote(text) {
         return text.replace(/"/g, "&quot;");
