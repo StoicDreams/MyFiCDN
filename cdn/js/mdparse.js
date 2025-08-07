@@ -81,10 +81,14 @@ export class MarkdownParser {
         t.addRule('blockquote_group', /^[\s]*> ?/, (line, state) => {
             line = line.trim();
             if (state.inCodeBlock || state.inTemplate) return { type: 'literal', content: line };
+            let [, , , theme, cite, content] = line.match(/^[\s]*(>| )*(\[([a-z]+)?\:?([A-Za-z-_ ]+)?\])?(.*)/);
+            theme = theme?.replace(/(\[|\])/g, '') || 'info';
             state.inBlockquote = true;
-            return { type: "blockquote", content: line.replace(/^> ?/, "") };
+            return { type: "blockquote", content: line.replace(/^> ?(\[([a-z]+)?:?([A-Za-z-_ ]+)?\])? ?/, ""), theme, cite };
         }, (html, token, commands) => {
-            return `${html}<webui-quote theme="info">` + t.parse(token.content.join('\n')) + `</webui-quote>\n`;
+            let theme = token.theme || 'info';
+            let cite = token.cite || '';
+            return `${html}<webui-quote theme="${theme}" cite="${cite}">` + t.parse(token.content.join('\n')) + `</webui-quote>\n`;
         });
         t.addRule('precode_start', /^[\s]*<pre><code>.*/, (line, state) => {
             if (state.inCodeBlock || state.inTemplate) return { type: 'literal', content: line };
@@ -125,7 +129,7 @@ export class MarkdownParser {
             return `${html}<webui-code lang="${token.lang}">`;
         });
         t.addRule('code_block_end', /^[\s]*```/, (line, state) => {
-            console.log('Unexpected use of code_block_end');
+            webui.log.warn('Unexpected use of code_block_end');
         }, (html, token, commands) => {
             return `${html}</webui-code>\n`;
         });
@@ -235,7 +239,12 @@ export class MarkdownParser {
             if (!state.inBlockquote) return;
             state.inBlockquote = false;
             if (state.blockquoteBuffer.length) {
-                state.tokens.push({ type: "blockquote_group", content: [...state.blockquoteBuffer] });
+                state.tokens.push({
+                    type: "blockquote_group",
+                    content: [...state.blockquoteBuffer.map(b => b.content)],
+                    theme: state.blockquoteBuffer[0].theme,
+                    cite: state.blockquoteBuffer[0].cite
+                });
                 state.blockquoteBuffer.length = 0;
             }
         };
@@ -262,7 +271,7 @@ export class MarkdownParser {
                             flushTable();
                         }
                         if (result.type === "blockquote") {
-                            state.blockquoteBuffer.push(result.content);
+                            state.blockquoteBuffer.push(result);
                             continue;
                         }
                         flushBlockquote();

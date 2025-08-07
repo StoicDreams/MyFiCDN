@@ -54,7 +54,7 @@ Before blockquote
 > This is a blockquote.
 >> Nested blockquote.
 >> Continue Nested
->>> More Nested
+>>> [This is a cite] More Nested with cite
 > Back to parent
 After blockquote
 ```
@@ -64,7 +64,7 @@ Before blockquote
 > [success] This is a blockquote.
 >> [warning] Nested blockquote.
 >> Continue Nested
->>> [danger] More Nested
+>>> [danger:This is a cite] More Nested with cite
 > Back to parent
 After blockquote
 ```
@@ -74,7 +74,7 @@ Before blockquote
 > This is a blockquote.
 >> Nested blockquote.
 >> Continue Nested
->>> More Nested
+>>> [This is a cite] More Nested with cite
 > Back to parent
 After blockquote
 
@@ -82,7 +82,7 @@ Before blockquote
 > [success] This is a blockquote.
 >> [warning] Nested blockquote.
 >> Continue Nested
->>> [danger] More Nested
+>>> [danger:This is a cite] More Nested with cite
 > Back to parent
 After blockquote
 </webui-page-segment>
