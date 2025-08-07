@@ -27,6 +27,7 @@ This Markdown cheat sheet provides a quick overview of all the syntax elements s
 </webui-page-segment>
 </webui-side-by-side>
 
+<script type="text/javascript">console.log('hello world')</script>
 ## Emphasis
 
 <webui-side-by-side>
@@ -98,6 +99,9 @@ After blockquote
 - Item 2
   - Item 2a
   - Item 2b
+    - Item 2ai
+    - Item 2bii
+- Item 3
 ```
 </webui-page-segment>
 <webui-page-segment elevation="10">
@@ -105,6 +109,9 @@ After blockquote
 - Item 2
   - Item 2a
   - Item 2b
+    - Item 2ai
+    - Item 2bii
+- Item 3
 </webui-page-segment>
 </webui-side-by-side>
 
@@ -114,16 +121,59 @@ After blockquote
 <webui-page-segment elevation="10">
 ```markdown
 1. Item 1
-2. Item 2
-   1. Item 2a
-   2. Item 2b
+1. Item 2
+  1. Item 2a
+  2. Item 2b
+    1. Item 2ai
+    1. Item 2bii
+2. Item 3
 ```
 </webui-page-segment>
 <webui-page-segment elevation="10">
 1. Item 1
 2. Item 2
-   1. Item 2a
-   2. Item 2b
+  1. Item 2a
+  2. Item 2b
+    1. Item 2ai
+    1. Item 2bii
+3. Item 3
+</webui-page-segment>
+</webui-side-by-side>
+
+### Mixed
+
+<webui-side-by-side>
+<webui-page-segment elevation="10">
+```markdown
+1. Item 1
+2. Item 2
+  - Item 2a
+  - Item 2b
+    1. Item 2ai
+    1. Item 2bii
+
+- Item 1
+- Item 2
+  1. Item 2a
+  1. Item 2b
+    - Item 2ai
+    - Item 2bii
+```
+</webui-page-segment>
+<webui-page-segment elevation="10">
+1. Item 1
+2. Item 2
+  - Item 2a
+  - Item 2b
+    1. Item 2ai
+    1. Item 2bii
+
+- Item 1
+- Item 2
+  1. Item 2a
+  1. Item 2b
+    - Item 2ai
+    - Item 2bii
 </webui-page-segment>
 </webui-side-by-side>
 

@@ -72,6 +72,7 @@ const webui = (() => {
             if (!handler) return;
             handler(changeDetails, sessionData, watchedSessionData);
         });
+        webui.storage.setItem('session-data', JSON.stringify(sessionData));
     }
     function getHandler(notifyHandler) {
         const handler = {
@@ -233,9 +234,6 @@ const webui = (() => {
             }
             Object.keys(cachedSessionData).forEach(key => {
                 sessionData[key] = cachedSessionData[key];
-            });
-            window.addEventListener('unload', _ => {
-                this.storage.setItem('session-data', JSON.stringify(sessionData));
             });
         }
         applyAppDataToContent(content, preTrim) {

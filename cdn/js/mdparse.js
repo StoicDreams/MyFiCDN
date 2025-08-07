@@ -32,11 +32,24 @@ export class MarkdownParser {
         this.rules.push({ test, processor });
         this.renderers[type] = render;
     }
-    insertRule(index, test, processor) {
+    insertRule(index, test, processor, render) {
         this.rules.splice(index, 0, { test, processor });
+        this.renderers[type] = render;
     }
     initDefaultRules() {
         const t = this;
+        const makeListRenderer = (listTag) => (html, token, commands) => {
+            const last = commands.stack[commands.stack.length - 1];
+            if (!last || token.indent < last.indent || last.tag !== listTag) {
+                html = commands.closeListsAbove(html, token.indent);
+            }
+            const top = commands.stack[commands.stack.length - 1];
+            if (!top || top.tag !== listTag || top.indent < token.indent) {
+                html += `<${listTag}>`;
+                commands.stack.push({ tag: listTag, indent: token.indent });
+            }
+            return html + `<li>${commands.renderInline(token.content)}</li>\n`;
+        };
         t.addRule('line-break', /^[\s]*---.*/, (line, state) => {
             const res = line.match(/^[\s]*[-]+([^-]+).*/);
             if (res) {
@@ -57,28 +70,14 @@ export class MarkdownParser {
         }, (html, token, commands) => {
             return `${html}<h${token.level}>${commands.renderInline(token.content)}</h${token.level}>\n`;
         });
-        t.addRule('ul_item', /^\s{0,3}\* /, (line, state) => {
+        t.addRule('ul_item', /^[\s]*\- /, (line, state) => {
             const indent = line.match(/^\s*/)[0].length;
             return { type: "ul_item", content: line.trim().slice(2).trim(), indent };
-        }, (html, token, commands) => {
-            commands.closeListsAbove(token.indent);
-            if (!commands.stack.length || commands.stack[commands.stack.length - 1].tag !== "ul") {
-                html += "<ul>";
-                commands.stack.push({ tag: "ul", indent: token.indent });
-            }
-            return `${html}<li>${commands.renderInline(token.content)}</li>\n`;
-        });
-        t.addRule('ol_item', /^\s{0,3}\d+\. /, (line, state) => {
+        }, makeListRenderer('ul'));
+        t.addRule('ol_item', /^[\s]*\d+\. /, (line, state) => {
             const indent = line.match(/^\s*/)[0].length;
             return { type: "ol_item", content: line.replace(/^\s*\d+\.\s+/, "").trim(), indent };
-        }, (html, token, commands) => {
-            commands.closeListsAbove(token.indent);
-            if (!commands.stack.length || commands.stack[commands.stack.length - 1].tag !== "ol") {
-                html += "<ol>";
-                commands.stack.push({ tag: "ol", indent: token.indent });
-            }
-            return `${html}<li>${commands.renderInline(token.content)}</li>\n`;
-        });
+        }, makeListRenderer('ol'));
         t.addRule('blockquote_group', /^[\s]*> ?/, (line, state) => {
             line = line.trim();
             if (state.inCodeBlock || state.inTemplate) return { type: 'literal', content: line };
@@ -123,19 +122,19 @@ export class MarkdownParser {
                 return { type: "code_block_start", lang };
             }
         }, (html, token, commands) => {
-            return `${html}<pre><code class="lang-${token.lang}">`;
+            return `${html}<webui-code lang="${token.lang}">`;
         });
         t.addRule('code_block_end', /^[\s]*```/, (line, state) => {
             console.log('Unexpected use of code_block_end');
         }, (html, token, commands) => {
-            return `${html}</code></pre>\n`;
+            return `${html}</webui-code>\n`;
         });
         t.addRule('code_line', (line, state) => {
             return state.inCodeBlock && !/^[\s]*```/.test(line);
         }, (line, state) => {
             return { type: 'code_line', content: line };
         }, (html, token, commands) => {
-            return `${html}${commands.escapeCode(token.content)}\n`;
+            return `${html}${token.content}\n`;
         });
         t.addRule('html_selfclose', /^[\s]*<([a-z][a-z0-9-_]*)([^>]*)\/>[\s]*$/, (line, state) => {
             const [, tag, attrs] = line.match(/^[\s]*<([a-z][a-z0-9-_]*)([^>]*)\/>[\s]*$/);
@@ -294,10 +293,12 @@ export class MarkdownParser {
         const stack = [];
         const commands = {
             stack: stack,
-            closeListsAbove: level => {
-                while (stack.length && stack[stack.length - 1].indent >= level) {
-                    html += `</${stack.pop().tag}>\n`;
+            closeListsAbove: (html, level) => {
+                while (stack.length && stack[stack.length - 1].indent > level) {
+                    const tag = stack.pop().tag;
+                    html += `</${tag}>\n`;
                 }
+                return html;
             },
             escapeCode: t.escapeCode,
             escapeHtml: t.escapeHtml,
@@ -305,17 +306,16 @@ export class MarkdownParser {
             renderInline: t.renderInline
         }
         for (const token of tokens) {
-            if (['ol-item', 'ul-item'].indexOf(token.type) === -1 && stack.length > 0) {
-                commands.closeListsAbove(0);
+            if (['ol_item', 'ul_item'].indexOf(token.type) === -1 && stack.length > 0) {
+                html = commands.closeListsAbove(html, -1);
             }
             const render = t.renderers[token.type];
             if (typeof render !== 'function') {
-                console.error('MarkdownParser error: Undefined token type %s', token.type, render, t.renderers);
                 continue;
             }
             html = render(html, token, commands);
         }
-        commands.closeListsAbove(0);
+        html = commands.closeListsAbove(html, -1);
         return html;
     }
     trimLinePreTabs(html, tabLength = 4) {
