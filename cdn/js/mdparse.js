@@ -30,8 +30,8 @@ export class MarkdownParser {
     }
     initDefaultRules() {
         const t = this;
-        t.addRule('line-break', /^---.*/, (line, state) => {
-            const res = line.match(/^[-]+([^-]+).*/);
+        t.addRule('line-break', /^[\s]*---.*/, (line, state) => {
+            const res = line.match(/^[\s]*[-]+([^-]+).*/);
             if (res) {
                 const [, theme] = res;
                 return { type: "line-break", theme };
@@ -43,7 +43,8 @@ export class MarkdownParser {
             }
             return `${html}<webui-line></webui-line>\n`;
         });
-        t.addRule('heading', /^#{1,6} /, (line, state) => {
+        t.addRule('heading', /^[\s]*#{1,6} /, (line, state) => {
+            line = line.trim();
             const level = line.match(/^#+/)[0].length;
             return { type: "heading", level, content: line.slice(level + 1).trim() };
         }, (html, token, commands) => {
@@ -71,7 +72,8 @@ export class MarkdownParser {
             }
             return `${html}<li>${commands.renderInline(token.content)}</li>\n`;
         });
-        t.addRule('blockquote_group', /^> ?/, (line, state) => {
+        t.addRule('blockquote_group', /^[\s]*> ?/, (line, state) => {
+            line = line.trim();
             if (state.inCodeBlock || state.inTemplate) return { type: 'literal', content: line };
             state.inBlockquote = true;
             return { type: "blockquote", content: line.replace(/^> ?/, "") };
@@ -96,7 +98,8 @@ export class MarkdownParser {
         }, (html, token, commands) => {
             return html;
         });
-        t.addRule('code_block_start', /^```/, (line, state) => {
+        t.addRule('code_block_start', /^[\s]*```/, (line, state) => {
+            line = line.trim();
             let [, tag, lang] = line.match(/^([`]+)(.*)/);
             if (state.inCodeBlock) {
                 if (state.codeBlockTag === tag) {
@@ -115,13 +118,13 @@ export class MarkdownParser {
         }, (html, token, commands) => {
             return `${html}<pre><code class="lang-${token.lang}">`;
         });
-        t.addRule('code_block_end', /^```/, (line, state) => {
+        t.addRule('code_block_end', /^[\s]*```/, (line, state) => {
             console.log('Unexpected use of code_block_end');
         }, (html, token, commands) => {
             return `${html}</code></pre>\n`;
         });
         t.addRule('code_line', (line, state) => {
-            return state.inCodeBlock && !/^```/.test(line);
+            return state.inCodeBlock && !/^[\s]*```/.test(line);
         }, (line, state) => {
             return { type: 'code_line', content: line };
         }, (html, token, commands) => {
