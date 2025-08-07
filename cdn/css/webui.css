@@ -902,6 +902,36 @@ li {
     text-align: left;
 }
 
+li.checked,
+li.unchecked {
+    list-style-type: none;
+    position: relative;
+}
+
+li.checked::before,
+li.unchecked::before {
+    position: relative;
+    content: " ";
+    margin-left: calc((-4 * var(--padding)) - (0.5 * var(--padding)));
+    margin-right: 0.5ch;
+    top: 0;
+    aspect-ratio: 1;
+    width: 2ch;
+    height: 2ch;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+li.checked::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='4' ry='4' fill='%23009000'/><polyline points='6 12 10 16 18 8' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
+
+li.unchecked::before {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='4' ry='4' fill='none' stroke='%23999' stroke-width='2'/></svg>");
+}
+
 li>svg:first-child,
 li>img:first-child,
 li>i:first-child {

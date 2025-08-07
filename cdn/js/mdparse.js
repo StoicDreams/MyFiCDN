@@ -48,6 +48,9 @@ export class MarkdownParser {
                 html += `<${listTag}>`;
                 commands.stack.push({ tag: listTag, indent: token.indent });
             }
+            if (token.check) {
+                return html + `<li class="${token.check}">${commands.renderInline(token.content)}</li>\n`;
+            }
             return html + `<li>${commands.renderInline(token.content)}</li>\n`;
         };
         t.addRule('line-break', /^[\s]*---.*/, (line, state) => {
@@ -72,7 +75,11 @@ export class MarkdownParser {
         });
         t.addRule('ul_item', /^[\s]*\- /, (line, state) => {
             const indent = line.match(/^\s*/)[0].length;
-            return { type: "ul_item", content: line.trim().slice(2).trim(), indent };
+            let [, check] = line.match(/^\s*\- ?(\[( |x)?\])?/);
+            if (check !== undefined) {
+                check = check === '[x]' ? 'checked' : 'unchecked';
+            }
+            return { type: "ul_item", content: line.replace(/^\s*\-( \[( |x)?\])?/, '').trim(), indent, check };
         }, makeListRenderer('ul'));
         t.addRule('ol_item', /^[\s]*\d+\. /, (line, state) => {
             const indent = line.match(/^\s*/)[0].length;
