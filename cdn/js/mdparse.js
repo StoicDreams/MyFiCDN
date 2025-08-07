@@ -375,18 +375,37 @@ export class MarkdownParser {
         return lines.join('\n');
     }
     renderInline(text) {
-        return text
-            .replace(/:([a-zA-Z0-9_+-]+):/g, '<webui-emoji emoji="$1"></webui-emoji>')
-            .replace(/!\[(.*?)\]\((.*?) "(.*)"\)/g, '<img alt="$1" src="$2" title="$3" />')
-            .replace(/\[(.*?)\]\((.*?) "(.*)"\)/g, '<a href="$2" title="$3">$1</a>')
+        const codeSpans = [];
+        text = text.replace(/`([^`]+)`/g, (_, code) => {
+            const token = `^^CODE${codeSpans.length}^^`;
+            codeSpans.push(`<code>${code}</code>`);
+            return token;
+        });
+        const emojis = [];
+        text = text.replace(/:([a-zA-Z0-9_+-]+):/g, (_, emoji) => {
+            const token = `^^EMOJI${emojis.length}^^`;
+            emojis.push(`<webui-emoji emoji="${emoji}"></webui-emoji>`);
+            return token;
+        });
+        text = text
+            .replace(/!\[(.*?)\]\((.*?) "(.*?)"\)/g, '<img alt="$1" src="$2" title="$3" />')
+            .replace(/\[(.*?)\]\((.*?) "(.*?)"\)/g, '<a href="$2" title="$3">$1</a>')
             .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" />')
-            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
-            .replace(/\\\*/g, '&ast;')
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/__(.*?)__/g, '<strong>$1</strong>')
-            .replace(/_(.*?)_/g, '<em>$1</em>')
-            .replace(/`([^`]+)`/g, '<code>$1</code>');
+            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+        text = text.replace(/\\\*/g, '&ast;');
+        text = text
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/__(.+?)__/g, '<strong>$1</strong>')
+            .replace(/\*(?!\s)(.+?)(?!\s)\*/g, '<em>$1</em>')
+            .replace(/_(?!\s)(.+?)(?!\s)_/g, '<em>$1</em>');
+
+        codeSpans.forEach((val, i) => {
+            text = text.replace(`^^CODE${i}^^`, val);
+        });
+        emojis.forEach((val, i) => {
+            text = text.replace(`^^EMOJI${i}^^`, val);
+        });
+        return text;
     }
     escapeQuote(text) {
         return text.replace(/"/g, "&quot;");
