@@ -8,13 +8,16 @@
 /*  */
 "use strict"
 const webui = (() => {
-    const markdownSrc = location.host === '127.0.0.1:3180' ? '/js/mdparse.min.js' : 'https://cdn.myfi.ws/js/mdparse.min.js';
-    import(markdownSrc).then(module => {
-        webui.marked = new module.MarkdownParser();
-        webui.loaded = true;
-    });
+    {
+        const markdownSrc = location.host === '127.0.0.1:3180' ? '/js/mdparse.min.js' : 'https://cdn.myfi.ws/js/mdparse.min.js';
+        import(markdownSrc).then(module => {
+            webui.marked = new module.MarkdownParser();
+            webui.loaded = true;
+        });
+    }
     const domain = location.hostname;
     const AsyncFunction = (async () => { }).constructor;
+    window.AsyncFunction = AsyncFunction;
     const map = {
         subs: {}
     };
@@ -22,31 +25,27 @@ const webui = (() => {
     window.subs = map.subs;
     const roles = {};
     let lastActive = Date.now();
-    const minTimeout = 1000 * 60 * 5;
-    function checkForRoleRefresh() {
-        if (webui.userRoles !== 0) {
-            let autoSignout = (webui.getData('session-autosignout') || 30) * 60 * 1000;
-            if (autoSignout < minTimeout) {
-                autoSignout = minTimeout;
-            }
-            let expiresAt = lastActive + autoSignout;
-            if (Date.now() < expiresAt) {
-                setTimeout(() => checkForRoleRefresh(), autoSignout);
-                webui.loadRoles();
+    {
+        const minTimeout = 1000 * 60 * 5;
+        function checkForRoleRefresh() {
+            if (webui.userRoles !== 0) {
+                let autoSignout = (webui.getData('session-autosignout') || 30) * 60 * 1000;
+                if (autoSignout < minTimeout) {
+                    autoSignout = minTimeout;
+                }
+                let expiresAt = lastActive + autoSignout;
+                if (Date.now() < expiresAt) {
+                    setTimeout(() => checkForRoleRefresh(), autoSignout);
+                    webui.loadRoles();
+                } else {
+                    setTimeout(() => checkForRoleRefresh(), minTimeout);
+                }
             } else {
                 setTimeout(() => checkForRoleRefresh(), minTimeout);
             }
-        } else {
-            setTimeout(() => checkForRoleRefresh(), minTimeout);
         }
+        setTimeout(() => checkForRoleRefresh(), minTimeout);
     }
-    setTimeout(() => checkForRoleRefresh(), minTimeout);
-    function updateActivity() {
-        lastActive = Date.now();
-    }
-    window.addEventListener('keydown', updateActivity);
-    window.addEventListener('click', updateActivity);
-    window.addEventListener('scroll', updateActivity);
     const appDataOnce = [];
     const appDataLimit = ['app-name', 'app-company-singular', 'app-company-possessive', 'app-domain', 'app-api', 'app-not-found-html', 'app-data-endpoint', 'app-content-endpoint'];
     const appData = {
@@ -1425,91 +1424,74 @@ const webui = (() => {
             webui.log.warn("Failed to load roles: %o", ex);
         });
     //storage_accepted
-    {
-        function getNodeKey(node) {
-            let segments = [];
-            segments.push(node.nodeName.toLowerCase());
-            if (node.classList.length) {
-                segments.push(node.classList[0]);
+    function getNodeKey(node) {
+        let segments = [];
+        segments.push(node.nodeName.toLowerCase());
+        if (node.classList.length) {
+            segments.push(node.classList[0]);
+        }
+        ['id', 'name'].forEach(attr => {
+            let val = node.attributes[attr];
+            if (val && val.value) {
+                segments.join(`${attr}-${val.value}`);
             }
-            ['id', 'name'].forEach(attr => {
-                let val = node.attributes[attr];
-                if (val && val.value) {
-                    segments.join(`${attr}-${val.value}`);
-                }
-            });
-            return segments.join('_');
-        }
-        function saveState(node) {
-            let key = getNodeKey(node);
-            let state = {};
-            node.dataset.state.split('|').forEach(attr => {
-                let val = node.attributes[attr];
-                if (val && val.value && val.value !== 'undefined') {
-                    state[attr] = val.value;
-                }
-            });
-            webui.storage.setItem(key, JSON.stringify(state));
-        }
-        function loadState(node) {
-            let key = getNodeKey(node);
-            let item = webui.storage.getItem(key);
-            if (!item) return;
-            let state = JSON.parse(item);
-            node.dataset.state.split('|').forEach(attr => {
-                if (state[attr]) {
-                    node.setAttribute(attr, state[attr]);
-                } else {
-                    node.removeAttribute(attr);
-                }
-            });
-        }
-
-        function checkNodes(nodes) {
-            if (nodes.length === 0) return;
-            nodes.forEach(node => {
-                if (node.dataset && node.dataset.state) {
-                    loadState(node);
-                }
-                checkNodes(node.childNodes);
-            });
-        }
-        function applyDataHide() {
-            webui.querySelectorAll('[data-hide]').forEach(el => {
-                let sel = el.dataset.hide;
-                if (!sel) return;
-                let found = document.querySelector(sel);
-                el.style.display = found ? '' : 'none';
-            });
-        }
-        const observerDataStates = (domNode) => {
-            const observer = new MutationObserver(mutations => {
-                lastActive = Date.now();
-                mutations.forEach(function (mutation) {
-                    if (mutation.target && mutation.target.dataset && mutation.target.dataset.state) {
-                        saveState(mutation.target, mutation.attributeName);
-                    }
-                    Array.from(mutation.addedNodes).forEach(el => {
-                        if (el.dataset && el.dataset.state) {
-                            loadState(el);
-                        }
-                    });
-                });
-                applyDataHide();
-            });
-            observer.observe(domNode, {
-                childList: true,
-                attributes: true,
-                characterData: true,
-                subtree: true,
-            });
-            return observer;
-        };
-        runWhenBodyIsReady(() => {
-            observerDataStates(document.body);
-            checkNodes(document.childNodes);
-            applyDataHide();
         });
+        return segments.join('_');
+    }
+    function saveState(node) {
+        let key = getNodeKey(node);
+        let state = {};
+        node.dataset.state.split('|').forEach(attr => {
+            let val = node.attributes[attr];
+            if (val && val.value && val.value !== 'undefined') {
+                state[attr] = val.value;
+            }
+        });
+        webui.storage.setItem(key, JSON.stringify(state));
+    }
+    function loadState(node) {
+        let key = getNodeKey(node);
+        let item = webui.storage.getItem(key);
+        if (!item) return;
+        let state = JSON.parse(item);
+        node.dataset.state.split('|').forEach(attr => {
+            if (state[attr]) {
+                node.setAttribute(attr, state[attr]);
+            } else {
+                node.removeAttribute(attr);
+            }
+        });
+    }
+    function checkNodes(nodes) {
+        if (nodes.length === 0) return;
+        nodes.forEach(node => {
+            if (node.dataset && node.dataset.state) {
+                loadState(node);
+            }
+            checkNodes(node.childNodes);
+        });
+    }
+    function applyDataHide() {
+        webui.querySelectorAll('[data-hide]').forEach(el => {
+            let sel = el.dataset.hide;
+            if (!sel) return;
+            let found = document.querySelector(sel);
+            el.style.display = found ? '' : 'none';
+        });
+    }
+    function checkDataStateMutations(mutations) {
+        updateActivity();
+        mutations.forEach(function (mutation) {
+            if (mutation.target && mutation.target.dataset && mutation.target.dataset.state) {
+                saveState(mutation.target, mutation.attributeName);
+            }
+            Array.from(mutation.addedNodes).forEach(el => {
+                if (el.dataset && el.dataset.state) {
+                    loadState(el);
+                }
+            });
+        });
+        applyDataHide();
     }
     // Data signalling/transfers
     function handleDataClick(ev) {
@@ -1703,107 +1685,9 @@ const webui = (() => {
         window.history.pushState(appData, document.title, url);
         loadPage(url);
     }
-    window.addEventListener('popstate', ev => {
-        if (ev.state) {
-            webui.log.trace("TODO: handle history updates", ev);
-        }
-    });
-
-    runWhenBodyIsReady(() => {
-        document.body.addEventListener('input', handleDataTrigger);
-        document.body.addEventListener('change', handleDataTrigger);
-        document.body.addEventListener('click', ev => {
-            let target = ev.composedPath ? ev.composedPath()[0] : ev.target;
-            let retValue = true;
-            let breakAtEnd = false;
-            let applyDynStyles = false;
-            function stop() {
-                ev.stopPropagation();
-                ev.preventDefault();
-                retValue = false;
-                breakAtEnd = true;
-            }
-            while (!breakAtEnd && target !== document.body && target !== null && target !== undefined) {
-                if (!target.hasAttribute) {
-                    target = target.parentNode || target.host;
-                    continue;
-                }
-                if (target.hasAttribute && target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'false' && !ev.ctrlKey) {
-                    ev.stopPropagation();
-                    ev.preventDefault();
-                    return false;
-                }
-                if (target.dataset.click) {
-                    stop();
-                    handleDataClick(target);
-                }
-                if (target.dataset.trigger && ['A', 'BUTTON', 'WEBUI-BUTTON'].indexOf(target.nodeName) !== -1) {
-                    stop();
-                    handleDataTrigger(target);
-                }
-                let href = target.getAttribute('href');
-                if (href && href.indexOf(':') !== -1 && href.substr(0, 4) !== 'http') {
-                    return true;
-                }
-                if (href && target.getAttribute('target') !== 'blank' && (href[0] === '/' || href.substr(0, 4) !== 'http')) {
-                    stop();
-                    changePage(href);
-                }
-                if (target.hasAttribute('data-stopclick')) {
-                    stop();
-                }
-                if (target.dataset.setattr) {
-                    let [val, attr, sel] = target.dataset.setattr.split('|').reverse();
-                    if (sel) {
-                        webui.querySelectorAll(sel).forEach(el => {
-                            setAttr(el, attr, val);
-                        });
-                    } else {
-                        setAttr(target, attr, val);
-                    }
-                    applyDynStyles = true;
-                    break;
-                }
-                if (target.dataset.toggleclass) {
-                    let [cls, sel] = target.dataset.toggleclass.split('|').reverse();
-                    if (sel) {
-                        webui.querySelectorAll(sel).forEach(el => toggleClass(el, cls));
-                    } else {
-                        toggleClass(target, cls);
-                    }
-                    applyDynStyles = true;
-                    break;
-                }
-                if (target.dataset.removeclass) {
-                    target.dataset.removeclass.split(';').forEach(ds => {
-                        let [cls, sel] = ds.split('|').reverse();
-                        if (sel) {
-                            webui.querySelectorAll(sel).forEach(el => removeClass(el, cls));
-                        } else {
-                            removeClass(target, cls);
-                        }
-                    });
-                    applyDynStyles = true;
-                }
-                if (target.dataset.toggleattr) {
-                    let [attr, sel] = target.dataset.toggleattr.split('|').reverse();
-                    if (sel) {
-                        webui.querySelectorAll(sel).forEach(el => toggleAttr(el, attr));
-                    } else {
-                        toggleAttr(target, attr);
-                    }
-                    applyDynStyles = true;
-                }
-                if (applyDynStyles) {
-                    webui.applyDynamicStyles();
-                    break;
-                }
-                target = target.parentNode || target.host;
-            }
-            return retValue;
-        });
-    });
-
+    function updateActivity() {
+        lastActive = Date.now();
+    }
     function checkForSubscription(node) {
         if (!node || !node.getAttribute) return;
         let dataKey = node.getAttribute('data-subscribe');
@@ -1819,11 +1703,7 @@ const webui = (() => {
                 setDataToEl(node, dataKey);
             });
         }
-        // node.childNodes.forEach(n => {
-        //     checkForSubscription(n);
-        // });
     }
-
     function checkAttributeMutations(mutation) {
         if (mutation.type !== 'attributes') return;
         if (mutation.target && mutation.target.nodeName === 'INPUT' && mutation.target.getAttribute('type') === 'hidden' && mutation.attributeName === 'value') {
@@ -1832,7 +1712,6 @@ const webui = (() => {
         let t = mutation.target;
         applyAttributeSettings(t, mutation.attributeName);
     }
-
     function applyAttributeSettings(target, attr) {
         if (webui.closest(target.parentNode, 'webui-code,code,template')) {
             return;
@@ -1887,68 +1766,43 @@ const webui = (() => {
                 break;
         }
     }
-
-    const observeDataSubscriptions = (domNode) => {
-        function checkForSubscriptionAttr(node) {
+    function checkForSubscriptionAttr(node) {
+        checkForSubscription(node);
+        webui.querySelectorAll('[data-subscribe]', node).forEach(node => {
             checkForSubscription(node);
-            webui.querySelectorAll('[data-subscribe]', node).forEach(node => {
-                checkForSubscription(node);
-            });
-        }
-        checkForSubscriptionAttr(domNode);
-        function removeNodeFromSubs(node) {
-            Object.keys(map.subs).forEach(key => {
-                let index = map.subs[key].indexOf(node);
-                if (index !== -1) {
-                    map.subs[key].splice(index, 1);
-                }
-            });
-        }
-        function handleRemovedNodes(node) {
-            if (node.dataset && node.dataset.subscribe) {
-                removeNodeFromSubs(node);
+        });
+    }
+    function removeNodeFromSubs(node) {
+        Object.keys(map.subs).forEach(key => {
+            let index = map.subs[key].indexOf(node);
+            if (index !== -1) {
+                map.subs[key].splice(index, 1);
             }
-            webui.querySelectorAll('[data-subscribe]', node).forEach(node => {
-                removeNodeFromSubs(node);
-            });
+        });
+    }
+    function handleRemovedNodes(node) {
+        if (node.dataset && node.dataset.subscribe) {
+            removeNodeFromSubs(node);
         }
-        const observer = new MutationObserver(mutations => {
-            mutations.forEach(function (mutation) {
-                checkAttributeMutations(mutation);
-                if (mutation.type === 'attributes' && mutation.attributeName === 'data-subscribe') {
-                    checkForSubscription(mutation.target);
-                }
-                Array.from(mutation.addedNodes).forEach(el => {
-                    applyAttributeSettings(el);
-                    checkForSubscriptionAttr(el);
-                });
-                Array.from(mutation.removedNodes).forEach(el => {
-                    handleRemovedNodes(el);
-                });
+        webui.querySelectorAll('[data-subscribe]', node).forEach(node => {
+            removeNodeFromSubs(node);
+        });
+    }
+    function checkDataSubscriptionMutations(mutations) {
+        mutations.forEach(function (mutation) {
+            checkAttributeMutations(mutation);
+            if (mutation.type === 'attributes' && mutation.attributeName === 'data-subscribe') {
+                checkForSubscription(mutation.target);
+            }
+            Array.from(mutation.addedNodes).forEach(el => {
+                applyAttributeSettings(el);
+                checkForSubscriptionAttr(el);
+            });
+            Array.from(mutation.removedNodes).forEach(el => {
+                handleRemovedNodes(el);
             });
         });
-        observer.observe(domNode, {
-            childList: true,
-            attributes: true,
-            characterData: true,
-            subtree: true,
-        });
-        return observer;
-    };
-    runWhenBodyIsReady(() => {
-        observeDataSubscriptions(document.body);
-        webui.querySelectorAll('[data-subscribe]').forEach(el => {
-            let key = el.dataset.subscribe;
-            setDataToEl(el, key);
-        });
-        webui.querySelectorAll('[theme]').forEach(el => {
-            applyAttributeSettings(el, 'theme');
-        });
-        webui.querySelectorAll('[elevation]').forEach(el => {
-            applyAttributeSettings(el, 'elevation');
-        });
-    });
-
+    }
     function transitionDelay(ms) {
         return new Promise((resolve, _) => {
             setTimeout(() => resolve(), ms);
@@ -2105,7 +1959,6 @@ const webui = (() => {
             pl.replace(';', ' ').replace(',', ' ').split(' ').forEach(loadWebUIComponent);
         }
     }
-
     function checkMutation(mutation) {
         checkAttributeMutations(mutation);
         let nodeName = mutation.target.nodeName;
@@ -2118,7 +1971,6 @@ const webui = (() => {
             checkAddedNode(el);
         });
     }
-
     function checkAddedNode(el) {
         applyAttributeSettings(el);
         //checkForSubscription(el);
@@ -2134,7 +1986,6 @@ const webui = (() => {
         }
         checkNodes(el.childNodes);
     }
-
     function checkNodes(nodes) {
         if (nodes.length === 0) return;
         nodes.forEach(node => {
@@ -2143,6 +1994,8 @@ const webui = (() => {
     }
     const startObserving = (domNode) => {
         const observer = new MutationObserver(mutations => {
+            checkDataStateMutations(mutations);
+            checkDataSubscriptionMutations(mutations);
             mutations.forEach(function (mutation) {
                 checkMutation(mutation);
             });
@@ -2157,13 +2010,126 @@ const webui = (() => {
     };
 
     runWhenBodyIsReady(() => {
+        checkNodes(document.childNodes);
+        applyDataHide();
+        webui.querySelectorAll('[data-subscribe]').forEach(el => {
+            let key = el.dataset.subscribe;
+            setDataToEl(el, key);
+        });
+        webui.querySelectorAll('[theme]').forEach(el => {
+            applyAttributeSettings(el, 'theme');
+        });
+        webui.querySelectorAll('[elevation]').forEach(el => {
+            applyAttributeSettings(el, 'elevation');
+        });
         ['app-config', 'app', 'data'].forEach(preload => {
             componentPreload(document.querySelector(`webui-${preload}`));
         });
         startObserving(document.body);
+        checkForSubscriptionAttr(document.body);
         loadPage();
         loadWebUIComponent('alert');
         loadWebUIComponent('content');
+        document.body.addEventListener('input', handleDataTrigger);
+        document.body.addEventListener('change', handleDataTrigger);
+        document.body.addEventListener('click', ev => {
+            let target = ev.composedPath ? ev.composedPath()[0] : ev.target;
+            let retValue = true;
+            let breakAtEnd = false;
+            let applyDynStyles = false;
+            function stop() {
+                ev.stopPropagation();
+                ev.preventDefault();
+                retValue = false;
+                breakAtEnd = true;
+            }
+            while (!breakAtEnd && target !== document.body && target !== null && target !== undefined) {
+                if (!target.hasAttribute) {
+                    target = target.parentNode || target.host;
+                    continue;
+                }
+                if (target.hasAttribute && target.hasAttribute('disabled') && target.getAttribute('disabled') !== 'false' && !ev.ctrlKey) {
+                    ev.stopPropagation();
+                    ev.preventDefault();
+                    return false;
+                }
+                if (target.dataset.click) {
+                    stop();
+                    handleDataClick(target);
+                }
+                if (target.dataset.trigger && ['A', 'BUTTON', 'WEBUI-BUTTON'].indexOf(target.nodeName) !== -1) {
+                    stop();
+                    handleDataTrigger(target);
+                }
+                let href = target.getAttribute('href');
+                if (href && href.indexOf(':') !== -1 && href.substr(0, 4) !== 'http') {
+                    return true;
+                }
+                if (href && target.getAttribute('target') !== 'blank' && (href[0] === '/' || href.substr(0, 4) !== 'http')) {
+                    stop();
+                    changePage(href);
+                }
+                if (target.hasAttribute('data-stopclick')) {
+                    stop();
+                }
+                if (target.dataset.setattr) {
+                    let [val, attr, sel] = target.dataset.setattr.split('|').reverse();
+                    if (sel) {
+                        webui.querySelectorAll(sel).forEach(el => {
+                            setAttr(el, attr, val);
+                        });
+                    } else {
+                        setAttr(target, attr, val);
+                    }
+                    applyDynStyles = true;
+                    break;
+                }
+                if (target.dataset.toggleclass) {
+                    let [cls, sel] = target.dataset.toggleclass.split('|').reverse();
+                    if (sel) {
+                        webui.querySelectorAll(sel).forEach(el => toggleClass(el, cls));
+                    } else {
+                        toggleClass(target, cls);
+                    }
+                    applyDynStyles = true;
+                    break;
+                }
+                if (target.dataset.removeclass) {
+                    target.dataset.removeclass.split(';').forEach(ds => {
+                        let [cls, sel] = ds.split('|').reverse();
+                        if (sel) {
+                            webui.querySelectorAll(sel).forEach(el => removeClass(el, cls));
+                        } else {
+                            removeClass(target, cls);
+                        }
+                    });
+                    applyDynStyles = true;
+                }
+                if (target.dataset.toggleattr) {
+                    let [attr, sel] = target.dataset.toggleattr.split('|').reverse();
+                    if (sel) {
+                        webui.querySelectorAll(sel).forEach(el => toggleAttr(el, attr));
+                    } else {
+                        toggleAttr(target, attr);
+                    }
+                    applyDynStyles = true;
+                }
+                if (applyDynStyles) {
+                    webui.applyDynamicStyles();
+                    break;
+                }
+                target = target.parentNode || target.host;
+            }
+            return retValue;
+        });
+    });
+    window.addEventListener('keydown', updateActivity);
+    window.addEventListener('click', updateActivity);
+    window.addEventListener('scroll', updateActivity);
+    window.addEventListener('popstate', ev => {
+        if (ev.state) {
+            webui.log.trace("TODO: handle history updates", ev);
+        }
     });
     window.addEventListener('resize', _ev => {
         webui.applyDynamicStyles();
@@ -2176,8 +2142,9 @@ const webui = (() => {
 })();
 
 setTimeout(() => {
-    'use strict';
-    window.tooltipsEnabled = true;
+    if (window.tooltipsEnabled === undefined) {
+        window.tooltipsEnabled = true;
+    }
     const Tooltip = webui.create('div');
     Tooltip.className = 'tooltip closed';
     let capturedElement = null;
@@ -2202,7 +2169,6 @@ setTimeout(() => {
             } else if (title === 'null') {
                 target.removeAttribute('title');
             }
-            //if (target.ariaLabel) { return [target, target.ariaLabel]; }
             let ariaLabel = target.getAttribute('aria-label');
             if (ariaLabel) { return [target, ariaLabel]; }
             target = target.parentNode || target.host;
@@ -2237,58 +2203,4 @@ setTimeout(() => {
         Tooltip.style.left = `${myposition.x}px`;
         Tooltip.style.top = `${myposition.y}px`;
     });
-}, 1000);
-
-{
-    // !function (e, o) {
-    //     "object" == typeof exports && "undefined" != typeof module ? o(exports) : "function" == typeof define && define.amd ? define(["exports"], o) : o((e = "undefined" != typeof globalThis ? globalThis : e || self).markedEmoji = {})
-    // }(this, (function (e) {
-    //     "use strict";
-    //     const o = {
-    //         renderer: void 0
-    //     };
-    //     e.markedEmoji = function (e) {
-    //         if (!(e = {
-    //             ...o,
-    //             ...e
-    //         }).emojis)
-    //             throw new Error("Must provide emojis to markedEmoji");
-    //         const n = Object.keys(e.emojis).map((e => e.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))).join("|")
-    //             , i = new RegExp(`:(${n}):`)
-    //             , r = new RegExp(`^${i.source}`);
-    //         return {
-    //             extensions: [{
-    //                 name: "emoji",
-    //                 level: "inline",
-    //                 start: e => e.match(i)?.index,
-    //                 tokenizer(o, n) {
-    //                     const i = r.exec(o);
-    //                     if (!i)
-    //                         return;
-    //                     const t = i[1]
-    //                         , s = e.emojis[t];
-    //                     return s ? {
-    //                         type: "emoji",
-    //                         raw: i[0],
-    //                         name: t,
-    //                         emoji: s
-    //                     } : void 0
-    //                 },
-    //                 renderer: o => e.renderer ? e.renderer(o) : `<img alt="${o.name}" src="${o.emoji}" class="marked-emoji-img">`
-    //             }]
-    //         }
-    //     }
-    // }
-    // ));
-    // webui.fetchWithCache('https://cdn.myfi.ws/i/emojis.json', true)
-    //     .then(emojiMap => {
-    //         const emojiOptions = {
-    //             emojis: emojiMap,
-    //             renderer: (token) => token.emoji
-    //         };
-    //         webui.marked.use(markedEmoji.markedEmoji(emojiOptions));
-    //     })
-    //     .catch(ex => {
-    //         webui.log.warn("Failed to load emojis: %o", ex);
-    //     });
-}
+}, 100);
