@@ -48,30 +48,20 @@ const webui = (() => {
     }
     const appDataOnce = [];
     const appDataLimit = ['app-name', 'app-company-singular', 'app-company-possessive', 'app-domain', 'app-api', 'app-not-found-html', 'app-data-endpoint', 'app-content-endpoint'];
-    const appData = {
-        'app-name': 'App',
-        'app-company-singular': 'Company',
-        'app-company-possessive': `Company's`,
-        'app-content-endpoint': '/d/en-US',
-        'app-domain': domain.toLowerCase(),
-        'page-title': '',
-        'page-subtitle': '',
-        'page-path': location.pathname,
-    };
     const notifyForAppDataChanges = [];
     const notifyForSessionDataChanges = [];
     function notifyAppDataChanged(changeDetails) {
         notifyForAppDataChanges.forEach(handler => {
             if (!handler) return;
-            handler(changeDetails, appData, watchedAppData);
+            handler(changeDetails, watchedAppData);
         });
     }
     function notifySessionDataChanged(changeDetails) {
         notifyForSessionDataChanges.forEach(handler => {
             if (!handler) return;
-            handler(changeDetails, sessionData, watchedSessionData);
+            handler(changeDetails, watchedSessionData);
         });
-        webui.storage.setItem('session-data', JSON.stringify(sessionData));
+        storage.setItem('session-data', JSON.stringify(watchedSessionData));
     }
     function getHandler(notifyHandler) {
         const handler = {
@@ -109,17 +99,33 @@ const webui = (() => {
         };
         return handler;
     }
-    const watchedAppData = new Proxy(appData, getHandler(notifyAppDataChanged));
+    const watchedAppData = (() => {
+        const appData = {
+            'app-name': 'App',
+            'app-company-singular': 'Company',
+            'app-company-possessive': `Company's`,
+            'app-content-endpoint': '/d/en-US',
+            'app-domain': domain.toLowerCase(),
+            'page-title': '',
+            'page-subtitle': '',
+            'page-path': location.pathname,
+        };
+        return new Proxy(appData, getHandler(notifyAppDataChanged));
+    })();
+    window.appData = watchedAppData;
     let isProcessing = false;
-    let sessionData = {
-        'session-user-role': 0,
-        'session-username': 'Guest',
-        'session-full-name': 'Guest',
-        'session-first-name': 'Guest',
-        'session-last-name': '',
-        'session-autosignout': 30
-    };
-    const watchedSessionData = new Proxy(sessionData, getHandler(notifySessionDataChanged));
+    const watchedSessionData = (() => {
+        let sessionData = {
+            'session-user-role': 0,
+            'session-username': 'Guest',
+            'session-full-name': 'Guest',
+            'session-first-name': 'Guest',
+            'session-last-name': '',
+            'session-autosignout': 30
+        };
+        return new Proxy(sessionData, getHandler(notifySessionDataChanged));
+    })();
+    window.sessionData = watchedSessionData;
     const appSettings = {
         appType: 'website',
         isDesktopApp: false,
@@ -219,6 +225,7 @@ const webui = (() => {
             });
         }
     }
+    const storage = new MemStorage();
     class WebUI {
         appSrc = '/wc';
         appMin = '.min';
@@ -226,13 +233,13 @@ const webui = (() => {
         marked = { parse(...args) { console.log('Unhandled parse', args); return ''; } }
         constructor() {
             this._appSettings = appSettings;
-            this.storage = new MemStorage();
+            this.storage = storage;
             let cachedSessionData = this.storage.getItem('session-data') || {};
             if (typeof cachedSessionData === 'string') {
                 cachedSessionData = JSON.parse(cachedSessionData);
             }
             Object.keys(cachedSessionData).forEach(key => {
-                sessionData[key] = cachedSessionData[key];
+                watchedSessionData[key] = cachedSessionData[key];
             });
         }
         applyAppDataToContent(content, preTrim) {
@@ -1447,11 +1454,11 @@ const webui = (() => {
                 state[attr] = val.value;
             }
         });
-        webui.storage.setItem(key, JSON.stringify(state));
+        storage.setItem(key, JSON.stringify(state));
     }
     function loadState(node) {
         let key = getNodeKey(node);
-        let item = webui.storage.getItem(key);
+        let item = storage.getItem(key);
         if (!item) return;
         let state = JSON.parse(item);
         node.dataset.state.split('|').forEach(attr => {
@@ -1682,7 +1689,8 @@ const webui = (() => {
         el.setAttribute(attr, val);
     }
     function changePage(url) {
-        window.history.pushState(appData, document.title, url);
+        const pageState = { appData: JSON.stringify(watchedAppData) };
+        window.history.pushState(pageState, document.title, url);
         loadPage(url);
     }
     function updateActivity() {
@@ -1868,13 +1876,13 @@ const webui = (() => {
             if (elapsed < 300) {
                 await transitionDelay(300 - elapsed);
             }
-            appSettings.app.setPageContent('', appData, fullContentUrl);
+            appSettings.app.setPageContent('', watchedAppData, fullContentUrl);
             clearPageData();
             if (body.startsWith(`<!DOCTYPE`)) {
                 throw Error(`Invalid page content loaded from ${fullContentUrl}`);
             }
             let content = webui.applyAppDataToContent(body);
-            appSettings.app.setPageContent(content, appData, fullContentUrl);
+            appSettings.app.setPageContent(content, watchedAppData, fullContentUrl);
             setTimeout(() => {
                 checkNodes(document.body.childNodes);
             }, 100);
@@ -1885,7 +1893,7 @@ const webui = (() => {
                 await transitionDelay(300 - elapsed);
             }
             clearPageData();
-            appSettings.app.setPageContent('<webui-page-not-found></webui-page-not-found>', appData);
+            appSettings.app.setPageContent('<webui-page-not-found></webui-page-not-found>', watchedAppData);
         }
         try {
             let data = await fetchData;
@@ -2127,8 +2135,19 @@ const webui = (() => {
     window.addEventListener('click', updateActivity);
     window.addEventListener('scroll', updateActivity);
     window.addEventListener('popstate', ev => {
+        changePage(`${location.pathname}${location.search}`);
         if (ev.state) {
-            webui.log.trace("TODO: handle history updates", ev);
+            if (ev.state.appData) {
+                const appData = JSON.parse(ev.state.appData);
+                Object.keys(appData).forEach(key => {
+                    if (['page-path', 'page-title', 'page-subtitle'].indexOf(key) !== -1) return;
+                    watchedAppData[key] = appData[key];
+                });
+                Object.keys(watchedAppData).forEach(key => {
+                    if (Object.keys(appData).indexOf(key) !== -1) return;
+                    delete watchedAppData[key];
+                });
+            }
         }
     });
     window.addEventListener('resize', _ev => {
