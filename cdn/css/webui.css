@@ -433,7 +433,7 @@ h4,
 h5,
 h6 {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     font-size: calc(var(--typography-size) * 1.75);
     margin: 0;
     padding: var(--padding);
