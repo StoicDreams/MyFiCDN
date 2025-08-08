@@ -8,8 +8,7 @@
         }
         let current = webui.getData(key);
         if (current) return;
-        // TODO: Update me once I can rewrite the markdown parser to ignore template content
-        let value = template.innerHTML.replace(/\<p\>/g, '').replace(/\<\/p\>/g, '');
+        let value = template.innerHTML;
         try {
             value = JSON.parse(value);
             return { key, value };
@@ -33,8 +32,7 @@
         }
         let current = webui.getData(key);
         if (current) return;
-        // TODO: Update me once I can rewrite the markdown parser to ignore template content
-        let value = template.innerHTML.replace(/\<p\>/g, '').replace(/\<\/p\>/g, '');
+        let value = template.innerHTML;
         value = webui.trimLinePreWhitespce(value);
         return { key, value };
     }
@@ -46,31 +44,22 @@
             t._slotJson = t.template.querySelector('slot[name="json"]');
         },
         connected: (t) => {
-            if (t.parentNode && t.parentNode.nodeName === 'BODY') {
-                t.setAttribute('init', true);
-            }
             t._slotText.assignedElements().forEach(template => {
-                if (t.hasAttribute('init') || template.hasAttribute('init')) {
-                    let { key, value } = extractText(template);
-                    if (key && value) {
-                        webui.setData(key, value);
-                    }
+                let { key, value } = extractText(template);
+                if (key && value) {
+                    webui.setData(key, value);
                 }
             });
             t._slotHtml.assignedElements().forEach(template => {
-                if (t.hasAttribute('init') || template.hasAttribute('init')) {
-                    let { key, value } = extractHTML(template);
-                    if (key && value) {
-                        webui.setData(key, value);
-                    }
+                let { key, value } = extractHTML(template);
+                if (key && value) {
+                    webui.setData(key, value);
                 }
             });
             t._slotJson.assignedElements().forEach(template => {
-                if (t.hasAttribute('init') || template.hasAttribute('init')) {
-                    let { key, value } = extractJSON(template);
-                    if (key && value) {
-                        webui.setData(key, value);
-                    }
+                let { key, value } = extractJSON(template);
+                if (key && value) {
+                    webui.setData(key, value);
                 }
             });
             Object.keys(t.dataset).forEach(key => {

@@ -255,6 +255,11 @@
             'value': {
                 get() { return webui.getDefined(this._select.value, ''); },
                 set(v) { this.setValue(v); }
+            },
+            'display': {
+                get() {
+                    return [... this._select.selectedOptions].map(i => i.innerText).join(',');
+                }
             }
         },
         setValue: function (value) {

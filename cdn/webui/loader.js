@@ -721,7 +721,13 @@ const webui = (() => {
             let key = args[0].split(':')[0];
             let dataContainer = webui.toSnake(key, '-').startsWith('session-') ? watchedSessionData : watchedAppData;
             let data = webui.getNestedData(key, dataContainer);
-            if (data === undefined) return undefined;
+            if (data === undefined) {
+                data = webui.getNestedData(`session-${key}`, watchedSessionData);
+                if (data !== undefined) return webui.clone(data);
+                data = webui.getNestedData(`app-${key}`, watchedAppData);
+                if (data !== undefined) return webui.clone(data);
+                return undefined
+            }
             if (typeof data !== 'object') return data;
             return webui.clone(data);
         }
