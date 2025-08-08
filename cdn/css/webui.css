@@ -779,13 +779,19 @@ main>.paper>pre {
 
 code {
     display: inline;
-    background-color: inherit;
-    color: inherit;
+    background-color: var(--color-info);
+    color: var(--color-info-offset);
     border-radius: var(--corners);
     outline: 1.5px solid var(--theme);
     white-space: pre-wrap;
     overflow: hidden;
     word-break: break-all;
+}
+
+[theme] code,
+code[theme] {
+    background-color: var(--theme-color);
+    color: var(--theme-color-offset);
 }
 
 pre>code {

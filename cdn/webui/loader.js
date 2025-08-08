@@ -1834,6 +1834,9 @@ const webui = (() => {
     }
 
     function applyAttributeSettings(target, attr) {
+        if (webui.closest(target.parentNode, 'webui-code,code,template')) {
+            return;
+        }
         if (!attr) {
             if (target && typeof target.getAttribute === 'function') {
                 ['elevation', 'theme', 'data-subscribe', 'top', 'right', 'bottom', 'left'].forEach(attr => {

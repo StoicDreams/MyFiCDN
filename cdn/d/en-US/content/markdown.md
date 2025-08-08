@@ -185,10 +185,14 @@ After blockquote
 <webui-page-segment elevation="10">
 ```markdown
 Use `code` inside text.
+Use <span theme="warning">`code`</span> inside text.
+Use `danger:code` inside text.
 ```
 </webui-page-segment>
 <webui-page-segment elevation="10">
 Use `code` inside text.
+Use <span theme="warning">`code`</span> inside text.
+Use `danger:code` inside text.
 </webui-page-segment>
 </webui-side-by-side>
 

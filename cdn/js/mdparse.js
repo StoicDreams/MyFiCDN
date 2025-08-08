@@ -378,7 +378,12 @@ export class MarkdownParser {
         const codeSpans = [];
         text = text.replace(/`([^`]+)`/g, (_, code) => {
             const token = `^^CODE${codeSpans.length}^^`;
-            codeSpans.push(`<code>${code}</code>`);
+            const [, , theme, refined] = code.match(/^(([a-z]+):)?(.*)/);
+            if (theme) {
+                codeSpans.push(`<code theme="${theme}">${refined}</code>`);
+            } else {
+                codeSpans.push(`<code>${code}</code>`);
+            }
             return token;
         });
         const emojis = [];
