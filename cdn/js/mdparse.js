@@ -119,7 +119,7 @@ export class MarkdownParser {
         });
         t.addRule('code_block_start', /^[\s]*```/, (line, state) => {
             line = line.trim();
-            let [, tag, lang] = line.match(/^([`]+)(.*)/);
+            let [, tag, lang, , label] = line.match(/^([`]+)([^:\|;]*)(:|\||;)?(.*)/);
             if (state.inCodeBlock) {
                 if (state.codeBlockTag === tag) {
                     state.inCodeBlock = false;
@@ -132,9 +132,12 @@ export class MarkdownParser {
                 state.inCodeBlock = true;
                 state.codeBlockTag = tag;
                 lang = !!lang ? lang.trim() : 'text';
-                return { type: "code_block_start", lang };
+                return { type: "code_block_start", lang, label };
             }
         }, (html, token, commands) => {
+            if (token.label) {
+                return `${html}<webui-code lang="${token.lang}" label="${token.label}">`;
+            }
             return `${html}<webui-code lang="${token.lang}">`;
         });
         t.addRule('code_block_end', /^[\s]*```/, (line, state) => {

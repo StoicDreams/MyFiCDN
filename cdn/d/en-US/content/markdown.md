@@ -8,7 +8,7 @@ This Markdown cheat sheet provides a quick overview of all the syntax elements s
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 # H1
 ## H2
 ### H3
@@ -32,7 +32,7 @@ This Markdown cheat sheet provides a quick overview of all the syntax elements s
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 *Italic* or _Italic_
 **Bold** or __Bold__
 ***Bold and Italic***
@@ -49,7 +49,7 @@ This Markdown cheat sheet provides a quick overview of all the syntax elements s
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 Before blockquote
 > This is a blockquote.
 >> Nested blockquote.
@@ -59,7 +59,7 @@ Before blockquote
 After blockquote
 ```
 
-```markdown
+```markdown:With Themes
 Before blockquote
 > [success] This is a blockquote.
 >> [warning] Nested blockquote.
@@ -94,7 +94,7 @@ After blockquote
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 - Item 1
 - Item 2
   - Item 2a
@@ -119,7 +119,7 @@ After blockquote
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 1. Item 1
 1. Item 2
   1. Item 2a
@@ -144,7 +144,7 @@ After blockquote
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 1. Item 1
 2. Item 2
   - Item 2a
@@ -183,7 +183,7 @@ After blockquote
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 Use `code` inside text.
 Use <span theme="warning">`code`</span> inside text.
 Use `danger:code` inside text.
@@ -200,8 +200,8 @@ Use `danger:code` inside text.
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-````markdown
-```javascript
+````markdown:Example Code
+```javascript:Code Label
 function test() {
   console.log("Hello world!");
 }
@@ -209,7 +209,7 @@ function test() {
 ````
 </webui-page-segment>
 <webui-page-segment elevation="10">
-```javascript
+```javascript:Code Label
 function test() {
   console.log("Hello world!");
 }
@@ -221,7 +221,7 @@ function test() {
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 ---
 ---success
 ---danger
@@ -240,7 +240,7 @@ function test() {
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 [Text](https://cdn.myfi.ws)
 [Text with title](https://cdn.myfi.ws "Title")
 ```
@@ -255,7 +255,7 @@ function test() {
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 ![Alt text](https://cdn.myfi.ws/ms-icon-310x310.png)
 ![Alt text with title](https://cdn.myfi.ws/ms-icon-310x310.png "Title")
 ```
@@ -270,14 +270,14 @@ function test() {
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 | Header 1 | Header 2 | H-Left | H-Center | H-Right |
 |----------|----------|:-------|:--------:|--------:|
 | Cell 1   | Cell 2   | Cell 3 | Cell 4   | Cell 5  |
 | Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10 |
 ```
 
-```markdown
+```markdown:Without wrapping pipes
 Header 1 | Header 2 | H-Left | H-Center | H-Right
 ---------|----------|:-------|:--------:|--------:
 Cell 1   | Cell 2   | Cell 3 | Cell 4   | Cell 5
@@ -301,7 +301,7 @@ Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 - [x] Task 1
 - [ ] Task 2
 - [ ] Task 3
@@ -318,7 +318,7 @@ Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 \*literal asterisks\*
 ```
 </webui-page-segment>
@@ -331,7 +331,7 @@ Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 <p>This is a paragraph with <strong>HTML</strong> formatting.</p>
 ```
 </webui-page-segment>
@@ -344,7 +344,7 @@ Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
-```markdown
+```markdown:Example Code
 :100: :+1: :-1: :angel: :scream: :trumpet:
 ```
 </webui-page-segment>
