@@ -112,6 +112,7 @@ const webui = (() => {
         };
         return new Proxy(appData, getHandler(notifyAppDataChanged));
     })();
+    // TODO: debug
     window.appData = watchedAppData;
     let isProcessing = false;
     const watchedSessionData = (() => {
@@ -125,6 +126,7 @@ const webui = (() => {
         };
         return new Proxy(sessionData, getHandler(notifySessionDataChanged));
     })();
+    // TODO: debug
     window.sessionData = watchedSessionData;
     const appSettings = {
         appType: 'website',
@@ -135,13 +137,6 @@ const webui = (() => {
         encryptPageContent: false,
         encryptPageData: 'base64'
     };
-    function runWhenBodyIsReady(setup) {
-        if (!document.body || !webui.loaded) {
-            setTimeout(() => runWhenBodyIsReady(setup), 1);
-            return;
-        }
-        setup();
-    }
     let debug = false;
     const memStorageCache = {};
     const STORAGE_ACCEPTED_KEY = 'storage_accepted';
@@ -1151,10 +1146,8 @@ const webui = (() => {
             Object.keys(map.subs).forEach(skey => {
                 let bkey = skey.split('.')[0];
                 if (bkey !== baseKey) return;
-                let subkey = skey.substring(skey.indexOf('.') + 1);
-                let svalue = subkey !== skey ? webui.getNestedData(skey, value) : value;
                 map.subs[skey].forEach(node => {
-                    setDataToEl(node, skey, svalue);
+                    setDataToEl(node, skey);
                 });
             });
         }
@@ -1566,19 +1559,15 @@ const webui = (() => {
         }
         key.split('|').forEach(key => {
             key = key.trim();
+            let toSet = getToSet(key);
+            if (toSet === 'click') return;
+            if (key.indexOf(':') !== -1) {
+                key = key.split(':')[0];
+            }
             let a = 0;
             (function attempt() {
                 try {
-                    let toSet = getToSet(key);
-                    if (key.indexOf(':') !== -1) {
-                        key = key.split(':')[0];
-                    }
-                    if (toSet === 'click') return;
-                    if (value === undefined) {
-                        value = webui.getData(key);
-                    } else if (key.indexOf('.') !== -1) {
-                        value = webui.getNestedData(key, value);
-                    }
+                    value = webui.getData(key);
                     let isNull = value === null || value === undefined;
                     switch (toSet) {
                         case 'setter':
@@ -2016,7 +2005,13 @@ const webui = (() => {
         });
         return observer;
     };
-
+    function runWhenBodyIsReady(setup) {
+        if (!document.body || !webui.loaded) {
+            setTimeout(() => runWhenBodyIsReady(setup), 1);
+            return;
+        }
+        setup();
+    }
     runWhenBodyIsReady(() => {
         checkNodes(document.childNodes);
         applyDataHide();
