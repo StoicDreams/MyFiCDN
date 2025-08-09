@@ -69,7 +69,6 @@
             const t = this;
             if (tabIndex === undefined || tabIndex === null) return;
             tabIndex = parseInt(tabIndex) || 0;
-            console.log('tab index', t, tabIndex);
             if (t._initiated && tabIndex === t._index) return;
             let index = 0;
             let foundIndex = false;
@@ -89,7 +88,6 @@
             }
             index = 0;
             foundIndex = false;
-            console.log('check tabs', Array.from(t.querySelectorAll('[slot="content"]')));
             Array.from(t.querySelectorAll('[slot="content"]')).filter(item => item.parentNode === t).forEach(c => {
                 if (tabIndex === index++) {
                     let offset = tabIndex * 100;
@@ -97,17 +95,13 @@
                     foundIndex = true;
                     webui.querySelectorAll('[name]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
                 } else {
-                    console.log('disabled', c.nodeName, c._contentLoaded);
                     webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
                     if (c.nodeName === 'WEBUI-CONTENT' && c.hasAttribute('src')) {
-                        console.log('TRIGGER DELAYED LOAD');
-                        webui.wait(count => {
-                            console.log('count', count, c._contentLoaded, c.innerHTML);
+                        webui.wait(_ => {
                             return c._contentLoaded && c.innerHTML;
-                        }).then(async () => {
-                            console.log('FINISHED LOADING');
+                        }).then(async _ => {
                             await webui.wait(10);
-                            webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); console.log('delayed disabled', c.nodeName, c._contentLoaded); });
+                            webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
                         });
                     }
                 }
