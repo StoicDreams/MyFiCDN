@@ -1,4 +1,10 @@
-/* Display button for opening My Fidelity Account Info panel. */
+/*!
+ * Web UI MyFi Info - https://webui.stoicdreams.com
+ * Display button for opening My Fidelity Account Info panel.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 {
     const domain = location.hostname;
@@ -64,7 +70,6 @@
                         content
                     );
                     panelBottomButtons.map(cfg => {
-                        console.log(cfg);
                         if (excludes.indexOf(cfg.name) === -1) {
                             var btn = webui.create('webui-button', { theme: cfg.theme, name: cfg.name, html: cfg.display });
                             btn.addEventListener('click', cfg.click);
