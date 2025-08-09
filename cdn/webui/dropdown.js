@@ -45,7 +45,6 @@
             t._startIcon = t.template.querySelector('webui-icon.start');
             t._midIcon = t.template.querySelector('webui-icon.mid');
             t._endIcon = t.template.querySelector('webui-icon.end');
-            t._datasub = webui.create('webui-data');
             t._select.addEventListener('change', _ => {
                 t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
                 if (!t._optionsSet) return;
@@ -53,7 +52,7 @@
             });
         },
         flags: ['multiple'],
-        attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'data-options', 'api'],
+        attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'api'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'api':
@@ -67,12 +66,6 @@
                         t.apiUrl = api;
                     }
                     t.loadData();
-                    break;
-                case 'dataOptions':
-                    t._datasub.setValue = (val) => {
-                        t.setOptions(val);
-                    };
-                    t._datasub.setAttribute('data-subscribe', value);
                     break;
                 case 'options':
                     t.setOptions(value);
@@ -180,7 +173,6 @@
         },
         connected: (t) => {
             let id = webui.uuid();
-            t.appendChild(t._datasub);
             t._forLabel.setAttribute('for', id);
             t._select.setAttribute('id', id);
         },

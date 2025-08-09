@@ -1575,6 +1575,13 @@ const webui = (() => {
                 try {
                     value = webui.getData(key);
                     let isNull = value === null || value === undefined;
+                    if (el.__setdata === undefined) { el.__setdata = {}; }
+                    let cv = typeof value === 'string' ? value : JSON.stringify(value);
+                    if (el.__setdata[key] === cv) {
+                        return;
+                    }
+                    const pcv = el.__setdata[key];
+                    el.__setdata[key] = cv;
                     switch (toSet) {
                         case 'setter':
                             let field = webui.toCamel(key);
@@ -1591,6 +1598,7 @@ const webui = (() => {
                                 el[field] = value;
                             } else {
                                 if (a++ < 5) {
+                                    el.__setdata[key] = pcv;
                                     setTimeout(() => {
                                         attempt();
                                     }, Math.min(1000, Math.pow(2, a)));
@@ -1618,6 +1626,7 @@ const webui = (() => {
                                 el[toSet] = value;
                             } else {
                                 if (a++ < 4) {
+                                    el.__setdata[key] = pcv;
                                     setTimeout(() => {
                                         attempt();
                                     }, Math.min(1000, Math.pow(2, a)));
