@@ -173,6 +173,15 @@ padding:var(--padding,1em);
 background-color:var(--theme-color);
 color:var(--theme-color-offset);
 }
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+background-color: var(--scroll-color);
+box-shadow: var(--scroll-shadow);
+}
+::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+background-color: var(--theme-color);
+}
 slot:not([name]) {
 display:flex;
 flex-grow:1;
