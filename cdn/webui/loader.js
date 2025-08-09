@@ -790,6 +790,17 @@ const webui = (() => {
         getSearchData(key) {
             return webui.getQueryData(key);
         }
+        hashCode(text) {
+            if (typeof text === undefined) return 0;
+            if (typeof text !== 'string') return -1;
+            let hash = 0x811c9dc5;
+            text = text || '';
+            for (let i = 0; i < text.length; i++) {
+                hash ^= text.charCodeAt(i);
+                hash = (hash * 0x01000193) >>> 0;
+            }
+            return hash | 0;
+        }
         hasSetter(el, field) {
             if (!el || typeof field !== 'string') return false;
             let proto = el;
@@ -1586,7 +1597,7 @@ const webui = (() => {
                     value = webui.getData(key);
                     let isNull = value === null || value === undefined;
                     if (el.__setdata === undefined) { el.__setdata = {}; }
-                    let cv = typeof value === 'string' ? value : JSON.stringify(value);
+                    let cv = typeof value === 'string' ? webui.hashCode(value) : webui.hashCode(JSON.stringify(value));
                     if (el.__setdata[key] === cv) {
                         return;
                     }
