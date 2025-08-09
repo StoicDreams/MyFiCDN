@@ -150,7 +150,7 @@ export class MarkdownParser {
         }, (line, state) => {
             return { type: 'code_line', content: line };
         }, (html, token, commands) => {
-            return `${html}${token.content}\n`;
+            return `${html}${commands.escapeCode(token.content)}\n`;
         });
         t.addRule('html_selfclose', /^[\s]*<([a-z][a-z0-9-_]*)([^>]*)\/>[\s]*$/, (line, state) => {
             const [, tag, attrs] = line.match(/^[\s]*<([a-z][a-z0-9-_]*)([^>]*)\/>[\s]*$/);
@@ -378,14 +378,15 @@ export class MarkdownParser {
         return lines.join('\n');
     }
     renderInline(text) {
+        const t = this;
         const codeSpans = [];
         text = text.replace(/`([^`]+)`/g, (_, code) => {
             const token = `^^CODE${codeSpans.length}^^`;
             const [, , theme, refined] = code.match(/^(([a-z]+):)?(.*)/);
             if (theme) {
-                codeSpans.push(`<code theme="${theme}">${refined}</code>`);
+                codeSpans.push(`<code theme="${theme}">${t.escapeCode(refined)}</code>`);
             } else {
-                codeSpans.push(`<code>${code}</code>`);
+                codeSpans.push(`<code>${t.escapeCode(code)}</code>`);
             }
             return token;
         });
