@@ -1415,8 +1415,17 @@ const webui = (() => {
             notifyForSessionDataChanges.splice(index, 1);
         }
         wait(milliseconds) {
-            return new Promise(resolve => {
-                setTimeout(resolve, milliseconds);
+            return new Promise(async resolve => {
+                if (typeof milliseconds === 'function') {
+                    let count = 0;
+                    let result = milliseconds(++count);
+                    while (!result && count < 1000) {
+                        await webui.wait(10);
+                        result = milliseconds(++count);
+                    }
+                } else {
+                    setTimeout(resolve, milliseconds);
+                }
             });
         }
     }
