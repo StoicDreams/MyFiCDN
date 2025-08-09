@@ -103,7 +103,7 @@
                         console.log('TRIGGER DELAYED LOAD');
                         webui.wait(count => {
                             console.log('count', count, c._contentLoaded, c.innerHTML);
-                            return c._contentLoaded;
+                            return c._contentLoaded && c.innerHTML;
                         }).then(async () => {
                             await webui.wait(10);
                             webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); console.log('delayed disabled', c.nodeName, c._contentLoaded); });
