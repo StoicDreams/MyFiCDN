@@ -24,6 +24,7 @@
 </button>`;
     webui.define("webui-drawer", {
         preload: 'icon flex toggle-icon',
+        linkCss: false,
         constructor: (t) => {
             t._idselector = `#${t._id}`;
             t.headerSlot = t.template.querySelector('slot[name=header]');
@@ -187,6 +188,11 @@ display:flex;
 flex-grow:1;
 flex-direction:column;
 overflow:auto;
+}
+slot:not([name])::after {
+content:" ";
+display:block;
+height:5em;
 }
 #actions:empty {display:none;}
 button {
