@@ -1,4 +1,10 @@
-/* Placeholder page content for pages under construction */
+/*!
+ * Web UI Under Construction - https://webui.stoicdreams.com
+ * Placeholder page content for pages under construction.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 webui.define("webui-under-construction", {
     connected: (t) => {

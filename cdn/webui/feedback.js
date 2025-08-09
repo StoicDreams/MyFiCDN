@@ -1,4 +1,10 @@
-/* Display feedback button that opens dialog for feedback when clicked */
+/*!
+ * Web UI Feedback - https://webui.stoicdreams.com
+ * Display feedback button that opens dialog for feedback when clicked.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 {
     const content = `

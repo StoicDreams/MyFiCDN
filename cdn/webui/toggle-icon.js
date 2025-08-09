@@ -1,4 +1,10 @@
-/* Toggle button that switches icons, title */
+/*!
+ * Web UI Toggle Icon - https://webui.stoicdreams.com
+ * Toggle button that switches icons, title.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 {
     webui.define('webui-toggle-icon', {

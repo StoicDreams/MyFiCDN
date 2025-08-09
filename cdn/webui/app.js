@@ -1,4 +1,10 @@
-/* Wrapper element for application - contains several app-level features for managing state and transferring data between elements within the app */
+/*!
+ * Web UI App - https://webui.stoicdreams.com
+ * Main layout component.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 webui.define("webui-app", {
     constructor: (t) => {

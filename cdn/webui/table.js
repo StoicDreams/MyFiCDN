@@ -1,4 +1,10 @@
-/* Display Data in Table */
+/*!
+ * Web UI Table - https://webui.stoicdreams.com
+ * A component for displaying data in tables within the web UI.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 {
     function getAlign(val) {
         let flagStart = 0, flagEnd = 0;

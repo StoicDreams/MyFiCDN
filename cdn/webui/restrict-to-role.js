@@ -1,7 +1,10 @@
-/* Restrict display of contents to a user role.
- - Auto-subscribes to user-role data.
- - Intended for use in .md or static html content. Do not use when dynamically creating or updating innerHTML content.
-*/
+/*!
+ * Web UI Restrict To Role - https://webui.stoicdreams.com
+ * A component for restricting content visibility based on user roles.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 {
     webui.define("webui-restrict-to-role", {

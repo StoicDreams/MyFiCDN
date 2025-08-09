@@ -1,4 +1,10 @@
-/* Display inline alert message */
+/*!
+ * Web UI Alert - https://webui.stoicdreams.com
+ * Display inline alert message.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 webui.define("webui-alert", {
     preload: 'icon',

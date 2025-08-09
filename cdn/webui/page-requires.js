@@ -1,3 +1,10 @@
+/*!
+ * Web UI Page Requires - https://webui.stoicdreams.com
+ * A component for managing page requirements within the web UI.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 /* Place at top of page and subscribe to data that is required for page to be viewed.
  - Data must pass through setter process (i.e. webui.setData('key',value))
  - If data equates to false (e.g. 0, -1, '', null, undefined) then component will redirect user to home ('/').
