@@ -102,6 +102,7 @@
                     if (c.nodeName === 'WEBUI-CONTENT' && c.hasAttribute('src')) {
                         console.log('TRIGGER DELAYED LOAD');
                         webui.wait(count => {
+                            console.log('count', count, c._contentLoaded, c);
                             return c._contentLoaded;
                         }).then(() => {
                             webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); console.log('delayed disabled', c.nodeName, c._contentLoaded); });
