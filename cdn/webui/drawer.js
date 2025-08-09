@@ -164,15 +164,6 @@ font-size: 1.2rem;
 gap:var(--padding, 1em);
 padding:var(--padding,1em);
 }
-::-webkit-scrollbar,
-*::-webkit-scrollbar {
-background-color: var(--scroll-color);
-box-shadow: var(--scroll-shadow);
-}
-::-webkit-scrollbar-thumb,
-*::-webkit-scrollbar-thumb {
-background-color: var(--theme-color);
-}
 ::slotted([slot="footer"]) {
 display: flex;
 gap:var(--padding, 1em);

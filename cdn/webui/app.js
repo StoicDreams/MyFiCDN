@@ -163,20 +163,26 @@ max-height:min-content;
 ::slotted([slot="left"]) {
 grid-column: 1;
 z-index: 10;
+max-height: var(--window-height);
+overflow:auto;
 }
 ::slotted([slot="right"]) {
 grid-column: 3;
 z-index: 11;
+max-height: var(--window-height);
+overflow:auto;
 }
 ::slotted([slot="bottom"]) {
 height:min-content;
 grid-row: 5;
 z-index: 12;
+max-width: var(--window-width);
 }
 ::slotted([slot="top"]) {
 height:min-content;
 grid-row: 1;
 z-index: 13;
+max-width: var(--window-width);
 }
 ::slotted([slot="left"]),
 ::slotted([slot="right"]) {
