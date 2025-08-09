@@ -8,7 +8,7 @@
             t._slotTemplates = t.template.querySelector('slot[name="template"]');
             t._section = t.template.querySelector('section');
         },
-        attr: ['pad', 'transition-timing', 'index', 'theme', 'content-theme', 'vertical'],
+        attr: ['pad', 'transition-timing', 'index', 'theme', 'content-theme'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'pad':
@@ -24,13 +24,7 @@
             }
         },
         connected: (t) => {
-            t._resizeHandler = () => t.checkResponsiveLayout();
-            window.addEventListener('resize', t._resizeHandler);
-            t._resizeHandler();
             t.render();
-        },
-        disconnected: function (t) {
-            window.removeEventListener('resize', t._resizeHandler);
         },
         setData: function (data, key) {
             const t = this;
@@ -102,11 +96,16 @@
                     webui.querySelectorAll('[name]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
                 } else {
                     webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
+                    setTimeout(() => {
+                        webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
+                    }, 10);
                 }
             });
             if (tabIndex > 0 && !foundIndex) {
                 console.error('did not find content index', tabIndex);
-                t.setTab(tabIndex - 1);
+                setTimeout(() => {
+                    t.setTab(tabIndex - 1);
+                }, 1);
                 return;
             }
             t._index = tabIndex;
@@ -151,18 +150,6 @@
             }
             t.setTab(t._index || 0);
         },
-        checkResponsiveLayout: function () {
-            const t = this;
-            const isNarrow = window.innerWidth < 900;
-            t._forceHorizontal = isNarrow;
-            if (isNarrow) {
-                if (!t.hasAttribute('narrow')) {
-                    t.setAttribute('narrow', true);
-                }
-            } else if (!isNarrow && t.hasAttribute('narrow')) {
-                t.removeAttribute('narrow');
-            }
-        },
         shadowTemplate: `
 <slot name="tabs"></slot>
 <section>
@@ -179,7 +166,7 @@ width:-webkit-fill-available;
 --theme-color-offset:var(--color-title-offset);
 --theme-padding: 0px;
 }
-:host([vertical]:not([narrow])) {
+:host([vertical]) {
 display:grid;
 grid-template-columns:max-content auto;
 }
@@ -192,7 +179,7 @@ color:var(--theme-color-offset);
 gap:var(--theme-padding);
 border-radius:var(--corners) var(--corners) 0 0;
 }
-:host([vertical]:not([narrow])) slot[name="tabs"] {
+:host([vertical]) slot[name="tabs"] {
 flex-direction:column;
 }
 slot[name="content"] {
