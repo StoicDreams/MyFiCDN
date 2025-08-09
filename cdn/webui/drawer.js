@@ -191,6 +191,16 @@ overflow:auto;
 --scroll-color: color-mix(in srgb, var(--theme-color) 20%, transparent);
 --scroll-shadow: -4px 0 -4px rgba(255, 255, 255, 0.2) inset;
 }
+::-webkit-scrollbar {
+width: 1em;
+height: 1em;
+}
+::-webkit-scrollbar-thumb {
+background: rgba(90, 90, 90, 0.2);
+}
+::-webkit-scrollbar-track {
+background: rgba(0, 0, 0, 0.2);
+}
 slot:not([name])::after {
 content:" ";
 display:block;
