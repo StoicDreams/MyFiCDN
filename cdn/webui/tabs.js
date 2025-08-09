@@ -25,6 +25,12 @@
         },
         connected: (t) => {
             t.render();
+            t._resizeHandler = () => t.checkResponsiveVertical();
+            window.addEventListener('resize', t._resizeHandler);
+            t.checkResponsiveVertical();
+        },
+        disconnected: (t) => {
+            window.removeEventListener('resize', t._resizeHandler);
         },
         setData: function (data, key) {
             const t = this;
@@ -155,6 +161,18 @@
             }
             t.setTab(t._index || 0);
         },
+        checkResponsiveVertical: function () {
+            const isNarrow = window.innerWidth < 900;
+            const t = this;
+            t._forceHorizontal = isNarrow;
+            if (isNarrow) {
+                if (!t.hasAttribute('narrow')) {
+                    t.setAttribute('narrow', true);
+                }
+            } else if (t.hasAttribute('narrow')) {
+                t.removeAttribute('narrow');
+            }
+        },
         shadowTemplate: `
 <slot name="tabs"></slot>
 <section>
@@ -171,7 +189,7 @@ width:-webkit-fill-available;
 --theme-color-offset:var(--color-title-offset);
 --theme-padding: 0px;
 }
-:host([vertical]) {
+:host([vertical]:not([narrow])) {
 display:grid;
 grid-template-columns:max-content auto;
 }
@@ -184,7 +202,7 @@ color:var(--theme-color-offset);
 gap:var(--theme-padding);
 border-radius:var(--corners) var(--corners) 0 0;
 }
-:host([vertical]) slot[name="tabs"] {
+:host([vertical]:not([narrow])) slot[name="tabs"] {
 flex-direction:column;
 }
 slot[name="content"] {
