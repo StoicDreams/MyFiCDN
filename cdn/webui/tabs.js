@@ -67,8 +67,10 @@
         },
         setTab: function (tabIndex) {
             const t = this;
+            console.log('set tab', t);
             if (tabIndex === undefined || tabIndex === null) return;
             tabIndex = parseInt(tabIndex) || 0;
+            console.log('tab index', t, tabIndex);
             if (t._initiated && tabIndex === t._index) return;
             let index = 0;
             let foundIndex = false;
