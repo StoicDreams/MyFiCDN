@@ -102,7 +102,7 @@
                     if (c.nodeName === 'WEBUI-CONTENT' && c.hasAttribute('src')) {
                         console.log('TRIGGER DELAYED LOAD');
                         webui.wait(count => {
-                            console.log('count', count, c._contentLoaded, c);
+                            console.log('count', count, c._contentLoaded, c.innerHTML);
                             return c._contentLoaded;
                         }).then(async () => {
                             await webui.wait(10);
