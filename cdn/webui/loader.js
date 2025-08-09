@@ -382,21 +382,16 @@ const webui = (() => {
                     Object.keys(options).forEach(key => {
                         t[key] = options[key];
                     });
-                    if (!options.isInline) {
-                        //webui.removeFromParentPTag(t);
-                    }
                     if (options.constructor) {
                         options.constructor(t);
                     }
                     if (options.watchVisibility) {
                         let observer = new IntersectionObserver(onIntersection, {
-                            root: null,   // default is the viewport
-                            scrollMargin: '30px',
-                            threshold: 0, // percentage of target's visible area. Triggers "onIntersection"
+                            root: null,
+                            scrollMargin: '0px',
+                            threshold: 0,
                             delay: 100
                         });
-
-                        // callback is called on intersection change
                         function onIntersection(entries, _opts) {
                             entries.forEach(entry => {
                                 if (entry.isIntersecting) {

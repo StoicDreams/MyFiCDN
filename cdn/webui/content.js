@@ -1,13 +1,22 @@
-/* Placeholder page content for pages under construction */
+/*!
+ * Web UI Content - https://webui.stoicdreams.com
+ * This component is used for dynamically loading and grouping page content to lazy-load content when becoming visible and detaching content when not visible.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 webui.define("webui-content", {
     watchVisibility: true,
     constructor: (t) => {
         t.loadDelay = 300;
+        t._storedNodes = null;
+        t._fixedHeight = null;
+        t._prevInlineHeight = null;
     },
     linkCss: true,
     attr: ["src", 'preload', 'load-delay', 'height', 'width'],
-    flags: ['cache'],
+    flags: ['cache', 'nodetach', 'nofix'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'height':
@@ -20,6 +29,11 @@ webui.define("webui-content", {
                 t.loadDelay = parseInt(value) || 0;
                 break;
             case 'visible':
+                if (t.visible) {
+                    t._reattachChildrenIfNeeded();
+                } else {
+                    t._detachChildrenIfNeeded();
+                }
                 t.updateContent();
                 break;
             case 'src':
@@ -44,11 +58,10 @@ webui.define("webui-content", {
             t.fetchContent();
             return;
         }
-        if (t.visible) {
-            setTimeout(() => t.fetchContent(), t.loadDelay);
-        } else {
-
+        if (!t.visible) {
+            return;
         }
+        setTimeout(() => t.fetchContent(), t.loadDelay);
     },
     setHtml: function (html) {
         const t = this;
@@ -117,6 +130,41 @@ webui.define("webui-content", {
             t.classList.add('loaded');
         }
     },
+    _detachChildrenIfNeeded: function () {
+        const t = this;
+        if (t.nodetach) return;
+        if (t._storedNodes) return;
+        const hasExplicitHeight = t.nofix || t.hasAttribute("height") ||
+            (t.style && t.style.height && t.style.height !== "");
+        if (!hasExplicitHeight) {
+            const rect = t.getBoundingClientRect();
+            t._prevInlineHeight = t.style.height || "";
+            t._fixedHeight = Math.round(rect.height);
+            if (t._fixedHeight > 0) {
+                t.style.height = t._fixedHeight + "px";
+            }
+        }
+        const frag = document.createDocumentFragment();
+        while (t.firstChild) {
+            frag.appendChild(t.firstChild);
+        }
+        t._storedNodes = frag;
+    },
+    _reattachChildrenIfNeeded: function () {
+        const t = this;
+        if (!t._storedNodes) return;
+        t.appendChild(t._storedNodes);
+        t._storedNodes = null;
+        const hadExplicitHeight = t.nofix || t.hasAttribute("height") ||
+            (t._prevInlineHeight && t._prevInlineHeight !== "");
+        requestAnimationFrame(() => {
+            if (!hadExplicitHeight) {
+                t.style.height = t._prevInlineHeight || "";
+            }
+            t._fixedHeight = null;
+            t._prevInlineHeight = null;
+        });
+    },
     shadowTemplate: `
 <slot></slot>
 <style type="text/css">
@@ -130,7 +178,7 @@ webui.define("webui-content", {
 }
 :host(:not(.loaded)) slot,
 :host(:not([visible])) slot {
-display:none;
+visibility:hidden;
 }
 slot {
 display:block;

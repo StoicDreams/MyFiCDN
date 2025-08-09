@@ -1,3 +1,10 @@
+/*!
+ * Web UI Tabs - https://webui.stoicdreams.com
+ * This component is used for creating tabbed sections of content on a page.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 {
     webui.define('webui-tabs', {
@@ -99,9 +106,11 @@
                     let offset = tabIndex * 100;
                     t._slotContent.style.translate = `-${offset}% 0`;
                     foundIndex = true;
+                    if (c.nodeName === 'WEBUI-CONTENT') { c.removeAttribute('nofix'); }
                     webui.querySelectorAll('[name]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
                 } else {
                     webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
+                    if (c.nodeName === 'WEBUI-CONTENT') { c.setAttribute('nofix', true); }
                     if (c.nodeName === 'WEBUI-CONTENT' && c.hasAttribute('src')) {
                         webui.wait(_ => {
                             return c._contentLoaded && c.innerHTML;

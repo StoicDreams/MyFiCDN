@@ -1,4 +1,10 @@
-/* Template for Web UI components. */
+/*!
+ * Web UI Component Template - https://webui.stoicdreams.com
+ * This is a template for a component hosted at cdn.myfi.ws.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 {
     webui.define("webui-template", {
@@ -35,8 +41,13 @@
         },
     });
 }
-
-/* Template for Web UI components with shadow-dom. */
+/*!
+ * Web UI Shadow Component Template - https://webui.stoicdreams.com
+ * This is a template for a shadow component hosted at cdn.myfi.ws.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
 "use strict"
 {
     webui.define("webui-shadow-template", {
