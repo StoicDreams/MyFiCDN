@@ -96,9 +96,10 @@
                     webui.querySelectorAll('[name]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
                 } else {
                     webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
+                    console.log('test', item.nodeName, item._contentLoaded);
                     setTimeout(() => {
                         webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
-                    }, 10);
+                    }, 1000);
                 }
             });
             if (tabIndex > 0 && !foundIndex) {
