@@ -1423,6 +1423,7 @@ const webui = (() => {
                         await webui.wait(10);
                         result = milliseconds(++count);
                     }
+                    resolve(count);
                 } else {
                     setTimeout(resolve, milliseconds);
                 }
