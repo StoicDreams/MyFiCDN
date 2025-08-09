@@ -7,7 +7,7 @@
             if (!key) return;
         }
         let current = webui.getData(key);
-        if (current) return;
+        if (current) return { key, value: undefined };
         let value = template.innerHTML;
         try {
             value = JSON.parse(value);

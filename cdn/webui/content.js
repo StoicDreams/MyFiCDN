@@ -14,9 +14,10 @@ webui.define("webui-content", {
         t._fixedHeight = null;
         t._prevInlineHeight = null;
     },
+    contentAttached: false,
     linkCss: true,
-    attr: ["src", 'preload', 'load-delay', 'height', 'width'],
-    flags: ['cache', 'nodetach', 'nofix'],
+    attr: ["src", 'load-delay', 'height', 'width'],
+    flags: ['cache', 'nodetach', 'nofix', 'preload'],
     attrChanged: (t, property, value) => {
         switch (property) {
             case 'height':
@@ -70,6 +71,7 @@ webui.define("webui-content", {
         t.classList.remove('loading');
         t.classList.add('loaded');
         t.innerHTML = html;
+        t.contentAttached = true;
     },
     setSrc: function (value) {
         let t = this;
@@ -77,14 +79,12 @@ webui.define("webui-content", {
         t._contentLoaded = false;
         t.fetchContent();
     },
-    fetchContent: async function () {
+    loadSrc: async function () {
         const t = this;
-        if (!t.preload && !t.visible) return;
-        if (t._contentLoaded && t._contentLoaded === t.src) return;
-        if (!t.src) {
+        if (!t.src || t.src === 'html') {
             return;
         }
-        t.classList.add('loading');
+        if (t._contentLoaded && t._contentLoaded === t.src) return;
         t._contentLoaded = t.src;
         try {
             let content = null;
@@ -94,21 +94,37 @@ webui.define("webui-content", {
                 content = await fetch(t.src);
                 content = content.ok ? await content.text() : null;
             }
-
-            if (!content) {
-                t.innerHTML = `Failed to load content from ${t.src}`;
-                return;
+            content = content ? content : `Failed to load content from ${t.src}`;
+            if (content.startsWith('<!DOCTYPE')) {
+                content = `Source ${t.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by t component)`;
             }
-            let body = content;
-            if (body.startsWith('<!DOCTYPE')) {
-                t.innerHTML = `Source ${t.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by t component)`;
-                return;
+            t._content = content;
+        } catch (ex) {
+            t._content = `Source ${t.src} failed to load:${ex}`;
+        }
+    },
+    fetchContent: async function () {
+        const t = this;
+        if (!t.src) {
+            return;
+        }
+        if (!t.visible) {
+            if (t.preload) {
+                setTimeout(() => {
+                    t.loadSrc();
+                }, 1000);
             }
+            return;
+        }
+        t.classList.add('loading');
+        try {
+            await t.loadSrc();
             if (t.hasAttribute('slot') || t.hasAttribute('nest')) {
-                t.innerHTML = webui.applyAppDataToContent(body);
+                t.innerHTML = webui.applyAppDataToContent(t._content);
+                t.contentAttached = true;
             } else {
                 let temp = webui.create('div');
-                temp.innerHTML = webui.applyAppDataToContent(body);
+                temp.innerHTML = webui.applyAppDataToContent(t._content);
                 let n = [];
                 let p = t.parentNode;
                 let b = t;
@@ -121,10 +137,12 @@ webui.define("webui-content", {
                 if (t.parentNode !== p) {
                     b.remove();
                 }
+                t.contentAttached = true;
                 t.remove();
             }
         } catch (ex) {
             t.innerHTML = `Source ${t.src} failed to load:${ex}`;
+            t.contentAttached = true;
         } finally {
             t.classList.remove('loading');
             t.classList.add('loaded');
@@ -144,6 +162,7 @@ webui.define("webui-content", {
                 t.style.height = t._fixedHeight + "px";
             }
         }
+        t.contentAttached = false;
         const frag = document.createDocumentFragment();
         while (t.firstChild) {
             frag.appendChild(t.firstChild);
@@ -154,6 +173,7 @@ webui.define("webui-content", {
         const t = this;
         if (!t._storedNodes) return;
         t.appendChild(t._storedNodes);
+        t.contentAttached = true;
         t._storedNodes = null;
         const hadExplicitHeight = t.nofix || t.hasAttribute("height") ||
             (t._prevInlineHeight && t._prevInlineHeight !== "");
@@ -200,6 +220,8 @@ justify-content: center;
 }
 :host(:not(.loaded)):before {
 content: " ";
+display:block;
+position: absolute;
 animation: spin 1s infinite linear;
 border: 2px solid rgba(30, 30, 30, 0.5);
 border-left: 4px solid #fff;
@@ -207,6 +229,7 @@ border-radius: 50%;
 height: 50px;
 margin-bottom: 10px;
 width: 50px;
+top:50px;
 }
 :host(:not(.loaded).loading):after {
 content: 'Loading';

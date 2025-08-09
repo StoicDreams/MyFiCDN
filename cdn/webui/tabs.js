@@ -108,17 +108,17 @@
                     foundIndex = true;
                     if (c.nodeName === 'WEBUI-CONTENT') { c.removeAttribute('nofix'); }
                     webui.querySelectorAll('[name]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
+                    if (c.nodeName === 'WEBUI-CONTENT' && !c.contentAttached) {
+                        webui.wait(_ => {
+                            return c.contentAttached;
+                        }).then(async _ => {
+                            await webui.wait(10);
+                            webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
+                        });
+                    }
                 } else {
                     webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
                     if (c.nodeName === 'WEBUI-CONTENT') { c.setAttribute('nofix', true); }
-                    if (c.nodeName === 'WEBUI-CONTENT' && c.hasAttribute('src')) {
-                        webui.wait(_ => {
-                            return c._contentLoaded && c.innerHTML;
-                        }).then(async _ => {
-                            await webui.wait(10);
-                            webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
-                        });
-                    }
                 }
             });
             if (tabIndex > 0 && !foundIndex) {
