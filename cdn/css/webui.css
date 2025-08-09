@@ -154,6 +154,7 @@ webui-app {
 }
 
 .content>p,
+.readable-content>p,
 webui-content>p,
 webui-app>p {
     padding: var(--padding);
@@ -445,6 +446,7 @@ h6 {
 
 webui-app>h1:not([theme]),
 webui-content>h1:not([theme]),
+..readable-content>h1:not([theme]),
 .content>h1:not([theme]) {
     --theme-color: var(--color-title);
     --theme-color-offset: var(--color-title-offset);
@@ -452,6 +454,7 @@ webui-content>h1:not([theme]),
 
 webui-app>h2:not([theme]),
 webui-content>h2:not([theme]),
+.readable-content>h2:not([theme]),
 .content>h2:not([theme]) {
     --theme-color: var(--color-primary);
     --theme-color-offset: var(--color-primary-offset);
@@ -459,6 +462,7 @@ webui-content>h2:not([theme]),
 
 webui-app>h3:not([theme]),
 webui-content>h3:not([theme]),
+.readable-content>h3:not([theme]),
 .content>h3:not([theme]) {
     --theme-color: var(--color-secondary);
     --theme-color-offset: var(--color-secondary-offset);
@@ -466,6 +470,7 @@ webui-content>h3:not([theme]),
 
 webui-app>h4:not([theme]),
 webui-content>h4:not([theme]),
+.readable-content>h4:not([theme]),
 .content>h4:not([theme]) {
     --theme-color: var(--color-tertiary);
     --theme-color-offset: var(--color-tertiary-offset);
@@ -473,6 +478,7 @@ webui-content>h4:not([theme]),
 
 webui-app>h5:not([theme]),
 webui-content>h5:not([theme]),
+.readable-content>h5:not([theme]),
 .content>h5:not([theme]) {
     --theme-color: var(--color-info);
     --theme-color-offset: var(--color-info-offset);
@@ -480,6 +486,7 @@ webui-content>h5:not([theme]),
 
 webui-app>h6:not([theme]),
 webui-content>h6:not([theme]),
+.readable-content>h6:not([theme]),
 .content>h6:not([theme]) {
     --theme-color: var(--color-success);
     --theme-color-offset: var(--color-success-offset);
@@ -511,6 +518,12 @@ p+h6 {
 .content>h4,
 .content>h5,
 .content>h6,
+.readable-content>h1,
+.readable-content>h2,
+.readable-content>h3,
+.readable-content>h4,
+.readable-content>h5,
+.readable-content>h6,
 webui-app>h1,
 webui-app>h2,
 webui-app>h3,
@@ -538,6 +551,12 @@ main h6 {
 .content>h4,
 .content>h5,
 .content>h6,
+.readable-content>h1,
+.readable-content>h2,
+.readable-content>h3,
+.readable-content>h4,
+.readable-content>h5,
+.readable-content>h6,
 webui-app>h1,
 webui-app>h2,
 webui-app>h3,
@@ -555,6 +574,7 @@ webui-content>h6 {
 }
 
 .content>h1,
+.readable-content>h1,
 webui-app>h1,
 webui-content>h1 {
     background-color: var(--color-title);
@@ -562,6 +582,7 @@ webui-content>h1 {
 }
 
 .content>h2,
+.readable-content>h2,
 webui-app>h2,
 webui-content>h2 {
     background-color: var(--color-primary);
@@ -569,6 +590,7 @@ webui-content>h2 {
 }
 
 .content>h3,
+.readable-content>h3,
 webui-app>h3,
 webui-content>h3 {
     background-color: var(--color-secondary);
@@ -576,6 +598,7 @@ webui-content>h3 {
 }
 
 .content>h4,
+.readable-content>h4,
 webui-app>h4,
 webui-content>h4 {
     background-color: var(--color-tertiary);
@@ -583,6 +606,7 @@ webui-content>h4 {
 }
 
 .content>h5,
+.readable-content>h5,
 webui-app>h5,
 webui-content>h5 {
     background-color: var(--color-info);
@@ -590,6 +614,7 @@ webui-content>h5 {
 }
 
 .content>h6,
+.readable-content>h6,
 webui-app>h6,
 webui-content>h6 {
     background-color: var(--color-action);
@@ -770,6 +795,7 @@ webui-code:not(.hide-label)>pre[languagetag]:before {
 }
 
 .content>webui-paper>pre,
+.readable-content>webui-paper>pre,
 webui-app>webui-paper>pre,
 webui-content>webui-paper>pre,
 main>.paper>pre {
