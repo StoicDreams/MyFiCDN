@@ -194,7 +194,7 @@ overflow:auto;
 slot:not([name])::after {
 content:" ";
 display:block;
-height:5em;
+min-height:2em;
 }
 #actions:empty {display:none;}
 button {
