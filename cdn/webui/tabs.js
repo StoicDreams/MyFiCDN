@@ -104,7 +104,8 @@
                         webui.wait(count => {
                             console.log('count', count, c._contentLoaded, c);
                             return c._contentLoaded;
-                        }).then(() => {
+                        }).then(async () => {
+                            await webui.wait(10);
                             webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); console.log('delayed disabled', c.nodeName, c._contentLoaded); });
                         });
                     }
