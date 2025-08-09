@@ -446,7 +446,7 @@ h6 {
 
 webui-app>h1:not([theme]),
 webui-content>h1:not([theme]),
-..readable-content>h1:not([theme]),
+.readable-content>h1:not([theme]),
 .content>h1:not([theme]) {
     --theme-color: var(--color-title);
     --theme-color-offset: var(--color-title-offset);
