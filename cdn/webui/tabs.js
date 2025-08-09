@@ -67,7 +67,6 @@
         },
         setTab: function (tabIndex) {
             const t = this;
-            console.log('set tab', t);
             if (tabIndex === undefined || tabIndex === null) return;
             tabIndex = parseInt(tabIndex) || 0;
             console.log('tab index', t, tabIndex);
@@ -90,6 +89,7 @@
             }
             index = 0;
             foundIndex = false;
+            console.log('check tabs', Array.from(t.querySelectorAll('[slot="content"]')));
             Array.from(t.querySelectorAll('[slot="content"]')).filter(item => item.parentNode === t).forEach(c => {
                 if (tabIndex === index++) {
                     let offset = tabIndex * 100;
@@ -97,7 +97,7 @@
                     foundIndex = true;
                     webui.querySelectorAll('[name]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
                 } else {
-                    webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); console.log('test', item.nodeName, item._contentLoaded); });
+                    webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); console.log('disabled', item.nodeName, item._contentLoaded); });
                     setTimeout(() => {
                         webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
                     }, 1000);
