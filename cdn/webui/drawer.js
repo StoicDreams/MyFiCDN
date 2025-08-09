@@ -24,7 +24,7 @@
 </button>`;
     webui.define("webui-drawer", {
         preload: 'icon flex toggle-icon',
-        linkCss: true,
+        linkCss: false,
         constructor: (t) => {
             t._idselector = `#${t._id}`;
             t.headerSlot = t.template.querySelector('slot[name=header]');
@@ -115,6 +115,8 @@ display: flex;
 flex-direction: column;
 overflow: auto;
 z-index:100;
+--scroll-color: color-mix(in srgb, var(--theme-color) 20%, transparent);
+--scroll-shadow: -4px 0 -4px rgba(255, 255, 255, 0.2) inset;
 }
 :host([id]) {
 transition: all 400ms;
