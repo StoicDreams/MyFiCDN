@@ -99,9 +99,12 @@
                 } else {
                     console.log('disabled', c.nodeName, c._contentLoaded);
                     webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
+                    if (c.nodeName === 'WEBUI-CONTENT' && c.hasAttribute('src')) {
+                        console.log('TRIGGER DELAYED LOAD');
+                    }
                     setTimeout(() => {
                         webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); console.log('delayed disabled', c.nodeName, c._contentLoaded); });
-                    }, 1000);
+                    }, 10);
                 }
             });
             if (tabIndex > 0 && !foundIndex) {
