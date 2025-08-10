@@ -9,7 +9,7 @@
 "use strict"
 const webui = (() => {
     {
-        const markdownSrc = location.host === '127.0.0.1:3180' ? '/js/mdparse.min.js' : 'https://cdn.myfi.ws/js/mdparse.min.js';
+        const markdownSrc = location.port === '3180' ? '/js/mdparse.min.js' : 'https://cdn.myfi.ws/js/mdparse.min.js';
         import(markdownSrc).then(module => {
             webui.marked = new module.MarkdownParser();
             webui.loaded = true;
@@ -237,10 +237,10 @@ const webui = (() => {
                 watchedSessionData[key] = cachedSessionData[key];
             });
         }
-        applyAppDataToContent(content, preTrim) {
+        applyAppDataToContent(content, preTrim, noParagraph) {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
             let pt = typeof preTrim == 'boolean' ? preTrim : undefined;
-            return this.parseWebuiMarkdown(this.replaceAppData(content, data), pt);
+            return this.parseWebuiMarkdown(this.replaceAppData(content, data), pt, noParagraph);
         }
         applyDynamicStyles() { }
         applyProperties(t) { }
@@ -958,16 +958,16 @@ const webui = (() => {
             el.classList.add('open');
             return content;
         }
-        parseWebuiMarkdown(md, preTrim) {
-            return this.parseMarkdown(md, preTrim);
+        parseWebuiMarkdown(md, preTrim, noParagraph) {
+            return this.parseMarkdown(md, preTrim, noParagraph);
         }
-        parseMarkdown(md, preTrim) {
+        parseMarkdown(md, preTrim, noParagraph) {
             const t = this;
             if (typeof md !== 'string') return md;
             if (preTrim) {
                 md = t.trimLinePreWhitespce(md);
             }
-            return t.marked.parse(md) || '';
+            return t.marked.parse(md, noParagraph) || '';
         }
         removeFromParentPTag(el) {
             if (el.parentNode && el.parentNode.nodeName === 'P') {

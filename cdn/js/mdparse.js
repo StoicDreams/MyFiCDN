@@ -23,7 +23,7 @@ export class MarkdownParser {
         'paragraph': (html, token, commands) => {
             return `${html}<p>${commands.renderInline(token.content)}</p>\n`;
         },
-        'single_line': (html, token, commands) => {
+        'no_paragraph': (html, token, commands) => {
             return `${html}${commands.renderInline(token.content)}\n`;
         }
     };
@@ -235,16 +235,16 @@ export class MarkdownParser {
             return `${html}</tbody></table>\n`;
         });
     }
-    parse(text) {
+    parse(text, noParagraph) {
         if (text === undefined || text === null || text === '') return '';
         const t = this;
         if (t.cache[text]) return t.cache[text];
-        const tokens = t.tokenize(t.trimLinePreTabs(text));
+        const tokens = t.tokenize(t.trimLinePreTabs(text), noParagraph);
         let html = t.render(tokens);
         t.cache[text] = html;
         return html;
     }
-    tokenize(text) {
+    tokenize(text, noParagraph) {
         const t = this;
         const state = {
             tokens: [],
@@ -319,7 +319,7 @@ export class MarkdownParser {
                 state.inBlockquote = false;
             }
             flushTable();
-            const type = state.lines.length === 1 ? 'single_line' : 'paragraph';
+            const type = noParagraph ? 'no_paragraph' : 'paragraph';
             state.tokens.push({ type, content: line.trim() });
         }
         flushTable();

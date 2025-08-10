@@ -7,7 +7,7 @@
  */
 "use strict"
 {
-    const isLocalDev = location.host === '127.0.0.1:3180';
+    const isLocalDev = location.port === '3180';
     const srcRoot = isLocalDev ? '' : 'https://cdn.myfi.ws';
     const content = `
 <webui-tabs pad="var(--padding)" vertical transition-timing="200" data-subscribe="session-components-tab-index:setTab"></webui-tabs>
