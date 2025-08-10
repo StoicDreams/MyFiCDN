@@ -84,6 +84,7 @@
         },
         applyFilter: function () {
             const t = this;
+            if (typeof t._search.value !== 'string') return;
             let filter = t._search.value.trim();
             t._filteredKeys = [];
             Object.keys(t.emojis).forEach(key => {
