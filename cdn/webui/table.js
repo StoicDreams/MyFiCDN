@@ -1,5 +1,5 @@
 /*!
- * Web UI Table - https://webui.stoicdreams.com
+ * Web UI Table - https://webui.stoicdreams.com/components#table
  * A component for displaying data in tables within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

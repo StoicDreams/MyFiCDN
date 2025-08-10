@@ -1,5 +1,5 @@
 /*!
- * Web UI Componennts - https://webui.stoicdreams.com
+ * Web UI Componennts - https://webui.stoicdreams.com/components#components
  * Display tabbed sections for all Web UI components.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

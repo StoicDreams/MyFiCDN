@@ -1,5 +1,5 @@
 /*!
- * Web UI Quote - https://webui.stoicdreams.com
+ * Web UI Quote - https://webui.stoicdreams.com/components#quote
  * A component for displaying and managing quotes within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

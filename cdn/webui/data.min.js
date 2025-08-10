@@ -1,5 +1,5 @@
 /*!
- * Web UI Data - https://webui.stoicdreams.com
+ * Web UI Data - https://webui.stoicdreams.com/components#code
  * A component for managing data within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

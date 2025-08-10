@@ -1,5 +1,5 @@
 /*!
- * Web UI MyFi Info - https://webui.stoicdreams.com
+ * Web UI MyFi Info - https://webui.stoicdreams.com/components#myfi-info
  * Display button for opening My Fidelity Account Info panel.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

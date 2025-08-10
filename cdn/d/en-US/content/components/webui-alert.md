@@ -45,3 +45,7 @@
         <webui-alert show variant="theme">Example Theme</webui-alert>
     </webui-page-segment>
 </webui-side-by-side>
+
+### Source Code
+
+<webui-code src="https://cdn.myfi.ws/webui/alert.js" language="javascript" label="alert.js"></webui-code>

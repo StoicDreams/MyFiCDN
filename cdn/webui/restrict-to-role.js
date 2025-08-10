@@ -1,5 +1,5 @@
 /*!
- * Web UI Restrict To Role - https://webui.stoicdreams.com
+ * Web UI Restrict To Role - https://webui.stoicdreams.com/components#restrict-to-role
  * A component for restricting content visibility based on user roles.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

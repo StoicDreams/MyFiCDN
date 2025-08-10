@@ -1,5 +1,5 @@
 /*!
- * Web UI Input Text - https://webui.stoicdreams.com
+ * Web UI Input Text - https://webui.stoicdreams.com/components#input-text
  * A component for displaying and managing single-line text input fields within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

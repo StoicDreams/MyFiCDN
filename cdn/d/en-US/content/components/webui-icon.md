@@ -11,3 +11,7 @@
         Demo Placeholder
     </webui-page-segment>
 </webui-side-by-side>
+
+### Source Code
+
+<webui-code src="https://cdn.myfi.ws/webui/icon.js" language="javascript" label="icon.js"></webui-code>

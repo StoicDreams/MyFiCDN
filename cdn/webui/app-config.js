@@ -1,5 +1,5 @@
 /*!
- * Web UI App Config - https://webui.stoicdreams.com
+ * Web UI App Config - https://webui.stoicdreams.com/components#app-config
  * A configuration management solution for web applications.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

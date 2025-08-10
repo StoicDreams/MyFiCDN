@@ -11,3 +11,7 @@
         Demo Placeholder
     </webui-page-segment>
 </webui-side-by-side>
+
+### Source Code
+
+<webui-code src="https://cdn.myfi.ws/webui/page-requires.js" language="javascript" label="page-requires.js"></webui-code>

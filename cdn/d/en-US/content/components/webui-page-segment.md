@@ -21,3 +21,7 @@
         </webui-paper>
     </webui-flex>
 </webui-side-by-side>
+
+### Source Code
+
+<webui-code src="https://cdn.myfi.ws/webui/page-segment.js" language="javascript" label="page-segment.js"></webui-code>

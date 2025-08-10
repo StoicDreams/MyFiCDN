@@ -1,5 +1,5 @@
 /*!
- * Web UI Code - https://webui.stoicdreams.com
+ * Web UI Code - https://webui.stoicdreams.com/components#code
  * A component for displaying code snippets.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
@@ -32,7 +32,7 @@
             });
             t._code.innerText = webui.trimLinePreTabs(code.trim());
         },
-        attr: ['language', 'lang', 'label', 'lines', 'nocopy'],
+        attr: ['language', 'lang', 'label', 'lines', 'nocopy', 'src'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'label':
@@ -59,7 +59,20 @@
                     }
                     t.applyLabelDisplay();
                     break;
+                case 'src':
+                    t.loadFromSrc();
+                    break;
             }
+        },
+        loadFromSrc: function () {
+            const t = this;
+            let src = t.src;
+            if (!src) return;
+            webui.fetchWithCache(src, false).then(content => {
+                t.setValue(content);
+            }).catch(ex => {
+                t.setValue(`Failed to load file ${src}: ${ex}`);
+            });
         },
         props: {
             'value': {

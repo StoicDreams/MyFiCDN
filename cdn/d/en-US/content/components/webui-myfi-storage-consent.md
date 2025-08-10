@@ -11,3 +11,7 @@
         Demo Placeholder
     </webui-page-segment>
 </webui-side-by-side>
+
+### Source Code
+
+<webui-code src="https://cdn.myfi.ws/webui/myfi-storage-consent.js" language="javascript" label="myfi-storage-consent.js"></webui-code>

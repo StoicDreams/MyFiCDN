@@ -23,3 +23,7 @@
         </webui-paper>
     </webui-side-by-side>
 </webui-side-by-side>
+
+### Source Code
+
+<webui-code src="https://cdn.myfi.ws/webui/side-by-side.js" language="javascript" label="side-by-side.js"></webui-code>

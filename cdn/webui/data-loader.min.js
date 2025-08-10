@@ -1,5 +1,5 @@
 /*!
- * Web UI Data Loader - https://webui.stoicdreams.com
+ * Web UI Data Loader - https://webui.stoicdreams.com/components#data-loader
  * A component for loading and managing data from external sources.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

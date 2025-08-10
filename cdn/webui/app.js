@@ -1,5 +1,5 @@
 /*!
- * Web UI App - https://webui.stoicdreams.com
+ * Web UI App - https://webui.stoicdreams.com/components#app
  * Main layout component.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
@@ -120,6 +120,14 @@ webui.define("webui-app", {
     },
     _adsrCache: {},
     shadowTemplate: `
+<slot name="header"></slot>
+<main><slot></slot><slot name="content-footer"></slot></main>
+<slot name="footer"></slot>
+<slot name="left"></slot>
+<slot name="right"></slot>
+<slot name="top"></slot>
+<slot name="bottom"></slot>
+<webui-dialogs></webui-dialogs>
 <style type="text/css">
 :host {
 background-color: var(--color-background, white);
@@ -230,13 +238,5 @@ background: rgba(90, 90, 90, 0.2);
 background: rgba(0, 0, 0, 0.2);
 }
 </style>
-<slot name="header"></slot>
-<main><slot></slot><slot name="content-footer"></slot></main>
-<slot name="footer"></slot>
-<slot name="left"></slot>
-<slot name="right"></slot>
-<slot name="top"></slot>
-<slot name="bottom"></slot>
-<webui-dialogs></webui-dialogs>
 `
 });

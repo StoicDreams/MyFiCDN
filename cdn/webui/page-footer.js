@@ -1,5 +1,5 @@
 /*!
- * Web UI Page Footer - https://webui.stoicdreams.com
+ * Web UI Page Footer - https://webui.stoicdreams.com/components#page-footer
  * A component for displaying the page footer within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

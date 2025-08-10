@@ -1,5 +1,5 @@
 /*!
- * Web UI Avatar - https://webui.stoicdreams.com
+ * Web UI Avatar - https://webui.stoicdreams.com/components#avatar
  * A component for displaying user avatars.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

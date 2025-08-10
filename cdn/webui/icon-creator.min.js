@@ -1,5 +1,5 @@
 /*!
- * Web UI Icon Creator - https://webui.stoicdreams.com
+ * Web UI Icon Creator - https://webui.stoicdreams.com/components#icon-creator
  * A component for creating and editing icons within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

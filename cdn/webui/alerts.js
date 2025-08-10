@@ -1,5 +1,5 @@
 /*!
- * Web UI Alerts - https://webui.stoicdreams.com
+ * Web UI Alerts - https://webui.stoicdreams.com/components#alerts
  * Displays Alert icon and enables webui.alert(message:string|html, variant:string[success|warning|danger|info]) for displaying popup alerts.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

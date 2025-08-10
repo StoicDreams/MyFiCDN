@@ -1,5 +1,5 @@
 /*!
- * Web UI Site Settings - https://webui.stoicdreams.com
+ * Web UI Site Settings - https://webui.stoicdreams.com/components#site-settings
  * A component for managing site settings within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

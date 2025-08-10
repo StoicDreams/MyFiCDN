@@ -1,5 +1,5 @@
 /*!
- * Web UI File Select - https://webui.stoicdreams.com
+ * Web UI File Select - https://webui.stoicdreams.com/components#file-select
  * A component for selecting files within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

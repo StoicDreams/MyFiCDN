@@ -79,3 +79,7 @@
 </body>
 </html>
 ```
+
+### Source Code
+
+<webui-code src="https://cdn.myfi.ws/webui/alerts.js" language="javascript" label="alerts.js"></webui-code>

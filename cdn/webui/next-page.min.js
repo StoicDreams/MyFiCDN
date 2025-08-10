@@ -1,5 +1,5 @@
 /*!
- * Web UI Next Page - https://webui.stoicdreams.com
+ * Web UI Next Page - https://webui.stoicdreams.com/components#next-page
  * A component for displaying a button to navigate to the next page within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

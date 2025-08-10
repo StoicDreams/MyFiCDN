@@ -1,5 +1,5 @@
 /*!
- * Web UI Side Image - https://webui.stoicdreams.com
+ * Web UI Side Image - https://webui.stoicdreams.com/components#sideimage
  * A component for displaying an image alongside content within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

@@ -1,5 +1,5 @@
 /*!
- * Web UI Page Not Found - https://webui.stoicdreams.com
+ * Web UI Page Not Found - https://webui.stoicdreams.com/components#page-not-found
  * A component for displaying a "Page Not Found" message within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

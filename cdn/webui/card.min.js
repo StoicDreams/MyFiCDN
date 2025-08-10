@@ -1,5 +1,5 @@
 /*!
- * Web UI Card - https://webui.stoicdreams.com
+ * Web UI Card - https://webui.stoicdreams.com/components#card
  * A component for displaying a card element.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

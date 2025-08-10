@@ -1,5 +1,5 @@
 /*!
- * Web UI Feedback - https://webui.stoicdreams.com
+ * Web UI Feedback - https://webui.stoicdreams.com/components#feedback
  * Display feedback button that opens dialog for feedback when clicked.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

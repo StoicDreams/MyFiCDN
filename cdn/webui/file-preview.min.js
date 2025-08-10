@@ -1,5 +1,5 @@
 /*!
- * Web UI File Preview - https://webui.stoicdreams.com
+ * Web UI File Preview - https://webui.stoicdreams.com/components#file-preview
  * A component for displaying file previews within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
