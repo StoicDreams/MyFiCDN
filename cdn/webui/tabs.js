@@ -109,6 +109,7 @@
                     if (c.previousElementSibling && c.previousElementSibling.hasAttribute && c.previousElementSibling.hasAttribute('hash')) {
                         webui.updateHash(c.previousElementSibling.getAttribute('hash'));
                     }
+                    t.scrollIntoView({ behavior: 'smooth' });
                     if (c.nodeName === 'WEBUI-CONTENT') { c.removeAttribute('nofix'); }
                     webui.querySelectorAll('[name]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
                     if (c.nodeName === 'WEBUI-CONTENT' && !c.contentAttached) {

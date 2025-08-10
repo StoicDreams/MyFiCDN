@@ -1876,7 +1876,7 @@ const webui = (() => {
                 el.click();
             } else {
                 el.focus();
-                el.scrollIntoView();
+                el.scrollIntoView({ behavior: 'smooth' });
             }
         }, 100);
     }
