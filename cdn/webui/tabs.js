@@ -109,7 +109,7 @@
                     if (c.previousElementSibling && c.previousElementSibling.hasAttribute && c.previousElementSibling.hasAttribute('hash')) {
                         webui.updateHash(c.previousElementSibling.getAttribute('hash'));
                     }
-                    if (t.hasAttribute('vertical')) {
+                    if (t.hasAttribute('vertical') && !t.hasAttribute('narrow')) {
                         t.scrollIntoView({ behavior: 'smooth' });
                     }
                     if (c.nodeName === 'WEBUI-CONTENT') { c.removeAttribute('nofix'); }
