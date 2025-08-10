@@ -1949,7 +1949,7 @@ const webui = (() => {
     const wcLoading = {};
     const wcLoaded = {};
     const appLoaded = {};
-    const wcRoot = location.hostname === '127.0.0.1' && location.port === '3180' ? '' : 'https://cdn.myfi.ws/';
+    const wcRoot = location.port === '3180' ? '' : 'https://cdn.myfi.ws/';
     const wcMin = '.min';
     function processNode(nodeName) {
         if (wcLoading[nodeName]) return;

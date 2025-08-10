@@ -120,6 +120,26 @@ export class MarkdownParser {
         }, (html, token, commands) => {
             return html;
         });
+        t.addRule('webui_code_start', /^[\s]*<webui-code*/, (line, state) => {
+            if (state.inCodeBlock) {
+                return { type: 'literal', content: line };
+            }
+            state.inCodeBlock = true;
+            state.codeBlockTag = '<webui-code>';
+            return { type: "webui_code_start", line };
+        }, (html, token, commands) => {
+            return `${html}${token.line}\n`;
+        });
+        t.addRule('webui_code_end', /^[\s]*<\/webui-code>[\s]*/, (line, state) => {
+            if (state.codeBlockTag !== '<webui-code>') {
+                return { type: 'literal', content: line };
+            }
+            state.inCodeBlock = false;
+            state.codeBlockTag = '';
+            return { type: "webui_code_end", line };
+        }, (html, token, commands) => {
+            return `${html}${token.line}\n`;
+        });
         t.addRule('code_block_start', /^[\s]*```/, (line, state) => {
             line = line.trim();
             let [, tag, lang, , label] = line.match(/^([`]+)([^:\|;]*)(:|\||;)?(.*)/);
@@ -293,7 +313,7 @@ export class MarkdownParser {
                         state.tokens.push({ type: 'literal', content: line });
                     } else if (state.inCodeBlock && result.type === 'code_block_end') {
                         state.tokens.push({ type: 'literal', content: line });
-                    } else if (state.inCodeBlock && result.type !== 'code_block_start') {
+                    } else if (state.inCodeBlock && result.type !== 'code_block_start' && result.type !== 'webui_code_start') {
                         state.tokens.push({ type: 'code_line', content: line });
                     } else if (result) {
                         if (result.type !== 'table') {
