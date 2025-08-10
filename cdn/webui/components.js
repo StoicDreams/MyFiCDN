@@ -47,7 +47,7 @@
                 data.forEach(component => {
                     let button = webui.create('webui-button', { align: 'left', slot: 'tabs', text: `webui-${component}` });
                     tabs.appendChild(button);
-                    let content = webui.create('webui-content', { preload: true, slot: 'content', src: `${srcRoot}/d/en-US/content/components/${component}.md` });
+                    let content = webui.create('webui-content', { slot: 'content', src: `${srcRoot}/d/en-US/content/components/${component}.md`, cache: true });
                     tabs.appendChild(content);
                 });
                 alert.remove();

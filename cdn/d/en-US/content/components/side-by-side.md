@@ -4,15 +4,7 @@
 </webui-page-segment>
 
 <webui-side-by-side>
-    <webui-side-by-side>
-        <webui-paper elevation="10">
-            Example Left Side
-        </webui-paper>
-        <webui-paper elevation="10">
-            Example Right Side
-        </webui-paper>
-    </webui-side-by-side>
-    <webui-code lang="html">
+    ```html:Code Snippet
         <webui-side-by-side class="side-by-side gap-4">
             <webui-paper elevation="10">
                 Example Left Side
@@ -21,5 +13,13 @@
                 Example Right Side
             </webui-paper>
         </webui-side-by-side>
-    </webui-code>
+    ```
+    <webui-side-by-side>
+        <webui-paper elevation="10">
+            Example Left Side
+        </webui-paper>
+        <webui-paper elevation="10">
+            Example Right Side
+        </webui-paper>
+    </webui-side-by-side>
 </webui-side-by-side>

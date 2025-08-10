@@ -4,14 +4,7 @@
 </webui-page-segment>
 
 <webui-side-by-side>
-    <webui-flex align="center" justify="center">
-        <webui-paper class="theme-white">
-            <webui-page-segment class="theme-info">
-                Example page-segment-standard
-            </webui-page-segment>
-        </webui-paper>
-    </webui-flex>
-    <webui-code lang="html">
+    ```html:Code Snippet
         <webui-flex align="center" justify="center">
             <webui-paper class="theme-white">
                 <webui-page-segment class="theme-info">
@@ -19,5 +12,12 @@
                 </webui-page-segment>
             </webui-paper>
         </webui-flex>
-    </webui-code>
+    ```
+    <webui-flex align="center" justify="center">
+        <webui-paper class="theme-white">
+            <webui-page-segment class="theme-info">
+                Example page-segment-standard
+            </webui-page-segment>
+        </webui-paper>
+    </webui-flex>
 </webui-side-by-side>

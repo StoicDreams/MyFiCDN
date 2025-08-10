@@ -8,6 +8,7 @@
 "use strict"
 webui.define("webui-content", {
     watchVisibility: true,
+    fetchCount: 0,
     constructor: (t) => {
         t.loadDelay = 300;
         t._storedNodes = null;
@@ -112,6 +113,10 @@ webui.define("webui-content", {
     },
     fetchContent: async function () {
         const t = this;
+        if (t.fetchCount++ === 0) {
+            // Giving time when attached to allow transitions to complete to assure content is truly visible to the user before determining if loading is needed.
+            await webui.wait(500);
+        }
         if (!t.src) {
             return;
         }
