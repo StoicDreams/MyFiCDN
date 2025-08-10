@@ -84,7 +84,12 @@ webui.define("webui-content", {
         if (!t.src || t.src === 'html') {
             return;
         }
-        if (t._contentLoaded && t._contentLoaded === t.src) return;
+        if (t._contentLoaded && t._contentLoaded === t.src) {
+            while (t._isLoading) {
+                await webui.wait(10);
+            }
+        };
+        t._isLoading = true;
         t._contentLoaded = t.src;
         try {
             let content = null;
@@ -99,8 +104,10 @@ webui.define("webui-content", {
                 content = `Source ${t.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by t component)`;
             }
             t._content = content;
+            t._isLoading = false;
         } catch (ex) {
             t._content = `Source ${t.src} failed to load:${ex}`;
+            t._isLoading = false;
         }
     },
     fetchContent: async function () {
