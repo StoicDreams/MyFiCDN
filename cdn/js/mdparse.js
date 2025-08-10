@@ -22,6 +22,9 @@ export class MarkdownParser {
         },
         'paragraph': (html, token, commands) => {
             return `${html}<p>${commands.renderInline(token.content)}</p>\n`;
+        },
+        'single_line': (html, token, commands) => {
+            return `${html}${commands.renderInline(token.content)}\n`;
         }
     };
     rules = [];
@@ -316,7 +319,8 @@ export class MarkdownParser {
                 state.inBlockquote = false;
             }
             flushTable();
-            state.tokens.push({ type: "paragraph", content: line.trim() });
+            const type = state.lines.length === 1 ? 'single_line' : 'paragraph';
+            state.tokens.push({ type, content: line.trim() });
         }
         flushTable();
         flushBlockquote();

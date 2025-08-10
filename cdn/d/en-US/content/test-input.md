@@ -20,6 +20,13 @@
     </webui-flex>
 </webui-side-by-side>
 
+<webui-flex column>
+    <webui-input-text label="Your Message" data-subscribe="page-test" data-trigger="page-test"></webui-input-text>
+    <webui-quote theme="success">
+        Your Message: <span data-subscribe="page-test:text"></span>
+    </webui-quote>
+</webui-flex>
+
 <webui-page-segment elevation="10">
 
 <app-test></app-test>
