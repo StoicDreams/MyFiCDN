@@ -11,3 +11,6 @@ pkg
 
 # Ignore Deployment folders
 apps
+
+# Ignore user files
+*.user.*
