@@ -75,13 +75,13 @@ export class MarkdownParser {
         }, (html, token, commands) => {
             return `${html}<h${token.level}>${commands.renderInline(token.content)}</h${token.level}>\n`;
         });
-        t.addRule('ul_item', /^[\s]*\- /, (line, state) => {
+        t.addRule('ul_item', /^[\s]*[\-\*]{1} /, (line, state) => {
             const indent = line.match(/^\s*/)[0].length;
-            let [, check] = line.match(/^\s*\- ?(\[( |x)?\])?/);
+            let [, check] = line.match(/^\s*[\-\*]{1} ?(\[( |x)?\])?/);
             if (check !== undefined) {
                 check = check === '[x]' ? 'checked' : 'unchecked';
             }
-            return { type: "ul_item", content: line.replace(/^\s*\-( \[( |x)?\])?/, '').trim(), indent, check };
+            return { type: "ul_item", content: line.replace(/^\s*[\-\*]{1}( \[( |x)?\])?/, '').trim(), indent, check };
         }, makeListRenderer('ul'));
         t.addRule('ol_item', /^[\s]*\d+\. /, (line, state) => {
             const indent = line.match(/^\s*/)[0].length;
