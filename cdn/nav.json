@@ -5,6 +5,11 @@
         "url": "/"
     },
     {
+        "name": "Components",
+        "icon": "hierarchy|has-shadow:true|rotate:270",
+        "url": "/components"
+    },
+    {
         "name": "Test",
         "icon": "test|fill|shade:tri",
         "children": [

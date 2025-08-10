@@ -112,7 +112,7 @@ webui.define("webui-content", {
             if (t.preload) {
                 setTimeout(() => {
                     t.loadSrc();
-                }, 1000);
+                }, 100);
             }
             return;
         }
