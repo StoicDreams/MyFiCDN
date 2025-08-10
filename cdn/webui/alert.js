@@ -1,5 +1,5 @@
 /*!
- * Web UI Alert - https://webui.stoicdreams.com/components#alert
+ * Web UI Alert - https://webui.stoicdreams.com/components#webui-alert
  * Display inline alert message.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

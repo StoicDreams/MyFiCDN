@@ -1,5 +1,5 @@
 /*!
- * Web UI Condition - https://webui.stoicdreams.com/components#condition
+ * Web UI Condition - https://webui.stoicdreams.com/components#webui-condition
  * A component for managing conditional content display.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

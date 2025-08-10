@@ -1,5 +1,5 @@
 /*!
- * Web UI Nav Link - https://webui.stoicdreams.com/components#nav-link
+ * Web UI Nav Link - https://webui.stoicdreams.com/components#webui-nav-link
  * A component for displaying and managing navigation links within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

@@ -1,5 +1,5 @@
 /*!
- * Web UI Loading Bar - https://webui.stoicdreams.com/components#loading-bars
+ * Web UI Loading Bar - https://webui.stoicdreams.com/components#webui-loading-bars
  * A component for displaying and managing loading bars within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

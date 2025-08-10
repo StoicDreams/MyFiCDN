@@ -1,5 +1,5 @@
 /*!
- * Web UI Link - https://webui.stoicdreams.com/components#link
+ * Web UI Link - https://webui.stoicdreams.com/components#webui-link
  * A component for displaying and managing links within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

@@ -1,5 +1,5 @@
 /*!
- * Web UI Input Message - https://webui.stoicdreams.com/components#input-message
+ * Web UI Input Message - https://webui.stoicdreams.com/components#webui-input-message
  * A component for displaying and managing multi-line text input fields.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

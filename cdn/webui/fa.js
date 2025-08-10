@@ -1,5 +1,5 @@
 /*!
- * Web UI Font Awesome - https://webui.stoicdreams.com/components#fa
+ * Web UI Font Awesome - https://webui.stoicdreams.com/components#webui-fa
  * A component for displaying and managing Font Awesome icons within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

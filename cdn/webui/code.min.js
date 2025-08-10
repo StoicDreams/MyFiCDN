@@ -1,5 +1,5 @@
 /*!
- * Web UI Code - https://webui.stoicdreams.com/components#code
+ * Web UI Code - https://webui.stoicdreams.com/components#webui-code
  * A component for displaying code snippets.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

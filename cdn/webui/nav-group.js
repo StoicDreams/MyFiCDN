@@ -1,5 +1,5 @@
 /*!
- * Web UI Nav Group - https://webui.stoicdreams.com/components#nav-group
+ * Web UI Nav Group - https://webui.stoicdreams.com/components#webui-nav-group
  * A component for displaying and managing groups of navigation links within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

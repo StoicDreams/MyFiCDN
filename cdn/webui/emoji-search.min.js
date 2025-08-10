@@ -1,5 +1,5 @@
 /*!
- * Web UI Emoji Search - https://webui.stoicdreams.com/components#emoji-search
+ * Web UI Emoji Search - https://webui.stoicdreams.com/components#webui-emoji-search
  * A component for searching and displaying emojis within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

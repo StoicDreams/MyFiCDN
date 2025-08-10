@@ -1,5 +1,5 @@
 /*!
- * Web UI Stoic Social Links - https://webui.stoicdreams.com/components#stoic-social-links
+ * Web UI Stoic Social Links - https://webui.stoicdreams.com/components#webui-stoic-social-links
  * A component for displaying Stoic Dreams's social media links within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

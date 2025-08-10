@@ -1,5 +1,5 @@
 /*!
- * Web UI Canvas - https://webui.stoicdreams.com/components#canvas
+ * Web UI Canvas - https://webui.stoicdreams.com/components#webui-canvas
  * A component for displaying a canvas element.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

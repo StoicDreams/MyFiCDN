@@ -1,5 +1,5 @@
 /*!
- * Web UI Dialogs - https://webui.stoicdreams.com/components#dialogs
+ * Web UI Dialogs - https://webui.stoicdreams.com/components#webui-dialogs
  * A component for displaying and managing dialogs within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

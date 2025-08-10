@@ -1,5 +1,5 @@
 /*!
- * Web UI Dialog Action - https://webui.stoicdreams.com/components#dialog-action
+ * Web UI Dialog Action - https://webui.stoicdreams.com/components#webui-dialog-action
  * A component for managing dialog actions within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

@@ -1,5 +1,5 @@
 /*!
- * Web UI Drawer - https://webui.stoicdreams.com/components#drawer
+ * Web UI Drawer - https://webui.stoicdreams.com/components#webui-drawer
  * A component for displaying and managing a drawer within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

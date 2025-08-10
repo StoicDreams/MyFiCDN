@@ -1,5 +1,5 @@
 /*!
- * Web UI Input Range - https://webui.stoicdreams.com/components#input-range
+ * Web UI Input Range - https://webui.stoicdreams.com/components#webui-input-range
  * A component for displaying and managing input range sliders within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

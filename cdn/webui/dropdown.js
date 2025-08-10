@@ -1,5 +1,5 @@
 /*!
- * Web UI Dropdown - https://webui.stoicdreams.com/components#dropdown
+ * Web UI Dropdown - https://webui.stoicdreams.com/components#webui-dropdown
  * A component for displaying and managing dropdown menus within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

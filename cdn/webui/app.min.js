@@ -1,5 +1,5 @@
 /*!
- * Web UI App - https://webui.stoicdreams.com/components#app
+ * Web UI App - https://webui.stoicdreams.com/components#webui-app
  * Main layout component.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

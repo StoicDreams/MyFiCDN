@@ -1,5 +1,5 @@
 /*!
- * Web UI MyFi Storage Consent - https://webui.stoicdreams.com/components#myfi-storage-consent
+ * Web UI MyFi Storage Consent - https://webui.stoicdreams.com/components#webui-myfi-storage-consent
  * A component for managing user storage consent within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

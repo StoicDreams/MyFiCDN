@@ -1,5 +1,5 @@
 /*!
- * Web UI Json Condensed - https://webui.stoicdreams.com/components#json-condensed
+ * Web UI Json Condensed - https://webui.stoicdreams.com/components#webui-json-condensed
  * A component for condensing and displaying JSON data within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

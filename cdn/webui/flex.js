@@ -1,5 +1,5 @@
 /*!
- * Web UI Flex - https://webui.stoicdreams.com/components#flex
+ * Web UI Flex - https://webui.stoicdreams.com/components#webui-flex
  * A component for creating flexible layouts within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

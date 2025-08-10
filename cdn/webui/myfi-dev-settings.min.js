@@ -1,5 +1,5 @@
 /*!
- * Web UI MyFi Dev Settings - https://webui.stoicdreams.com/components#myfi-dev-settings
+ * Web UI MyFi Dev Settings - https://webui.stoicdreams.com/components#webui-myfi-dev-settings
  * A component for managing MyFi development settings within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

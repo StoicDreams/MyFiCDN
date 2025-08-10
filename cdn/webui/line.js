@@ -1,5 +1,5 @@
 /*!
- * Web UI Line - https://webui.stoicdreams.com/components#line
+ * Web UI Line - https://webui.stoicdreams.com/components#webui-line
  * A component for displaying a horizontal line within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

@@ -1,5 +1,5 @@
 /*!
- * Web UI Grid - https://webui.stoicdreams.com/components#grid
+ * Web UI Grid - https://webui.stoicdreams.com/components#webui-grid
  * A component for creating grid layouts within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

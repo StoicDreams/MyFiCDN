@@ -1,5 +1,5 @@
 /*!
- * Web UI Under Construction - https://webui.stoicdreams.com/components#under-construction
+ * Web UI Under Construction - https://webui.stoicdreams.com/components#webui-under-construction
  * Placeholder page content for pages under construction.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

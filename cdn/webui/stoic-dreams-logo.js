@@ -1,5 +1,5 @@
 /*!
- * Web UI Stoic Dreams Logo - https://webui.stoicdreams.com/components#stoic-dreams-logo
+ * Web UI Stoic Dreams Logo - https://webui.stoicdreams.com/components#webui-stoic-dreams-logo
  * A component for displaying the Stoic Dreams logo within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

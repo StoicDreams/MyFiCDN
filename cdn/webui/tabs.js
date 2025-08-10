@@ -1,5 +1,5 @@
 /*!
- * Web UI Tabs - https://webui.stoicdreams.com/components#tabs
+ * Web UI Tabs - https://webui.stoicdreams.com/components#webui-tabs
  * This component is used for creating tabbed sections of content on a page.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

@@ -1,5 +1,5 @@
 /*!
- * Web UI Icon - https://webui.stoicdreams.com/components#icon
+ * Web UI Icon - https://webui.stoicdreams.com/components#webui-icon
  * A component for displaying and managing icons within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

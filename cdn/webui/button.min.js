@@ -1,5 +1,5 @@
 /*!
- * Web UI Button - https://webui.stoicdreams.com/components#button
+ * Web UI Button - https://webui.stoicdreams.com/components#webui-button
  * A component for displaying buttons.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

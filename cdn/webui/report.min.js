@@ -1,5 +1,5 @@
 /*!
- * Web UI Report - https://webui.stoicdreams.com/components#report
+ * Web UI Report - https://webui.stoicdreams.com/components#webui-report
  * A component for displaying and managing reports within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

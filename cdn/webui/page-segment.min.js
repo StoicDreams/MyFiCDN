@@ -1,5 +1,5 @@
 /*!
- * Web UI Page Segment - https://webui.stoicdreams.com/components#page-segment
+ * Web UI Page Segment - https://webui.stoicdreams.com/components#webui-page-segment
  * A component for displaying a segment of content within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

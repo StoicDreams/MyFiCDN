@@ -1,5 +1,5 @@
 /*!
- * Web UI Content - https://webui.stoicdreams.com/components#content
+ * Web UI Content - https://webui.stoicdreams.com/components#webui-content
  * This component is used for dynamically loading and grouping page content to lazy-load content when becoming visible and detaching content when not visible.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

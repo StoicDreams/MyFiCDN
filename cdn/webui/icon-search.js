@@ -1,5 +1,5 @@
 /*!
- * Web UI Icon Search - https://webui.stoicdreams.com/components#icon-search
+ * Web UI Icon Search - https://webui.stoicdreams.com/components#webui-icon-search
  * A component for searching and filtering icons within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

@@ -1,5 +1,5 @@
 /*!
- * Web UI Toggle Icon - https://webui.stoicdreams.com/components#toggle-icon
+ * Web UI Toggle Icon - https://webui.stoicdreams.com/components#webui-toggle-icon
  * Toggle button that switches icons, title.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com

@@ -1,5 +1,5 @@
 /*!
- * Web UI Powered By - https://webui.stoicdreams.com/components#poweredby
+ * Web UI Powered By - https://webui.stoicdreams.com/components#webui-poweredby
  * A component for displaying the "Powered By" information within the web UI.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
