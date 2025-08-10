@@ -42,7 +42,7 @@
                 data = JSON.parse(data);
                 const tabs = webui.create('webui-tabs', { pad: 'var(--padding)', vertical: true, 'transition-timing': 200, 'data-subscribe': 'session-components-tab-index:setTab' });
                 data.forEach(component => {
-                    let button = webui.create('webui-button', { align: 'left', slot: 'tabs', text: component });
+                    let button = webui.create('webui-button', { hash: component, align: 'left', slot: 'tabs', text: component });
                     tabs.appendChild(button);
                     let content = webui.create('webui-content', { slot: 'content', src: `${srcRoot}/d/en-US/content/components/${component}.md`, cache: true });
                     tabs.appendChild(content);

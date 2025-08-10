@@ -870,6 +870,14 @@ const webui = (() => {
         navigateTo(href) {
             changePage(href);
         }
+        updateHash(hash) {
+            hash = typeof hash !== 'string' ? '' : hash;
+            hash = hash.trim();
+            if (hash !== '' && hash[0] !== '#') {
+                hash = `#${hash}`;
+            }
+            changePage(`${location.pathname}${hash}${location.search}`);
+        }
         removeWrappingPTags(html, tagPattern) {
             while (html.match(`<p><(${tagPattern})[\> ]{1}`)) {
                 let orig = html;
@@ -1703,7 +1711,10 @@ const webui = (() => {
     function setAttr(el, attr, val) {
         el.setAttribute(attr, val);
     }
+    let currentPageUrl = '-';
     function changePage(url) {
+        if (url === currentPageUrl) return;
+        currentPageUrl = url;
         const pageState = { appData: JSON.stringify(watchedAppData) };
         window.history.pushState(pageState, document.title, url);
         loadPage(url);
@@ -1851,6 +1862,24 @@ const webui = (() => {
         }
         return {};
     }
+    let currentPage = '';
+    let currentHash = '';
+    async function applyHash() {
+        if (currentHash === location.hash) return;
+        currentHash = location.hash;
+        if (currentHash === '') return;
+        setTimeout(() => {
+            if (currentHash !== location.hash) return;
+            let el = webui.querySelectorAll(`[hash="${currentHash.substring(1)}"]`)[0];
+            if (!el) return;
+            if (['WEBUI-BUTTON', 'BUTTON'].indexOf(el.nodeName) !== -1) {
+                el.click();
+            } else {
+                el.focus();
+                el.scrollIntoView();
+            }
+        }, 100);
+    }
     async function loadPage() {
         if (!appSettings.app || !webui.appConfig.appName) {
             setTimeout(() => {
@@ -1871,6 +1900,11 @@ const webui = (() => {
         if (contentPage.endsWith('/')) {
             contentPage = contentPage.substring(0, contentPage.length - 1);
         }
+        if (currentPage === contentPage) {
+            applyHash();
+            return;
+        }
+        currentPage = contentPage;
         let contentUrl = `${contentPage}${appSettings.contentExtension}${location.search}`;
         if (appSettings.encryptPageContent) {
             contentUrl = encryptUrl(contentUrl, appSettings.encryptPageContent);
@@ -1900,6 +1934,7 @@ const webui = (() => {
             appSettings.app.setPageContent(content, watchedAppData, fullContentUrl);
             setTimeout(() => {
                 checkNodes(document.body.childNodes);
+                applyHash();
             }, 100);
         } catch (ex) {
             webui.log.error('Failed loading page content', ex);
@@ -2156,7 +2191,7 @@ const webui = (() => {
     window.addEventListener('click', updateActivity);
     window.addEventListener('scroll', updateActivity);
     window.addEventListener('popstate', ev => {
-        changePage(`${location.pathname}${location.search}`);
+        changePage(`${location.pathname}${location.hash}${location.search}`);
         if (ev.state) {
             if (ev.state.appData) {
                 const appData = JSON.parse(ev.state.appData);

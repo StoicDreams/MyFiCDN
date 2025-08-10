@@ -106,6 +106,11 @@
                     let offset = tabIndex * 100;
                     t._slotContent.style.translate = `-${offset}% 0`;
                     foundIndex = true;
+                    if (c.previousElementSibling && c.previousElementSibling.hasAttribute && c.previousElementSibling.hasAttribute('hash')) {
+                        webui.updateHash(c.previousElementSibling.getAttribute('hash'));
+                    } else {
+                        webui.updateHash('');
+                    }
                     if (c.nodeName === 'WEBUI-CONTENT') { c.removeAttribute('nofix'); }
                     webui.querySelectorAll('[name]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
                     if (c.nodeName === 'WEBUI-CONTENT' && !c.contentAttached) {
