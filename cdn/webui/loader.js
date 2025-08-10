@@ -150,24 +150,19 @@ const webui = (() => {
             memStorageCache[key] = localStorage.getItem(key);
         });
         sessionStorage.clear();
-    } else if (sessionStorage.key(STORAGE_ACCEPTED_KEY) && sessionStorage.getItem(STORAGE_ACCEPTED_KEY) === ACCEPT_SESSION_STORAGE) {
+    } else {
         acceptedStorage = ACCEPT_SESSION_STORAGE;
         Object.keys(sessionStorage).forEach(key => {
             memStorageCache[key] = sessionStorage.getItem(key);
         });
-        localStorage.clear();
-    } else {
-        sessionStorage.clear();
         localStorage.clear();
     }
     function getCache() {
         return new Promise((resolve, reject) => {
             if (localStorage.getItem(STORAGE_ACCEPTED_KEY)) {
                 resolve(localStorage);
-            } else if (sessionStorage.getItem(STORAGE_ACCEPTED_KEY)) {
-                resolve(sessionStorage);
             } else {
-                reject('Caching not accepted');
+                resolve(sessionStorage);
             }
         });
     }
