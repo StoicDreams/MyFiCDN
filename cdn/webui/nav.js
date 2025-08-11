@@ -8,6 +8,7 @@
 "use strict"
 {
     const show = {};
+    const sessionKey = 'session-nav-show';
     webui.define('webui-nav', {
         preload: 'fa paper nav-group nav-link',
         attr: ['routes', 'nav-routes'],
@@ -25,6 +26,11 @@
             t.userRole = 0;
             t.addDataset('subscribe', 'session-user-role:setUserRole');
             t._buildNav();
+            let cachedShow = webui.getData(sessionKey);
+            if (!cachedShow) return;
+            Object.keys(cachedShow).forEach(key => {
+                show[key] = cachedShow[key];
+            });
         },
         setUserRole: function (userRole) {
             const t = this;
@@ -66,6 +72,7 @@
                 }
                 el.addEventListener('change', _ => {
                     show[link.name] = el.isOpen;
+                    webui.setData(sessionKey, show);
                 });
                 link.children.forEach(child => {
                     t.buildLink(el, child);
