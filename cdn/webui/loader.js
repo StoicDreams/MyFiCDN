@@ -10,7 +10,7 @@ const webui = (() => {
     {
         const markdownSrc = location.port === '3180' ? '/js/mdparse.min.js' : 'https://cdn.myfi.ws/js/mdparse.min.js';
         import(markdownSrc).then(module => {
-            webui.marked = new module.MarkdownParser();
+            webui.markdown = new module.MarkdownParser();
             webui.loaded = true;
         });
     }
@@ -216,10 +216,45 @@ const webui = (() => {
     }
     const storage = new MemStorage();
     class WebUI {
+        /**
+         * Relative path to custom web components.
+         * Change this only if you use a different subfolder to hold your custom components.
+         *
+         * @returns {string} '.min'
+         * @example
+         * webui.appSrc = '/custom-components';
+         */
         appSrc = '/wc';
+        /**
+         * Postfix for web components.
+         * Set this to '' if you want non-minified versions of web components.
+         *
+         * @returns {string} '.min' | ''
+         * @example
+         * webui.appMin = '';
+         */
         appMin = '.min';
+        /**
+         * App configuration data.
+         * Typically this should only be updated by webui-app-config.
+         *
+         * @returns {object}
+         * @example html
+         * <webui-app-config example="one"></webui-app-config>
+         */
         appConfig = {};
-        marked = { parse(...args) { console.log('Unhandled parse', args); return ''; } }
+        /**
+         * Instance of class MarkdownParser - a Web UI specific Markdown parser.
+         * This is a custom markdown parser developed specifically for Web UI flavored markdown which prioritizes HTML support within markdown and using Web UI components to handle specific conversion to HTML.
+         * Standard markdown is generally supported, but can include extra syntax support for Web UI specific options.
+         * One noteable deviation from standard markdown is sequential paragraph lines are not merged into a single paragraph, but instead are treated as separate paragraphs.
+         *
+         * @returns {MarkdownParser}
+         * @example
+         * let markdown = '# Title';
+         * let result = webui.markdown.parse(markdown);
+         */
+        markdown = { parse(...args) { console.error('Unhandled webui.markdown parse', args); return ''; } }
         constructor() {
             this._appSettings = appSettings;
             this.storage = storage;
@@ -239,8 +274,8 @@ const webui = (() => {
          * @param {boolean} noParagraph - Exclude wrapping single lined content with a paragraph element.
          * @returns {string} Converted HTML.
          * @example
-         * // returns '<p>Hello World</p>'
-         * applyAppDataToContent('Hello World');
+         * // returns '<p>Hello World</p>\n'
+         * '<p>Hello World</p>\n' == webui.applyAppDataToContent('Hello World');
          */
         applyAppDataToContent(content, preTrim, noParagraph) {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
@@ -258,6 +293,23 @@ const webui = (() => {
                 data = { ...data };
                 return structuredClone(data);
             }
+        }
+        escapeCode(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+        escapeQuote(text) {
+            return text.replace(/"/g, "&quot;");
+        }
+        escapeHtml(text) {
+            return text
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
         }
         create(name, attr) {
             let el = document.createElement(name);
@@ -980,7 +1032,7 @@ const webui = (() => {
             if (preTrim) {
                 md = t.trimLinePreWhitespce(md);
             }
-            return t.marked.parse(md, noParagraph) || '';
+            return t.markdown.parse(md, noParagraph) || '';
         }
         removeFromParentPTag(el) {
             if (el.parentNode && el.parentNode.nodeName === 'P') {

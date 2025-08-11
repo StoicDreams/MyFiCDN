@@ -15,9 +15,7 @@
     webui.define('webui-code', {
         preload: 'icon',
         constructor: (t) => {
-            let code = t.innerHTML.replace(/&gt;/g, '>')
-                .replace(/&lt;/g, '<')
-                .replace(/&amp;/g, '&');
+            let code = t.innerHTML;
             t.innerHTML = '';
             t._template = webui.create('div', { html: template });
             t._label = t._template.querySelector('label > span');
@@ -30,7 +28,7 @@
                 webui.copyToClipboard(t.value);
                 return false;
             });
-            t._code.innerText = webui.trimLinePreTabs(code.trim());
+            t._code.innerHTML = webui.trimLinePreTabs(code.trim());
         },
         attr: ['language', 'lang', 'label', 'lines', 'nocopy', 'src'],
         attrChanged: (t, property, value) => {

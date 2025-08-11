@@ -131,6 +131,7 @@ webui.define("webui-content", {
         t.classList.add('loading');
         try {
             await t.loadSrc();
+            if (!t._content) return;
             if (t.hasAttribute('slot') || t.hasAttribute('nest')) {
                 t.innerHTML = webui.applyAppDataToContent(t._content);
                 t.contentAttached = true;

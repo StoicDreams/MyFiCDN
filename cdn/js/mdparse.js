@@ -52,7 +52,7 @@ export class MarkdownParser {
                 commands.stack.push({ tag: listTag, indent: token.indent });
             }
             if (token.check) {
-                return html + `<li class="${token.check}">${commands.renderInline(token.content)}</li>\n`;
+                return html + `<li class="${t.escapeQuote(token.check)}">${commands.renderInline(token.content)}</li>\n`;
             }
             return html + `<li>${commands.renderInline(token.content)}</li>\n`;
         };
@@ -67,7 +67,7 @@ export class MarkdownParser {
             return { type: "line-break" };
         }, (html, token, commands) => {
             if (token.theme) {
-                return `${html}<webui-line theme="${token.theme}"></webui-line>\n`;
+                return `${html}<webui-line theme="${t.escapeQuote(token.theme)}"></webui-line>\n`;
             }
             return `${html}<webui-line></webui-line>\n`;
         });
@@ -100,7 +100,7 @@ export class MarkdownParser {
         }, (html, token, commands) => {
             let theme = token.theme || 'info';
             let cite = token.cite || '';
-            return `${html}<webui-quote theme="${theme}" cite="${cite}">` + t.parse(token.content.join('\n')) + `</webui-quote>\n`;
+            return `${html}<webui-quote theme="${t.escapeQuote(theme)}" cite="${t.escapeQuote(cite)}">` + t.parse(token.content.join('\n')) + `</webui-quote>\n`;
         });
         t.addRule('precode_start', /^[\s]*<pre><code>.*/, (line, state) => {
             if (state.inCodeBlock || state.inTemplate) return { type: 'literal', content: line };
@@ -159,9 +159,9 @@ export class MarkdownParser {
             }
         }, (html, token, commands) => {
             if (token.label) {
-                return `${html}<webui-code lang="${token.lang}" label="${token.label}">`;
+                return `${html}<webui-code lang="${t.escapeQuote(token.lang)}" label="${t.escapeQuote(token.label)}">`;
             }
-            return `${html}<webui-code lang="${token.lang}">`;
+            return `${html}<webui-code lang="${t.escapeQuote(token.lang)}">`;
         });
         t.addRule('code_block_end', /^[\s]*```/, (line, state) => {
             webui.log.warn('Unexpected use of code_block_end');
@@ -242,13 +242,13 @@ export class MarkdownParser {
             const body = rows.slice(2);
             html += `<table class="bordered" theme="info"><thead><tr>` + head.map((h, i) => {
                 const align = alignments[i];
-                const cls = align ? ` class="text-${align}"` : '';
+                const cls = align ? ` class="text-${t.escapeQuote(align)}"` : '';
                 return `<th${cls}>${commands.renderInline(h)}</th>`;
             }).join('') + "</tr></thead><tbody>";
             for (const row of body) {
                 html += "<tr>" + row.map((c, i) => {
                     const align = alignments[i];
-                    const cls = align ? ` class="text-${align}"` : '';
+                    const cls = align ? ` class="text-${t.escapeQuote(align)}"` : '';
                     return `<td${cls}>${commands.renderInline(c)}</td>`;
                 }).join('') + "</tr>";
             }
@@ -408,7 +408,7 @@ export class MarkdownParser {
             const token = `^^CODE${codeSpans.length}^^`;
             const [, , theme, refined] = code.match(/^(([a-z]+):)?(.*)/);
             if (theme) {
-                codeSpans.push(`<code theme="${theme}">${t.escapeCode(refined)}</code>`);
+                codeSpans.push(`<code theme="${t.escapeQuote(theme)}">${t.escapeCode(refined)}</code>`);
             } else {
                 codeSpans.push(`<code>${t.escapeCode(code)}</code>`);
             }
@@ -417,7 +417,7 @@ export class MarkdownParser {
         const emojis = [];
         text = text.replace(/:([a-zA-Z0-9_+-]+):/g, (_, emoji) => {
             const token = `^^EMOJI${emojis.length}^^`;
-            emojis.push(`<webui-emoji emoji="${emoji}"></webui-emoji>`);
+            emojis.push(`<webui-emoji emoji="${t.escapeQuote(emoji)}"></webui-emoji>`);
             return token;
         });
         text = text
@@ -440,21 +440,15 @@ export class MarkdownParser {
         });
         return text;
     }
-    escapeQuote(text) {
-        return text.replace(/"/g, "&quot;");
-    }
-    escapeHtml(text) {
-        return text
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;")
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
-    }
     escapeCode(text) {
         return text
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;");
+    }
+    escapeQuote(text) {
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, "&quot;");
     }
 }
