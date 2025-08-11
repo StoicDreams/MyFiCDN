@@ -5,7 +5,6 @@
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
  * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
  */
-/*  */
 "use strict"
 const webui = (() => {
     {
@@ -232,6 +231,17 @@ const webui = (() => {
                 watchedSessionData[key] = cachedSessionData[key];
             });
         }
+        /**
+         * Apply data to markdown and convert to HTML
+         *
+         * @param {string} content - Markdown to apply data to and convert to HTML.
+         * @param {boolean} preTrim - Pretrim leading spaces in lines prior to conversion.
+         * @param {boolean} noParagraph - Exclude wrapping single lined content with a paragraph element.
+         * @returns {string} Converted HTML.
+         * @example
+         * // returns '<p>Hello World</p>'
+         * applyAppDataToContent('Hello World');
+         */
         applyAppDataToContent(content, preTrim, noParagraph) {
             let data = typeof preTrim !== undefined && typeof preTrim !== 'boolean' ? preTrim : undefined;
             let pt = typeof preTrim == 'boolean' ? preTrim : undefined;

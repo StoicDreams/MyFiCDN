@@ -6,8 +6,13 @@
     },
     {
         "name": "Components",
-        "icon": "hierarchy|has-shadow:true|rotate:270",
+        "icon": "hierarchy|has-shadow:true|rotate:270|theme:secondary",
         "url": "/components"
+    },
+    {
+        "name": "Web UI Methods",
+        "icon": "hierarchy|has-shadow:true|rotate:270|theme:primary",
+        "url": "/webui-methods"
     },
     {
         "name": "Test",

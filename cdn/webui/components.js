@@ -13,7 +13,7 @@
         content: true,
         watchVisibility: false,
         isInput: false,
-        preload: '',
+        preload: 'tabs content alert button',
         constructor: (t) => { },
         flags: [],
         attr: ['height', 'max-height'],
