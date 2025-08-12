@@ -2884,11 +2884,31 @@ const webui = (() => {
             }
         }
     });
-    window.onerror = function (message, source, lineno, colno, errorObject) {
-        const fullErrorMessage = `Error: ${message}\nSource: ${source}:${lineno}:${colno}`;
-        console.error('An uncaught error occurred:', fullErrorMessage);
-        webui.alert(fullErrorMessage, 'danger');
-        return true;
+    window.addEventListener('load', () => {
+        const FIVE_MINUTES_MS = 5 * 60 * 1000;
+        let lastError = {};
+        function buildMessage(event) {
+            if (event.reason && event.reason.message) {
+                return `Unhandled Promise Rejection: ${event.reason.message || event.reason}\nStack: ${event.reason.stack}`;
+            }
+            return `Unhandled Error: ${event.message}\nSource: ${event.filename}:${event.lineno}:${event.colno}`;
+        }
+        function errorHandler(event) {
+            event.preventDefault();
+            const message = buildMessage(event);
+            const hc = webui.hashCode(message);
+            if (lastError[hc] !== undefined && (Date.now() - lastError[hc]) < FIVE_MINUTES_MS) {
+                return true;
+            }
+            lastError[hc] = Date.now();
+            webui.alert(message, 'danger');
+            return true;
+        }
+        window.addEventListener('error', errorHandler);
+        window.addEventListener('unhandledrejection', errorHandler);
+    });
+    window.throwTestError = () => {
+        throw new Error("This is a simulated uncaught error!");
     };
     window.addEventListener('resize', _ev => {
         webui.applyDynamicStyles();
