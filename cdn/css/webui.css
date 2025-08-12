@@ -141,6 +141,14 @@
     opacity: 0;
 }
 
+i.vl {
+    content: " ";
+    display: inline-block;
+    margin: -0.5ch 0.5em;
+    border: 1px solid var(--color-background-offset, #888);
+    height: 2ch;
+}
+
 webui-condition:not(:has(*:not([slot]))),
 webui-page-requires,
 webui-data,

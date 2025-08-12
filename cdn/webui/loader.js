@@ -245,8 +245,11 @@ const webui = (() => {
         appConfig = {};
         /**
          * Instance of class MarkdownParser - a Web UI specific Markdown parser.
+         *
          * This is a custom markdown parser developed specifically for Web UI flavored markdown which prioritizes HTML support within markdown and using Web UI components to handle specific conversion to HTML.
+         *
          * Standard markdown is generally supported, but can include extra syntax support for Web UI specific options.
+         *
          * One noteable deviation from standard markdown is sequential paragraph lines are not merged into a single paragraph, but instead are treated as separate paragraphs.
          *
          * @returns {MarkdownParser}
@@ -282,8 +285,30 @@ const webui = (() => {
             let pt = typeof preTrim == 'boolean' ? preTrim : undefined;
             return this.parseWebuiMarkdown(this.replaceAppData(content, data), pt, noParagraph);
         }
+        /**
+         * Placeholder for method to call when applying dynamic styles.
+         *
+         * This method is intended to be overwritten by the app.js component.
+         *
+         * This should generally only be used internally by Web UI.
+         *
+         * @returns {undefined}
+         * @example
+         * // within an app.js component constructor
+         * webui.applyDynamicStyles = () => { t.applyDynamicStyles(); };
+         */
         applyDynamicStyles() { }
-        applyProperties(t) { }
+        /**
+         * Safely deep clone an object.
+         *
+         * @param {any} data - Any data
+         * @returns {any}
+         * @example
+         * let original = {one:[1,2,3]};
+         * let cloned = webui.clone(original);
+         * original.one.shift();
+         * console.log(original, cloned); // {one:[2,3]}, {one:[1,2,3]}
+         */
         clone(data) {
             if (data === undefined || data === null) return data;
             if (typeof data !== 'object') return data;
@@ -294,15 +319,40 @@ const webui = (() => {
                 return structuredClone(data);
             }
         }
+        /**
+         * Escape special characters from text meant to include in code snippet.
+         *
+         * Escapes &, <, and >.
+         *
+         * @param {string} text - Text to apply translations to.
+         * @returns {string}
+         * @example
+         * let original = {one:[1,2,3]};
+         * let cloned = webui.clone(original);
+         * original.one.shift();
+         * console.log(original, cloned); // {one:[2,3]}, {one:[1,2,3]}
+         */
         escapeCode(text) {
             return text
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;");
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         escapeQuote(text) {
             return text.replace(/"/g, "&quot;");
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         escapeHtml(text) {
             return text
                 .replace(/"/g, "&quot;")
@@ -311,10 +361,22 @@ const webui = (() => {
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;");
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         create(name, attr) {
             let el = document.createElement(name);
             return this.attachAttributes(el, attr);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         createFromHTML(html, attr) {
             let container = this.create('div');
             container.innerHTML = html;
@@ -322,6 +384,12 @@ const webui = (() => {
             if (!el) return el;
             return this.attachAttributes(el, attr);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         attachAttributes(el, attr) {
             if (attr) {
                 Object.keys(attr).forEach(key => {
@@ -346,6 +414,12 @@ const webui = (() => {
             }
             return el;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         closest(target, selector) {
             if (!target) return null;
             if (target.composedPath instanceof Function) {
@@ -362,10 +436,22 @@ const webui = (() => {
             }
             return null;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         async copyToClipboard(value) {
             await navigator.clipboard.writeText(value);
             webui.alert('Copied code to clipboard', 'success');
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         define(name, options) {
             options = options || {};
             options.attr = options.attr || [];
@@ -637,6 +723,12 @@ const webui = (() => {
             }
             customElements.define(name, CustomElement, defineOptions);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         displaySeconds(value, onZero = '0 seconds') {
             let seconds = parseFloat(value) || 0;
             if (seconds === 0) return onZero;
@@ -658,6 +750,12 @@ const webui = (() => {
             }
             return result.join(' ');
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         displayMinutes(value, onZero = '0 minutes') {
             let min = parseFloat(value) || 0;
             if (min === 0) return onZero;
@@ -675,11 +773,23 @@ const webui = (() => {
             }
             return result.join(' ');
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         displayLeadingZero(number, count = 1) {
             let pad = 1 + count - `${number}`.length;
             if (pad <= 0) return `${number}`;
             return `${'0'.repeat(pad)}${number}`;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         escapeForHTML(text) {
             return text
                 .replace(/&/g, "&amp;")
@@ -690,6 +800,12 @@ const webui = (() => {
                 .replace(/\//g, "&#x2F;")
                 .replace(/`/g, "&#96;");
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         async fetchApi(url, data, method = 'POST') {
             const t = this;
             if (!url.startsWith('http')) {
@@ -727,6 +843,12 @@ const webui = (() => {
                 headers: headers
             });
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         fetchWithCache(url, isJson) {
             return new Promise((resolve, reject) => {
                 if (cachedFetches[url]) {
@@ -750,6 +872,12 @@ const webui = (() => {
                 }
             });
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         fromBase64(encoded) {
             encoded = encoded.replace(/-/g, '+').replace(/_/g, '/');
             while (encoded.length % 4 !== 0) {
@@ -757,6 +885,12 @@ const webui = (() => {
             }
             return atob(encoded);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         getData(...args) {
             if (args.length === 0) return undefined;
             if (args.length > 1) {
@@ -783,6 +917,12 @@ const webui = (() => {
             if (typeof data !== 'object') return data;
             return webui.clone(data);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         getNestedData(key, data) {
             let segments = key.split('.');
             if (!data) return undefined;
@@ -801,6 +941,12 @@ const webui = (() => {
             }
             return data;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         getDefined(...args) {
             for (let index = 0; index < args.length; ++index) {
                 if (args[index] !== undefined && args[index] !== null) {
@@ -809,6 +955,12 @@ const webui = (() => {
             }
             return undefined;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         getHtmlFromTemplate(template, data) {
             if (!template || typeof template.assignedElements !== 'function') return '';
             let html = [];
@@ -820,6 +972,12 @@ const webui = (() => {
             });
             return this.applyAppDataToContent(html.join('\n'), data);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         getQueryData(key) {
             let data = location.search;
             if (!data || data[0] !== '?') return null;
@@ -831,6 +989,12 @@ const webui = (() => {
             if (!key) return dict;
             return dict[key];
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         getResponseHeader(resp, ...keys) {
             let message = undefined;
             keys.forEach(key => {
@@ -839,9 +1003,21 @@ const webui = (() => {
             });
             return message;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         getSearchData(key) {
             return webui.getQueryData(key);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         hashCode(text) {
             if (typeof text === undefined) return 0;
             if (typeof text !== 'string') return -1;
@@ -853,6 +1029,12 @@ const webui = (() => {
             }
             return hash | 0;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         hasSetter(el, field) {
             if (!el || typeof field !== 'string') return false;
             let proto = el;
@@ -865,25 +1047,53 @@ const webui = (() => {
             }
             return false;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         isEqual(a, b) {
             if (a === b) return true;
             if (typeof a !== typeof b) return false;
             if (a !== a && b !== b) return true;
             return JSON.stringify(a) === JSON.stringify(b);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @returns {string}
+         */
         get isLocalhost() {
             if (domain === 'localhost') return true;
             if (parseInt(domain).toString() !== 'NaN') return true;
             return false;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         isTextOverflowing(el) {
             return el.scrollWidth > el.clientWidth + 1;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @returns {string}
+         */
         get isSignedIn() {
             const t = this;
             let role = t.getDefined(t.getData('session-user-role'), 0);
             return !!((role && 1) !== 0);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         limitChars(text, limit) {
             if (!text || !text.length || text.length <= limit) return text;
             let words = text.split(' ');
@@ -904,6 +1114,12 @@ const webui = (() => {
             }
             return result.join(' ');
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         log = (() => {
             let log = (...args) => console.log(...args);
             log.assert = (...args) => console.assert(...args);
@@ -916,6 +1132,12 @@ const webui = (() => {
             log.timeEnd = (key) => console.timeEnd(key);
             return log;
         })()
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         unitIfNumber(input, unit) {
             let num = parseFloat(input);
             if (num === input || `${num}` === input) {
@@ -923,15 +1145,39 @@ const webui = (() => {
             }
             return input;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         pxIfNumber(input) {
             return this.unitIfNumber(input, 'px');
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         msIfNumber(input) {
             return this.unitIfNumber(input, 'ms');
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         navigateTo(href) {
             changePage(href);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         updateHash(hash) {
             hash = typeof hash !== 'string' ? '' : hash;
             hash = hash.trim();
@@ -940,6 +1186,12 @@ const webui = (() => {
             }
             changePage(`${location.pathname}${hash}${location.search}`);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         removeWrappingPTags(html, tagPattern) {
             while (html.match(`<p><(${tagPattern})[\> ]{1}`)) {
                 let orig = html;
@@ -950,6 +1202,12 @@ const webui = (() => {
             }
             return html;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         async closeSharedDrawer() {
             let el = document.querySelector('webui-drawer.shared');
             if (!el) return;
@@ -958,6 +1216,12 @@ const webui = (() => {
                 await webui.wait(400);
             }
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         async openSharedDrawer(header, content) {
             if (content === undefined) {
                 content = header;
@@ -1023,9 +1287,21 @@ const webui = (() => {
             el.classList.add('open');
             return content;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         parseWebuiMarkdown(md, preTrim, noParagraph) {
             return this.parseMarkdown(md, preTrim, noParagraph);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         parseMarkdown(md, preTrim, noParagraph) {
             const t = this;
             if (typeof md !== 'string') return md;
@@ -1034,6 +1310,12 @@ const webui = (() => {
             }
             return t.markdown.parse(md, noParagraph) || '';
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         removeFromParentPTag(el) {
             if (el.parentNode && el.parentNode.nodeName === 'P') {
                 let p = el.parentNode;
@@ -1046,6 +1328,12 @@ const webui = (() => {
             }
             return el;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         removeChildren(t, condition) {
             let tr = [];
             t.childNodes.forEach(ch => {
@@ -1062,6 +1350,12 @@ const webui = (() => {
             });
             return tr;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         removeClass(t, prefix) {
             let r = [];
             t.classList.forEach(c => {
@@ -1069,6 +1363,12 @@ const webui = (() => {
             });
             r.forEach(c => t.classList.remove(c));
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         removeElements(parent, selector, action) {
             let tr = [];
             parent.querySelectorAll(selector).forEach(n => {
@@ -1081,6 +1381,12 @@ const webui = (() => {
                 n.remove();
             });
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         repeat(digit, length) {
             if (!length) return '';
             let digits = [];
@@ -1090,6 +1396,12 @@ const webui = (() => {
             }
             return digits.join('');
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         replaceAppData(text, data) {
             if (typeof text !== 'string') return text;
             if (data) {
@@ -1121,6 +1433,12 @@ const webui = (() => {
             });
             return text;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         replaceData(text, data) {
             if (text.indexOf("{TEMPLATE_ROWDATA}") !== -1) {
                 let rowData = webui.escapeForHTML(JSON.stringify(data));
@@ -1149,6 +1467,12 @@ const webui = (() => {
             });
             return text;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         resolveFunctionFromString(value, context = window) {
             let t = this;
             const parts = value.split('.');
@@ -1168,9 +1492,21 @@ const webui = (() => {
             }
             return null;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         setApp(app) {
             appSettings.app = app;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         setData(key, value) {
             if (!key) return;
             key = key.split(':')[0];
@@ -1228,6 +1564,12 @@ const webui = (() => {
                 });
             });
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         querySelectorAll(selector, rootNode = document) {
             const results = [];
             if (!rootNode || typeof (rootNode.querySelectorAll) !== 'function') {
@@ -1244,6 +1586,12 @@ const webui = (() => {
             });
             return results;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         setDefaultData(data, defaultData) {
             if (!data || !defaultData) return data;
             defaultData = JSON.parse(JSON.stringify(defaultData));
@@ -1254,6 +1602,12 @@ const webui = (() => {
             });
             return data;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         setFlag(t, property, value) {
             if ([undefined, null, 0, false, 'false', 'null', 'undefined', '0'].indexOf(value) !== -1) {
                 t[property] = false;
@@ -1263,6 +1617,12 @@ const webui = (() => {
                 return true;
             }
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         setProperty(t, property, value) {
             if (property !== 'value' && (value === null || value === undefined)) {
                 delete t[property];
@@ -1280,10 +1640,22 @@ const webui = (() => {
                     break;
             }
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         setTheme(el, value) {
             el.style.setProperty('--theme-color', `var(--color-${value})`);
             el.style.setProperty('--theme-color-offset', `var(--color-${value}-offset)`);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} text
+         * @returns {string}
+         */
         targetMatchesCheck(parent, target, check, onSuccess) {
             while (true) {
                 if (!target) return false;
@@ -1311,17 +1683,49 @@ const webui = (() => {
                 target = target.parentNode || target.host;
             }
         }
+        /**
+         * Convert to snake case syntax.
+         *
+         * e.g. this_is_snake_case
+         *
+         * @param {string} key
+         * @param {string} delim Delimiter to use between words
+         * @returns {string}
+         */
         toSnake(key, delim = '_') {
             return key.trim().replace(/[A-Z]{1}/g, letter => `${delim}${letter.toLowerCase()}`).replace(/[-_ ]+/g, _ => delim);
         }
+        /**
+         * Convert text to camel case syntax.
+         *
+         * e.g. thisIsCamelCase
+         *
+         * @param {string} key
+         * @returns {string}
+         */
         toCamel(key) {
             return key.trim().replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })
                 .replace(/^[A-Z]{1}/, a => { return a.toLowerCase(); });
         }
+        /**
+         * Convert text to pascel case syntax.
+         *
+         * e.g. ThisIsPascelCase
+         *
+         * @param {string} key
+         * @returns {string}
+         */
         toPascel(key) {
             return key.trim().replace(/((-| )[A-Za-z0-9]{1})/g, a => { return a[1].toUpperCase(); })
-                .replace(/^[A-Z]{1}/, a => { return a.toUpperCase(); });
+                .replace(/^[a-z]{1}/, a => { return a.toUpperCase(); });
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {Node} from
+         * @param {Node} to
+         * @returns {undefined}
+         */
         transferChildren(from, to) {
             let nodes = [];
             from.childNodes.forEach(ch => {
@@ -1331,6 +1735,13 @@ const webui = (() => {
                 to.appendChild(ch);
             });
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} html
+         * @param {number} tabLength
+         * @returns {string}
+         */
         trimLinePreTabs(html, tabLength = 4) {
             let lines = [], ls = 0;
             let tabRepl = webui.repeat(' ', tabLength);
@@ -1355,6 +1766,12 @@ const webui = (() => {
             }
             return lines.join('\n');
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {string} html
+         * @returns {string}
+         */
         trimLinePreWhitespce(html) {
             let lines = [];
             html.split('\n').forEach(l => {
@@ -1362,6 +1779,14 @@ const webui = (() => {
             });
             return lines.join('\n');
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {function} handler
+         * @param {function} onError
+         * @param {function} onFinally
+         * @returns {Promise} Response from handler
+         */
         async try(handler, onError, onFinally) {
             if (typeof handler !== 'function') {
                 console.error('Invalid handler for webui.try - expecting function', handler, onError);
@@ -1383,6 +1808,13 @@ const webui = (() => {
                 }
             }
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {function} handler
+         * @param {function} onError
+         * @returns {Promise} Response from handler
+         */
         async trySoloProcess(handler, onError) {
             if (typeof handler !== 'function') {
                 console.error('Invalid handler for webui.trySoloProcess - expecting function', handler, onError);
@@ -1404,6 +1836,13 @@ const webui = (() => {
                 isProcessing = false;
             }
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {function} handler
+         * @param {function} onError
+         * @returns {Promise} Response from handler
+         */
         eventSoloProcess(handler, onError) {
             if (typeof handler !== 'function') {
                 console.error('Invalid handler for webui.eventSoloProcess - expecting function', handler, onError);
@@ -1427,6 +1866,11 @@ const webui = (() => {
                 }
             }
         }
+        /**
+         * Method to load user roles based on the app configuration.
+         *
+         * @returns {Promise}
+         */
         async loadRoles() {
             let t = this;
             if (t.appConfig && t.appConfig.rolesApi) {
@@ -1447,15 +1891,42 @@ const webui = (() => {
                 console.warn("Cannot load roles, missing configuration.");
             }
         }
+        /**
+         * Check if user is assigned the given role.
+         *
+         * See webui.roles for available roles.
+         *
+         * @param {number} role
+         * @returns {boolean} true if user has role assigned, false if not
+         */
         hasRole(role) {
             return (this.userRoles & role) === role;
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @returns {object} Mapping of available user roles
+         */
         get roles() {
             return roles;
         }
+        /**
+         * Get roles assigned to current user.
+         *
+         * Roles are represented in an integer usign bitwise checks. (e.g. 0=Guest, 1=User, 2=..., 4=..., 8=..., etc.)
+         *
+         * @returns {number} i32 Integer representing current roles of user.
+         */
         get userRoles() {
             return this.getData('session-user-role');
         }
+        /**
+         * Create a new random UUID.
+         *
+         * Attempts to use crypto.randomUUID(), falls back to inline method if fails.
+         *
+         * @returns {string} string representing a new UUID unique identifier.
+         */
         uuid() {
             try {
                 return crypto.randomUUID();
@@ -1466,25 +1937,64 @@ const webui = (() => {
                 });
             }
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {object} data
+         * @param {function} handler
+         * @returns {string}
+         */
         watchData(data, handler) {
             return new Proxy(data, getHandler(handler));
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {function} handler
+         * @returns {string}
+         */
         watchAppDataChanges(handler) {
             notifyForAppDataChanges.push(handler);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {function} handler
+         * @returns {undefined}
+         */
         watchSessionDataChanges(handler) {
             notifyForSessionDataChanges.push(handler);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {function} handler
+         * @returns {undefined}
+         */
         unwatchAppDataChanges(handler) {
             let index = notifyForAppDataChanges.indexOf(handler);
             if (index === -1) return;
             notifyForAppDataChanges.splice(index, 1);
         }
+        /**
+         * TODO: Details coming soon
+         *
+         * @param {function} handler
+         * @returns {undefined}
+         */
         unwatchSessionDataChanges(handler) {
             let index = notifyForSessionDataChanges.indexOf(handler);
             if (index === -1) return;
             notifyForSessionDataChanges.splice(index, 1);
         }
+        /**
+         * Awaitable method to wait for a given time in milliseconds before continuing process.
+         *
+         * Note: When passing a method, wait will resolve no later than 10 seconds. This is done to avoid waits that go on forever because of batch logic.
+         *
+         * @param {number|function} milliseconds - milliseconds to wait | Method that returns true|false and flags when the wait can resolve.
+         * @returns {Promise}
+         */
         wait(milliseconds) {
             return new Promise(async resolve => {
                 if (typeof milliseconds === 'function') {

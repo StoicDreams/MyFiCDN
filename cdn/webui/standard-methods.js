@@ -32,7 +32,7 @@
                 isExample = false;
                 continue;
             }
-            let [, , key, , type, , paramName, text] = lines[index].match(/^[\s]{9}\*( \@([a-z]+))?( \{([a-z]+)\})?( ([A-Za-z0-9_]+) -)? ?(.+)?$/) || [];
+            let [, , key, , type, , paramName, text] = lines[index].match(/^[\s]{9}\*( \@([a-z]+))?( \{([a-z\|]+)\})?( ([A-Za-z0-9_]+) -)? ?(.+)?$/) || [];
             if (key || type || paramName || text) {
                 if (!key) {
                     if (isExample) {
@@ -45,8 +45,11 @@
                 } else {
                     switch (key) {
                         case 'param':
+                            if (!paramName && text) {
+                                paramName = text;
+                            }
                             if (!paramName) {
-                                console.error('Param is missing paramName', lines[index], type, text);
+                                console.error('Param is missing paramName |%s|type:%s|text:%s|', lines[index], type, text, lines[index].match(/^[\s]{9}\*( \@([a-z]+))?( \{([A-Za-z\|]+)\})?( ([A-Za-z0-9_]+) -)? ?(.+)?$/));
                                 continue;
                             }
                             let pd = {};
@@ -78,7 +81,7 @@
                 continue;
             }
             isExample = false;
-            let [, funcName, args, , closing] = lines[index].match(/^[\s]{8}([A-Za-z0-9_]+)\(([^\)]+)?\) ?\{.*(\})?$/) || [];
+            let [, , getset, funcName, args, , closing] = lines[index].match(/^[\s]{8}((get|set) )?([A-Za-z0-9_]+)\(([^\)]+)?\) ?\{.*(\})?$/) || [];
             if (['constructor'].indexOf(funcName) !== -1) {
                 continue;
             }
@@ -101,7 +104,7 @@
                     }
                     currentMethod.parameters.push(p);
                 });
-                currentMethod.type = 'method';
+                currentMethod.type = getset ? getset : 'method';
                 currentMethod.description = webui.escapeCode(currentMetadata.description.join('\n')).trim();
                 currentMethod.returns = currentMetadata.returns;
                 currentMethod.line = index;
@@ -111,7 +114,7 @@
                 currentMethod = startMethodObject();
             }
         }
-        return methods;
+        return methods.sort((a, b) => a.name > b.name ? 1 : a.name < b.name ? -1 : 0);
     }
     function startCommentObject() {
         return {
@@ -134,6 +137,9 @@
     }
     function extractClassBody(src) {
         return src.match(/(class WebUI \{(.*)\})[\n\s]+const webui/s)[2];
+    }
+    function fixSpecialCharacters(text) {
+        return text.replace(/\|/g, '<i class="vl"></i>');
     }
     const isLocalDev = location.port === '3180';
     const srcRoot = isLocalDev ? '' : 'https://cdn.myfi.ws';
@@ -176,7 +182,7 @@
                         console.error('Method is missing name %o', method);
                         return;
                     }
-                    let button = webui.create('webui-button', { hash: method.name, align: 'left', slot: 'tabs', text: method.name });
+                    let button = webui.create('webui-button', { hash: method.name, align: 'left', slot: 'tabs', text: `webui.${method.name}` });
                     tabs.appendChild(button);
                     let args = method.parameters.map(p => p.name).join(', ');
                     let post = '';
@@ -185,12 +191,24 @@
                             post = `(${args})`;
                             break;
                         case 'field':
-
                             if (method.returns.type) {
                                 post = `:${method.returns.type}`;
                             }
                             if (method.returns.description) {
                                 post += ` - ${method.returns.description}`;
+                            }
+                            break;
+                        case 'get':
+                            if (method.returns.type) {
+                                post = `:${method.returns.type}`;
+                            }
+                            if (method.returns.description) {
+                                post += ` - ${method.returns.description}`;
+                            }
+                            break;
+                        case 'set':
+                            if (method.returns.type) {
+                                post = `:${method.returns.type}`;
                             }
                             break;
                         default:
@@ -211,10 +229,10 @@
                         method.parameters.forEach(a => {
                             let type = a.type ? a.type : 'any';
                             let def = a.def ? `= ${a.def} ` : '';
-                            md += `> [tertiary] **${a.name}**:${type} ${def}
+                            md += `> [tertiary] **${a.name}**:${fixSpecialCharacters(type)} ${fixSpecialCharacters(def)}
 `;
                             if (a.description) {
-                                let desk = a.description.split(/[\r\n]+/).join('\n>>');
+                                let desk = fixSpecialCharacters(a.description).split(/[\r\n]+/).join('\n>>');
                                 md += `>>${desk}\n`;
                             }
                         });
@@ -242,6 +260,20 @@ ${text}
                         md += `
 \`\`\`javascript:Example
 let result = webui.${method.name}(${args});
+\`\`\`
+`;
+                    } else if (method.type === 'get') {
+                        md += '##### Examples\n';
+                        md += `
+\`\`\`javascript:Example
+let result = webui.${method.name};
+\`\`\`
+`;
+                    } else if (method.type === 'set') {
+                        md += '##### Examples\n';
+                        md += `
+\`\`\`javascript:Example
+webui.${method.name} = value;
 \`\`\`
 `;
                     }

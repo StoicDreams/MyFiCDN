@@ -430,7 +430,7 @@ export class MarkdownParser {
             .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
             .replace(/__(.+?)__/g, '<strong>$1</strong>')
             .replace(/\*(?!\s)(.+?)(?!\s)\*/g, '<em>$1</em>')
-            .replace(/_(?!\s)(.+?)(?!\s)_/g, '<em>$1</em>');
+            .replace(/(?<!\S)_(?!\s)(.+?)(?<!\s)_(?!\.\,\S)/g, '<em>$1</em>');
 
         codeSpans.forEach((val, i) => {
             text = text.replace(`^^CODE${i}^^`, val);
