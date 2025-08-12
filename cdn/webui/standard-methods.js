@@ -1,5 +1,11 @@
 "use strict"
 {
+    /**
+     * TODO: Need to handle
+     * - handle parameters with ...args syntax
+     * - bug: description missing first word
+     * - handle and document optional parameters
+     */
     function parseWebUIMethods(source) {
         const body = extractClassBody(source);
         if (!body) return [];

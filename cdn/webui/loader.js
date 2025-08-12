@@ -339,7 +339,7 @@ const webui = (() => {
                 .replace(/>/g, "&gt;");
         }
         /**
-         * TODO: Details coming soon
+         * Escape double quotes.
          *
          * @param {string} text
          * @returns {string}
@@ -348,7 +348,17 @@ const webui = (() => {
             return text.replace(/"/g, "&quot;");
         }
         /**
-         * TODO: Details coming soon
+         * Escape special characters for HTML.
+         *
+         * replaces " with &amp;quot;
+         *
+         * replaces ' with &amp;#039;
+         *
+         * replaces & with &amp;amp;
+         *
+         * replaces < with &amp;lt;
+         *
+         * replaces > with &amp;gt;
          *
          * @param {string} text
          * @returns {string}
@@ -362,9 +372,10 @@ const webui = (() => {
                 .replace(/>/g, "&gt;");
         }
         /**
-         * TODO: Details coming soon
+         * Create an element.
          *
-         * @param {string} text
+         * @param {string} name
+         * @param {object} attr
          * @returns {string}
          */
         create(name, attr) {
@@ -372,10 +383,11 @@ const webui = (() => {
             return this.attachAttributes(el, attr);
         }
         /**
-         * TODO: Details coming soon
+         * Convert html representing a single element into a Node.
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {string} html
+         * @param {object} attr
+         * @returns {Node}
          */
         createFromHTML(html, attr) {
             let container = this.create('div');
@@ -387,7 +399,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
+         * @param {Node} el
+         * @param {object} attr
          * @returns {string}
          */
         attachAttributes(el, attr) {
@@ -417,7 +430,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
+         * @param {Node} target
+         * @param {string} selector
          * @returns {string}
          */
         closest(target, selector) {
@@ -439,7 +453,7 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
+         * @param {string} value
          * @returns {string}
          */
         async copyToClipboard(value) {
@@ -447,15 +461,32 @@ const webui = (() => {
             webui.alert('Copied code to clipboard', 'success');
         }
         /**
-         * TODO: Details coming soon
+         * Defines a custom web component.
          *
-         * @param {string} text
-         * @returns {string}
+         * This is the base for how all Web UI components are created.
+         *
+         * @param {string} name
+         * @param {object} options
+         * @returns {undefined}
          */
         define(name, options) {
+            if (typeof name !== 'string') {
+                console.error('name in webui.define(name) must be a string');
+                return;
+            }
+            if (name.substring(0, 6) !== 'webui-' && name.substring(0, 4) !== 'app-') {
+                console.error('name in webui.define(name) must start with the prefix `app-`.');
+                return;
+            }
             options = options || {};
             options.attr = options.attr || [];
+            if (typeof options.attr === 'string') {
+                options.attr = options.attr.split(/[, ]+/);
+            }
             options.flags = options.flags || [];
+            if (typeof options.flags === 'string') {
+                options.flags = options.flags.split(/[, ]+/);
+            }
             ['class'].forEach(attr => {
                 if (options.attr.indexOf(attr) === -1) {
                     options.attr.push(attr);
@@ -726,7 +757,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
+         * @param {number} value
+         * @param {string} onZero
          * @returns {string}
          */
         displaySeconds(value, onZero = '0 seconds') {
@@ -753,7 +785,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
+         * @param {number} value
+         * @param {string} onZero
          * @returns {string}
          */
         displayMinutes(value, onZero = '0 minutes') {
@@ -776,7 +809,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
+         * @param {number} number
+         * @param {number} count
          * @returns {string}
          */
         displayLeadingZero(number, count = 1) {
@@ -785,7 +819,21 @@ const webui = (() => {
             return `${'0'.repeat(pad)}${number}`;
         }
         /**
-         * TODO: Details coming soon
+         * Escape text for display in HTML.
+         *
+         * replaces & with &amp;amp;
+         *
+         * replaces < with &amp;lt;
+         *
+         * replaces > with &amp;gt;
+         *
+         * replaces " with &amp;quot;
+         *
+         * replaces ' with &amp;#39;
+         *
+         * replaces / with &amp;#x2F;
+         *
+         * replaces ` with &amp;#96;
          *
          * @param {string} text
          * @returns {string}
@@ -801,9 +849,11 @@ const webui = (() => {
                 .replace(/`/g, "&#96;");
         }
         /**
-         * TODO: Details coming soon
+         * Fetch from API using root endpoint as defined in App config.
          *
-         * @param {string} text
+         * @param {string} url
+         * @param {object} data
+         * @param {string} method (POST|GET|DELETE|PATCH)
          * @returns {string}
          */
         async fetchApi(url, data, method = 'POST') {
@@ -844,10 +894,13 @@ const webui = (() => {
             });
         }
         /**
-         * TODO: Details coming soon
+         * Fetch from url using a get request, caching response. Subsequent requests to the same url will skip fetch and just returned cached data.
          *
-         * @param {string} text
-         * @returns {string}
+         * Endpoint is expected to not change for lifetime of user session.
+         *
+         * @param {string} url
+         * @param {boolean} isJson Set true to apply JSON parsing on response body, false to return body untouched.
+         * @returns {string|any}
          */
         fetchWithCache(url, isJson) {
             return new Promise((resolve, reject) => {
@@ -873,9 +926,9 @@ const webui = (() => {
             });
         }
         /**
-         * TODO: Details coming soon
+         * Decode base64 string to decoded value.
          *
-         * @param {string} text
+         * @param {string} encoded
          * @returns {string}
          */
         fromBase64(encoded) {
@@ -886,10 +939,10 @@ const webui = (() => {
             return atob(encoded);
         }
         /**
-         * TODO: Details coming soon
+         * Get data from key, or pass multiple keys to return array of results.
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {string} args
+         * @returns {any}
          */
         getData(...args) {
             if (args.length === 0) return undefined;
@@ -920,8 +973,9 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {string} key
+         * @param {object} data
+         * @returns {any}
          */
         getNestedData(key, data) {
             let segments = key.split('.');
@@ -942,10 +996,10 @@ const webui = (() => {
             return data;
         }
         /**
-         * TODO: Details coming soon
+         * Return first argument that is not null or undefined.
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {any} args
+         * @returns {any}
          */
         getDefined(...args) {
             for (let index = 0; index < args.length; ++index) {
@@ -958,7 +1012,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
+         * @param {string} template
+         * @param {object} data
          * @returns {string}
          */
         getHtmlFromTemplate(template, data) {
@@ -975,8 +1030,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {string} key
+         * @returns {object}
          */
         getQueryData(key) {
             let data = location.search;
@@ -992,7 +1047,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
+         * @param {object} resp
+         * @param {string} keys
          * @returns {string}
          */
         getResponseHeader(resp, ...keys) {
@@ -1006,17 +1062,17 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {string} key
+         * @returns {object}
          */
         getSearchData(key) {
             return webui.getQueryData(key);
         }
         /**
-         * TODO: Details coming soon
+         * Turn a string into a hashcode using a standard and repeatable algorithm.
          *
          * @param {string} text
-         * @returns {string}
+         * @returns {number}
          */
         hashCode(text) {
             if (typeof text === undefined) return 0;
@@ -1032,8 +1088,9 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {Node} el
+         * @param {string} field
+         * @returns {boolean}
          */
         hasSetter(el, field) {
             if (!el || typeof field !== 'string') return false;
@@ -1050,8 +1107,9 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {any} a
+         * @param {any} b
+         * @returns {boolean}
          */
         isEqual(a, b) {
             if (a === b) return true;
@@ -1062,7 +1120,7 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @returns {string}
+         * @returns {boolean}
          */
         get isLocalhost() {
             if (domain === 'localhost') return true;
@@ -1072,16 +1130,16 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {Node} el
+         * @returns {boolean}
          */
         isTextOverflowing(el) {
             return el.scrollWidth > el.clientWidth + 1;
         }
         /**
-         * TODO: Details coming soon
+         * Is true if the user is signed in (i.e. role bit matches 1 signalling they are a user).
          *
-         * @returns {string}
+         * @returns {boolean}
          */
         get isSignedIn() {
             const t = this;
@@ -1092,6 +1150,7 @@ const webui = (() => {
          * TODO: Details coming soon
          *
          * @param {string} text
+         * @param {number} limit
          * @returns {string}
          */
         limitChars(text, limit) {
@@ -1117,8 +1176,7 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @returns {object}
          */
         log = (() => {
             let log = (...args) => console.log(...args);
@@ -1133,9 +1191,12 @@ const webui = (() => {
             return log;
         })()
         /**
-         * TODO: Details coming soon
+         * Appends unit to input if input is just a number.
          *
-         * @param {string} text
+         * This is used when applying styles from input that may inlude size postfix's such as %, em, etc.
+         *
+         * @param {string|number} input
+         * @param {string} unit
          * @returns {string}
          */
         unitIfNumber(input, unit) {
@@ -1146,37 +1207,41 @@ const webui = (() => {
             return input;
         }
         /**
-         * TODO: Details coming soon
+         * Appends px to input if input is just a number.
          *
-         * @param {string} text
+         * This is used when applying styles from input that may inlude size postfix's such as %, em, etc.
+         *
+         * @param {string|number} input
          * @returns {string}
          */
         pxIfNumber(input) {
             return this.unitIfNumber(input, 'px');
         }
         /**
-         * TODO: Details coming soon
+         * Appends ms to input if input is just a number.
          *
-         * @param {string} text
+         * This is used when applying styles from input that may inlude size postfix's such as %, em, etc.
+         *
+         * @param {string|number} input
          * @returns {string}
          */
         msIfNumber(input) {
             return this.unitIfNumber(input, 'ms');
         }
         /**
-         * TODO: Details coming soon
+         * Navigate to the given relative url.
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {string} href
+         * @returns {undefined}
          */
         navigateTo(href) {
             changePage(href);
         }
         /**
-         * TODO: Details coming soon
+         * Update url hashcode with the given hash.
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {string} hash
+         * @returns {undefined}
          */
         updateHash(hash) {
             hash = typeof hash !== 'string' ? '' : hash;
@@ -1189,7 +1254,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
+         * @param {string} html
+         * @param {string} tagPattern
          * @returns {string}
          */
         removeWrappingPTags(html, tagPattern) {
@@ -1203,10 +1269,9 @@ const webui = (() => {
             return html;
         }
         /**
-         * TODO: Details coming soon
+         * Close the shared drawer.
          *
-         * @param {string} text
-         * @returns {string}
+         * @returns {undefined}
          */
         async closeSharedDrawer() {
             let el = document.querySelector('webui-drawer.shared');
@@ -1217,10 +1282,11 @@ const webui = (() => {
             }
         }
         /**
-         * TODO: Details coming soon
+         * Open the shared drawer.
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {function|string} header
+         * @param {function|string} content
+         * @returns {Promise}
          */
         async openSharedDrawer(header, content) {
             if (content === undefined) {
@@ -1288,18 +1354,22 @@ const webui = (() => {
             return content;
         }
         /**
-         * TODO: Details coming soon
+         * Parse Web UI specific markdown content.
          *
-         * @param {string} text
+         * @param {string} md
+         * @param {boolean} preTrim
+         * @param {boolean} noParagraph
          * @returns {string}
          */
         parseWebuiMarkdown(md, preTrim, noParagraph) {
             return this.parseMarkdown(md, preTrim, noParagraph);
         }
         /**
-         * TODO: Details coming soon
+         * Parse Web UI specific markdown content.
          *
-         * @param {string} text
+         * @param {string} md
+         * @param {boolean} preTrim
+         * @param {boolean} noParagraph
          * @returns {string}
          */
         parseMarkdown(md, preTrim, noParagraph) {
@@ -1313,8 +1383,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {Node} el
+         * @returns {Node}
          */
         removeFromParentPTag(el) {
             if (el.parentNode && el.parentNode.nodeName === 'P') {
@@ -1331,8 +1401,9 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {Node} t
+         * @param {function} condition
+         * @returns {array} removed children
          */
         removeChildren(t, condition) {
             let tr = [];
@@ -1353,8 +1424,9 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {Node} t
+         * @param {string} prefix
+         * @returns {undefined}
          */
         removeClass(t, prefix) {
             let r = [];
@@ -1366,8 +1438,10 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {string} parent
+         * @param {string} selector
+         * @param {string} action
+         * @returns {undefined}
          */
         removeElements(parent, selector, action) {
             let tr = [];
@@ -1384,7 +1458,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
+         * @param {string} digit
+         * @param {number} length
          * @returns {string}
          */
         repeat(digit, length) {
@@ -1400,6 +1475,7 @@ const webui = (() => {
          * TODO: Details coming soon
          *
          * @param {string} text
+         * @param {object} data
          * @returns {string}
          */
         replaceAppData(text, data) {
@@ -1437,6 +1513,7 @@ const webui = (() => {
          * TODO: Details coming soon
          *
          * @param {string} text
+         * @param {object} data
          * @returns {string}
          */
         replaceData(text, data) {
@@ -1470,8 +1547,9 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {string} value
+         * @param {object} context
+         * @returns {function}
          */
         resolveFunctionFromString(value, context = window) {
             let t = this;
@@ -1495,8 +1573,8 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {Node} app
+         * @returns {undefined}
          */
         setApp(app) {
             appSettings.app = app;
@@ -1504,8 +1582,9 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {string} key
+         * @param {any} value
+         * @returns {undefined}
          */
         setData(key, value) {
             if (!key) return;
@@ -1567,8 +1646,9 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {string} selector
+         * @param {Node} rootNode
+         * @returns {array}
          */
         querySelectorAll(selector, rootNode = document) {
             const results = [];
