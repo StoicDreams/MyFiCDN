@@ -31,17 +31,6 @@ export class MarkdownParser {
     constructor() {
         this.initDefaultRules();
     }
-    escapeCode(text) {
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
-    }
-    escapeQuote(text) {
-        return text
-            .replace(/&/g, '&amp;')
-            .replace(/"/g, "&quot;");
-    }
     addRule(type, test, processor, render) {
         this.rules.push({ test, processor });
         this.renderers[type] = render;
@@ -63,7 +52,7 @@ export class MarkdownParser {
                 commands.stack.push({ tag: listTag, indent: token.indent });
             }
             if (token.check) {
-                return html + `<li class="${t.escapeQuote(token.check)}">${commands.renderInline(token.content)}</li>\n`;
+                return html + `<li class="${commands.escapeQuote(token.check)}">${commands.renderInline(token.content)}</li>\n`;
             }
             return html + `<li>${commands.renderInline(token.content)}</li>\n`;
         };
@@ -370,11 +359,11 @@ export class MarkdownParser {
                 }
                 return html;
             },
-            escapeCode: t.escapeCode,
-            escapeHtml: t.escapeHtml,
-            escapeQuote: t.escapeQuote,
-            parse: t.parse,
-            renderInline: t.renderInline
+            escapeCode: t.escapeCode.bind(t),
+            escapeHtml: t.escapeHtml.bind(t),
+            escapeQuote: t.escapeQuote.bind(t),
+            parse: t.parse.bind(t),
+            renderInline: t.renderInline.bind(t)
         }
         for (const token of tokens) {
             if (['ol_item', 'ul_item'].indexOf(token.type) === -1 && stack.length > 0) {
@@ -451,5 +440,24 @@ export class MarkdownParser {
             text = text.replace(`^^EMOJI${i}^^`, val);
         });
         return text;
+    }
+    escapeHtml(text) {
+        return text
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+    escapeCode(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+    escapeQuote(text) {
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, "&quot;");
     }
 }
