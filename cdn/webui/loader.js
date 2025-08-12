@@ -270,6 +270,23 @@ const webui = (() => {
             });
         }
         /**
+         * Alert system for displaying alerts to user
+         *
+         * To fully enable this process, include <webui-alerts> component in your index.html.
+         *
+         * @param {string} message - Message to display to user
+         * @param {string} variant - danger|success|warning|info
+         * @returns {undefined}
+         * @example
+         * webui.alert('Hello World');
+         * webui.alert('Hello World', 'danger');
+         * webui.alert('Hello World', 'warning');
+         * webui.alert('Hello World', 'success);
+         */
+        alert(message, variant) {
+            webui.log.warn('Alerts are not setup for this website', message, variant);
+        }
+        /**
          * Apply data to markdown and convert to HTML
          *
          * @param {string} content - Markdown to apply data to and convert to HTML.
@@ -2867,6 +2884,12 @@ const webui = (() => {
             }
         }
     });
+    window.onerror = function (message, source, lineno, colno, errorObject) {
+        const fullErrorMessage = `Error: ${message}\nSource: ${source}:${lineno}:${colno}`;
+        console.error('An uncaught error occurred:', fullErrorMessage);
+        webui.alert(fullErrorMessage, 'danger');
+        return true;
+    };
     window.addEventListener('resize', _ev => {
         webui.applyDynamicStyles();
     });
