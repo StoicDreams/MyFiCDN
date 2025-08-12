@@ -56,6 +56,7 @@
             });
             webui.removeElements(t, '[data-dynamic]');
             let index = 0;
+            data = data.filter(d => Object.keys(d).length > 0);
             data.forEach(item => {
                 let displayItem = webui.setDefaultData(item, { name: 'Name', label: 'Missing Label', content: 'Missing Content' });
                 displayItem['tab-index'] = index++;
