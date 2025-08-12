@@ -1587,10 +1587,11 @@ const webui = (() => {
             return results;
         }
         /**
-         * TODO: Details coming soon
+         * Populate missing key:value pairs in data with defaults found in defaultData.
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {object} data
+         * @param {object} defaultData
+         * @returns {object}
          */
         setDefaultData(data, defaultData) {
             if (!data || !defaultData) return data;
@@ -1603,10 +1604,12 @@ const webui = (() => {
             return data;
         }
         /**
-         * TODO: Details coming soon
+         * Set flag property (true|false) on node.
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {Node} t test
+         * @param {string} property
+         * @param {any} value
+         * @returns {undefined}
          */
         setFlag(t, property, value) {
             if ([undefined, null, 0, false, 'false', 'null', 'undefined', '0'].indexOf(value) !== -1) {
@@ -1618,10 +1621,12 @@ const webui = (() => {
             }
         }
         /**
-         * TODO: Details coming soon
+         * Set property on node.
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {Node} t
+         * @param {string} property
+         * @param {any} value
+         * @returns {undefined}
          */
         setProperty(t, property, value) {
             if (property !== 'value' && (value === null || value === undefined)) {
@@ -1643,8 +1648,9 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {Node} el
+         * @param {string} value primary | secondary | etc
+         * @returns {undefined}
          */
         setTheme(el, value) {
             el.style.setProperty('--theme-color', `var(--color-${value})`);
@@ -1653,8 +1659,11 @@ const webui = (() => {
         /**
          * TODO: Details coming soon
          *
-         * @param {string} text
-         * @returns {string}
+         * @param {Node} parent
+         * @param {Node} target
+         * @param {function|string} check
+         * @param {function} onSuccess
+         * @returns {boolean}
          */
         targetMatchesCheck(parent, target, check, onSuccess) {
             while (true) {

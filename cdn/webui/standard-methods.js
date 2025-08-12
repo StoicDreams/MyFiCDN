@@ -32,7 +32,7 @@
                 isExample = false;
                 continue;
             }
-            let [, , key, , type, , paramName, text] = lines[index].match(/^[\s]{9}\*( \@([a-z]+))?( \{([a-z\|]+)\})?( ([A-Za-z0-9_]+) -)? ?(.+)?$/) || [];
+            let [, , key, , type, paramName, , text] = lines[index].match(/^[\s]{9}\*\s?(@([a-z]+))?\s?(\{([A-Za-z\|]+)\})?\s?([A-Za-z0-9_]+)?\s?(-)?\s?(.*)?$/) || [];
             if (key || type || paramName || text) {
                 if (!key) {
                     if (isExample) {
@@ -47,6 +47,7 @@
                         case 'param':
                             if (!paramName && text) {
                                 paramName = text;
+                                text = '';
                             }
                             if (!paramName) {
                                 console.error('Param is missing paramName |%s|type:%s|text:%s|', lines[index], type, text, lines[index].match(/^[\s]{9}\*( \@([a-z]+))?( \{([A-Za-z\|]+)\})?( ([A-Za-z0-9_]+) -)? ?(.+)?$/));
