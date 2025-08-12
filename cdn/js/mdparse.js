@@ -31,6 +31,17 @@ export class MarkdownParser {
     constructor() {
         this.initDefaultRules();
     }
+    escapeCode(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+    escapeQuote(text) {
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, "&quot;");
+    }
     addRule(type, test, processor, render) {
         this.rules.push({ test, processor });
         this.renderers[type] = render;
@@ -361,6 +372,7 @@ export class MarkdownParser {
             },
             escapeCode: t.escapeCode,
             escapeHtml: t.escapeHtml,
+            escapeQuote: t.escapeQuote,
             parse: t.parse,
             renderInline: t.renderInline
         }
@@ -439,16 +451,5 @@ export class MarkdownParser {
             text = text.replace(`^^EMOJI${i}^^`, val);
         });
         return text;
-    }
-    escapeCode(text) {
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
-    }
-    escapeQuote(text) {
-        return text
-            .replace(/&/g, '&amp;')
-            .replace(/"/g, "&quot;");
     }
 }
