@@ -8,6 +8,7 @@
 "use strict"
 {
     const alertList = [];
+    let alertTrigger = 'trigger-alert';
     const popup = webui.create('section');
     popup.classList.add('webui-alerts-popup');
     popup.style.display = 'block';
@@ -83,14 +84,37 @@
             t.icon = t.template.querySelector('webui-icon');
             if (!window.webuiAlert) {
                 webui.alert = (message, variant) => {
-                    let alert = webui.create('webui-alert');
+                    const msg = message.nodeName ? message.innerText : message;
+                    const hc = webui.hashCode(`${variant}-${msg}`);
+                    let index = -1;
+                    alertList.forEach(al => {
+                        index++;
+                        if (!al.userclosed) return;
+                        alertList.splice(index, 1);
+                        index--;
+                        al.remove();
+                    });
+                    let alert = alertList.filter(i => i._hashCode === hc)[0];
+                    if (alert) {
+                        alert.increment();
+                        popup.appendChild(alert);
+                        alert.display();
+                        setTimeout(() => {
+                            if (alert.parentNode === popup) {
+                                alert.removeAttribute('show');
+                            }
+                        }, popupTiming);
+                        return;
+                    }
+                    alert = webui.create('webui-alert');
+                    alert._hashCode = hc;
                     if (message.nodeName) {
                         alert.appendChild(message);
                     } else {
                         alert.innerHTML = message;
                     }
                     alert.setAttribute('variant', variant || 'danger');
-                    alert.setAttribute('show', true);
+                    alert.display();
                     alert.style.margin = '0 10px 10px 0'
                     alert.userclosed = false;
                     alertList.push(alert);
@@ -100,7 +124,7 @@
                         if (alert.parentNode === popup) {
                             alert.removeAttribute('show');
                         }
-                    }, popupTiming)
+                    }, popupTiming);
                 };
                 window.webuiAlert = webui.alert;
             }
@@ -151,6 +175,43 @@
                 this.setCount(newCount);
             }
             setTimeout(() => this.checkCounts(), 1000);
+        },
+        triggerAlert: function (data, a) {
+            const t = this;
+            if (!data) return;
+            if (!data.message || !data.show) {
+                if (data.show) {
+                    data.show = undefined;
+                    webui.setData(alertTrigger, data);
+                }
+                return;
+            };
+            const lastTriggered = webui.hashCode(JSON.stringify(data));
+            if (t._lastTrigger === lastTriggered) {
+                if (data.show) {
+                    data.show = undefined;
+                    webui.setData(alertTrigger, data);
+                }
+                return;
+            };
+            t._lastTrigger = lastTriggered;
+            let message = data.message;
+            let variant = data.variant || data.theme || 'info';
+            t._lastTrigger =
+                data.message = '';
+            data.show = undefined;
+            webui.setData(alertTrigger, data);
+            webui.alert(message, variant);
+            setTimeout(() => {
+                if (t._lastTrigger !== lastTriggered) return;
+                t._lastTrigger = undefined;
+            }, 100);
+        },
+        connected: function (t) {
+            if (t.dataset.subscribe) {
+                alertTrigger = t.dataset.subscribe;
+            };
+            t.dataset.subscribe = `${alertTrigger}:triggerAlert`;
         },
         shadowTemplate: `
 <webui-icon icon="bell|fill|shade:tri|theme:info"></webui-icon>

@@ -12,6 +12,14 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+<webui-page-segment elevation="10">
+    <webui-flex>
+        <webui-input-text label="Alert Message" placeholder="Enter an alert message" data-trigger="trigger-alert.message" data-subscribe="trigger-alert.message" maxlength="100"></webui-input-text>
+        <webui-dropdown label="Alert Type" theme="secondary" data-trigger="trigger-alert.variant" options="Info:info,Success:success,Warning:warning,Danger:danger"></webui-dropdown>
+        <webui-button theme="action" data-trigger="trigger-alert.show">Add Alert</webui-button>
+    </webui-flex>
+</webui-page-segment>
+
 ## Full context sample
 
 ```html:index.html

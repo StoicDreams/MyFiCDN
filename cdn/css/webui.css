@@ -149,6 +149,20 @@ i.vl {
     height: 2ch;
 }
 
+.counter {
+    display: inline-block;
+    position: relative;
+    border-radius: 1em;
+    background-color: var(--theme-color-offset, var(--color-info-offset));
+    color: var(--theme-color, var(--color-info));
+    padding: 1px;
+    font-size: 0.6em;
+    min-width: 1rem;
+    text-align: center;
+    margin: auto auto auto 1ch;
+    transform: translateY(-1ch);
+}
+
 webui-condition:not(:has(*:not([slot]))),
 webui-page-requires,
 webui-data,

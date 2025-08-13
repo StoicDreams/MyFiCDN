@@ -24,7 +24,10 @@
                 let items = options.split(',');
                 return items.map(item => {
                     item = item.trim();
-                    return { id: item, value: item, display: item };
+                    let displayId = item.indexOf('|') !== -1 ? item.split('|') : item.split(':');
+                    let id = displayId.length === 2 ? displayId[1] : item;
+                    let display = displayId.length === 2 ? displayId[0] : item;
+                    return { id, value: id, display: display };
                 });
             }
         }

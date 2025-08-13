@@ -152,7 +152,6 @@ webui.define("webui-content", {
             }
         } catch (ex) {
             let src = t.src || 'html';
-            console.log(ex);
             t.innerHTML = `Source ${src} failed to load:${ex}`;
             t.contentAttached = true;
         } finally {

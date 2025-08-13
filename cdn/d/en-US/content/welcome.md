@@ -7,5 +7,3 @@
         Please don't hesitate to share your <a data-click="feedback">questions, comments, or any other feedback</a>.
     </webui-page-segment>
 </webui-sideimage>
-
-<button onclick="throwTestError()">Throw Test Error</button>

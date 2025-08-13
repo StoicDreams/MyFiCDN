@@ -87,6 +87,11 @@ webui.define("webui-button", {
                 break;
         }
     },
+    connected: function (t) {
+        if (t.dataset.trigger && t.dataset.value === undefined) {
+            t.dataset.value = 1;
+        }
+    },
     shadowTemplate: `
 <slot name="start-icon"></slot>
 <slot></slot>

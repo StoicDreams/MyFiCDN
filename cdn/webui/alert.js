@@ -8,6 +8,7 @@
 "use strict"
 webui.define("webui-alert", {
     preload: 'icon',
+    _counter: 1,
     constructor: (t) => {
         t.icon = t.template.querySelector('#icon');
         t.btnClose = t.template.querySelector('#close');
@@ -61,6 +62,16 @@ webui.define("webui-alert", {
         }
         t.setAttribute('show', true);
     },
+    display: function () {
+        const t = this;
+        if (t.hasAttribute('show')) return;
+        t.setAttribute('show', true);
+    },
+    hide: function () {
+        const t = this;
+        if (!t.hasAttribute('show')) return;
+        t.removeAttribute('show');
+    },
     setVariant: function (theme) {
         this.setTheme(theme);
         switch (theme) {
@@ -81,6 +92,15 @@ webui.define("webui-alert", {
                 this.icon.setAttribute('shape', 'triangle');
                 break;
         }
+    },
+    increment: function () {
+        const t = this;
+        t._counter++;
+        if (!t._counterEl) {
+            t._counterEl = webui.create('span', { class: 'counter' });
+            t.appendChild(t._counterEl);
+        }
+        t._counterEl.innerText = t._counter;
     },
     shadowTemplate: `
 <webui-icon id="icon" icon="" bordered backing></webui-icon>
