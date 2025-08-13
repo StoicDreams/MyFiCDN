@@ -117,9 +117,6 @@ webui.define("webui-content", {
             // Giving time when attached to allow transitions to complete to assure content is truly visible to the user before determining if loading is needed.
             await webui.wait(500);
         }
-        if (!t.src) {
-            return;
-        }
         if (!t.visible) {
             if (t.preload) {
                 setTimeout(() => {
@@ -154,7 +151,9 @@ webui.define("webui-content", {
                 t.remove();
             }
         } catch (ex) {
-            t.innerHTML = `Source ${t.src} failed to load:${ex}`;
+            let src = t.src || 'html';
+            console.log(ex);
+            t.innerHTML = `Source ${src} failed to load:${ex}`;
             t.contentAttached = true;
         } finally {
             t.classList.remove('loading');

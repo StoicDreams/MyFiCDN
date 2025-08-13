@@ -41,6 +41,7 @@
             let [, , key, , type, paramName, , text] = lines[index].match(/^[\s]{9}\*\s?(@([a-z]+))?\s?(\{([A-Za-z\|]+)\})?\s?([A-Za-z0-9_]+)?\s?(-)?\s?(.*)?$/) || [];
             if (key || type || paramName || text) {
                 if (!key) {
+                    text = lines[index].match(/^[\s]{9}\*\s?(.*)$/)[1];
                     if (isExample) {
                         currentMetadata.examples[currentMetadata.examples.length - 1] += `${text}\n`;
                         continue;
@@ -191,101 +192,104 @@
                     }
                     let button = webui.create('webui-button', { hash: method.name, align: 'left', slot: 'tabs', text: `webui.${method.name}` });
                     tabs.appendChild(button);
-                    let args = method.parameters.map(p => p.name).join(', ');
-                    let post = '';
-                    switch (method.type) {
-                        case 'method':
-                            post = `(${args})`;
-                            break;
-                        case 'field':
-                            if (method.returns.type) {
-                                post = `:${method.returns.type}`;
-                            }
-                            if (method.returns.description) {
-                                post += ` - ${method.returns.description}`;
-                            }
-                            break;
-                        case 'get':
-                            if (method.returns.type) {
-                                post = `:${method.returns.type}`;
-                            }
-                            if (method.returns.description) {
-                                post += ` - ${method.returns.description}`;
-                            }
-                            break;
-                        case 'set':
-                            if (method.returns.type) {
-                                post = `:${method.returns.type}`;
-                            }
-                            break;
-                        default:
-                            console.error('Unexpected method type', method);
-                            break;
-                    }
-                    let md = `
+                    let content = webui.create('webui-content', { slot: 'content' });
+                    content.loadSrc = (async function () {
+                        let args = method.parameters.map(p => p.name).join(', ');
+                        let post = '';
+                        switch (method.type) {
+                            case 'method':
+                                post = `(${args})`;
+                                break;
+                            case 'field':
+                                if (method.returns.type) {
+                                    post = `:${method.returns.type}`;
+                                }
+                                if (method.returns.description) {
+                                    post += ` - ${method.returns.description}`;
+                                }
+                                break;
+                            case 'get':
+                                if (method.returns.type) {
+                                    post = `:${method.returns.type}`;
+                                }
+                                if (method.returns.description) {
+                                    post += ` - ${method.returns.description}`;
+                                }
+                                break;
+                            case 'set':
+                                if (method.returns.type) {
+                                    post = `:${method.returns.type}`;
+                                }
+                                break;
+                            default:
+                                console.error('Unexpected method type', method);
+                                break;
+                        }
+                        let md = `
 ### webui.${method.name}${post}\n`;
-                    if (method.description) {
-                        md += `
+                        if (method.description) {
+                            md += `
 <webui-page-segment elevation="10">
     ${method.description}
 </webui-page-segment>
 `;
-                    }
-                    if (args.length > 0) {
-                        md += `\n#### Parameters\n`;
-                        method.parameters.forEach(a => {
-                            let type = a.type ? a.type : 'any';
-                            let def = a.def ? `= ${a.def} ` : '';
-                            md += `> [tertiary] **${a.name}**:${fixSpecialCharacters(type)} ${fixSpecialCharacters(def)}
+                        }
+                        if (args.length > 0) {
+                            md += `\n#### Parameters\n`;
+                            method.parameters.forEach(a => {
+                                let type = a.type ? a.type : 'any';
+                                let def = a.def ? `= ${a.def} ` : '';
+                                md += `> [tertiary] **${a.name}**:${fixSpecialCharacters(type)} ${fixSpecialCharacters(def)}
 `;
-                            if (a.description) {
-                                let desk = fixSpecialCharacters(a.description).split(/[\r\n]+/).join('\n>>');
-                                md += `>>${desk}\n`;
-                            }
-                        });
-                    }
-                    if (method.examples.length > 0) {
-                        md += '##### Examples\n';
-                        method.examples.forEach(ex => {
-                            let [, , type, text] = ex.trim().match(/^(\[([A-Za-z]+)\])?[\s]*(.*)$/s) || [];
-                            text = text ? text : ex;
-                            type = type ? type : 'javascript';
-                            let lines = text.split(/[\r\n]+/);
-                            let d = '';
-                            if (lines[0].startsWith('//')) {
-                                d = ` - ${webui.escapeCode(lines.shift().substring(2).trim())}`;
-                                text = lines.join('\n');
-                            }
-                            md += `
+                                if (a.description) {
+                                    let desk = fixSpecialCharacters(a.description).split(/[\r\n]+/).join('\n>>');
+                                    md += `>>${desk}\n`;
+                                }
+                            });
+                        }
+                        if (method.examples.length > 0) {
+                            md += '##### Examples\n';
+                            method.examples.forEach(ex => {
+                                let [, , type, text] = ex.trim().match(/^(\[([A-Za-z]+)\])?[\s]*(.*)$/s) || [];
+                                text = text ? text : ex;
+                                type = type ? type : 'javascript';
+                                let lines = text.split(/[\r\n]+/);
+                                let d = '';
+                                if (lines[0].startsWith('//')) {
+                                    d = ` - ${webui.escapeCode(lines.shift().substring(2).trim())}`;
+                                    text = lines.join('\n');
+                                }
+                                md += `
 \`\`\`${type}:Example${d}
 ${text}
 \`\`\`
 `;
-                        });
-                    } else if (method.type === 'method') {
-                        md += '##### Examples\n';
-                        md += `
+                            });
+                        } else if (method.type === 'method') {
+                            md += '##### Examples\n';
+                            md += `
 \`\`\`javascript:Example
 let result = webui.${method.name}(${args});
 \`\`\`
 `;
-                    } else if (method.type === 'get') {
-                        md += '##### Examples\n';
-                        md += `
+                        } else if (method.type === 'get') {
+                            md += '##### Examples\n';
+                            md += `
 \`\`\`javascript:Example
 let result = webui.${method.name};
 \`\`\`
 `;
-                    } else if (method.type === 'set') {
-                        md += '##### Examples\n';
-                        md += `
+                        } else if (method.type === 'set') {
+                            md += '##### Examples\n';
+                            md += `
 \`\`\`javascript:Example
 webui.${method.name} = value;
 \`\`\`
 `;
-                    }
-                    const html = webui.parseWebuiMarkdown(md);
-                    let content = webui.create('webui-content', { slot: 'content', html });
+                        }
+                        const html = webui.parseWebuiMarkdown(md);
+                        content._content = html;
+                    }).bind();
                     tabs.appendChild(content);
                 });
                 alert.remove();
