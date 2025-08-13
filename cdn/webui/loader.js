@@ -294,7 +294,6 @@ const webui = (() => {
          * @param {boolean} noParagraph - Exclude wrapping single lined content with a paragraph element.
          * @returns {string} Converted HTML.
          * @example
-         * // returns '<p>Hello World</p>\n'
          * '<p>Hello World</p>\n' == webui.applyAppDataToContent('Hello World');
          */
         applyAppDataToContent(content, preTrim, noParagraph) {
