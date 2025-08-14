@@ -224,6 +224,7 @@ box-shadow: var(--scroll-shadow);
 }
 :host(:not(.loaded)) {
 display:flex;
+position:relative;
 flex-direction:column;
 gap: var(--padding);
 align-items: center;
