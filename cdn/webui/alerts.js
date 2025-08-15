@@ -18,14 +18,14 @@
     popup.style.overflow = 'visible';
     document.body.appendChild(popup);
 
-    let alertTitle = 'Alerts';
     let popupTiming = 5000;
 
     function getAlertHeader() {
+        const t = this;
         const container = webui.create('header');
         container.style.padding = 'var(--padding)';
         container.setAttribute('slot', 'header');
-        container.innerHTML = alertTitle;
+        container.innerHTML = t.alertTitle;
         return container;
     }
 
@@ -51,34 +51,37 @@
     }
 
     function showAlertsInDialog() {
+        const t = this;
         webui.dialog({
-            title: getAlertHeader(),
-            content: getAlertContent(),
+            title: getAlertHeader.bind(t)(),
+            content: getAlertContent.bind(t)(),
             confirm: 'Close',
         });
     }
 
     function showAlertsInDrawer(drawer) {
+        const t = this;
         let el = document.querySelector(drawer);
         if (!el) {
-            showAlertsInDialog();
+            showAlertsInDialog.bind(t)();
             return;
         }
         if (el.classList.contains('open')) {
             el.classList.remove('open');
-            setTimeout(() => showAlertsInDrawer(drawer), 500);
+            setTimeout(() => showAlertsInDrawer.bind(t)(drawer), 500);
             return;
         }
         el.innerHTML = '';
-        el.appendChild(getAlertHeader());
-        el.appendChild(getAlertContent());
+        el.appendChild(getAlertHeader.bind(t)());
+        el.appendChild(getAlertContent.bind(t)());
         setTimeout(() => {
             el.classList.add('open');
         }, 100);
     }
 
     webui.define("webui-alerts", {
-        "preload": "icon alert dialogs",
+        preload: "icon alert dialogs",
+        alertTitle: 'Alerts',
         constructor: (t) => {
             t.count = 0;
             t.icon = t.template.querySelector('webui-icon');
@@ -130,9 +133,9 @@
             }
             t.addEventListener('click', _ev => {
                 if (!t.drawer) {
-                    showAlertsInDialog();
+                    showAlertsInDialog.bind(t)();
                 } else {
-                    showAlertsInDrawer(t.drawer);
+                    showAlertsInDrawer.bind(t)(t.drawer);
                 }
                 return true;
             });
@@ -142,7 +145,7 @@
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'dataTitle':
-                    alertTitle = value;
+                    t.alertTitle = value;
                     break;
                 case 'dataPopup':
                     let timing = parseInt(value);
