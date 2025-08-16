@@ -12,6 +12,7 @@
 
 <webui-side-by-side>
     ```html:Code Snippet
+        <!--Code Comment-->
         <webui-alerts title="Example Notifications" data-title="Example Alerts" data-toggleclass=".shared|open"></webui-alerts>
     ```
     <webui-page-segment elevation="10">

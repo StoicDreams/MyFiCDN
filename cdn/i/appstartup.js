@@ -36,8 +36,6 @@ window.DomInterop = (() => {
 	setTimeout(function LoadOtherIndependentJavascriptComponentsFromCDN() {
 		[
 			'i/tooltips.min.js',
-			'i/mermaid.js',
-			'i/prism.js'
 		].forEach(url => {
 			let script = document.createElement('script');
 			script.src = `${cdnhost}/${url}`;
@@ -63,13 +61,6 @@ window.DomInterop = (() => {
 				mermaid.init({ 'theme': 'base', 'themeVariables': { 'darkMode': true } }, e);
 			});
 			setTimeout(WatchForMermaidUpdates, 1000);
-		})();
-		(function WatchForPrismUpdates() {
-			'use strict';
-			document.querySelectorAll('pre:not([class*=language]) > code[class*=language]').forEach(e => {
-				Prism.highlightElement(e);
-			});
-			setTimeout(WatchForPrismUpdates, 1000);
 		})();
 	}
 

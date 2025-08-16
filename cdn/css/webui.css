@@ -3691,104 +3691,110 @@ webui-drawer[slot="bottom"] webui-stoic-dreams-logo {
 }
 
 /* Code highlight defaults */
-.hljs-keyword {
-    color: #fff
+code .keyword {
+    color: #0cbe33;
 }
 
-.hljs-link {
-    color: #0096db
+code .link {
+    color: #0096db;
 }
 
-.hljs-literal {
-    color: #ecff41
+code .literal {
+    color: #ecff41;
 }
 
-.hljs-section {
-    color: #f57226
+code .section {
+    color: #f57226;
 }
 
-.hljs-selector-tag {
-    color: #c766cf
+code .selector-tag {
+    color: #c766cf;
 }
 
-.hljs-addition {
-    color: rgb(142, 127, 211)
+code .addition {
+    color: rgb(142, 127, 211);
 }
 
-.hljs-attribute {
-    color: rgb(238, 152, 83)
+code .attribute {
+    color: rgb(226, 164, 114);
 }
 
-.hljs-built_in {
-    color: rgb(161, 204, 105)
+code .built_in {
+    color: rgb(161, 204, 105);
 }
 
-.hljs-bullet {
-    color: rgb(138, 138, 180)
+code .bullet {
+    color: rgb(138, 138, 180);
 }
 
-.hljs-name {
-    color: rgb(97, 99, 241)
+code .name {
+    color: rgb(97, 99, 241);
 }
 
-.hljs-string {
-    color: rgb(177, 177, 177)
+code .string {
+    color: rgb(177, 177, 177);
 }
 
-.hljs-symbol {
-    color: rgb(136, 221, 157)
+code .symbol {
+    color: rgb(136, 221, 157);
 }
 
-.hljs-template-tag {
-    color: rgb(177, 127, 70)
+code .template-tag {
+    color: rgb(177, 127, 70);
 }
 
-.hljs-template-variable {
-    color: rgb(236, 82, 154)
+code .template-variable {
+    color: rgb(236, 82, 154);
 }
 
-.hljs-title {
-    color: rgb(255, 252, 47)
+code .title {
+    color: rgb(255, 252, 47);
 }
 
-.hljs-type {
-    color: rgb(69, 248, 45)
+code .type {
+    color: rgb(69, 248, 45);
 }
 
-.hljs-variable {
-    color: rgb(8, 233, 0)
+code .variable {
+    color: rgb(8, 233, 0);
 }
 
-.hljs-comment {
-    color: #919191
+code .comment {
+    color: #919191;
 }
 
-.hljs-deletion {
-    color: #cc2424
+code .deletion {
+    color: #cc2424;
 }
 
-.hljs-meta {
-    color: #87a59e
+code .meta {
+    color: #87a59e;
 }
 
-.hljs-quote {
-    color: #9ac7c9
+code .quote {
+    color: #1a9ca3;
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    box-sizing: content-box;
 }
 
-.hljs-doctag,
-.hljs-keyword,
-.hljs-literal,
-.hljs-name,
-.hljs-section,
-.hljs-selector-tag,
-.hljs-strong,
-.hljs-title,
-.hljs-type {
-    font-weight: 700
+code .doctag,
+code .keyword,
+code .literal,
+code .name,
+code .section,
+code .selector-tag,
+code .strong,
+code .title,
+code .type {
+    font-weight: 700;
 }
 
-.hljs-emphasis {
-    font-style: italic
+code .emphasis {
+    font-style: italic;
 }
 
 .grow-open {
