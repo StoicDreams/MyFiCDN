@@ -44,8 +44,14 @@
         { regex: /\b(\.[a-zA-Z0-9_-]+|#[a-zA-Z0-9_-]+|\b[a-zA-Z]+)/g, class: 'selector-tag' },
         { regex: /\b(\d+(\.\d+)?(px|em|rem|%|vh|vw|ch)?)\b/g, class: 'number' },
     ];
+    const terminalPatterns = [
+    ];
     const languages = {
         javascript: { patterns: jsPatterns },
+        bash: { patterns: terminalPatterns },
+        powershell: { patterns: terminalPatterns },
+        pwsh: { patterns: terminalPatterns },
+        console: { patterns: terminalPatterns },
         typescript: {
             patterns: [
                 { regex: /\b(interface|type|public|private|protected|readonly|export)\b/g, class: 'keyword' },
