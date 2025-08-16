@@ -281,7 +281,7 @@ const webui = (() => {
          * webui.alert('Hello World');
          * webui.alert('Hello World', 'danger');
          * webui.alert('Hello World', 'warning');
-         * webui.alert('Hello World', 'success);
+         * webui.alert('Hello World', 'success');
          */
         alert(message, variant) {
             webui.log.warn('Alerts are not setup for this website', message, variant);

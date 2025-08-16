@@ -78,7 +78,7 @@
                             }
                             break;
                         case 'example':
-                            currentMetadata.examples.push(text ? `[${text}]` : '');
+                            currentMetadata.examples.push(paramName ? `[${paramName}]` : '');
                             isExample = true;;
                             break;
                         default:

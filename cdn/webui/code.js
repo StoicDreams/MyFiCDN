@@ -34,8 +34,9 @@
         { regex: /(\/\/.*|\/\*[\s\S]*?\*\/)/g, class: 'comment' },
         { regex: /\b(const|let|var|function|return|if|else|for|while|do|break|continue|switch|case|default|try|catch|finally|throw|new|this|class|extends|super|import|export|await|async|of|console)\b/g, class: 'keyword' },
         { regex: /\b(\d+(\.\d+)?)\b/g, class: 'number' },
-        { regex: /(=&gt;|&gt;|&lt;|&amp;)/g, class: 'symbol' },
-        { regex: /[\+\-\*\/=><!&|\(\)\{\}\[\]\.]/g, class: 'operator' }
+        { regex: /(=&gt;|&gt;|&lt;|&amp;|;)/g, class: 'symbol' },
+        { regex: /[\+\-\*\/=><!&|\(\)\{\}\[\]\.,]/g, class: 'operator' },
+        { regex: /\b([A-Za-z-_]+[A-Za-z0-9-_])\b/g, class: 'selector-tag'}
     ];
     const cssPatterns = [
         { regex: /(\/\*[\s\S]*?\*\/)/g, class: 'comment' },
