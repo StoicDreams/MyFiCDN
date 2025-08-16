@@ -52,6 +52,7 @@
         powershell: { patterns: terminalPatterns },
         pwsh: { patterns: terminalPatterns },
         console: { patterns: terminalPatterns },
+        terminal: { patterns: terminalPatterns },
         typescript: {
             patterns: [
                 { regex: /\b(interface|type|public|private|protected|readonly|export)\b/g, class: 'keyword' },
