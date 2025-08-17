@@ -413,11 +413,11 @@ const webui = (() => {
             return this.attachAttributes(el, attr);
         }
         /**
-         * TODO: Details coming soon
+         * Attach attributes to an element.
          *
-         * @param {Node} el
-         * @param {object} attr
-         * @returns {string}
+         * @param {Node} el - The element to attach attributes to.
+         * @param {object} attr - The attributes to attach.
+         * @returns {Node}
          */
         attachAttributes(el, attr) {
             if (attr) {
@@ -444,11 +444,11 @@ const webui = (() => {
             return el;
         }
         /**
-         * TODO: Details coming soon
+         * Find the closest ancestor element that matches the selector.
          *
          * @param {Node} target
          * @param {string} selector
-         * @returns {string}
+         * @returns {Node}
          */
         closest(target, selector) {
             if (!target) return null;
@@ -467,10 +467,10 @@ const webui = (() => {
             return null;
         }
         /**
-         * TODO: Details coming soon
+         * Copy a string to the clipboard.
          *
          * @param {string} value
-         * @returns {string}
+         * @returns {undefined}
          */
         async copyToClipboard(value) {
             await navigator.clipboard.writeText(value);
@@ -483,7 +483,7 @@ const webui = (() => {
          *
          * @param {string} name
          * @param {object} options
-         * @returns {undefined}
+         * @returns {Node}
          */
         define(name, options) {
             if (typeof name !== 'string') {
@@ -771,7 +771,7 @@ const webui = (() => {
             customElements.define(name, CustomElement, defineOptions);
         }
         /**
-         * TODO: Details coming soon
+         * Display a duration of seconds in a human readable format.
          *
          * @param {number} value
          * @param {string} onZero
@@ -799,7 +799,7 @@ const webui = (() => {
             return result.join(' ');
         }
         /**
-         * TODO: Details coming soon
+         * Display a duration of minutes in a human readable format.
          *
          * @param {number} value
          * @param {string} onZero
@@ -823,10 +823,10 @@ const webui = (() => {
             return result.join(' ');
         }
         /**
-         * TODO: Details coming soon
+         * Display a number with leading zeros.
          *
-         * @param {number} number
-         * @param {number} count
+         * @param {number} number - The number to format.
+         * @param {number} count - The total length of the output string.
          * @returns {string}
          */
         displayLeadingZero(number, count = 1) {
@@ -987,10 +987,10 @@ const webui = (() => {
             return webui.clone(data);
         }
         /**
-         * TODO: Details coming soon
+         * Get nested data from an object using a dot notation key.
          *
-         * @param {string} key
-         * @param {object} data
+         * @param {string} key - The dot notation key to search for.
+         * @param {object} data - The object to search within.
          * @returns {any}
          */
         getNestedData(key, data) {
@@ -1014,7 +1014,7 @@ const webui = (() => {
         /**
          * Return first argument that is not null or undefined.
          *
-         * @param {any} args
+         * @param {any} args - The arguments to check.
          * @returns {any}
          */
         getDefined(...args) {
@@ -1026,10 +1026,12 @@ const webui = (() => {
             return undefined;
         }
         /**
-         * TODO: Details coming soon
+         * Transform a markdown template to HTML.
          *
-         * @param {string} template
-         * @param {object} data
+         * Optionally apply data to the template.
+         *
+         * @param {string} template - The markdown to use.
+         * @param {object} data - The data to apply to the template.
          * @returns {string}
          */
         getHtmlFromTemplate(template, data) {
@@ -1044,10 +1046,10 @@ const webui = (() => {
             return this.applyAppDataToContent(html.join('\n'), data);
         }
         /**
-         * TODO: Details coming soon
+         * Get query data by key from the URL.
          *
-         * @param {string} key
-         * @returns {object}
+         * @param {string} key - The key to search for in the query string.
+         * @returns {string}
          */
         getQueryData(key) {
             let data = location.search;
@@ -1061,10 +1063,10 @@ const webui = (() => {
             return dict[key];
         }
         /**
-         * TODO: Details coming soon
+         * Get the value of a specific key from the response headers.
          *
-         * @param {object} resp
-         * @param {string} keys
+         * @param {object} resp - The response object to search within.
+         * @param {string} keys - The keys to search for in the response headers.
          * @returns {string}
          */
         getResponseHeader(resp, ...keys) {
@@ -1076,9 +1078,9 @@ const webui = (() => {
             return message;
         }
         /**
-         * TODO: Details coming soon
+         * Get search data by key from the URL.
          *
-         * @param {string} key
+         * @param {string} key - The key to search for in the query string.
          * @returns {object}
          */
         getSearchData(key) {
@@ -1087,7 +1089,7 @@ const webui = (() => {
         /**
          * Turn a string into a hashcode using a standard and repeatable algorithm.
          *
-         * @param {string} text
+         * @param {string} text - The string to hash.
          * @returns {number}
          */
         hashCode(text) {
@@ -1102,10 +1104,10 @@ const webui = (() => {
             return hash | 0;
         }
         /**
-         * TODO: Details coming soon
+         * Check if an element has a specific setter field.
          *
-         * @param {Node} el
-         * @param {string} field
+         * @param {Node} el - The element to check.
+         * @param {string} field - The name of the field to check for.
          * @returns {boolean}
          */
         hasSetter(el, field) {
@@ -1121,10 +1123,10 @@ const webui = (() => {
             return false;
         }
         /**
-         * TODO: Details coming soon
+         * Check if two values are equal.
          *
-         * @param {any} a
-         * @param {any} b
+         * @param {any} a - The first value to compare.
+         * @param {any} b - The second value to compare.
          * @returns {boolean}
          */
         isEqual(a, b) {
@@ -1134,7 +1136,7 @@ const webui = (() => {
             return JSON.stringify(a) === JSON.stringify(b);
         }
         /**
-         * TODO: Details coming soon
+         * Check if the current domain is localhost.
          *
          * @returns {boolean}
          */
@@ -1144,9 +1146,9 @@ const webui = (() => {
             return false;
         }
         /**
-         * TODO: Details coming soon
+         * Check if the text content of an element is overflowing its container.
          *
-         * @param {Node} el
+         * @param {Node} el - The element to check.
          * @returns {boolean}
          */
         isTextOverflowing(el) {
@@ -1163,10 +1165,10 @@ const webui = (() => {
             return !!((role && 1) !== 0);
         }
         /**
-         * TODO: Details coming soon
+         * Limit the number of characters in a string to the given limit.
          *
-         * @param {string} text
-         * @param {number} limit
+         * @param {string} text - The text to limit.
+         * @param {number} limit - The maximum number of characters.
          * @returns {string}
          */
         limitChars(text, limit) {
@@ -1190,7 +1192,7 @@ const webui = (() => {
             return result.join(' ');
         }
         /**
-         * TODO: Details coming soon
+         * Log messages to the console with various methods.
          *
          * @returns {object}
          */
@@ -1268,10 +1270,10 @@ const webui = (() => {
             changePage(`${location.pathname}${hash}${location.search}`);
         }
         /**
-         * TODO: Details coming soon
+         * Remove wrapping <p> tags from HTML content.
          *
-         * @param {string} html
-         * @param {string} tagPattern
+         * @param {string} html - The HTML content to modify.
+         * @param {string} tagPattern - The pattern to match the tags.
          * @returns {string}
          */
         removeWrappingPTags(html, tagPattern) {
@@ -1397,9 +1399,9 @@ const webui = (() => {
             return t.markdown.parse(md, noParagraph) || '';
         }
         /**
-         * TODO: Details coming soon
+         * Remove an elements parent if it is a <p> tag.
          *
-         * @param {Node} el
+         * @param {Node} el - The element to check for parent <p> tag.
          * @returns {Node}
          */
         removeFromParentPTag(el) {
@@ -1415,15 +1417,15 @@ const webui = (() => {
             return el;
         }
         /**
-         * TODO: Details coming soon
+         * Remove all children from a node.
          *
-         * @param {Node} t
-         * @param {function} condition
+         * @param {Node} el - The node to remove children from.
+         * @param {function} condition - Optional condition to filter which children to remove.
          * @returns {array} removed children
          */
-        removeChildren(t, condition) {
+        removeChildren(el, condition) {
             let tr = [];
-            t.childNodes.forEach(ch => {
+            el.childNodes.forEach(ch => {
                 if (typeof condition === 'function') {
                     if (condition(ch)) {
                         tr.push(ch);
@@ -1438,25 +1440,25 @@ const webui = (() => {
             return tr;
         }
         /**
-         * TODO: Details coming soon
+         * Remove all classes from an element that start with a specific prefix.
          *
-         * @param {Node} t
-         * @param {string} prefix
+         * @param {Node} el - The element to remove classes from.
+         * @param {string} prefix - The class prefix to match for classes to remove.
          * @returns {undefined}
          */
-        removeClass(t, prefix) {
+        removeClass(el, prefix) {
             let r = [];
-            t.classList.forEach(c => {
+            el.classList.forEach(c => {
                 if (c.startsWith(prefix)) { r.push(c); }
             });
-            r.forEach(c => t.classList.remove(c));
+            r.forEach(c => el.classList.remove(c));
         }
         /**
-         * TODO: Details coming soon
+         * Remove all children and nested children from a node that match the given selector.
          *
-         * @param {string} parent
-         * @param {string} selector
-         * @param {string} action
+         * @param {string} parent - The parent element to remove children from.
+         * @param {string} selector - The selector to match children elements.
+         * @param {string} action - Optional action to perform on each matched element prior to removal.
          * @returns {undefined}
          */
         removeElements(parent, selector, action) {
@@ -1472,10 +1474,10 @@ const webui = (() => {
             });
         }
         /**
-         * TODO: Details coming soon
+         * Repeat a string for a given length.
          *
-         * @param {string} digit
-         * @param {number} length
+         * @param {string} digit - The string to repeat.
+         * @param {number} length - The number of times to repeat the string.
          * @returns {string}
          */
         repeat(digit, length) {
@@ -1488,10 +1490,12 @@ const webui = (() => {
             return digits.join('');
         }
         /**
-         * TODO: Details coming soon
+         * Replace app specific placeholders in a string with values from a data object.
          *
-         * @param {string} text
-         * @param {object} data
+         * Placeholders are denoted by curly braces and keys in all-caps snake case, e.g. {APP_PLACEHOLDER}.
+         *
+         * @param {string} text - The string containing placeholders.
+         * @param {object} data - The data object containing values to replace placeholders.
          * @returns {string}
          */
         replaceAppData(text, data) {
@@ -1526,10 +1530,12 @@ const webui = (() => {
             return text;
         }
         /**
-         * TODO: Details coming soon
+         * Replace template specific placeholders in a string with values from a data object.
          *
-         * @param {string} text
-         * @param {object} data
+         * Placeholders are denoted by curly braces and keys in all-caps snake case, e.g. {TEMPLATE_KEY_NAME}.
+         *
+         * @param {string} text - The string containing placeholders.
+         * @param {object} data - The data object containing values to replace placeholders.
          * @returns {string}
          */
         replaceData(text, data) {
@@ -1561,14 +1567,14 @@ const webui = (() => {
             return text;
         }
         /**
-         * TODO: Details coming soon
+         * Resolve a function from a string.
          *
-         * @param {string} value
-         * @param {object} context
+         * @param {string} value - The string containing the function reference.
+         * @param {object} context - The context in which to resolve the function.
          * @returns {function}
          */
         resolveFunctionFromString(value, context = window) {
-            let t = this;
+            const t = this;
             const parts = value.split('.');
             if (parts.length === 0) return undefined;
             if (parts[0] === 'webui') {
@@ -1587,19 +1593,19 @@ const webui = (() => {
             return null;
         }
         /**
-         * TODO: Details coming soon
+         * Set the main application node.
          *
-         * @param {Node} app
+         * @param {Node} app - The main application node.
          * @returns {undefined}
          */
         setApp(app) {
             appSettings.app = app;
         }
         /**
-         * TODO: Details coming soon
+         * Set global data that elements can subscribe to and JavaScript can access using webui.getData(key).
          *
-         * @param {string} key
-         * @param {any} value
+         * @param {string} key - The key for the global data.
+         * @param {any} value - The value for the global data.
          * @returns {undefined}
          */
         setData(key, value) {
@@ -1660,10 +1666,10 @@ const webui = (() => {
             });
         }
         /**
-         * TODO: Details coming soon
+         * Query selector all elements matching the selector, including those in shadow DOMs.
          *
-         * @param {string} selector
-         * @param {Node} rootNode
+         * @param {string} selector - The CSS selector to match elements.
+         * @param {Node} rootNode - The root node to start the search from.
          * @returns {array}
          */
         querySelectorAll(selector, rootNode = document) {
@@ -1685,8 +1691,8 @@ const webui = (() => {
         /**
          * Populate missing key:value pairs in data with defaults found in defaultData.
          *
-         * @param {object} data
-         * @param {object} defaultData
+         * @param {object} data - The data object to populate.
+         * @param {object} defaultData - The default data object to use for populating missing values.
          * @returns {object}
          */
         setDefaultData(data, defaultData) {
@@ -1702,50 +1708,50 @@ const webui = (() => {
         /**
          * Set flag property (true|false) on node.
          *
-         * @param {Node} t test
-         * @param {string} property
-         * @param {any} value
+         * @param {Node} el - The target node.
+         * @param {string} property - The property to set.
+         * @param {any} value - The value to set the property to.
          * @returns {undefined}
          */
-        setFlag(t, property, value) {
+        setFlag(el, property, value) {
             if ([undefined, null, 0, false, 'false', 'null', 'undefined', '0'].indexOf(value) !== -1) {
-                t[property] = false;
+                el[property] = false;
                 return false;
             } else {
-                t[property] = true;
+                el[property] = true;
                 return true;
             }
         }
         /**
          * Set property on node.
          *
-         * @param {Node} t
-         * @param {string} property
-         * @param {any} value
+         * @param {Node} el - The target node.
+         * @param {string} property - The property to set.
+         * @param {any} value - The value to set the property to.
          * @returns {undefined}
          */
-        setProperty(t, property, value) {
+        setProperty(el, property, value) {
             if (property !== 'value' && (value === null || value === undefined)) {
-                delete t[property];
+                delete el[property];
             } else {
-                t[property] = value;
+                el[property] = value;
             }
             switch (property) {
                 case 'elevation':
-                    webui.removeClass(t, 'elevation-');
+                    webui.removeClass(el, 'elevation-');
                     if (value > 0) {
-                        t.classList.add(`elevation-${value}`);
+                        el.classList.add(`elevation-${value}`);
                     } else if (value < 0) {
-                        t.classList.add(`elevation-n${(value * -1)}`);
+                        el.classList.add(`elevation-n${(value * -1)}`);
                     }
                     break;
             }
         }
         /**
-         * TODO: Details coming soon
+         * Set the theme color for an element.
          *
-         * @param {Node} el
-         * @param {string} value primary | secondary | etc
+         * @param {Node} el - The target element.
+         * @param {string} value - primary | secondary | etc
          * @returns {undefined}
          */
         setTheme(el, value) {
@@ -1753,12 +1759,12 @@ const webui = (() => {
             el.style.setProperty('--theme-color-offset', `var(--color-${value}-offset)`);
         }
         /**
-         * TODO: Details coming soon
+         * Check if the target node matches the given check function or string.
          *
-         * @param {Node} parent
-         * @param {Node} target
-         * @param {function|string} check
-         * @param {function} onSuccess
+         * @param {Node} parent - The parent node.
+         * @param {Node} target - The target node.
+         * @param {function|string} check - The check function or string.
+         * @param {function} onSuccess - The callback function to call on success.
          * @returns {boolean}
          */
         targetMatchesCheck(parent, target, check, onSuccess) {
@@ -1793,8 +1799,8 @@ const webui = (() => {
          *
          * e.g. this_is_snake_case
          *
-         * @param {string} key
-         * @param {string} delim Delimiter to use between words
+         * @param {string} key - The string to convert.
+         * @param {string} delim - Delimiter to use between words.
          * @returns {string}
          */
         toSnake(key, delim = '_') {
@@ -1805,7 +1811,7 @@ const webui = (() => {
          *
          * e.g. thisIsCamelCase
          *
-         * @param {string} key
+         * @param {string} key - The string to convert.
          * @returns {string}
          */
         toCamel(key) {
@@ -1825,10 +1831,10 @@ const webui = (() => {
                 .replace(/^[a-z]{1}/, a => { return a.toUpperCase(); });
         }
         /**
-         * TODO: Details coming soon
+         * Transfer all children from one node to another.
          *
-         * @param {Node} from
-         * @param {Node} to
+         * @param {Node} from - The source node.
+         * @param {Node} to - The target node.
          * @returns {undefined}
          */
         transferChildren(from, to) {
@@ -1841,10 +1847,10 @@ const webui = (() => {
             });
         }
         /**
-         * TODO: Details coming soon
+         * Trim leading whitespace from each line in a block of HTML to shift tabbing.
          *
-         * @param {string} html
-         * @param {number} tabLength
+         * @param {string} html - The HTML content to process.
+         * @param {number} tabLength - The number of spaces per tab.
          * @returns {string}
          */
         trimLinePreTabs(html, tabLength = 4) {
@@ -1872,9 +1878,9 @@ const webui = (() => {
             return lines.join('\n');
         }
         /**
-         * TODO: Details coming soon
+         * Trim all leading whitespace from each line in a block of HTML.
          *
-         * @param {string} html
+         * @param {string} html - The HTML content to process.
          * @returns {string}
          */
         trimLinePreWhitespce(html) {
@@ -1885,11 +1891,11 @@ const webui = (() => {
             return lines.join('\n');
         }
         /**
-         * TODO: Details coming soon
+         * Try-catch wrapper for async functions.
          *
-         * @param {function} handler
-         * @param {function} onError
-         * @param {function} onFinally
+         * @param {function} handler - The async function to execute.
+         * @param {function} onError - The callback function to call on error.
+         * @param {function} onFinally - The callback function to call on finally.
          * @returns {Promise} Response from handler
          */
         async try(handler, onError, onFinally) {
@@ -1914,10 +1920,10 @@ const webui = (() => {
             }
         }
         /**
-         * TODO: Details coming soon
+         * Solo process handler to ensure only one instance runs at a time.
          *
-         * @param {function} handler
-         * @param {function} onError
+         * @param {function} handler - The function to execute.
+         * @param {function} onError - The callback function to call on error.
          * @returns {Promise} Response from handler
          */
         async trySoloProcess(handler, onError) {
@@ -1942,10 +1948,10 @@ const webui = (() => {
             }
         }
         /**
-         * TODO: Details coming soon
+         * Get a Solo process handler that can be called by an event to run handler while ensuring only one solo process instance runs at a time.
          *
-         * @param {function} handler
-         * @param {function} onError
+         * @param {function} handler - The function to execute.
+         * @param {function} onError - The callback function to call on error.
          * @returns {Promise} Response from handler
          */
         eventSoloProcess(handler, onError) {
@@ -1977,7 +1983,7 @@ const webui = (() => {
          * @returns {Promise}
          */
         async loadRoles() {
-            let t = this;
+            const t = this;
             if (t.appConfig && t.appConfig.rolesApi) {
                 let resp = await t.fetchApi(t.appConfig.rolesApi, null, 'get');
                 if (resp.status === 200) {
@@ -2008,7 +2014,7 @@ const webui = (() => {
             return (this.userRoles & role) === role;
         }
         /**
-         * TODO: Details coming soon
+         * Get mapping of available user roles.
          *
          * @returns {object} Mapping of available user roles
          */
@@ -2043,37 +2049,37 @@ const webui = (() => {
             }
         }
         /**
-         * TODO: Details coming soon
+         * Create a proxy to watch for changes on a data object and call handler on changes.
          *
-         * @param {object} data
-         * @param {function} handler
-         * @returns {string}
+         * @param {object} data - The data object to watch.
+         * @param {function} handler - The function to call on changes.
+         * @returns {string} The proxy instance.
          */
         watchData(data, handler) {
             return new Proxy(data, getHandler(handler));
         }
         /**
-         * TODO: Details coming soon
+         * Pass a function to be called on app data changes.
          *
-         * @param {function} handler
-         * @returns {string}
+         * @param {function} handler - The function to call on app data changes.
+         * @returns {undefined}
          */
         watchAppDataChanges(handler) {
             notifyForAppDataChanges.push(handler);
         }
         /**
-         * TODO: Details coming soon
+         * Pass a function to be called on session data changes.
          *
-         * @param {function} handler
+         * @param {function} handler - The function to call on session data changes.
          * @returns {undefined}
          */
         watchSessionDataChanges(handler) {
             notifyForSessionDataChanges.push(handler);
         }
         /**
-         * TODO: Details coming soon
+         * Remove a function from being called on app data changes.
          *
-         * @param {function} handler
+         * @param {function} handler - The function to remove.
          * @returns {undefined}
          */
         unwatchAppDataChanges(handler) {
@@ -2082,9 +2088,9 @@ const webui = (() => {
             notifyForAppDataChanges.splice(index, 1);
         }
         /**
-         * TODO: Details coming soon
+         * Remove a function from being called on session data changes.
          *
-         * @param {function} handler
+         * @param {function} handler - The function to remove.
          * @returns {undefined}
          */
         unwatchSessionDataChanges(handler) {
@@ -2420,7 +2426,7 @@ const webui = (() => {
         if (mutation.target && mutation.target.nodeName === 'INPUT' && mutation.target.getAttribute('type') === 'hidden' && mutation.attributeName === 'value') {
             handleDataTrigger(mutation.target);
         }
-        let t = mutation.target;
+        const t = mutation.target;
         applyAttributeSettings(t, mutation.attributeName);
     }
     function applyAttributeSettings(target, attr) {

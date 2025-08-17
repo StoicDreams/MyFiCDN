@@ -65,7 +65,7 @@
                                 pd.type = type;
                             }
                             if (text) {
-                                pd.description = text;
+                                pd.description = webui.escapeCode(text);
                             }
                             currentMetadata.parameters[paramName] = pd;
                             break;
