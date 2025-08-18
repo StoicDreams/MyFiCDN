@@ -55,7 +55,7 @@ webui.define('webui-input-range', {
                 break;
             case 'value':
                 if (value === undefined) return;
-                if (value = t.value) return;
+                if (value === t.value) return;
                 t.setValue(value);
                 break;
             case 'min':
