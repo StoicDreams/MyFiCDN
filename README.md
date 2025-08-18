@@ -12,7 +12,7 @@ CDN Services for Stoic Dreams
 
 ### Setup
 
-Before running this project, follow the [Web CLI Setup](https://webui.stoicdeams.com/tools/cli) guide to install the necessary tools and dependencies for local deployment.
+Before running this project, follow the [Web CLI Setup](https://webui.stoicdreams.com/tools/cli) guide to install the necessary tools and dependencies for local deployment.
 
 ### Running the Project
 
