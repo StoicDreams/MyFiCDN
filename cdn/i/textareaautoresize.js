@@ -15,10 +15,12 @@
                 if (text.charAt(cursorPos - 1) === '\t') {
                     if (i > 0) { break; }
                     --cursorPos;
+                    ++trimCount;
                     break;
-                } s
+                }
                 if (text.charAt(cursorPos - 1) === ' ') {
                     --cursorPos;
+                    ++trimCount;
                     continue;
                 }
                 break;
