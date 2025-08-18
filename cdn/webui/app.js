@@ -34,9 +34,7 @@ webui.define("webui-app", {
         });
         let temp = webui.create('div');
         temp.innerHTML = content;
-        temp.childNodes.forEach(node => {
-            this.appendChild(node);
-        });
+        this.append(...temp.childNodes);
     },
     attrChanged: (t, property, newValue) => {
         switch (property) {
@@ -92,7 +90,7 @@ webui.define("webui-app", {
         let r = this.getSlot('right') || { clientWidth: 0 };
         let b = this.getSlot('bottom') || { clientHeight: 0 };
         let l = this.getSlot('left') || { clientWidth: 0 };
-        let m = this.shadowRoot.children[2];
+        let m = this.shadowRoot.querySelector('main');
         let w = window;
         let wb = document.body;
         let ww = w.innerWidth || wb.clientWidth;

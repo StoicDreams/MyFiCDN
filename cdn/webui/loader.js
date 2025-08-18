@@ -923,14 +923,14 @@ const webui = (() => {
                 if (cachedFetches[url]) {
                     resolve(cachedFetches[url]);
                 } else {
-                    fetch(url).then(res => {
+                    fetch(url).then(async res => {
                         if (isJson) {
-                            res.json().then(json => {
+                            await res.json().then(json => {
                                 cachedFetches[url] = json;
                                 resolve(json);
                             });
                         } else {
-                            res.text().then(text => {
+                            await res.text().then(text => {
                                 cachedFetches[url] = text;
                                 resolve(text);
                             });
