@@ -27,6 +27,7 @@ const webuiDialog = function (data) {
             t.btnCancel = t.template.querySelector('#dlg-cancel');
             let close = () => { };
             t.form.addEventListener('submit', ev => {
+                ev.preventDefault();
                 t._onsubmit();
             });
             document.body.addEventListener('keyup', ev => {
