@@ -16,6 +16,12 @@
         }, 1);
     }
     function handleKeyDown(ev) {
+        if (ev.key === 'Enter' && !ev.ctrlKey) {
+            ev.preventDefault();
+            ev.stopImmediatePropagation();
+            ev.stopPropagation();
+            return;
+        }
         if (ev.key !== 'Tab' || !ev.shiftKey) { return; }
         if (!ev.target || ev.target.nodeName !== 'TEXTAREA') { return; }
         ev.preventDefault();
