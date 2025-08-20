@@ -392,7 +392,7 @@ const webui = (() => {
          *
          * @param {string} name
          * @param {object} attr
-         * @returns {string}
+         * @returns {Node}
          */
         create(name, attr) {
             let el = document.createElement(name);

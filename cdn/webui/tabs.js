@@ -114,13 +114,13 @@
                         t.scrollIntoView({ behavior: 'smooth' });
                     }
                     if (c.nodeName === 'WEBUI-CONTENT') { c.removeAttribute('nofix'); }
-                    webui.querySelectorAll('[name]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
+                    webui.querySelectorAll('[name][disabled]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
                     if (c.nodeName === 'WEBUI-CONTENT' && !c.contentAttached) {
                         webui.wait(_ => {
                             return c.contentAttached;
                         }).then(async _ => {
                             await webui.wait(10);
-                            webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
+                            webui.querySelectorAll('[name][disabled]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
                         });
                     }
                 } else {

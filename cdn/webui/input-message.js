@@ -151,7 +151,7 @@ label:empty {
 display:none;
 }
 </style>
-<webui-flex column gap="0">
+<webui-flex column gap="0" align="start">
 <label></label>
 <textarea spellcheck="true" autocomplete="off" autocorrect="off"></textarea>
 </webui-flex>
