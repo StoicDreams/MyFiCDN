@@ -525,6 +525,10 @@ header[slot="header"] h6 {
     color: inherit;
 }
 
+header[slot="header"] h1:has(~h2:not(:empty)):after {
+    content: ":";
+}
+
 p+h1,
 p+h2,
 p+h3,
