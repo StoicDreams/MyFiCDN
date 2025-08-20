@@ -834,6 +834,8 @@ code {
     white-space: pre-wrap;
     overflow: hidden;
     word-break: break-all;
+    margin: 0 -0.25ch;
+    padding: 0 0.5ch;
 }
 
 [theme] code,
