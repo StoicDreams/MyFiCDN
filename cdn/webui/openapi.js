@@ -100,7 +100,11 @@
                     const label = `${method.toUpperCase()} ${path}`;
                     const btn = webui.create('webui-button', { slot: 'tabs', text: label, align: 'left' });
                     if (typeof t.hash === 'string') {
-                        btn.setAttribute('hash', `${t.hash}${webui.toSnake(label, '-')}`);
+                        let hash = [];
+                        if (t.hash) { hash.push(hash); }
+                        hash.push(method.toLowerCase());
+                        hash.push(path.replace(/[\/\\]+/g, '-'));
+                        btn.setAttribute('hash', `${t.hash}${webui.toSnake(hash.join('-'), '-')}`);
                     }
                     tabs.appendChild(btn);
                     const content = webui.create('webui-content', { slot: 'content' });
