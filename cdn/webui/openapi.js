@@ -42,7 +42,7 @@
         constructor: t => {
             t.baseUrl = '';
         },
-        attr: ['src'],
+        attr: ['src', 'hash'],
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'src':
@@ -99,6 +99,9 @@
                     const ep = pathItem[method];
                     const label = `${method.toUpperCase()} ${path}`;
                     const btn = webui.create('webui-button', { slot: 'tabs', text: label, align: 'left' });
+                    if (typeof t.hash === 'string') {
+                        btn.setAttribute('hash', `${t.hash}${webui.toSnake(label, '-')}`);
+                    }
                     tabs.appendChild(btn);
                     const content = webui.create('webui-content', { slot: 'content' });
                     tabs.appendChild(content);
