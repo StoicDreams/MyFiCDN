@@ -23,6 +23,16 @@ const webui = (() => {
     // TODO: Temp debug
     window.subs = map.subs;
     const roles = {};
+    function updatePageTitle() {
+        let pt = [];
+        pt.push(webui.getData('page-title'));
+        pt.push(webui.getData('page-subtitle'));
+        pt.push(location.hash);
+        pt = pt.filter(a => !!a);
+        let title = pt.join(': ') || webui.getData('app-company-singular');
+        if (!title) return;
+        document.title = webui.replaceAppData(title);
+    }
     let lastActive = Date.now();
     {
         const minTimeout = 1000 * 60 * 5;
@@ -1268,6 +1278,7 @@ const webui = (() => {
                 hash = `#${hash}`;
             }
             changePage(`${location.pathname}${hash}${location.search}`);
+            updatePageTitle();
         }
         /**
          * Remove wrapping <p> tags from HTML content.
@@ -1664,6 +1675,9 @@ const webui = (() => {
                     setDataToEl(node, skey);
                 });
             });
+            if (['page-title', 'page-subtitle'].indexOf(key) !== -1) {
+                updatePageTitle();
+            }
         }
         /**
          * Query selector all elements matching the selector, including those in shadow DOMs.
