@@ -86,9 +86,9 @@
             t.count = 0;
             t.icon = t.template.querySelector('webui-icon');
             if (!window.webuiAlert) {
-                webui.alert = (message, variant) => {
+                webui.alert = async (message, variant) => {
                     const msg = message.nodeName ? message.innerText : message;
-                    const hc = webui.hashCode(`${variant}-${msg}`);
+                    const hc = await webui.hashSHA256(`${variant}-${msg}`);
                     let index = -1;
                     alertList.forEach(al => {
                         index++;

@@ -1114,6 +1114,23 @@ const webui = (() => {
             return hash | 0;
         }
         /**
+         * Turn a string into a SHA256 Hash.
+         *
+         * @param {string} text - The string to hash.
+         * @returns {number}
+         */
+        async hashSHA256(text) {
+            if (typeof window.crypto === 'undefined' || typeof window.crypto.subtle === 'undefined') {
+                throw new Error('Web Cryptography API is not available in this environment.');
+            }
+            const encoder = new TextEncoder();
+            const data = encoder.encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+        /**
          * Check if an element has a specific setter field.
          *
          * @param {Node} el - The element to check.
