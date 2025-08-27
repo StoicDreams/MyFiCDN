@@ -9,4 +9,4 @@
 
 > More information coming soon.
 
-<webui-content cache src="/d/en-US/about-stoic-dreams.md"></webui-content>
+<webui-content cache src="/d/about-stoic-dreams.md"></webui-content>

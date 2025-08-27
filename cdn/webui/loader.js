@@ -113,7 +113,7 @@ const webui = (() => {
             'app-name': 'App',
             'app-company-singular': 'Company',
             'app-company-possessive': `Company's`,
-            'app-content-endpoint': '/d/en-US',
+            'app-content-endpoint': '/d',
             'app-domain': domain.toLowerCase(),
             'page-title': '',
             'page-subtitle': '',
@@ -142,7 +142,7 @@ const webui = (() => {
         isDesktopApp: false,
         rootPage: 'root',
         contentExtension: '.md',
-        pageContentEndpoint: '/d/en-US',
+        pageContentEndpoint: '/d',
         encryptPageContent: false,
         encryptPageData: 'base64'
     };
