@@ -22,6 +22,7 @@ const webui = (() => {
     };
     // TODO: Temp debug
     window.subs = map.subs;
+    const resizeSubscribers = {};
     const roles = {};
     function updatePageTitle() {
         let pt = [];
@@ -684,6 +685,9 @@ const webui = (() => {
                 }
                 connectedCallback() {
                     const t = this;
+                    if (typeof options.onResize === 'function') {
+                        resizeSubscribers[t._id] = options.onResize.bind(t);
+                    }
                     if (options.content) {
                         t.classList.add('content');
                     }
@@ -719,11 +723,15 @@ const webui = (() => {
                     }
                 }
                 disconnectedCallback() {
-                    this._isConnected = false;
-                    if (typeof options.disconnected === 'function') {
-                        options.disconnected(this);
+                    const t = this;
+                    t._isConnected = false;
+                    if (resizeSubscribers[t._id]) {
+                        delete resizeSubscribers[t._id];
                     }
-                    this.disconnectHandlers.forEach(h => {
+                    if (typeof options.disconnected === 'function') {
+                        options.disconnected(t);
+                    }
+                    t.disconnectHandlers.forEach(h => {
                         h();
                     });
                 }
@@ -2946,8 +2954,11 @@ const webui = (() => {
     window.throwTestError = () => {
         throw new Error("This is a simulated uncaught error!");
     };
-    window.addEventListener('resize', _ev => {
+    window.addEventListener('resize', ev => {
         webui.applyDynamicStyles();
+        Object.keys(resizeSubscribers).forEach(key => {
+            resizeSubscribers[key](ev);
+        });
     });
     (function applyDynamicStylesTimer() {
         webui.applyDynamicStyles();

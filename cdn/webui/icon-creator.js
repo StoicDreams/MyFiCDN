@@ -17,12 +17,25 @@
         preload: "icon dropdown input-range input-text input-message",
         constructor: (t) => {
         },
+        onResize: function (_) {
+            const t = this;
+            let cols = t.clientWidth > 1200 ? '2fr 1fr' : '1fr';
+            if (t._inputs.getAttribute('columns') !== cols) {
+                t._inputs.setAttribute('columns', cols);
+            }
+        },
         setupComponent: function () {
             const t = this;
             t.style.display = 'flex';
             t.style.flexDirection = 'column';
             t.style.flexGap = 'var(--padding)';
-            let colorOptions = JSON.stringify([
+            let shadeOptions = JSON.stringify([
+                { value: '', display: 'Regular' },
+                { value: 'bi', display: 'Bi' },
+                { value: 'tri', display: 'Tri' }
+            ]);
+            let lineShades = ['', '', '', '', '', '', '', ''];
+            const colorOptions = JSON.stringify([
                 { value: '', display: 'None' },
                 { value: 'black', display: 'Black' },
                 { value: 'white', display: 'White' },
@@ -94,11 +107,7 @@
                 { value: 'thin', display: 'Thin' },
                 { value: 'thick', display: 'Thick' }
             ]));
-            setupDropdown('Shade', 'shade', JSON.stringify([
-                { value: '', display: 'Regular' },
-                { value: 'duo', display: 'Duo' },
-                { value: 'tri', display: 'Trio' }
-            ]));
+            setupDropdown('Shade', 'shade', shadeOptions);
             let rotate = webui.create('webui-input-range', { label: 'Rotation', min: 0, max: 355, step: 5 });
             inputsColumn.appendChild(rotate);
             rotate.addEventListener('input', _ => {
@@ -116,8 +125,7 @@
             setupToggleIcon('_fillToggle', 'Fill', 'fill');
             setupToggleIcon('_borderToggle', 'Bordered', 'bordered');
             setupToggleIcon('_banToggle', 'Ban', 'ban');
-
-            t._inputs = webui.create('webui-grid', { columns: '1fr 1fr' });
+            t._inputs = webui.create('webui-grid', { columns: t.clientWidth > 1200 ? '2fr 1fr' : '1fr' });
             t.appendChild(t._inputs);
             t._svgContainer = webui.create('div', { style: 'display:block;position:relative;aspect-ratio:1;padding:0;margin:0;' });
             t._inputs.appendChild(t._svgContainer);
@@ -130,7 +138,7 @@
             t._svgContainer.appendChild(t._svgPreview);
             t._inputFull = webui.create('webui-input-message', { 'label': `Definition`, value: 'WEBUI-ICON-DEF\n', placeholder: "WEBUI-ICON-NAME" });
             inputsColumn.appendChild(t._inputFull);
-            t._inputPath = webui.create('webui-input-message', { 'label': `Definition`, value: '', placeholder: "" });
+            t._inputPath = webui.create('webui-input-message', { 'label': `Line Definition`, value: '', placeholder: "" });
             let pathOptions = [];
             for (let p = 1; p <= 8; ++p) {
                 pathOptions.push({ value: `${p}` });
@@ -155,6 +163,14 @@
                 t._inputPath.value = lines[t._modPath];
                 setPreview();
             });
+            t._inputDefShade = webui.create('webui-dropdown', {
+                'label': 'Line Shade', options: shadeOptions
+            });
+            t._inputDefShade.addEventListener('change', _ => {
+                lineShades[t._modPath - 1] = t._inputDefShade.value;
+                t._buildDef();
+            });
+            inputsColumn.appendChild(t._inputDefShade);
             inputsColumn.appendChild(t._inputPath);
             let bgScale = webui.create('webui-input-range', { label: 'Background Scale', value: '100', min: 25, max: 200, step: 1 });
             inputsColumn.appendChild(bgScale);
@@ -222,7 +238,7 @@
                     t._inputPath.value = ds;
                 }
                 let lines = checkForValidInput();
-                lines[t._modPath] = ds;
+                lines[t._modPath] = lineShades[t._modPath - 1] ? `${lineShades[t._modPath - 1]}|${ds}` : ds;
                 let fullDef = lines.join('\n');
                 if (fullDef !== t._inputFull.value) {
                     t._inputFull.value = fullDef;
@@ -472,21 +488,21 @@
                 }
                 return c;
             }
-            function setPathDefinition(definition) {
-                let segments = definition.split('|').pop().split('Q');
-                if (definition.startsWith('WEBUI-ICON')) {
-                    segments.shift();
-                }
+            function setPathDefinition(definition, lineNumber) {
+                let lineSegments = definition.split('|');
+                let shade = lineSegments.length > 1 ? lineSegments.shift().trim() : '';
+                lineShades[lineNumber - 1] = shade;
+                t._inputDefShade.value = shade;
+                let segments = lineSegments.pop().trim().split('Q');
                 let main = getCoord(segments.shift());
                 pathCoords[0].x = main.x;
                 pathCoords[0].y = main.y;
                 let index = 1;
                 while (segments.length > 0) {
-                    let line = segments.shift();
-                    if (line.startsWith('WEBUI-ICON')) continue;
-                    if (!line) continue;
+                    let coord = segments.shift();
+                    if (!coord) continue;
                     if (index >= pathCoords.length) break;
-                    let quad = getCoord(line);
+                    let quad = getCoord(coord);
                     let i = index++;
                     pathCoords[i].x = quad.x;
                     pathCoords[i].y = quad.y;
@@ -513,7 +529,7 @@
                 }
                 let i = t._modPath - 1;
                 if (lines[i]) {
-                    setPathDefinition(lines[i]);
+                    setPathDefinition(lines[i], i + 1);
                 }
                 icons.forEach(icon => {
                     icon.setIconDefinition(definition);
@@ -545,6 +561,9 @@
                 right.appendChild(webui.create('label', { text: def.l, class: 'text-center' }));
             });
             t._inputs.appendChild(inputsColumn);
+            function buildFullRule() {
+
+            }
             function checkForValidInput(skipPathUpdate) {
                 let values = t._inputFull.value.split('\n');
                 if (values.length === 0) {
@@ -560,6 +579,7 @@
                     t._modPath = values.length;
                     if (!skipPathUpdate) {
                         t._selectPath.value = t._modPath;
+                        t._inputDefShade = lineShades[t._modPath - 1];
                     }
                 }
                 return values;
