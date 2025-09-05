@@ -24,6 +24,10 @@
         "tags": "alert"
     },
     {
+        "name": "book",
+        "tags": "reading"
+    },
+    {
         "name": "caret",
         "tags": "left right up down prev next drop select"
     },
@@ -130,6 +134,10 @@
     {
         "name": "plus",
         "tags": "math add"
+    },
+    {
+        "name": "question",
+        "tags": "faq"
     },
     {
         "name": "refresh",
