@@ -30,7 +30,7 @@ webui.define("webui-avatar", {
                     t._slot.innerHTML = value;
                     return;
                 }
-                t._slot.innerHTML = `<img src="${value}" />`;
+                t._slot.innerHTML = `<img src="${value}" alt="avatar image" />`;
                 break;
         }
     },

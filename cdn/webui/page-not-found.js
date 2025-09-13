@@ -21,7 +21,7 @@
             <p>The page you are looking for was not found!</p>
         </webui-flex>
         <webui-flex column justify="center">
-            <img src="https://cdn.myfi.ws/v/Vecteezy/404-error-illustration-exclusive-design-inspiration.svg" />
+            <img src="https://cdn.myfi.ws/v/Vecteezy/404-error-illustration-exclusive-design-inspiration.svg" alt="Page Not Found Graphic" />
         </webui-flex>
     </webui-side-by-side>
     `;

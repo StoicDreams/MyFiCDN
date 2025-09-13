@@ -46,7 +46,7 @@
         },
         shadowTemplate: `
 <iframe></iframe>
-<img />
+<img alt="File Preview" />
 <style type="text/css">
 :host {
 display:block;
