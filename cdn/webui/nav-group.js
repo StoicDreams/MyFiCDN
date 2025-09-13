@@ -9,7 +9,7 @@
 webui.define('webui-nav-group', {
     preload: 'icon',
     constructor: (t) => {
-        t._anchor = webui.create('a');
+        t._anchor = webui.create('button');
         t._anchor.classList.add('navlink');
         t._display = webui.create('span');
         t._anchor.appendChild(t._display);

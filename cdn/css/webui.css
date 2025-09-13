@@ -1286,6 +1286,7 @@ webui-paper,
     align-items: center;
     padding: var(--padding);
     text-decoration: none;
+    font-size: 1em;
 }
 
 .navlink.active {
