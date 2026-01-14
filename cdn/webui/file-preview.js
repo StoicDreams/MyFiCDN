@@ -36,7 +36,7 @@
             let file = files[0];
             t.clear();
             console.log('debug', file.content.startsWith('data:image'), file);
-            if (file.content.startsWith('data:image')) {
+            if (file.type.startsWith('image')) {
                 t._img.src = file.content;
             } else {
                 t._iframe.src = file.content;
