@@ -35,6 +35,7 @@
             // TODO, add pagination when multiple files are selected
             let file = files[0];
             t.clear();
+            console.log('debug', file.content.startsWith('data:image'), file);
             if (file.content.startsWith('data:image')) {
                 t._img.src = file.content;
             } else {
