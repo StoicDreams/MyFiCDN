@@ -63,6 +63,7 @@
                 t._label.innerHTML = t.label;
             } else {
                 t.value = value;
+                console.log('debug fs', value, t.value);
                 let label = t.value.map(v => v.name).join(',') || t.label;
                 if (t.labelLimit && label.length > t.labelLimit) {
                     label = `${label.substr(0, t.labelLimit)}...`;
