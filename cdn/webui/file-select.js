@@ -10,7 +10,6 @@
     webui.define("webui-file-select", {
         preload: 'button fa',
         constructor: (t) => {
-            t.contentType = 'bin';
             t.label = 'File Select';
             t.labelLimit = 20;
             t._label = t.template.querySelector('label');
@@ -39,7 +38,23 @@
                                 t.setValue(list);
                             }
                         }
-                        switch (t.contentType) {
+                        const ft = file.type.split('/')[0];
+                        switch (ft) {
+                            case 'image':
+                            case 'text':
+                                break;
+                            default:
+                                ft = file.type;
+                                break;
+                        }
+                        switch (ft) {
+                            case 'image':
+                            case 'application/pdf':
+                                reader.readAsDataURL(file);
+                                break;
+                            case 'application/json':
+                            case 'application/xml':
+                            case 'application/xhtml+xml':
                             case 'text':
                                 reader.readAsText(file);
                                 break;
@@ -63,7 +78,6 @@
                 t._label.innerHTML = t.label;
             } else {
                 t.value = value;
-                console.log('debug fs', value, t.value);
                 let label = t.value.map(v => v.name).join(',') || t.label;
                 if (t.labelLimit && label.length > t.labelLimit) {
                     label = `${label.substr(0, t.labelLimit)}...`;
@@ -83,11 +97,6 @@
                     break;
                 case 'accept':
                     t._input.setAttribute('accept', value);
-                    ['json', 'txt', 'md', 'html', 'toml', ''].forEach(ft => {
-                        if (value.indexOf(`.${ft}`) !== -1) {
-                            t.contentType = 'text';
-                        }
-                    });
                     break;
                 case 'multiple':
                     if (value === false) {
