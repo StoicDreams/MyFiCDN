@@ -37,8 +37,10 @@
             t.clear();
             if (file.type.startsWith('image')) {
                 t._img.src = file.content;
-            } else {
+            } else if (file.content.startsWith('data:')) {
                 t._iframe.src = file.content;
+            } else {
+                t._iframe.srcdoc = file.content;
             }
         },
         clear: function () {
