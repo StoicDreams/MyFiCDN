@@ -17,9 +17,12 @@
             switch (property) {
                 case 'height':
                     t.style.height = webui.pxIfNumber(value);
+                    t._img.style.width = 'auto';
+                    t._img.style.height = webui.pxIfNumber(value);
                     break;
                 case 'maxHeight':
                     t.style.maxHeight = webui.pxIfNumber(value);
+                    t._img.style.maxHeight = webui.pxIfNumber(value);
                     break;
             }
         },
