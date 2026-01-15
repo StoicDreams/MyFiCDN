@@ -973,6 +973,38 @@ const webui = (() => {
             return atob(encoded);
         }
         /**
+         * Helper to format bytes into KB/MB.
+         *
+         * @param {string} bytes - bytes
+         * @param {string} decimals - default 2
+         * @returns {undefined}
+         * @example
+         * webui.formatBytes(webui.getBase64Size(btoa('Hello World')));
+         */
+        formatBytes(bytes, decimals = 2) {
+            if (!+bytes) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+        }
+        /**
+         * Helper to calculate exact bytes from Base64 string.
+         *
+         * @param {string} base64String - base64 string to calculate size from
+         * @returns {undefined}
+         * @example
+         * webui.getBase64Size(btoa('Hello World'));
+         * webui.formatBytes(webui.getBase64Size(btoa('Hello World')));
+         */
+        getBase64Size(base64String) {
+            if (!base64String) return 0;
+            let clean = base64String.includes(',') ? base64String.split(',')[1] : base64String;
+            let padding = (clean.match(/=*$/) || [''])[0].length;
+            return (clean.length * 0.75) - padding;
+        }
+        /**
          * Get data from key, or pass multiple keys to return array of results.
          *
          * @param {string} args
