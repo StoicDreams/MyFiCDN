@@ -60,7 +60,6 @@
         },
         loadDoc: async function () {
             const t = this;
-            console.log('ld', t.src);
             t.innerHTML = `<webui-alert theme="info" show>Enter your URL to view</webui-alert>`;
             if (!t.src) return;
             if (t._loadedSrc === t.src) return;
