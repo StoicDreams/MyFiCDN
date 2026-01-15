@@ -54,6 +54,7 @@
             t.loadDoc();
         },
         setSource: function () {
+            const t = this;
             t.src = value;
             t.loadDoc();
         },
