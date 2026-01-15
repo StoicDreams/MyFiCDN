@@ -2170,6 +2170,25 @@ const webui = (() => {
             notifyForSessionDataChanges.splice(index, 1);
         }
         /**
+         * Check to see if a URL is valid.
+         *
+         * Optionally check for specific protocols.
+         *
+         * @param {string} url - Url to check if is a valid URL.
+         * @param {array} protocols - Protocols to check for - default ['http:','https:']
+         * @returns {bool}
+         */
+        validateUrl(url, protocols = ['http:', 'https:']) {
+            let url;
+            try {
+                url = new URL(url);
+            } catch (_) {
+                return false;
+            }
+            if (!protocols || !protocols.indexOf) return true;
+            return protocols.indexOf(url.protocol) !== -1;
+        }
+        /**
          * Awaitable method to wait for a given time in milliseconds before continuing process.
          *
          * Note: When passing a method, wait will resolve no later than 10 seconds. This is done to avoid waits that go on forever because of batch logic.

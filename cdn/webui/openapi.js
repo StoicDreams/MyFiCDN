@@ -64,6 +64,7 @@
             t.innerHTML = `<webui-alert theme="info" show>Enter your URL to view</webui-alert>`;
             if (!t.src) return;
             if (t._loadedSrc === t.src) return;
+            if (!webui.validateUrl(t.src)) return;
             t.innerHTML = `<webui-alert theme="info" show>Loading</webui-alert>`;
             t._loadedSrc = t.src;
             try {
