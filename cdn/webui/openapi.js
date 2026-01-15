@@ -46,13 +46,15 @@
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'src':
-                    console.log('debug src', value);
-                    t.src = value;
-                    t.loadDoc();
+                    t.setSource(value);
                     break;
             }
         },
         connected: t => {
+            t.loadDoc();
+        },
+        setSource: function () {
+            t.src = value;
             t.loadDoc();
         },
         loadDoc: async function () {
