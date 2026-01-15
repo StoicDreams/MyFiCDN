@@ -58,9 +58,10 @@
         loadDoc: async function () {
             const t = this;
             console.log('ld', t.src);
-            t.innerHTML = `<webui-alert theme="info" show>Loading</webui-alert>`;
+            t.innerHTML = `<webui-alert theme="info" show>Enter your URL to view</webui-alert>`;
             if (!t.src) return;
             if (t._loadedSrc === t.src) return;
+            t.innerHTML = `<webui-alert theme="info" show>Loading</webui-alert>`;
             t._loadedSrc = t.src;
             try {
                 let doc = await webui.fetchWithCache(t.src, true);
