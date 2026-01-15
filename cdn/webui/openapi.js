@@ -46,6 +46,7 @@
         attrChanged: (t, property, value) => {
             switch (property) {
                 case 'src':
+                    console.log('debug src', value);
                     t.src = value;
                     t.loadDoc();
                     break;
@@ -56,6 +57,8 @@
         },
         loadDoc: async function () {
             const t = this;
+            console.log('ld', t.src);
+            t.innerHTML = `<webui-alert theme="info" show>Loading</webui-alert>`;
             if (!t.src) return;
             if (t._loadedSrc === t.src) return;
             t._loadedSrc = t.src;
