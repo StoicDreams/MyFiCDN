@@ -53,7 +53,7 @@
         connected: t => {
             t.loadDoc();
         },
-        setSource: function () {
+        setSource: function (value) {
             const t = this;
             t.src = value;
             t.loadDoc();
