@@ -1239,24 +1239,8 @@ const webui = (() => {
          * @returns {string}
          */
         limitChars(text, limit) {
-            if (!text || !text.length || text.length <= limit) return text;
-            let words = text.split(' ');
-            let count = 0;
-            let result = [];
-            result.push(words.unshift());
-            function addWord(word) {
-                count += word.length;
-                result.push(word);
-            }
-            addWord(words.unshift());
-            while (words.length > 0) {
-                let word = words.unshift();
-                if (count + word.length > limit) {
-                    break;
-                }
-                addWord(words.unshift());
-            }
-            return result.join(' ');
+            if (!text || typeof limit !== 'number' || !text.length || text.length <= limit || !text.substring) return text;
+            return text.substring(0, limit);
         }
         /**
          * Log messages to the console with various methods.
@@ -1986,7 +1970,7 @@ const webui = (() => {
                 }
             } finally {
                 if (typeof onFinally === 'function') {
-                    onFinally(ex);
+                    onFinally();
                 }
             }
         }
@@ -2179,7 +2163,6 @@ const webui = (() => {
          * @returns {bool}
          */
         validateUrl(url, protocols = ['http:', 'https:']) {
-            let url;
             try {
                 url = new URL(url);
             } catch (_) {
@@ -2263,10 +2246,7 @@ const webui = (() => {
     function checkNodes(nodes) {
         if (nodes.length === 0) return;
         nodes.forEach(node => {
-            if (node.dataset && node.dataset.state) {
-                loadState(node);
-            }
-            checkNodes(node.childNodes);
+            checkAddedNode(node);
         });
     }
     function applyDataHide() {
@@ -2655,9 +2635,7 @@ const webui = (() => {
     }
     async function loadPage() {
         if (!appSettings.app || !webui.appConfig.appName) {
-            setTimeout(() => {
-                loadPage();
-            }, 10);
+            setTimeout(() => { loadPage(); }, 10);
             return;
         }
         let page = location.pathname === '/' ? '/' + appSettings.rootPage : location.pathname;
@@ -2804,6 +2782,9 @@ const webui = (() => {
     }
     function checkAddedNode(el) {
         applyAttributeSettings(el);
+        if (el.dataset && el.dataset.state) {
+            loadState(el);
+        }
         //checkForSubscription(el);
         if (el.shadowRoot) {
             if (!el._isObserved) {
@@ -2816,12 +2797,6 @@ const webui = (() => {
             processNode(el.nodeName);
         }
         checkNodes(el.childNodes);
-    }
-    function checkNodes(nodes) {
-        if (nodes.length === 0) return;
-        nodes.forEach(node => {
-            checkAddedNode(node);
-        });
     }
     const startObserving = (domNode) => {
         const observer = new MutationObserver(mutations => {
@@ -2839,9 +2814,11 @@ const webui = (() => {
         });
         return observer;
     };
+    let rwrStep = 1;
     function runWhenBodyIsReady(setup) {
         if (!document.body || !webui.loaded) {
-            setTimeout(() => runWhenBodyIsReady(setup), 1);
+            setTimeout(() => runWhenBodyIsReady(setup), rwrStep);
+            rwrStep += 1;
             return;
         }
         setup();
