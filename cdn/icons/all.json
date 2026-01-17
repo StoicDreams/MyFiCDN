@@ -112,6 +112,10 @@
         "tags": "brands social"
     },
     {
+        "name": "jwt",
+        "tags": "key code stars"
+    },
+    {
         "name": "messages",
         "tags": "talk communication chat"
     },

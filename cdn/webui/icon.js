@@ -29,7 +29,7 @@ Stroke line joins: miter|round|bevel
     M0 -70Q25 -45 25 -45Q45 -25 45 -25Q70 0 70 0Q50 20 50 20Q25 45 25 45Q0 70 0 70Q-35 35 -35 35Q-70 0 -70 0Q-45 -25 -45 -25Q-25 -45 -25 -45Q0 -70 0 -70z
     M0 -70Q25 -45 25 -45Q45 -25 45 -25Q70 0 70 0Q50 20 50 20Q25 45 25 45Q0 70 0 70Q-35 35 -35 35Q-70 0 -70 0Q-45 -25 -45 -25Q-25 -45 -25 -45Q0 -70 0 -70z
     M0 -70Q25 -45 25 -45Q45 -25 45 -25Q70 0 70 0Q50 20 50 20Q25 45 25 45Q0 70 0 70Q-35 35 -35 35Q-70 0 -70 0Q-45 -25 -45 -25Q-25 -45 -25 -45Q0 -70 0 -70z`;
-    const pathCount = 8;
+    const pathCount = 10;
     const cache = {}, waiter = {};
     const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     const defUnused = 'M0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0z';
@@ -274,6 +274,8 @@ Stroke line joins: miter|round|bevel
 <path class="i6" d=""></path>
 <path class="i7" d=""></path>
 <path class="i8" d=""></path>
+<path class="i9" d=""></path>
+<path class="i10" d=""></path>
 <path class="ban" d="M-60 60Q-50 50 -50 50Q-35 35 -35 35Q-20 20 -20 20Q-10 10 -10 10Q-5 5 -5 5Q5 -5 5 -5Q10 -10 10 -10Q20 -20 20 -20Q35 -35 35 -35Q50 -50 50 -50Q60 -60 60 -60z"></path>
 </svg>
 <slot name="count"></slot>

@@ -33,7 +33,7 @@
                 get() { return this._perPage; },
                 set(v) {
                     this._perPage = v;
-                    this.t._pag.perPage = v;
+                    this._pag.perPage = v;
                 }
             },
             'pageCount': {
@@ -62,24 +62,34 @@
                     break;
             }
         },
+        applyStyles: function () {
+            const t = this;
+            t.style.setProperty('--font-size', `${t._size.value}em`);
+        },
         connected: function (t) {
             webui.fetchWithCache(emojiSource, true).then(emojis => {
                 t.emojis = emojis;
                 t.applyFilter();
                 t.render();
             });
-            t._search.addEventListener('input', _ => {
-                t._filter = t._search.value.trim();
-                t.applyFilter();
-                t.render();
-            });
             t._size.addEventListener('change', _ => {
-                t.style.setProperty('--font-size', `${t._size.value}em`);
+                t.applyStyles();
+            });
+            let timer;
+            t._search.addEventListener('input', _ => {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    t._filter = t._search.value.trim();
+                    t.applyFilter();
+                    t.render();
+                }, 300);
             });
             let size = webui.getData('session-emoji-search-size');
             if (!size) {
-                webui.setData('session-emoji-search-size', 2);
+                size = 2;
+                webui.setData('session-emoji-search-size', size);
             }
+            t._size.value = size;
             t.setAttribute('data-subscribe', 'session-emoji-search-index:page');
         },
         applyFilter: function () {
@@ -97,7 +107,6 @@
             const t = this;
             if (!t.emojis) { return; }
             t._grid.innerText = '';
-            let index = 0;
             let perPage = t.perPage || 20;
             let page = t.page || 1;
             let startIndex = (page - 1) * perPage;
@@ -105,8 +114,7 @@
                 startIndex = 0;
             }
             let endIndex = startIndex + perPage;
-            t._filteredKeys.forEach(key => {
-                if (index++ < startIndex || index > endIndex) return;
+            t._filteredKeys.slice(startIndex, endIndex).forEach(key => {
                 const code = `:${key}:`;
                 let el = webui.create('a', { title: code, html: t.emojis[key] });
                 t._grid.appendChild(el);
@@ -114,8 +122,9 @@
                     ev.stopPropagation();
                     ev.preventDefault();
                     webui.copyToClipboard(code);
-                })
+                });
             });
+            t.applyStyles();
         },
         shadowTemplate: `
 <webui-flex gap="10">
@@ -133,7 +142,7 @@ overflow-x:hidden;
 a {
 display:block;
 font-size:var(--font-size);
-ratio:1;
+aspect-ratio:1;
 width:var(--font-size);
 cursor:pointer;
 }

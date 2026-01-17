@@ -2,26 +2,26 @@
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>https://cdn.myfi.ws/</loc>
-		<lastmod>2026-01-14</lastmod>
+		<lastmod>2026-01-17</lastmod>
 	</url>
 	<url>
 		<loc>https://cdn.myfi.ws/components</loc>
-		<lastmod>2026-01-14</lastmod>
+		<lastmod>2026-01-17</lastmod>
 	</url>
 	<url>
 		<loc>https://cdn.myfi.ws/webui-methods</loc>
-		<lastmod>2026-01-14</lastmod>
+		<lastmod>2026-01-17</lastmod>
 	</url>
 	<url>
 		<loc>https://cdn.myfi.ws/notfound</loc>
-		<lastmod>2026-01-14</lastmod>
+		<lastmod>2026-01-17</lastmod>
 	</url>
 	<url>
 		<loc>https://cdn.myfi.ws/under-construction</loc>
-		<lastmod>2026-01-14</lastmod>
+		<lastmod>2026-01-17</lastmod>
 	</url>
 	<url>
 		<loc>https://cdn.myfi.ws/test/hello</loc>
-		<lastmod>2026-01-14</lastmod>
+		<lastmod>2026-01-17</lastmod>
 	</url>
 </urlset>
