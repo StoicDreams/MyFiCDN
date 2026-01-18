@@ -121,6 +121,7 @@
     --drawer-width-mini-left: 56px;
     --drawer-width-mini-right: 56px;
     --appbar-height: 64px;
+    --min-font-size: 14px;
     --typography-family: system-ui, 'Roboto', 'Helvetica', Arial, sans-serif;
     --typography-size: 16px;
     --typography-weight: 400;
@@ -156,7 +157,7 @@ i.vl {
     background-color: var(--theme-color-offset, var(--color-info-offset));
     color: var(--theme-color, var(--color-info));
     padding: 1px;
-    font-size: 0.6em;
+    font-size: max(var(--min-font-size), 0.6em);
     min-width: 1rem;
     text-align: center;
     margin: auto auto auto 1ch;
@@ -807,7 +808,7 @@ pre[languagetag]:before {
     right: 0;
     translate: 4px -4px;
     padding: calc(0.5 * var(--padding)) calc(1.5 * var(--padding));
-    font-size: 0.85em;
+    font-size: max(var(--min-font-size), 0.85em);
     font-weight: 600;
     z-index: 2;
     opacity: 1;
@@ -1014,7 +1015,7 @@ li>i:first-child {
     bottom: 0;
     width: 100%;
     text-align: center;
-    font-size: calc(var(--typography-size) * 0.8);
+    font-size: max(var(--min-font-size), calc(var(--typography-size) * 0.8));
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
@@ -1851,7 +1852,7 @@ webui-nav-group>.navlink:not(.show)~webui-nav-group>*,
 }
 
 .f0 {
-    font-size: calc(var(--typography-size) * 0.8);
+    font-size: max(var(--min-font-size), calc(var(--typography-size) * 0.8));
 }
 
 .f1 {

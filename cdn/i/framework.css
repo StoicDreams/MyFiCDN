@@ -1,9 +1,11 @@
-﻿:root, ::before, ::after {
+﻿:root,
+::before,
+::after {
     --primary-dark: #000000;
-    --primary-glass: rgba(0,0,0,0.7);
+    --primary-glass: rgba(0, 0, 0, 0.7);
     --primary-light: #FFFFFF;
     --splash-primary: #000000;
-    --splash-glass: rgba(0,0,0,0.7);
+    --splash-glass: rgba(0, 0, 0, 0.7);
     --splash-secondary: #FFFFFF;
     --color-dark: #333;
     --color-light: #FFF;
@@ -12,8 +14,8 @@
     --primary-button-offset: #FFF;
     --active-button-background: #111;
     --active-button-color: #EEE;
-    --glass-light: rgba(255,255,255,0.7);
-    --glass-dark: rgba(0,0,0,0.7);
+    --glass-light: rgba(255, 255, 255, 0.7);
+    --glass-dark: rgba(0, 0, 0, 0.7);
     --primary-page: #2626A8;
     --color-page: #FFFFFF;
     --color-info: #004bff;
@@ -44,7 +46,8 @@ app * {
     transition-duration: 200ms;
 }
 
-html, body {
+html,
+body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 14px;
     background-color: var(--primary-page);
@@ -68,11 +71,13 @@ html, body {
     overflow: hidden;
 }
 
-ol, ul {
+ol,
+ul {
     padding-inline-start: 20px;
 }
 
-a, span,
+a,
+span,
 button {
     display: inline-block;
 }
@@ -84,18 +89,26 @@ img {
     max-height: 100%;
 }
 
-pre, code {
+pre,
+code {
     margin: 0;
 }
 
 figure,
 blockquote,
-div, p,
+div,
+p,
 section,
 aside,
 article,
-h1, h2, h3, h4, h5, h6,
-header, footer {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+header,
+footer {
     display: block;
     padding: 0;
     margin: 0;
@@ -104,13 +117,20 @@ header, footer {
 
 figure,
 blockquote,
-div, p,
+div,
+p,
 section,
 aside,
 article,
 li,
-h1, h2, h3, h4, h5, h6,
-header, footer {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+header,
+footer {
     position: relative;
 }
 
@@ -118,7 +138,11 @@ h1 {
     font-size: 1.3em;
 }
 
-h2, h3, h4, h5, h6 {
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-size: 1.3em;
 }
 
@@ -148,45 +172,75 @@ h2, h3, h4, h5, h6 {
     grid-column: span 4;
 }
 
-.page.editing > h1,
-.page.editing > h2,
-.page.editing > h3,
-.page.editing > h4,
-.page.editing > h5,
-.page.editing > h6,
-.page.editing > table,
-.page.editing > .glass,
-.page.editing > .tabbedgroup,
-.page.editing > .actions,
-.page.editing > .spanrow,
-.page.editing > .span2,
-.page.editing > .span3,
-.page.editing > .span4 {
+.page.editing>h1,
+.page.editing>h2,
+.page.editing>h3,
+.page.editing>h4,
+.page.editing>h5,
+.page.editing>h6,
+.page.editing>table,
+.page.editing>.glass,
+.page.editing>.tabbedgroup,
+.page.editing>.actions,
+.page.editing>.spanrow,
+.page.editing>.span2,
+.page.editing>.span3,
+.page.editing>.span4 {
     grid-column: span 1;
 }
 
-.details > .glass + .uiinput,
-.details > header + *,
-:not(.grid):not(.actions):not(.tabs):not(.tabsection) > ol + button,
-:not(.grid):not(.actions):not(.tabs):not(.tabsection) > ul + button,
-:not(.grid):not(.actions):not(.tabs):not(.tabsection) > section + button,
-:not(.grid):not(.actions):not(.tabs):not(.tabsection) > header + section:not(.page),
-:not(.grid):not(.actions):not(.tabs):not(.tabsection) > header + footer,
-:not(.grid):not(.actions):not(.tabs):not(.tabsection) > section + footer,
-:not(.grid):not(.actions):not(.tabs):not(.tabsection) > ul:not(:first-child),
-:not(.grid):not(.actions):not(.tabs):not(.tabsection) > ol:not(:first-child),
-:not(.grid):not(.actions):not(.tabs):not(.tabsection) > section:not(.page):not(:first-child),
-:not(.grid):not(.actions):not(.tabs):not(.tabsection) > p:not(:first-child),
-:not(.grid):not(.actions):not(.tabs):not(.tabsection) > blockquote:not(:first-child) {
+.details>.glass+.uiinput,
+.details>header+*,
+:not(.grid):not(.actions):not(.tabs):not(.tabsection)>ol+button,
+:not(.grid):not(.actions):not(.tabs):not(.tabsection)>ul+button,
+:not(.grid):not(.actions):not(.tabs):not(.tabsection)>section+button,
+:not(.grid):not(.actions):not(.tabs):not(.tabsection)>header+section:not(.page),
+:not(.grid):not(.actions):not(.tabs):not(.tabsection)>header+footer,
+:not(.grid):not(.actions):not(.tabs):not(.tabsection)>section+footer,
+:not(.grid):not(.actions):not(.tabs):not(.tabsection)>ul:not(:first-child),
+:not(.grid):not(.actions):not(.tabs):not(.tabsection)>ol:not(:first-child),
+:not(.grid):not(.actions):not(.tabs):not(.tabsection)>section:not(.page):not(:first-child),
+:not(.grid):not(.actions):not(.tabs):not(.tabsection)>p:not(:first-child),
+:not(.grid):not(.actions):not(.tabs):not(.tabsection)>blockquote:not(:first-child) {
     margin-top: 10px;
 }
 
-h1 + h1, h1 + h2, h1 + h3, h1 + h4, h1 + h5, h1 + h6,
-h2 + h1, h2 + h2, h2 + h3, h2 + h4, h2 + h5, h2 + h6,
-h3 + h1, h3 + h2, h4 + h3, h3 + h4, h3 + h5, h3 + h6,
-h4 + h1, h4 + h2, h4 + h3, h4 + h4, h4 + h5, h4 + h6,
-h5 + h1, h5 + h2, h5 + h3, h5 + h4, h5 + h5, h5 + h6,
-h6 + h1, h6 + h2, h6 + h3, h6 + h4, h6 + h5, h6 + h6 {
+h1+h1,
+h1+h2,
+h1+h3,
+h1+h4,
+h1+h5,
+h1+h6,
+h2+h1,
+h2+h2,
+h2+h3,
+h2+h4,
+h2+h5,
+h2+h6,
+h3+h1,
+h3+h2,
+h4+h3,
+h3+h4,
+h3+h5,
+h3+h6,
+h4+h1,
+h4+h2,
+h4+h3,
+h4+h4,
+h4+h5,
+h4+h6,
+h5+h1,
+h5+h2,
+h5+h3,
+h5+h4,
+h5+h5,
+h5+h6,
+h6+h1,
+h6+h2,
+h6+h3,
+h6+h4,
+h6+h5,
+h6+h6 {
     margin-top: 2px;
     border-top: none;
     padding-top: 2px;
@@ -214,94 +268,101 @@ h6 + h1, h6 + h2, h6 + h3, h6 + h4, h6 + h5, h6 + h6 {
     filter: blur(20px);
 }
 
-.grid > aside,
+.grid>aside,
 aside {
     margin: 0;
     padding: 5px;
     border: 2px solid var(--primary-glass);
 }
 
-    aside > header {
-        background-color: var(--primary-glass);
-        color: var(--primary-light);
-        margin: -5px -5px 5px;
-        padding: 5px;
-    }
+aside>header {
+    background-color: var(--primary-glass);
+    color: var(--primary-light);
+    margin: -5px -5px 5px;
+    padding: 5px;
+}
 
 blockquote,
 figure {
     position: relative;
-    box-shadow: 0px 5px 5px rgba(0,0,0,0.8);
+    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.8);
     overflow: hidden;
 }
 
-    *:not(figure) > blockquote,
-    figure.quote {
-        border-left: 10px solid #0DF;
-        background-color: var(--block-background);
-        color: var(--block-color);
-        padding: 10px;
-    }
+*:not(figure)>blockquote,
+figure.quote {
+    border-left: 10px solid #0DF;
+    background-color: var(--block-background);
+    color: var(--block-color);
+    padding: 10px;
+}
 
-        *:not(figure) > blockquote::before,
-        figure.quote::before {
-            content: "“";
-            display: block;
-            float: left;
-            margin: -17px 10px -0.5em 0;
-            font-size: 6em;
-            text-shadow: 6px 6px 5px rgba(0,0,0,0.3);
-            line-height: 1em;
-        }
+*:not(figure)>blockquote::before,
+figure.quote::before {
+    content: "“";
+    display: block;
+    float: left;
+    margin: -17px 10px -0.5em 0;
+    font-size: 6em;
+    text-shadow: 6px 6px 5px rgba(0, 0, 0, 0.3);
+    line-height: 1em;
+}
 
-    blockquote > blockquote::before {
-        content: "";
-        display: none;
-    }
+blockquote>blockquote::before {
+    content: "";
+    display: none;
+}
 
-    blockquote::after,
-    figure.quote::after {
-        content: " ";
-        display: block;
-        height: 0px;
-        clear: both;
-    }
+blockquote::after,
+figure.quote::after {
+    content: " ";
+    display: block;
+    height: 0px;
+    clear: both;
+}
 
-    blockquote figcaption,
-    figure figcaption {
-        text-align: right;
-        margin: 10px -10px -10px -10px;
-        padding: 10px;
-        color: #0DF;
-    }
+blockquote figcaption,
+figure figcaption {
+    text-align: right;
+    margin: 10px -10px -10px -10px;
+    padding: 10px;
+    color: #0DF;
+}
 
-        blockquote figcaption::after,
-        figure figcaption::after {
-            content: "\00A0 \2014";
-        }
+blockquote figcaption::after,
+figure figcaption::after {
+    content: "\00A0 \2014";
+}
 
 table {
     max-width: 100%;
 }
 
-    table:not(:first-child) {
-        margin-top: 10px;
-    }
+table:not(:first-child) {
+    margin-top: 10px;
+}
 
-table, thead, tbody, tr, td, th {
+table,
+thead,
+tbody,
+tr,
+td,
+th {
     border-collapse: collapse;
     border: 1px solid var(--color-diagram-primary);
 }
 
-th, td {
+th,
+td {
     padding: 2px 5px;
     word-break: break-word;
     text-overflow: ellipsis;
 }
 
-    th:first-child, td:first-child {
-        white-space: nowrap;
-    }
+th:first-child,
+td:first-child {
+    white-space: nowrap;
+}
 
 span.fa-layers-counter {
     display: block;
@@ -332,10 +393,10 @@ span.fa-layers-counter {
     max-width: 100%;
 }
 
-    .uiinput.no-label,
-    .uiinput.vertical {
-        grid-template-columns: 1fr;
-    }
+.uiinput.no-label,
+.uiinput.vertical {
+    grid-template-columns: 1fr;
+}
 
 label {
     display: inline-block;
@@ -348,7 +409,7 @@ label {
     font-size: 14px;
 }
 
-.uiinput > label {
+.uiinput>label {
     display: flex;
     align-items: center;
     padding: 5px;
@@ -397,17 +458,18 @@ textarea {
     tab-size: 4;
 }
 
-    select > option {
-        background-color: var(--color-light);
-        color: var(--color-dark);
-    }
+select>option {
+    background-color: var(--color-light);
+    color: var(--color-dark);
+}
 
 input[type=text] {
     border: none;
     box-sizing: border-box;
 }
 
-pre, code,
+pre,
+code,
 div[contenteditable=true],
 textarea {
     font-family: Monoise-Regular;
@@ -429,7 +491,7 @@ code {
     white-space: pre-wrap;
 }
 
-pre > code {
+pre>code {
     background-color: var(--back-terminal);
     color: var(--color-terminal);
     display: block;
@@ -437,40 +499,40 @@ pre > code {
     padding: 10px;
 }
 
-    pre > code[class*=language-] {
-        margin-top: 1.4em;
-    }
+pre>code[class*=language-] {
+    margin-top: 1.4em;
+}
 
-        pre > code[class*=language-]::before {
-            display: block;
-            position: absolute;
-            content: attr(class);
-            background-color: var(--color-terminal);
-            color: var(--back-terminal);
-            border: 1px solid var(--color-info);
-            border-radius: 3px 3px 0 0;
-            font-size: 10px;
-            font-family: Monoise-Regular;
-            font-feature-settings: "liga" 0, "calt" 0;
-            text-indent: -61px;
-            bottom: 100%;
-            left: 5px;
-            padding: 0px 3px;
-            overflow: hidden;
-        }
+pre>code[class*=language-]::before {
+    display: block;
+    position: absolute;
+    content: attr(class);
+    background-color: var(--color-terminal);
+    color: var(--back-terminal);
+    border: 1px solid var(--color-info);
+    border-radius: 3px 3px 0 0;
+    font-size: 10px;
+    font-family: Monoise-Regular;
+    font-feature-settings: "liga" 0, "calt" 0;
+    text-indent: -61px;
+    bottom: 100%;
+    left: 5px;
+    padding: 0px 3px;
+    overflow: hidden;
+}
 
-        pre > code[class*=language-]::after {
-            content: " ";
-            position: absolute;
-            left: 5px;
-            z-index: 2;
-            background-color: var(--color-terminal);
-            bottom: 100%;
-            display: block;
-            width: 2px;
-            height: 4px;
-            margin: auto auto 6px 1px;
-        }
+pre>code[class*=language-]::after {
+    content: " ";
+    position: absolute;
+    left: 5px;
+    z-index: 2;
+    background-color: var(--color-terminal);
+    bottom: 100%;
+    display: block;
+    width: 2px;
+    height: 4px;
+    margin: auto auto 6px 1px;
+}
 
 .consoledrawer code,
 .consoledrawer code[class*=language-] {
@@ -480,10 +542,10 @@ pre > code {
     outline: none;
 }
 
-    .consoledrawer code[class*=language-]::before,
-    .consoledrawer code[class*=language-]::after {
-        display: none;
-    }
+.consoledrawer code[class*=language-]::before,
+.consoledrawer code[class*=language-]::after {
+    display: none;
+}
 
 div[contenteditable=true],
 textarea {
@@ -493,19 +555,19 @@ textarea {
     text-overflow: ellipsis;
 }
 
-    div[contenteditable=true]:valid,
-    input[type=text]:valid,
-    textarea:valid {
-        border: none;
-        outline: none;
-    }
+div[contenteditable=true]:valid,
+input[type=text]:valid,
+textarea:valid {
+    border: none;
+    outline: none;
+}
 
-    input[type=text]:invalid,
-    div[contenteditable=true]:invalid,
-    textarea:invalid {
-        border: none;
-        outline: none;
-    }
+input[type=text]:invalid,
+div[contenteditable=true]:invalid,
+textarea:invalid {
+    border: none;
+    outline: none;
+}
 
 *.actions {
     display: grid;
@@ -521,22 +583,22 @@ footer.actions {
     border-left-width: 0;
     padding: 10px 10px 10px 0;
     text-align: right;
-    box-shadow: 0 -10px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.5);
 }
 
-    footer.actions > section:nth-last-child(n+3) {
-        text-align: left;
-    }
+footer.actions>section:nth-last-child(n+3) {
+    text-align: left;
+}
 
-    footer.actions > section:nth-last-child(2) {
-        text-align: center;
-    }
+footer.actions>section:nth-last-child(2) {
+    text-align: center;
+}
 
-    footer.actions > section:nth-last-child(1) {
-        text-align: right;
-    }
+footer.actions>section:nth-last-child(1) {
+    text-align: right;
+}
 
-.page > footer.actions {
+.page>footer.actions {
     position: -webkit-sticky;
     position: sticky;
     background: inherit;
@@ -562,79 +624,79 @@ footer.actions {
     color: var(--color-page);
 }
 
-    .page.editing {
-        grid-template-columns: 1fr;
-    }
+.page.editing {
+    grid-template-columns: 1fr;
+}
 
-    .page::-webkit-scrollbar {
-        background-color: #000;
-        box-shadow: -4px 0 -4px rgba(255,255,255,0.2) inset;
-    }
+.page::-webkit-scrollbar {
+    background-color: #000;
+    box-shadow: -4px 0 -4px rgba(255, 255, 255, 0.2) inset;
+}
 
-    .page::-webkit-scrollbar-thumb {
-        background-color: #333;
-    }
+.page::-webkit-scrollbar-thumb {
+    background-color: #333;
+}
 
-    .page.editing > .inlineAlert.warning {
-        grid-column: span 2;
-    }
+.page.editing>.inlineAlert.warning {
+    grid-column: span 2;
+}
 
-    .page.editing .glass {
-        grid-column: auto;
-    }
+.page.editing .glass {
+    grid-column: auto;
+}
 
-    .page h1 {
-        font-size: 2em;
-    }
+.page h1 {
+    font-size: 2em;
+}
 
-    .page h2 {
-        font-size: 1.8em;
-    }
+.page h2 {
+    font-size: 1.8em;
+}
 
-    .page h3 {
-        font-size: 1.6em;
-    }
+.page h3 {
+    font-size: 1.6em;
+}
 
-    .page h4 {
-        font-size: 1.4em;
-    }
+.page h4 {
+    font-size: 1.4em;
+}
 
-    .page h5 {
-        font-size: 1.3em;
-    }
+.page h5 {
+    font-size: 1.3em;
+}
 
-    .page h6 {
-        font-size: 1.2em;
-    }
+.page h6 {
+    font-size: 1.2em;
+}
 
-    .page > h1,
-    .page > h2 {
-        position: -webkit-sticky;
-        position: sticky;
-        top: -10px;
-        margin: 0 -10px;
-        padding: 0 10px;
-        background: var(--primary-page);
-        z-index: 1;
-        box-shadow: 0 10px 10px rgba(0,0,0,0.7);
-    }
+.page>h1,
+.page>h2 {
+    position: -webkit-sticky;
+    position: sticky;
+    top: -10px;
+    margin: 0 -10px;
+    padding: 0 10px;
+    background: var(--primary-page);
+    z-index: 1;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.7);
+}
 
-        .page > h1:first-child,
-        .page > h2:first-child {
-            margin-top: -10px;
-        }
+.page>h1:first-child,
+.page>h2:first-child {
+    margin-top: -10px;
+}
 
-    .page > .details > h1:first-child,
-    .page > .details > h2:first-child,
-    .page > .details > h3:first-child,
-    .page > .details > h4:first-child,
-    .page > .details > h5:first-child,
-    .page > .details > h6:first-child {
-        background-color: var(--color-info);
-        color: var(--color-info-offset);
-        margin: -10px -10px 0;
-        padding: 0px 7px;
-    }
+.page>.details>h1:first-child,
+.page>.details>h2:first-child,
+.page>.details>h3:first-child,
+.page>.details>h4:first-child,
+.page>.details>h5:first-child,
+.page>.details>h6:first-child {
+    background-color: var(--color-info);
+    color: var(--color-info-offset);
+    margin: -10px -10px 0;
+    padding: 0px 7px;
+}
 
 .content {
     padding-top: 1.1rem;
@@ -661,23 +723,23 @@ footer.actions {
     max-width: 500px;
     border: 4px dashed #e88315;
     outline: 4px dashed #e88315;
-    box-shadow: 0 0 8px rgba(0,0,0,0.7);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
 }
 
-section.construction > h2:not(:first-child),
-section.construction > h3:not(:first-child),
-section.construction > h4:not(:first-child),
-section.construction > h5:not(:first-child),
-section.construction > h6:not(:first-child) {
+section.construction>h2:not(:first-child),
+section.construction>h3:not(:first-child),
+section.construction>h4:not(:first-child),
+section.construction>h5:not(:first-child),
+section.construction>h6:not(:first-child) {
     border-top: 6px dashed #e88315;
 }
 
-.construction > p {
+.construction>p {
     padding: 10px;
 }
 
-.construction > .iconImage,
-.construction > i {
+.construction>.iconImage,
+.construction>i {
     font-size: 48px;
     color: #e88315;
     display: block;
@@ -689,10 +751,10 @@ section.construction > h6:not(:first-child) {
     color: var(--color-dark);
     padding: 10px;
     border-radius: 3px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.7) inset, 0 -2px 10px rgba(0,0,0,0.4) inset;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7) inset, 0 -2px 10px rgba(0, 0, 0, 0.4) inset;
 }
 
-.page > section.glass {
+.page>section.glass {
     margin-left: -10px;
     margin-right: -10px;
     max-width: 100%;
@@ -706,7 +768,7 @@ section.construction > h6:not(:first-child) {
     color: var(--color-terminal);
 }
 
-.page > span.iconImage.fa-layers.fa-fw:only-child {
+.page>span.iconImage.fa-layers.fa-fw:only-child {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -725,32 +787,32 @@ ul.list-bullet {
     line-height: 2em;
 }
 
-    ul.list-bullet > li {
-        display: list-item;
-    }
+ul.list-bullet>li {
+    display: list-item;
+}
 
 .details {
     border: 2px solid var(--secondary-dark);
     border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.7), 0 -2px 10px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7), 0 -2px 10px rgba(0, 0, 0, 0.4);
     padding: 10px 10px 5px;
 }
 
-.page > section.details:nth-child(2n) {
+.page>section.details:nth-child(2n) {
     background-color: var(--secondary-dark-offset);
 }
 
-.page > section.details {
+.page>section.details {
     max-width: 100%;
     overflow: auto;
 }
 
-    .page > section.details > *:last-child:not(header) {
-        margin-bottom: 10px;
-    }
+.page>section.details>*:last-child:not(header) {
+    margin-bottom: 10px;
+}
 
-.page > section:not(.grid):before,
-.page > section:not(.grid):after {
+.page>section:not(.grid):before,
+.page>section:not(.grid):after {
     content: " ";
     clear: both;
     display: block;
@@ -775,67 +837,67 @@ ul.list-bullet {
     padding: 1px;
 }
 
-    *.autowidth,
-    .grid.autowidth {
-        width: max-content;
-    }
+*.autowidth,
+.grid.autowidth {
+    width: max-content;
+}
 
-    .grid.compact {
-        grid-gap: var(--grid-gap);
-    }
+.grid.compact {
+    grid-gap: var(--grid-gap);
+}
 
-    .grid.table {
-        border: 1px solid var(--color-diagram-primary);
-        grid-gap: 0px;
-    }
+.grid.table {
+    border: 1px solid var(--color-diagram-primary);
+    grid-gap: 0px;
+}
 
-        .grid.table > * {
-            border: 1px solid var(--color-diagram-primary);
-            border-collapse: collapse;
-            padding: 5px;
-            margin: 0px;
-        }
+.grid.table>* {
+    border: 1px solid var(--color-diagram-primary);
+    border-collapse: collapse;
+    padding: 5px;
+    margin: 0px;
+}
 
-    .center,
-    .btn.center,
-    .grid.center {
-        margin-left: auto;
-        margin-right: auto;
-    }
+.center,
+.btn.center,
+.grid.center {
+    margin-left: auto;
+    margin-right: auto;
+}
 
-    .grid > *:not(img) {
-        white-space: pre-wrap;
-        white-space: break-spaces;
-        word-break: break-word;
-        padding: 0px;
-        margin: 0px;
-        align-self: center;
-        min-height: 100%;
-        box-sizing: border-box;
-    }
+.grid>*:not(img) {
+    white-space: pre-wrap;
+    white-space: break-spaces;
+    word-break: break-word;
+    padding: 0px;
+    margin: 0px;
+    align-self: center;
+    min-height: 100%;
+    box-sizing: border-box;
+}
 
-    table > thead > th,
-    .grid.table > header {
-        background-color: var(--color-info);
-        color: var(--color-info-offset);
-    }
+table>thead>th,
+.grid.table>header {
+    background-color: var(--color-info);
+    color: var(--color-info-offset);
+}
 
-    table > tbody > tr:nth-child(2n),
-    .grid.table > .alt {
-        background-color: rgba(0,0,0,0.1);
-    }
+table>tbody>tr:nth-child(2n),
+.grid.table>.alt {
+    background-color: rgba(0, 0, 0, 0.1);
+}
 
-    .grid > .glass,
-    .grid > .details {
-        white-space: pre-line;
-    }
+.grid>.glass,
+.grid>.details {
+    white-space: pre-line;
+}
 
 *.autoleft {
     margin-left: auto;
 }
 
 *.autoright {
-    margin-rigth: auto;
+    margin-right: auto;
 }
 
 a:any-link,
@@ -847,7 +909,8 @@ a:focus {
     color: inherit;
 }
 
-a.btn, button {
+a.btn,
+button {
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -869,7 +932,7 @@ a.btn, button {
 
 .btn.tag {
     padding: 2px 3px;
-    font-size: 0.8em;
+    font-size: max(var(--min-font-size), 0.8em);
     line-height: 1em;
 }
 
@@ -890,9 +953,9 @@ a.btn.patreon[href] {
     padding: 0.465rem 1rem;
 }
 
-    .btn.patreon i.fa-patreon {
-        color: rgb(5, 45, 73);
-    }
+.btn.patreon i.fa-patreon {
+    color: rgb(5, 45, 73);
+}
 
 .tags {
     display: grid;
@@ -900,15 +963,17 @@ a.btn.patreon[href] {
     grid-template-columns: repeat(auto-fill, minmax(min(10rem, 100%), 1fr));
 }
 
-    .tags > .tag {
-        background-color: var(--color-info);
-        color: var(--color-info-offset);
-        padding: 5px;
-        align-self: center;
-    }
+.tags>.tag {
+    background-color: var(--color-info);
+    color: var(--color-info-offset);
+    padding: 5px;
+    align-self: center;
+}
 
-a.btn.disabled, button.disabled,
-a.btn[disabled], button[disabled] {
+a.btn.disabled,
+button.disabled,
+a.btn[disabled],
+button[disabled] {
     opacity: 0.8;
     cursor: default;
     background-color: gray;
@@ -916,30 +981,31 @@ a.btn[disabled], button[disabled] {
 
 a.btn:not([disabled]):not(.disabled):not(.active):hover,
 button:not([disabled]):not(.disabled):not(.active):hover {
-    box-shadow: 1px 3px 5px rgba(0,0,0,0.5);
+    box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.5);
     transform: scale(1.01);
     background-color: var(--primary-button-offset);
     color: var(--primary-button);
 }
 
-.grid > a.btn:not([disabled]):not(.disabled):not(.active):hover,
-.grid > button:not([disabled]):not(.disabled):not(.active):hover {
+.grid>a.btn:not([disabled]):not(.disabled):not(.active):hover,
+.grid>button:not([disabled]):not(.disabled):not(.active):hover {
     transform: scale(0.95);
 }
 
-a.active, button.active {
-    box-shadow: 2px 2px 2px rgba(0,0,0,0.4) inset, -2px -2px 2px rgba(255,255,255,0.3) inset;
+a.active,
+button.active {
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4) inset, -2px -2px 2px rgba(255, 255, 255, 0.3) inset;
     background-color: var(--active-button-background);
     color: var(--active-button-color);
     cursor: default;
 }
 
-a > .iconImage:first-child,
-a > i:first-child,
-button > .iconImage:first-child,
-button > i:first-child,
-a > img:first-child,
-button > img:first-child {
+a>.iconImage:first-child,
+a>i:first-child,
+button>.iconImage:first-child,
+button>i:first-child,
+a>img:first-child,
+button>img:first-child {
     display: inline-block;
     margin: 0;
     line-height: 1em;
@@ -951,27 +1017,27 @@ button > img:first-child {
     transform-origin: center center;
 }
 
-    a > .iconImage:first-child:not(:last-child),
-    a > i:first-child:not(:last-child),
-    button > .iconImage:first-child:not(:last-child),
-    button > i:first-child:not(:last-child),
-    a > img:first-child:not(:last-child),
-    a > :not(:last-child),
-    button > img:first-child:not(:last-child) {
-        margin: 0 10px 0 0px;
-    }
-
-a:hover:not([disabled]):not(.disabled):not(.active) > .iconImage:first-child,
-a:hover:not([disabled]):not(.disabled):not(.active) > i:first-child,
-button:hover:not([disabled]):not(.disabled):not(.active) > .iconImage:first-child,
-button:hover:not([disabled]):not(.disabled):not(.active) > i:first-child,
-a:hover:not([disabled]):not(.disabled):not(.active) > img:first-child,
-button:hover:not([disabled]):not(.disabled):not(.active) > img:first-child {
-    transform: perspective(3cm) rotateX(-2deg) rotateY(3deg) translate3d(2px, 0px, 0px) scale(1.4);
-    text-shadow: 0 0 4px rgba(0,0,200,0.9);
+a>.iconImage:first-child:not(:last-child),
+a>i:first-child:not(:last-child),
+button>.iconImage:first-child:not(:last-child),
+button>i:first-child:not(:last-child),
+a>img:first-child:not(:last-child),
+a> :not(:last-child),
+button>img:first-child:not(:last-child) {
+    margin: 0 10px 0 0px;
 }
 
-.btn > div {
+a:hover:not([disabled]):not(.disabled):not(.active)>.iconImage:first-child,
+a:hover:not([disabled]):not(.disabled):not(.active)>i:first-child,
+button:hover:not([disabled]):not(.disabled):not(.active)>.iconImage:first-child,
+button:hover:not([disabled]):not(.disabled):not(.active)>i:first-child,
+a:hover:not([disabled]):not(.disabled):not(.active)>img:first-child,
+button:hover:not([disabled]):not(.disabled):not(.active)>img:first-child {
+    transform: perspective(3cm) rotateX(-2deg) rotateY(3deg) translate3d(2px, 0px, 0px) scale(1.4);
+    text-shadow: 0 0 4px rgba(0, 0, 200, 0.9);
+}
+
+.btn>div {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -984,12 +1050,12 @@ div.buttonGroup {
     grid-template-columns: repeat(auto-fill, minmax(100px, auto));
 }
 
-    div.buttonGroup > button {
-        display: block;
-        width: 100%;
-        margin: 0;
-        border-radius: 0;
-    }
+div.buttonGroup>button {
+    display: block;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+}
 
 .buttonGroup.tabs {
     display: grid;
@@ -999,45 +1065,44 @@ div.buttonGroup {
     overflow: hidden;
     border-radius: 5px 5px 0 0;
     box-shadow: 0 -7px 8px inset rgb(0 0 0 / 20%);
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
-    .buttonGroup.tabs > .tabsection {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(10px, max-content));
-        grid-gap: 0px;
-    }
+.buttonGroup.tabs>.tabsection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10px, max-content));
+    grid-gap: 0px;
+}
 
-        .buttonGroup.tabs > .tabsection:nth-child(2),
-        .buttonGroup.tabs > .tabsection:nth-child(3) {
-            display: block;
-            overflow: hidden;
-            text-overflow: clip;
-            white-space: nowrap;
-        }
+.buttonGroup.tabs>.tabsection:nth-child(2),
+.buttonGroup.tabs>.tabsection:nth-child(3) {
+    display: block;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+}
 
-        .buttonGroup.tabs > .tabsection:nth-child(2) {
-            text-align: center;
-        }
+.buttonGroup.tabs>.tabsection:nth-child(2) {
+    text-align: center;
+}
 
-        .buttonGroup.tabs > .tabsection:nth-child(3) {
-            text-align: right;
-        }
+.buttonGroup.tabs>.tabsection:nth-child(3) {
+    text-align: right;
+}
 
-.tabsection:nth-child(2) > :first-child
-.tabsection:nth-child(3) > :first-child {
+.tabsection:nth-child(2)> :first-child .tabsection:nth-child(3)> :first-child {
     margin-left: auto;
 }
 
-.tabsection:nth-child(2) > :last-child {
+.tabsection:nth-child(2)> :last-child {
     margin-right: auto;
 }
 
-.tabsection > label {
+.tabsection>label {
     padding: 5px 7px;
 }
 
-.tabs > .tabsection > .inlineAlert {
+.tabs>.tabsection>.inlineAlert {
     margin: 0;
     outline: none;
     box-sizing: border-box;
@@ -1049,27 +1114,27 @@ header.buttonGroup.tabs .btn {
     white-space: nowrap;
 }
 
-    header.buttonGroup.tabs button + .btn,
-    header.buttonGroup.tabs .btn + button,
-    header.buttonGroup.tabs button + button,
-    header.buttonGroup.tabs .btn + .btn {
-        border-left: 2px solid slategray;
-    }
+header.buttonGroup.tabs button+.btn,
+header.buttonGroup.tabs .btn+button,
+header.buttonGroup.tabs button+button,
+header.buttonGroup.tabs .btn+.btn {
+    border-left: 2px solid slategray;
+}
 
-.buttonGroup.tabs > button.disabled,
-.buttonGroup.tabs > button[disabled],
-.buttonGroup.tabs > button.active {
+.buttonGroup.tabs>button.disabled,
+.buttonGroup.tabs>button[disabled],
+.buttonGroup.tabs>button.active {
     background-color: dodgerblue;
     color: yellow;
     box-shadow: inset 0 2px 10px black;
 }
 
-.tabbedgroup > .details > header.buttonGroup.tabs {
+.tabbedgroup>.details>header.buttonGroup.tabs {
     border-radius: 0;
 }
 
-.page > .glass > .buttonGroup.tabs,
-.details > .buttonGroup.tabs {
+.page>.glass>.buttonGroup.tabs,
+.details>.buttonGroup.tabs {
     margin: -10px -10px 0 -10px;
 }
 
@@ -1077,16 +1142,16 @@ header.buttonGroup.tabs .btn {
     padding: 0px;
 }
 
-    .details.tabbedgroup > header {
-        margin: 0 0 -10px !important;
-    }
+.details.tabbedgroup>header {
+    margin: 0 0 -10px !important;
+}
 
-*.details > *.glass {
+*.details>*.glass {
     margin: 0 -10px 0 !important;
     padding: 10px;
 }
 
-.pagenav .navoverlay > button {
+.pagenav .navoverlay>button {
     background-color: var(--primary-button);
     color: var(--primary-button-offset);
     font-size: 20px;
@@ -1094,17 +1159,17 @@ header.buttonGroup.tabs .btn {
     padding: 7px;
 }
 
-    .pagenav .navoverlay > button > .iconImage:first-child:not(:last-child),
-    .pagenav .navoverlay > button > i:first-child:not(:last-child) {
-        margin: 0 10px 0 -5px;
-    }
+.pagenav .navoverlay>button>.iconImage:first-child:not(:last-child),
+.pagenav .navoverlay>button>i:first-child:not(:last-child) {
+    margin: 0 10px 0 -5px;
+}
 
-.pagenav.closed .navmenu > div[style] ~ a {
+.pagenav.closed .navmenu>div[style]~a {
     display: none;
 }
 
-a.btn > span,
-button > span {
+a.btn>span,
+button>span {
     display: inline;
 }
 
@@ -1127,7 +1192,7 @@ button.navLink.link {
     font-weight: 600;
 }
 
-#appbody > header {
+#appbody>header {
     display: grid;
     grid-template-columns: 40px auto max-content;
     font-size: 18px;
@@ -1136,7 +1201,7 @@ button.navLink.link {
     padding: 0;
     background-color: var(--primary-dark);
     color: var(--primary-light);
-    box-shadow: 0 9px 2px var(--primary-dark), 0 8px 18px rgba(0,0,0,0.7);
+    box-shadow: 0 9px 2px var(--primary-dark), 0 8px 18px rgba(0, 0, 0, 0.7);
     height: 30px;
     line-height: 1em;
     position: relative;
@@ -1144,76 +1209,76 @@ button.navLink.link {
     box-sizing: border-box;
 }
 
-    #appbody > header > .iconImage:first-child,
-    #appbody > header > i:first-child {
-        padding: 10px;
-        float: left;
-        transform: perspective(1cm) rotateX(-2deg) rotateY(30deg) translate3d(-0px, 0px, 0px) scale(1.2);
-        font-size: 1.2em;
-    }
+#appbody>header>.iconImage:first-child,
+#appbody>header>i:first-child {
+    padding: 10px;
+    float: left;
+    transform: perspective(1cm) rotateX(-2deg) rotateY(30deg) translate3d(-0px, 0px, 0px) scale(1.2);
+    font-size: 1.2em;
+}
 
-    #appbody > header > h1 {
-        display: block;
-        height: 30px;
-        overflow: visible;
-        text-overflow: ellipsis;
-        position: relative;
-        font-size: 14px;
-    }
+#appbody>header>h1 {
+    display: block;
+    height: 30px;
+    overflow: visible;
+    text-overflow: ellipsis;
+    position: relative;
+    font-size: 14px;
+}
 
-        #appbody > header > h1 > span {
-            margin: 0;
-            padding: 0;
-            white-space: nowrap;
-        }
+#appbody>header>h1>span {
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+}
 
-            #appbody > header > h1 > span.nosub {
-                line-height: 30px;
-            }
+#appbody>header>h1>span.nosub {
+    line-height: 30px;
+}
 
-        #appbody > header > h1 > sub {
-            display: block;
-            line-height: 1.4em;
-            height: 1em;
-            font-size: 12px;
-            padding: 0 0 0 8px;
-            margin: 0;
-            white-space: nowrap;
-            position: absolute;
-            bottom: 1px;
-            left: 0px;
-        }
+#appbody>header>h1>sub {
+    display: block;
+    line-height: 1.4em;
+    height: 1em;
+    font-size: 12px;
+    padding: 0 0 0 8px;
+    margin: 0;
+    white-space: nowrap;
+    position: absolute;
+    bottom: 1px;
+    left: 0px;
+}
 
-            #appbody > header > h1 > sub:empty {
-                display: none;
-            }
+#appbody>header>h1>sub:empty {
+    display: none;
+}
 
-    #appbody > header nav.quickLinks {
-        display: grid;
-        white-space: nowrap;
-        padding: 0;
-        grid-gap: var(--grid-gap);
-        height: inherit;
-        font-size: 14px;
-    }
+#appbody>header nav.quickLinks {
+    display: grid;
+    white-space: nowrap;
+    padding: 0;
+    grid-gap: var(--grid-gap);
+    height: inherit;
+    font-size: 14px;
+}
 
-        #appbody > header nav.quickLinks > * {
-            grid-row: 1;
-            margin: auto;
-        }
+#appbody>header nav.quickLinks>* {
+    grid-row: 1;
+    margin: auto;
+}
 
-        #appbody > header nav.quickLinks > a.btn.icon,
-        #appbody > header nav.quickLinks > button.icon {
-            margin-top: 0;
-            width: min-content;
-        }
+#appbody>header nav.quickLinks>a.btn.icon,
+#appbody>header nav.quickLinks>button.icon {
+    margin-top: 0;
+    width: min-content;
+}
 
-        #appbody > header nav.quickLinks > a > img {
-            size: auto;
-            height: 24px;
-        }
+#appbody>header nav.quickLinks>a>img {
+    size: auto;
+    height: 24px;
+}
 
-.quickLinks > span.spacer {
+.quickLinks>span.spacer {
     width: 20px;
     display: block;
 }
@@ -1233,110 +1298,110 @@ button.navLink.link {
     z-index: 1;
 }
 
-    .pagenav.closed {
-        display: grid;
-        grid-template-columns: auto 42px;
-    }
+.pagenav.closed {
+    display: grid;
+    grid-template-columns: auto 42px;
+}
 
-    .pagenav:not(.closed) {
-        background-color: var(--primary-glass);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-    }
+.pagenav:not(.closed) {
+    background-color: var(--primary-glass);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
 
-    .pagenav.transitionClose {
-        height: 30px;
-    }
+.pagenav.transitionClose {
+    height: 30px;
+}
 
-    .pagenav.transitionOpen {
-        height: 100%;
-    }
+.pagenav.transitionOpen {
+    height: 100%;
+}
 
-    .pagenav.open {
-        height: 100%;
-    }
+.pagenav.open {
+    height: 100%;
+}
 
-    .pagenav > .navmenu {
-        display: grid;
-        grid-gap: var(--grid-gap);
-        grid-template-columns: repeat(30, min-content);
-        box-shadow: 0 8px 18px rgba(0,0,0,0.7) inset;
-        overflow: hidden;
-        padding: 0 42px 0 0;
-    }
+.pagenav>.navmenu {
+    display: grid;
+    grid-gap: var(--grid-gap);
+    grid-template-columns: repeat(30, min-content);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.7) inset;
+    overflow: hidden;
+    padding: 0 42px 0 0;
+}
 
-    .pagenav.open > .navmenu {
-        overflow: auto;
-    }
+.pagenav.open>.navmenu {
+    overflow: auto;
+}
 
-    .pagenav:not(.closed) > .navmenu {
-        grid-template-columns: repeat(var(--nav-page-columns), 1fr);
-        grid-auto-rows: min-content;
-        grid-auto-flow: dense;
-        grid-gap: var(--grid-gap);
-        padding: 20px;
-        height: 100%;
-        box-sizing: border-box;
-    }
+.pagenav:not(.closed)>.navmenu {
+    grid-template-columns: repeat(var(--nav-page-columns), 1fr);
+    grid-auto-rows: min-content;
+    grid-auto-flow: dense;
+    grid-gap: var(--grid-gap);
+    padding: 20px;
+    height: 100%;
+    box-sizing: border-box;
+}
 
-    .pagenav > .navoverlay {
-        display: block;
-        position: absolute;
-        z-index: 1;
-        right: 0;
-        bottom: 0;
-        padding: 2px;
-    }
+.pagenav>.navoverlay {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    bottom: 0;
+    padding: 2px;
+}
 
-        .pagenav > .navoverlay > button {
-            transform: perspective(1cm) rotateX(-2deg) rotateY(-10deg) translate3d(-0px, 0px, 0px) scale(1.2);
-            border-radius: 3px 0 0 0;
-        }
+.pagenav>.navoverlay>button {
+    transform: perspective(1cm) rotateX(-2deg) rotateY(-10deg) translate3d(-0px, 0px, 0px) scale(1.2);
+    border-radius: 3px 0 0 0;
+}
 
-            .pagenav > .navoverlay > button:hover {
-                transform: perspective(1cm) rotateX(-2deg) rotateY(-8deg) translate3d(-0px, 0px, 0px) scale(1.3);
-            }
+.pagenav>.navoverlay>button:hover {
+    transform: perspective(1cm) rotateX(-2deg) rotateY(-8deg) translate3d(-0px, 0px, 0px) scale(1.3);
+}
 
-    .pagenav .navLink {
-        border-radius: 0px;
-        height: 30px;
-        display: block;
-        text-align: center;
-        line-height: 30px;
-        padding: 0 10px;
-        text-decoration: none;
-        cursor: pointer;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+.pagenav .navLink {
+    border-radius: 0px;
+    height: 30px;
+    display: block;
+    text-align: center;
+    line-height: 30px;
+    padding: 0 10px;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
-        .pagenav .navLink > span {
-            display: inline;
-        }
+.pagenav .navLink>span {
+    display: inline;
+}
 
-            .pagenav .navLink > span + i:before {
-                content: "- ";
-                margin: 0 2px 0 -4px;
-            }
+.pagenav .navLink>span+i:before {
+    content: "- ";
+    margin: 0 2px 0 -4px;
+}
 
-    .pagenav.closed .navLink > span + i {
-        display: none;
-    }
+.pagenav.closed .navLink>span+i {
+    display: none;
+}
 
-    .pagenav .navLink.active {
-        background-color: var(--active-button-background);
-        color: var(--active-button-color);
-        box-shadow: 0 0 8px rgba(0,0,0,0.5) inset;
-    }
+.pagenav .navLink.active {
+    background-color: var(--active-button-background);
+    color: var(--active-button-color);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5) inset;
+}
 
-    .pagenav .navLink:not(.active):hover {
-        background-color: var(--primary-button-offset);
-        color: var(--primary-button);
-        box-shadow: 0 0 8px rgba(0,0,0,0.5);
-    }
+.pagenav .navLink:not(.active):hover {
+    background-color: var(--primary-button-offset);
+    color: var(--primary-button);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
 
-.AccountNav > .navLink > i {
+.AccountNav>.navLink>i {
     display: none;
 }
 
@@ -1353,208 +1418,208 @@ button.navLink.link {
     transition-duration: 300ms;
 }
 
-    .pageModalBackdrop.closed {
-        background-color: rgba(150,150,150,0);
-        backdrop-filter: blur(0px);
-        -webkit-backdrop-filter: blur(0px);
-    }
+.pageModalBackdrop.closed {
+    background-color: rgba(150, 150, 150, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+}
 
-    .pageModalBackdrop:not(.closed) {
-        background-color: rgba(150,150,150,0.2);
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
-    }
+.pageModalBackdrop:not(.closed) {
+    background-color: rgba(150, 150, 150, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
 
-    .pageModalBackdrop * {
-        transition-duration: 300ms;
-    }
+.pageModalBackdrop * {
+    transition-duration: 300ms;
+}
 
-    .pageModalBackdrop > a {
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 0;
-    }
+.pageModalBackdrop>a {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
 
-    .pageModalBackdrop > div.pageModalContainer {
-        display: grid;
-        grid-template-rows: 2em minmax(4em, 100%) auto;
-        grid-template-columns: 100%;
-        margin: 0 auto;
-        max-height: 98%;
-        max-width: 98%;
-        min-width: 60%;
-        min-height: 100px;
-        width: auto;
-        height: auto;
-        overflow: visible;
-        box-shadow: 0 4px 10px;
-        opacity: 0;
-        transition-duration: 0ms;
-        transition-timing-function: ease-in-out;
-        transform: scale(0);
-        background-color: var(--primary-page);
-    }
+.pageModalBackdrop>div.pageModalContainer {
+    display: grid;
+    grid-template-rows: 2em minmax(4em, 100%) auto;
+    grid-template-columns: 100%;
+    margin: 0 auto;
+    max-height: 98%;
+    max-width: 98%;
+    min-width: 60%;
+    min-height: 100px;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    box-shadow: 0 4px 10px;
+    opacity: 0;
+    transition-duration: 0ms;
+    transition-timing-function: ease-in-out;
+    transform: scale(0);
+    background-color: var(--primary-page);
+}
 
-    .pageModalBackdrop.closed > div.pageModalContainer {
-        transition-duration: 300ms;
-        transform: scale(0);
-    }
+.pageModalBackdrop.closed>div.pageModalContainer {
+    transition-duration: 300ms;
+    transform: scale(0);
+}
 
-    .pageModalBackdrop.transitionIn > div.pageModalContainer {
-        transition-duration: 400ms;
-        opacity: 1;
-        transform: scale(1.1);
-    }
+.pageModalBackdrop.transitionIn>div.pageModalContainer {
+    transition-duration: 400ms;
+    opacity: 1;
+    transform: scale(1.1);
+}
 
-    .pageModalBackdrop.open > div.pageModalContainer,
-    .pageModalBackdrop.transitionReplace > div.pageModalContainer {
-        transition-duration: 100ms;
-        opacity: 1;
-        transform: scale(1);
-    }
+.pageModalBackdrop.open>div.pageModalContainer,
+.pageModalBackdrop.transitionReplace>div.pageModalContainer {
+    transition-duration: 100ms;
+    opacity: 1;
+    transform: scale(1);
+}
 
-    .pageModalBackdrop.transitionOut > div.pageModalContainer {
-        transition-duration: 200ms;
-        opacity: 0;
-        transform: scale(0);
-    }
+.pageModalBackdrop.transitionOut>div.pageModalContainer {
+    transition-duration: 200ms;
+    opacity: 0;
+    transform: scale(0);
+}
 
-    .pageModalBackdrop > div.pageModalContainer > header {
-        display: block;
-        position: relative;
-        overflow: visible;
-        text-overflow: ellipsis;
-        line-height: 2em;
-        margin: 0;
-        padding: 0;
-        background-color: var(--splash-primary);
-        color: var(--splash-secondary);
-        box-shadow: inset 0 -4px 10px rgba(0,0,0,0.5);
-        grid-row: 1;
-        height: 2em;
-    }
+.pageModalBackdrop>div.pageModalContainer>header {
+    display: block;
+    position: relative;
+    overflow: visible;
+    text-overflow: ellipsis;
+    line-height: 2em;
+    margin: 0;
+    padding: 0;
+    background-color: var(--splash-primary);
+    color: var(--splash-secondary);
+    box-shadow: inset 0 -4px 10px rgba(0, 0, 0, 0.5);
+    grid-row: 1;
+    height: 2em;
+}
 
-        .pageModalBackdrop > div.pageModalContainer > header > span {
-            display: block;
-            overflow: hidden;
-            word-wrap: break-word;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            padding: 0 2.3em 0 6px;
-            box-sizing: border-box;
-        }
+.pageModalBackdrop>div.pageModalContainer>header>span {
+    display: block;
+    overflow: hidden;
+    word-wrap: break-word;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0 2.3em 0 6px;
+    box-sizing: border-box;
+}
 
-        .pageModalBackdrop > div.pageModalContainer > header > button {
-            display: block;
-            position: absolute;
-            top: 0;
-            right: 0;
-            font-size: 2em;
-            line-height: 1em;
-            padding: 0 0.2em;
-        }
+.pageModalBackdrop>div.pageModalContainer>header>button {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 2em;
+    line-height: 1em;
+    padding: 0 0.2em;
+}
 
-    .pageModalBackdrop > div.pageModalContainer > section {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        margin: 0 !important;
-        overflow: auto;
-        grid-row: 2;
-    }
+.pageModalBackdrop>div.pageModalContainer>section {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 0 !important;
+    overflow: auto;
+    grid-row: 2;
+}
 
-        .pageModalBackdrop > div.pageModalContainer > section > section {
-            display: block;
-            width: 100%;
-            min-width: 300px;
-            margin: auto;
-        }
+.pageModalBackdrop>div.pageModalContainer>section>section {
+    display: block;
+    width: 100%;
+    min-width: 300px;
+    margin: auto;
+}
 
-    .pageModalBackdrop > div.pageModalContainer > footer {
-        overflow: visible;
-        text-overflow: ellipsis;
-        background-color: var(--splash-primary);
-        color: var(--splash-secondary);
-        box-shadow: inset 0 4px 8px rgba(0,0,0,0.5);
-        grid-row: 3;
-        height: auto;
-        margin: 0 !important;
-        padding: 0;
-    }
+.pageModalBackdrop>div.pageModalContainer>footer {
+    overflow: visible;
+    text-overflow: ellipsis;
+    background-color: var(--splash-primary);
+    color: var(--splash-secondary);
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.5);
+    grid-row: 3;
+    height: auto;
+    margin: 0 !important;
+    padding: 0;
+}
 
-        .pageModalBackdrop > div.pageModalContainer > header::before,
-        .pageModalBackdrop > div.pageModalContainer > header::after,
-        .pageModalBackdrop > div.pageModalContainer > footer::before,
-        .pageModalBackdrop > div.pageModalContainer > footer::after {
-            content: " ";
-            display: block;
-            line-height: 0px;
-            height: 0px;
-            clear: both;
-        }
+.pageModalBackdrop>div.pageModalContainer>header::before,
+.pageModalBackdrop>div.pageModalContainer>header::after,
+.pageModalBackdrop>div.pageModalContainer>footer::before,
+.pageModalBackdrop>div.pageModalContainer>footer::after {
+    content: " ";
+    display: block;
+    line-height: 0px;
+    height: 0px;
+    clear: both;
+}
 
-        .pageModalBackdrop > div.pageModalContainer > footer button.confirm {
-            padding: 7px 20px;
-            float: right;
-        }
+.pageModalBackdrop>div.pageModalContainer>footer button.confirm {
+    padding: 7px 20px;
+    float: right;
+}
 
-    .pageModalBackdrop.slideFromRight > div.pageModalContainer {
-        position: absolute;
-        top: 0;
-        right: 0;
-        transform: scale(1);
-        min-width: 400px;
-        max-width: 100%;
-        height: 100%;
-        max-height: 100%;
-    }
+.pageModalBackdrop.slideFromRight>div.pageModalContainer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: scale(1);
+    min-width: 400px;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+}
 
-    .pageModalBackdrop.slideFromRight.closed > div.pageModalContainer {
-        transform: scale(1) translateX(100%);
-    }
+.pageModalBackdrop.slideFromRight.closed>div.pageModalContainer {
+    transform: scale(1) translateX(100%);
+}
 
-    .pageModalBackdrop.slideFromRight.transitionIn > div.pageModalContainer {
-        opacity: 1;
-        transform: scale(1) translateX(0%);
-    }
+.pageModalBackdrop.slideFromRight.transitionIn>div.pageModalContainer {
+    opacity: 1;
+    transform: scale(1) translateX(0%);
+}
 
-    .pageModalBackdrop .ModalContent {
-        opacity: 1;
-        transform: scale(1);
-        transition-duration: 300ms;
-    }
+.pageModalBackdrop .ModalContent {
+    opacity: 1;
+    transform: scale(1);
+    transition-duration: 300ms;
+}
 
-    .pageModalBackdrop.transitionReplace .ModalContent {
-        transform: scale(0);
-    }
+.pageModalBackdrop.transitionReplace .ModalContent {
+    transform: scale(0);
+}
 
-    .pageModalBackdrop.transitionReplace * {
-        transform: rotateX(90deg);
-    }
+.pageModalBackdrop.transitionReplace * {
+    transform: rotateX(90deg);
+}
 
-    .pageModalBackdrop.slideFromRight.transitionReplace > div.pageModalContainer,
-    .pageModalBackdrop.slideFromRight.open > div.pageModalContainer {
-        opacity: 1;
-        transform: scale(1) translateX(0%);
-    }
+.pageModalBackdrop.slideFromRight.transitionReplace>div.pageModalContainer,
+.pageModalBackdrop.slideFromRight.open>div.pageModalContainer {
+    opacity: 1;
+    transform: scale(1) translateX(0%);
+}
 
-    .pageModalBackdrop.slideFromRight.transitionOut > div.pageModalContainer {
-        opacity: 1;
-        transform: scale(1) translateX(100%);
-    }
+.pageModalBackdrop.slideFromRight.transitionOut>div.pageModalContainer {
+    opacity: 1;
+    transform: scale(1) translateX(100%);
+}
 
-    .pageModalBackdrop.slideFromRight > div.pageModalContainer > section {
-        align-items: start;
-    }
+.pageModalBackdrop.slideFromRight>div.pageModalContainer>section {
+    align-items: start;
+}
 
-        .pageModalBackdrop.slideFromRight > div.pageModalContainer > section > section {
-            width: 100%;
-            margin-top: 0;
-        }
+.pageModalBackdrop.slideFromRight>div.pageModalContainer>section>section {
+    width: 100%;
+    margin-top: 0;
+}
 
 div.tooltip {
     position: fixed;
@@ -1578,25 +1643,24 @@ div.tooltip {
     box-sizing: border-box;
 }
 
-    div.tooltip.open {
-        transform: scale(1);
-    }
+div.tooltip.open {
+    transform: scale(1);
+}
 
-    div.tooltip.closed {
-        transform: scale(0);
-    }
+div.tooltip.closed {
+    transform: scale(0);
+}
 
-.pageModalBackdrop > div.pageModalContainer section.ModalContent {
+.pageModalBackdrop>div.pageModalContainer section.ModalContent {
     display: grid;
     grid-gap: var(--grid-gap-page);
 }
 
-    .pageModalBackdrop > div.pageModalContainer section.ModalContent > button.navLink > i {
-        display: none;
-    }
-
-.pageModalBackdrop > div.pageModalContainer section.SiteSettings {
+.pageModalBackdrop>div.pageModalContainer section.ModalContent>button.navLink>i {
+    display: none;
 }
+
+.pageModalBackdrop>div.pageModalContainer section.SiteSettings {}
 
 .inlineAlert {
     display: grid;
@@ -1609,20 +1673,20 @@ div.tooltip {
     box-sizing: border-box;
 }
 
-header > .inlineAlert,
-footer > .inlineAlert,
-header > section > .inlineAlert,
-footer > section > .inlineAlert {
+header>.inlineAlert,
+footer>.inlineAlert,
+header>section>.inlineAlert,
+footer>section>.inlineAlert {
     margin: 0;
 }
 
-.inlineAlert > .iconImage:first-child,
-.inlineAlert > i:first-child,
-.inlineAlert > * {
+.inlineAlert>.iconImage:first-child,
+.inlineAlert>i:first-child,
+.inlineAlert>* {
     margin: auto 0;
 }
 
-.inlineAlert > button.close {
+.inlineAlert>button.close {
     background: inherit;
     color: inherit;
     text-align: center;
@@ -1681,7 +1745,8 @@ a.btn.danger {
     border-style: none;
 }
 
-button.center, .btn.center {
+button.center,
+.btn.center {
     display: block;
     width: max-content;
 }
@@ -1723,18 +1788,18 @@ button.primary:not([disabled]):not(.disabled):not(.active) {
     color: white;
 }
 
-    a.btn.info:not([disabled]):not(.disabled):not(.active):hover > i:first-child,
-    a.btn.warning:not([disabled]):not(.disabled):not(.active):hover > i:first-child,
-    a.btn.error:not([disabled]):not(.disabled):not(.active):hover > i:first-child,
-    a.btn.success:not([disabled]):not(.disabled):not(.active):hover > i:first-child,
-    a.btn.primary:not([disabled]):not(.disabled):not(.active):hover > i:first-child,
-    button.info:not([disabled]):not(.disabled):not(.active):hover > i:first-child,
-    button.warning:not([disabled]):not(.disabled):not(.active):hover > i:first-child,
-    button.error:not([disabled]):not(.disabled):not(.active):hover > i:first-child,
-    button.success:not([disabled]):not(.disabled):not(.active):hover > i:first-child,
-    button.primary:not([disabled]):not(.disabled):not(.active):hover > i:first-child {
-        text-shadow: 0 0 4px rgba(255,255,255,0.9);
-    }
+a.btn.info:not([disabled]):not(.disabled):not(.active):hover>i:first-child,
+a.btn.warning:not([disabled]):not(.disabled):not(.active):hover>i:first-child,
+a.btn.error:not([disabled]):not(.disabled):not(.active):hover>i:first-child,
+a.btn.success:not([disabled]):not(.disabled):not(.active):hover>i:first-child,
+a.btn.primary:not([disabled]):not(.disabled):not(.active):hover>i:first-child,
+button.info:not([disabled]):not(.disabled):not(.active):hover>i:first-child,
+button.warning:not([disabled]):not(.disabled):not(.active):hover>i:first-child,
+button.error:not([disabled]):not(.disabled):not(.active):hover>i:first-child,
+button.success:not([disabled]):not(.disabled):not(.active):hover>i:first-child,
+button.primary:not([disabled]):not(.disabled):not(.active):hover>i:first-child {
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.9);
+}
 
 .pageAlerts {
     display: block;
@@ -1747,18 +1812,18 @@ button.primary:not([disabled]):not(.disabled):not(.active) {
     z-index: 9999;
 }
 
-    .pageAlerts > .inlineAlert {
-        position: relative;
-        transition-duration: 800ms;
-    }
+.pageAlerts>.inlineAlert {
+    position: relative;
+    transition-duration: 800ms;
+}
 
-        .pageAlerts > .inlineAlert.closed {
-            transform: scale(0) translateX(0%);
-        }
+.pageAlerts>.inlineAlert.closed {
+    transform: scale(0) translateX(0%);
+}
 
-        .pageAlerts > .inlineAlert.open {
-            transform: scale(1) translateX(-100%);
-        }
+.pageAlerts>.inlineAlert.open {
+    transform: scale(1) translateX(-100%);
+}
 
 #appbody.transition * {
     pointer-events: none !important;
@@ -1789,12 +1854,12 @@ button.primary:not([disabled]):not(.disabled):not(.active) {
     overflow: hidden;
 }
 
-#appbody.transition.out header > h1 {
+#appbody.transition.out header>h1 {
     transform: rotateX(90deg);
 }
 
-#appbody.transition.out header > .iconImage:first-child,
-#appbody.transition.out header > i:first-child {
+#appbody.transition.out header>.iconImage:first-child,
+#appbody.transition.out header>i:first-child {
     transform: rotateY(90deg);
 }
 
@@ -1806,10 +1871,10 @@ button.primary:not([disabled]):not(.disabled):not(.active) {
     position: absolute;
 }
 
-    .flexCenter > * {
-        margin-left: auto;
-        margin-right: auto;
-    }
+.flexCenter>* {
+    margin-left: auto;
+    margin-right: auto;
+}
 
 div.LoadingPlaceholder {
     display: flex;
@@ -1822,16 +1887,16 @@ div.LoadingPlaceholder {
     text-align: center;
     z-index: 99;
     font-size: 1em;
-    background-color: rgba(125,125,125,0.7);
+    background-color: rgba(125, 125, 125, 0.7);
 }
 
-    div.LoadingPlaceholder > * {
-        margin: auto;
-    }
+div.LoadingPlaceholder>* {
+    margin: auto;
+}
 
-    div.LoadingPlaceholder .iconImage {
-        font-size: 64px;
-    }
+div.LoadingPlaceholder .iconImage {
+    font-size: 64px;
+}
 
 .grid.fontbuttongallery {
     grid-template-columns: repeat(auto-fit, 36px);
@@ -1868,34 +1933,33 @@ section.navInfoEditor {
     border: 1px solid var(--color-page);
 }
 
-    section.navInfoEditor.editing {
-        grid-template-columns: min-content min-content auto auto min-content min-content;
-    }
+section.navInfoEditor.editing {
+    grid-template-columns: min-content min-content auto auto min-content min-content;
+}
 
-    section.navInfoEditor > div {
-    }
+section.navInfoEditor>div {}
 
-    section.navInfoEditor span.iconImage {
-        display: flex;
-        align-items: center;
-    }
+section.navInfoEditor span.iconImage {
+    display: flex;
+    align-items: center;
+}
 
-    section.navInfoEditor > span.iconImage {
-        padding: 10px;
-    }
+section.navInfoEditor>span.iconImage {
+    padding: 10px;
+}
 
 section.SectionContentEditorActions {
     display: block;
     text-align: center;
 }
 
-    section.SectionContentEditorActions > button {
-        padding: 3px 5px 0px;
-    }
+section.SectionContentEditorActions>button {
+    padding: 3px 5px 0px;
+}
 
-        section.SectionContentEditorActions > button > span {
-            font-size: 12px !important;
-        }
+section.SectionContentEditorActions>button>span {
+    font-size: 12px !important;
+}
 
 section.SectionContentEditor {
     display: block;
@@ -1921,8 +1985,7 @@ section.navInfoEditor:after {
     outline: 5px dashed gray;
 }
 
-*.active-Public {
-}
+*.active-Public {}
 
 *.active-User {
     outline: 5px dashed orange;
@@ -1937,35 +2000,34 @@ section.navInfoEditor:after {
     grid-gap: 1px;
 }
 
-    .paginationbar > * {
-        height: 30px;
-        overflow: hidden;
-        display: flex;
-        flex-basis: max-content;
-        flex-flow: nowrap;
-    }
+.paginationbar>* {
+    height: 30px;
+    overflow: hidden;
+    display: flex;
+    flex-basis: max-content;
+    flex-flow: nowrap;
+}
 
-    .paginationbar .btn + .btn {
-        margin-left: 1px;
-    }
+.paginationbar .btn+.btn {
+    margin-left: 1px;
+}
 
-    .paginationbar .uiinput {
-        outline: none;
-    }
+.paginationbar .uiinput {
+    outline: none;
+}
 
 .placeholder,
 .fillifempty {
     min-height: 20px;
 }
 
-    .placeholder,
-    .fillifempty:empty {
-        content: "Missing Content";
-        outline: 3px dashed orange;
-    }
-
-.mermaid {
+.placeholder,
+.fillifempty:empty {
+    content: "Missing Content";
+    outline: 3px dashed orange;
 }
+
+.mermaid {}
 
 app *.mermaid * {
     transition-duration: 0ms;
@@ -1996,11 +2058,11 @@ section.hideable {
     transition-duration: 300ms;
 }
 
-    section.hideable.hide {
-        max-height: 0;
-        margin-top: 0 !important;
-        opacity: 0;
-    }
+section.hideable.hide {
+    max-height: 0;
+    margin-top: 0 !important;
+    opacity: 0;
+}
 
 *.hiddenunit {
     display: none;
@@ -2014,7 +2076,7 @@ section.hideable {
     display: block !important;
 }
 
-.page > .flagSingleColumn {
+.page>.flagSingleColumn {
     display: none;
 }
 
@@ -2037,7 +2099,7 @@ code[class*=language-] {
     hyphens: none
 }
 
-pre > code span {
+pre>code span {
     display: inline;
     margin: 0;
     padding: 0;
@@ -2048,13 +2110,13 @@ pre > code span {
     min-height: auto;
 }
 
-.uiinput.message + pre > code.language-powershell {
+.uiinput.message+pre>code.language-powershell {
     margin: 0;
     min-height: 100%;
     box-sizing: border-box;
 }
 
-.uiinput.message > div.codebox {
+.uiinput.message>div.codebox {
     display: block;
     padding: 0px !important;
     margin: 0px !important;
@@ -2062,49 +2124,53 @@ pre > code span {
     background-color: var(--back-terminal);
 }
 
-.uiinput.message > .codebox > pre {
+.uiinput.message>.codebox>pre {
     position: block;
     z-index: 0;
     margin: 0px;
     padding: 0px 0px 2em;
 }
 
-    .uiinput.message > .codebox > pre > code,
-    .uiinput.message > .codebox > pre + textarea {
-        margin: 0px;
-        padding: 5px;
-        word-break: break-word;
-        word-wrap: break-word;
-        border: none;
-        outline: none;
-        font-family: Monoise-Regular;
-        box-sizing: border-box;
-    }
+.uiinput.message>.codebox>pre>code,
+.uiinput.message>.codebox>pre+textarea {
+    margin: 0px;
+    padding: 5px;
+    word-break: break-word;
+    word-wrap: break-word;
+    border: none;
+    outline: none;
+    font-family: Monoise-Regular;
+    box-sizing: border-box;
+}
 
-    .uiinput.message > .codebox > pre > code {
-        position: relative;
-        height: 100%;
-    }
+.uiinput.message>.codebox>pre>code {
+    position: relative;
+    height: 100%;
+}
 
-        .uiinput.message > .codebox > pre > code::before,
-        .uiinput.message > .codebox > pre > code::after {
-            display: none;
-        }
+.uiinput.message>.codebox>pre>code::before,
+.uiinput.message>.codebox>pre>code::after {
+    display: none;
+}
 
-    .uiinput.message > .codebox > pre + textarea {
-        position: absolute;
-        z-index: 1;
-        background-color: transparent;
-        color: transparent;
-        caret-color: var(--color-terminal);
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
+.uiinput.message>.codebox>pre+textarea {
+    position: absolute;
+    z-index: 1;
+    background-color: transparent;
+    color: transparent;
+    caret-color: var(--color-terminal);
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
 
-.token.block-comment, .token.cdata, .token.comment, .token.doctype, .token.prolog {
+.token.block-comment,
+.token.cdata,
+.token.comment,
+.token.doctype,
+.token.prolog {
     color: #999
 }
 
@@ -2112,7 +2178,10 @@ pre > code span {
     color: #ccc
 }
 
-.token.attr-name, .token.deleted, .token.namespace, .token.tag {
+.token.attr-name,
+.token.deleted,
+.token.namespace,
+.token.tag {
     color: #e2777a
 }
 
@@ -2120,27 +2189,43 @@ pre > code span {
     color: #6196cc
 }
 
-.token.boolean, .token.function, .token.number {
+.token.boolean,
+.token.function,
+.token.number {
     color: #f08d49
 }
 
-.token.class-name, .token.constant, .token.property, .token.symbol {
+.token.class-name,
+.token.constant,
+.token.property,
+.token.symbol {
     color: #f8c555
 }
 
-.token.atrule, .token.builtin, .token.important, .token.keyword, .token.selector {
+.token.atrule,
+.token.builtin,
+.token.important,
+.token.keyword,
+.token.selector {
     color: #cc99cd
 }
 
-.token.attr-value, .token.char, .token.regex, .token.string, .token.variable {
+.token.attr-value,
+.token.char,
+.token.regex,
+.token.string,
+.token.variable {
     color: #7ec699
 }
 
-.token.entity, .token.operator, .token.url {
+.token.entity,
+.token.operator,
+.token.url {
     color: #67cdcc
 }
 
-.token.bold, .token.important {
+.token.bold,
+.token.important {
     font-weight: 700
 }
 
@@ -2159,13 +2244,25 @@ pre > code span {
 /* Media Handlers */
 
 @media (max-width: 500px) {
-    h1, h2, h3, h4, h5, h6 {
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         font-size: 16px;
     }
 }
 
 @media (max-width:800px) {
-    h1, h2, h3, h4, h5, h6 {
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         font-size: 18px;
     }
 
@@ -2173,8 +2270,8 @@ pre > code span {
         grid-template-columns: auto;
     }
 
-    .page > section.grid:before,
-    .page > section.grid:after {
+    .page>section.grid:before,
+    .page>section.grid:after {
         content: none;
         clear: both;
         display: block;
@@ -2183,12 +2280,13 @@ pre > code span {
 }
 
 @media (max-width: 700px) {
-    .pagenav.closed .navLink > .iconImage:first-child,
-    .pagenav.closed .navLink > i:first-child {
+
+    .pagenav.closed .navLink>.iconImage:first-child,
+    .pagenav.closed .navLink>i:first-child {
         margin: 0;
     }
 
-    .pagenav.closed .navLink > span:not(.iconImage) {
+    .pagenav.closed .navLink>span:not(.iconImage) {
         display: none;
     }
 }
@@ -2263,25 +2361,25 @@ pre > code span {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .page > .flagSingleColumn ~ .details {
+    .page>.flagSingleColumn~.details {
         grid-column: 1 / -1;
         max-width: 1200px;
         margin-left: auto;
         margin-right: auto;
     }
 
-    section.page.page-terms > h1,
-    section.page.page-terms > h2,
-    section.page.page-terms > h3,
-    section.page.page-terms > h4,
-    section.page.page-terms > h5,
-    section.page.page-terms > h6,
-    section.page.page-privacy > h1,
-    section.page.page-privacy > h2,
-    section.page.page-privacy > h3,
-    section.page.page-privacy > h4,
-    section.page.page-privacy > h5,
-    section.page.page-privacy > h6 {
+    section.page.page-terms>h1,
+    section.page.page-terms>h2,
+    section.page.page-terms>h3,
+    section.page.page-terms>h4,
+    section.page.page-terms>h5,
+    section.page.page-terms>h6,
+    section.page.page-privacy>h1,
+    section.page.page-privacy>h2,
+    section.page.page-privacy>h3,
+    section.page.page-privacy>h4,
+    section.page.page-privacy>h5,
+    section.page.page-privacy>h6 {
         margin-left: auto;
         margin-right: auto;
         width: 100%;

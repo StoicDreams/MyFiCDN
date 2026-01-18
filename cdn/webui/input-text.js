@@ -137,7 +137,7 @@ display:grid;
 gap:0.1em;
 }
 :host([compact])>label {
-font-size:0.8em;
+font-size:max(var(--min-font-size), 0.8em);
 }
 :host(:disabled)>input,
 :host([readonly])>input {
