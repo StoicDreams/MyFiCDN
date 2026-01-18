@@ -2,7 +2,7 @@
 <webui-side-by-side>
     <webui-flex column>
         <webui-input-text label="Data Trigger From webui-input-text" data-trigger="test1" data-subscribe="test1:value"></webui-input-text>
-        <webui-flex>
+        <webui-flex gap="3">
             <label for="test2" class="nowrap">Data Trigger From input</label>
             <input id="test2" type="text" data-trigger="test1" data-subscribe="test1:value">
         </webui-flex>

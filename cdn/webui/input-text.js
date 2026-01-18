@@ -90,7 +90,6 @@ max-width:100%;
 position:relative;
 box-sizing:border-box;
 align-items:center;
-overflow:auto;
 background-color:var(--theme-color);
 color:var(--theme-color-offset);
 flex-wrap: wrap;
@@ -115,7 +114,7 @@ label {
 overflow:hidden;
 width:max-content;
 padding-left: var(--padding);
-white-space:nowrap;
+white-space:pre-wrap;
 text-overflow: ellipsis;
 }
 input {
@@ -126,6 +125,7 @@ flex-grow:1;
 line-height:normal;
 box-sizing:border-box;
 font:inherit;
+max-width:100%;
 }
 label:empty {
 display:none;
