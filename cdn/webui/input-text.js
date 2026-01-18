@@ -11,16 +11,16 @@ webui.define('webui-input-text', {
         t._field = t.template.querySelector('input');
         t._field.setAttribute('name', 'text');
         t._label = t.template.querySelector('label');
-        t.addEventListener('focus', ev => {
+        t.addEventListener('focus', _ => {
             t._field.focus();
         });
-        t.addEventListener('click', _ev => {
+        t.addEventListener('click', _ => {
             t._field.focus();
         });
-        t._field.addEventListener('input', _ev => {
+        t._field.addEventListener('input', _ => {
             t.setAttribute('value', t._field.value);
         });
-        t._field.addEventListener('change', _ev => {
+        t._field.addEventListener('change', _ => {
             t.setAttribute('value', t._field.value);
         });
     },
