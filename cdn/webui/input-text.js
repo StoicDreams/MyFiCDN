@@ -93,6 +93,7 @@ align-items:center;
 overflow:auto;
 background-color:var(--theme-color);
 color:var(--theme-color-offset);
+flex-wrap: wrap;
 }
 :host([vertical]),
 :host([compact]) {
@@ -113,7 +114,6 @@ outline:none;
 label {
 overflow:hidden;
 width:max-content;
-max-width:50%;
 padding-left: var(--padding);
 white-space:nowrap;
 text-overflow: ellipsis;
