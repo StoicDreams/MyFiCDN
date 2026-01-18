@@ -58,6 +58,10 @@
                 handleKeyDown(ev);
             }
             function onInput(ev) {
+                const value = webui.sanitize(t._field.value);
+                if (value !== t._field.value) {
+                    t._field.value = value;
+                }
                 t.autosize();
             }
             t._field.setAttribute('name', 'message');

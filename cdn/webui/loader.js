@@ -1645,6 +1645,50 @@ const webui = (() => {
             return null;
         }
         /**
+         * Sanitize HTML/Markdown to assure script execution is not included.
+         *
+         * @param {string} dirty - The string to sanitize.
+         * @returns {string}
+         */
+        sanitize(dirty) {
+            if (typeof dirty !== 'string') return '';
+            const cleanInput = dirty.replace(/\0/g, '');
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(cleanInput, 'text/html');
+            const blockedTags = [
+                'script', 'iframe', 'object', 'embed', 'base', 'head', 'link', 'meta', 'applet', 'frame', 'frameset', 'style'
+            ];
+            const clean = (node) => {
+                const childNodes = Array.from(node.childNodes);
+                childNodes.forEach(child => {
+                    if (child.nodeType !== 1) return;
+                    const tagName = child.tagName.toLowerCase();
+                    if (blockedTags.includes(tagName)) {
+                        child.remove();
+                        return;
+                    }
+                    const attrs = Array.from(child.attributes);
+                    attrs.forEach(attr => {
+                        const name = attr.name.toLowerCase();
+                        const value = attr.value.trim().toLowerCase();
+                        if (name.startsWith('on')) {
+                            child.removeAttribute(name);
+                            return;
+                        }
+                        if (['href', 'src', 'action', 'data'].includes(name)) {
+                            const checkVal = value.replace(/[\s\x00-\x1f]+/g, '');
+                            if (checkVal.startsWith('javascript:') || checkVal.startsWith('vbscript:')) {
+                                child.removeAttribute(name);
+                            }
+                        }
+                    });
+                    clean(child);
+                });
+            };
+            clean(doc.body);
+            return doc.body.innerHTML;
+        }
+        /**
          * Set the main application node.
          *
          * @param {Node} app - The main application node.

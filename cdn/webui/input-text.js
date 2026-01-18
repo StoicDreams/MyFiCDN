@@ -18,9 +18,36 @@ webui.define('webui-input-text', {
             t._field.focus();
         });
         t._field.addEventListener('input', _ => {
-            t.setAttribute('value', t._field.value);
+            const value = webui.sanitize(t._field.value);
+            if (value !== t._field.value) {
+                t._field.value = value;
+            }
+            if (t._field.type === 'number' && t.hasAttribute('max')) {
+                const max = parseFloat(t.getAttribute('max'));
+                const current = parseFloat(value);
+                if (!isNaN(current) && current > max) {
+                    t._field.value = max;
+                }
+            }
         });
         t._field.addEventListener('change', _ => {
+            const value = webui.sanitize(t._field.value);
+            if (value !== t._field.value) {
+                t._field.value = value;
+            }
+            if (t._field.type === 'number') {
+                const val = parseFloat(value);
+                if (!isNaN(val)) {
+                    if (t.hasAttribute('max')) {
+                        const max = parseFloat(t.getAttribute('max'));
+                        if (val > max) t._field.value = max;
+                    }
+                    if (t.hasAttribute('min')) {
+                        const min = parseFloat(t.getAttribute('min'));
+                        if (val < min) t._field.value = min;
+                    }
+                }
+            }
             t.setAttribute('value', t._field.value);
         });
     },
@@ -32,6 +59,7 @@ webui.define('webui-input-text', {
                     t.removeAttribute('id');
                     t._field.setAttribute('id', value);
                 }
+                break;
             case 'label':
                 t._label.innerHTML = value;
                 break;
