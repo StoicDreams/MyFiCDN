@@ -88,6 +88,10 @@
         "tags": "thumbnails images"
     },
     {
+        "name": "gear",
+        "tags": "cog"
+    },
+    {
         "name": "hamburger",
         "tags": "menu bars"
     },
