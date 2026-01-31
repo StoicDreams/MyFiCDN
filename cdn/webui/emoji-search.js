@@ -21,12 +21,22 @@
             t._pag = t.template.querySelector('webui-pagination');
             console.log('emojis constructed');
         },
+        applyPagination: (t) => {
+            t = t || this;
+            console.log('apply pagination', t, t._pag);
+            if (!t._pag) return;
+            t._pag.page = t.page;
+            t._pag.perPage = t.perPage;
+            t._pag.pageCount = t.pageCount;
+            t._pag.totalCount = t.totalCount;
+            console.log('apply pagination', t._pag.page, t._pag.perPage, t._pag.pageCount, t._pag.totalCount);
+        },
         props: {
             'page': {
                 get() { return this._page; },
                 set(v) {
                     this._page = v;
-                    this._pag.page = v;
+                    this.applyPagination(this);
                     this.render();
                 }
             },
@@ -34,7 +44,7 @@
                 get() { return this._perPage; },
                 set(v) {
                     this._perPage = v;
-                    this._pag.perPage = v;
+                    this.applyPagination(this);
                 }
             },
             'pageCount': {
@@ -44,8 +54,7 @@
                 get() { return this._totalCount; },
                 set(v) {
                     this._totalCount = v;
-                    this._pag.totalCount = v;
-                    this._pag.pageCount = this.pageCount;
+                    this.applyPagination(this);
                     if (this.page > this.pageCount) {
                         this.page = this.pageCount;
                     }
