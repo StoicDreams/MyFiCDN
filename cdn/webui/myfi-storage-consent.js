@@ -72,9 +72,10 @@ With this storage option, browser data is only stored until you either close you
     }
 
     webui.define('webui-myfi-storage-consent', {
-        constructor: (t) => {
+        constructor() {
+            const t = this;
         },
-        setAcceptedKey: function (value) {
+        setAcceptedKey(value) {
             switch (value) {
                 case webui.storage.ACCEPT_LOCAL_STORAGE:
                     webui.storage.acceptLocalStorage();
@@ -89,7 +90,7 @@ With this storage option, browser data is only stored until you either close you
                     break;
             }
         },
-        render: function () {
+        render() {
             build_options();
             if (isDesktopApp) return;
             this.innerHTML = webui.applyAppDataToContent(`
@@ -103,7 +104,8 @@ With this storage option, browser data is only stored until you either close you
 </webui-page-segment>
 `);
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             t.addDataset('subscribe', `${webui.storage.STORAGE_ACCEPTED_KEY}:setAcceptedKey`);
             t.render();
         }

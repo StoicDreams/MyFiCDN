@@ -7,23 +7,26 @@
  */
 "use strict"
 webui.define('webui-poweredby', {
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t.anchor = webui.create('a');
         t.anchor.setAttribute('href', 'https://webui.stoicdreams.com');
         t.anchor.innerHTML = 'Web UI';
         t.appendChild(t.anchor);
     },
     attr: ['version'],
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'version':
                 t.anchor.setAttribute('title', `Web UI version ${value}`);
                 break;
         }
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         if (!t.version) {
-            t.setAttribute("version", "0.11.41");
+            t.setAttribute("version", "0.11.42");
             webui.setData('webui-version', t.getAttribute('version'));
         }
     },

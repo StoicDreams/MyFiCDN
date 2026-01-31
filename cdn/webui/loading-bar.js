@@ -8,12 +8,14 @@
 "use strict"
 {
     webui.define("webui-loading-bar", {
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._box = t.template.querySelector('div:nth-child(2)');
         },
         flags: ['indeterminate', 'striped'],
         attr: ['height', 'percent'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'height':
                     t.setHeight(value);
@@ -25,10 +27,11 @@
             }
             t.render();
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             t.render();
         },
-        render: function () {
+        render() {
             const t = this;
         },
         shadowTemplate: `

@@ -9,7 +9,8 @@
 {
     webui.define("webui-file-select", {
         preload: 'button fa',
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t.label = 'File Select';
             t.labelLimit = 20;
             t._label = t.template.querySelector('label');
@@ -71,7 +72,7 @@
                 t.setValue([]);
             });
         },
-        setValue: function (value) {
+        setValue(value) {
             const t = this;
             if (!value || value.length === undefined || parseInt(value.length) !== value.length) {
                 t.value = [];
@@ -87,7 +88,8 @@
             t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         },
         attr: ['label', 'data-trigger', 'accept', 'multiple', 'content-type', 'label-limit'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'label':
                     t._label.innerHTML = value;
@@ -107,7 +109,8 @@
                     break;
             }
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             let id = webui.uuid();
             t._label.style.backgroundColor = `var(--color-${(t.theme || 'primary')})`;
             t._label.style.color = `var(--color-${(t.theme || 'primary')}-offset)`;

@@ -581,10 +581,16 @@ const webui = (() => {
                         t.template = shadowTemplate.content.cloneNode(true);
                     }
                     Object.keys(options).forEach(key => {
-                        t[key] = options[key];
+                        if (typeof options[key] === 'function') {
+                            t[key] = options[key].bind(t);
+                        } else {
+                            t[key] = options[key];
+                        }
                     });
                     if (options.constructor) {
-                        options.constructor(t);
+                        let con = options.constructor.bind(t);
+                        con();
+                        //t.constructor();
                     }
                     if (options.watchVisibility) {
                         let observer = new IntersectionObserver(onIntersection, {
@@ -680,8 +686,8 @@ const webui = (() => {
                     } else {
                         webui.setProperty(this, property, newValue);
                     }
-                    if (options.attrChanged) {
-                        options.attrChanged(this, property, newValue);
+                    if (t.attrChanged) {
+                        t.attrChanged(property, newValue);
                     }
                 }
                 async connectedCallback() {
@@ -693,9 +699,9 @@ const webui = (() => {
                         t.classList.add('content');
                     }
                     if (t._connectedInit) {
-                        if (typeof options.reconnected === 'function') {
+                        if (typeof t.reconnected === 'function') {
                             setTimeout(() => {
-                                options.reconnected(t);
+                                t.reconnected();
                             }, 1);
                         }
                         return;
@@ -703,12 +709,12 @@ const webui = (() => {
                     t._connectedInit = true;
                     t._isConnected = true;
                     checkAddedNode(t);
-                    if (options.preload) {
-                        await preloadComponents(options.preload);
+                    if (t.preload) {
+                        await preloadComponents(t.preload);
                     }
-                    if (typeof options.connected === 'function') {
+                    if (typeof t.connected === 'function') {
                         setTimeout(() => {
-                            options.connected(t);
+                            t.connected();
                         }, 1);
                     }
                     if (t.shadowRoot && t.shadowRoot && t.shadowRoot.childNodes) {
@@ -729,8 +735,8 @@ const webui = (() => {
                     if (resizeSubscribers[t._id]) {
                         delete resizeSubscribers[t._id];
                     }
-                    if (typeof options.disconnected === 'function') {
-                        options.disconnected(t);
+                    if (typeof t.disconnected === 'function') {
+                        t.disconnected();
                     }
                     t.disconnectHandlers.forEach(h => {
                         h();
@@ -2157,9 +2163,15 @@ const webui = (() => {
          */
         async waitForConstruction(el, handler) {
             let toWait = 10;
-            while (!el._isConstructed) {
+            let count = 0;
+            while (!el._isConstructed && ++count < 1000) {
                 await webui.wait(10);
                 toWait *= 2;
+            }
+            if (!el._isConstructed) {
+                Promise.reject(`Construction failed for ${el}`);
+                console.error('Construction failed for %o', el);
+                return;
             }
             if (typeof handler === 'function') {
                 handler(el);

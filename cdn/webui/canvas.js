@@ -12,7 +12,8 @@
         watchVisibility: false,
         isInput: false,
         preload: '',
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._canvas = t.template.querySelector('canvas');
             t._ctx = t._canvas.getContext('2d');
             t._textLines = [];
@@ -24,7 +25,8 @@
         },
         flags: ['line-numbers'],
         attr: ['height', 'max-height', 'alt-color'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'height':
                     t.style.height = webui.pxIfNumber(value);
@@ -45,7 +47,7 @@
             t.updateCanvas();
             t.setScroll(0);
         },
-        setFromText: function (text) {
+        setFromText(text) {
             const t = this;
             if (text === t._textLines) return;
             text = text || '';
@@ -54,7 +56,7 @@
             });
             t.setLines(lines);
         },
-        setFromHTML: function (html) {
+        setFromHTML(html) {
             const t = this;
             const div = webui.create('div');
             div.innerHTML = html;
@@ -65,7 +67,7 @@
             });
             t.setLines(lines);
         },
-        render: function () {
+        render() {
             const t = this;
             t.wrapAllLines();
             t._contentHeight = t._wrappedLines.length * t._lineHeight;
@@ -106,7 +108,7 @@
                 }
             }
         },
-        updateCanvas: function () {
+        updateCanvas() {
             const t = this;
             if (!t._wrappedLines) return;
             const ctx = t._ctx;
@@ -162,11 +164,11 @@
                 ctx.fillRect(scrollbarX, scrollbarY, 14, scrollbarHeight);
             }
         },
-        getScroll: function () {
+        getScroll() {
             const t = this;
             return t._scrollTop;
         },
-        setScroll: function (value) {
+        setScroll(value) {
             const t = this;
             t._scrollTop = value || 0;
             const maxScroll = Math.max(0, t._contentHeight - t._canvas.height);
@@ -188,7 +190,7 @@
             let multi = e.shiftKey && e.ctrlKey ? 4 : e.ctrlKey ? 3 : e.shiftKey ? 2 : 0.2;
             t.setScroll(t._scrollTop + (e.deltaY * multi));
         },
-        checkDimensions: function () {
+        checkDimensions() {
             const t = this;
             const rect = t.getBoundingClientRect();
             let height = Math.floor(rect.height);
@@ -202,7 +204,8 @@
             t.updateCanvas();
             setTimeout(() => { t.checkDimensions(); }, 100);
         },
-        connected: function (t) {
+        connected() {
+            const t = this;
             const resizeObserver = new ResizeObserver(() => {
                 t.checkDimensions();
             });
@@ -214,7 +217,8 @@
             t._boundOnWheel = (e) => t.onWheel(e);
             t._canvas.addEventListener('wheel', t._boundOnWheel, { passive: false });
         },
-        disconnected: function (t) {
+        disconnected() {
+            const t = this;
             if (t._resizeObserver) {
                 t._resizeObserver.disconnect();
                 t._resizeObserver = null;

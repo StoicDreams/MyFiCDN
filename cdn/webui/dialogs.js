@@ -16,7 +16,8 @@ const webuiDialog = function (data) {
     webui.define("webui-dialogs", {
         preload: 'icon',
         linkCss: true,
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t.dialog = t.template.querySelector('dialog');
             t.form = t.template.querySelector('form');
             t.header = t.template.querySelector('form>header>section');

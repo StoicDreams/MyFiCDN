@@ -87,12 +87,14 @@ Stroke line joins: miter|round|bevel
         }
     }
     webui.define('webui-icon', {
-        preload: "",
-        constructor: (t) => {
-            t._svg = t.template.querySelector('svg');
+        preload: "emoji",
+        constructor() {
+            const t = this;
+            t._svg = t.template.querySelector('svg.main');
             t._countSlot = t.template.querySelector('slot[name=count]');
             t._style = t.template.querySelector('defs style');
             t._backPath = t.template.querySelector('path.backing');
+            t._emoji = t.template.querySelector('webui-emoji');
             t._dynPaths = [];
             for (let instance = 1; instance <= pathCount; ++instance) {
                 t[`_i${instance}`] = t.template.querySelector(`path.i${instance}`);
@@ -100,7 +102,8 @@ Stroke line joins: miter|round|bevel
             }
         },
         attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'shape', 'rotate', 'count', 'stroke', 'shade'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'count':
                     let num = parseInt(value) || 0;
@@ -174,6 +177,10 @@ Stroke line joins: miter|round|bevel
                             t.setAttribute(av[0], webui.getDefined(av[1], true));
                         }
                     });
+                    if (icon.startsWith('emoji-')) {
+                        t.setEmoji(icon);
+                        return;
+                    }
                     getIcon(icon, (iconDef) => {
                         t.setIconDefinition(iconDef);
                     });
@@ -188,14 +195,24 @@ Stroke line joins: miter|round|bevel
                     break;
             }
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             if (!t.shape) {
                 t._backPath.setAttribute('d', defSquare);
             }
         },
+        setEmoji(emoji) {
+            console.log('set emoji', this, emoji);
+            const t = this;
+            const emojiChar = emoji.replace('emoji-', '');
+            console.log('set emoji', this, t._svg);
+            t._svg.classList.add('emoji');
+            t._emoji.setAttribute('emoji', emojiChar);
+        },
         setIconDefinition(iconDef) {
             if (!iconDef || typeof iconDef !== 'string') return;
             const t = this;
+            t._svg.classList.remove('emoji');
             t._definition = iconDef;
             let defs = iconDef.split('\n');
             defs.shift();
@@ -263,7 +280,7 @@ Stroke line joins: miter|round|bevel
             }
         },
         shadowTemplate: `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200" class="main">
 <!--! Stoic Dreams - https://webui.stoicdreams.com License - https://webui.stoicdreams.com/license Copyright 2024 Stoic Dreams Inc. -->
 <defs>
 <style></style>
@@ -279,6 +296,10 @@ Stroke line joins: miter|round|bevel
 <path class="i8" d=""></path>
 <path class="i9" d=""></path>
 <path class="i10" d=""></path>
+</svg>
+<webui-emoji></webui-emoji>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200" class="overlay">
+<!--! Stoic Dreams - https://webui.stoicdreams.com License - https://webui.stoicdreams.com/license Copyright 2024 Stoic Dreams Inc. -->
 <path class="ban" d="M-60 60Q-50 50 -50 50Q-35 35 -35 35Q-20 20 -20 20Q-10 10 -10 10Q-5 5 -5 5Q5 -5 5 -5Q10 -10 10 -10Q20 -20 20 -20Q35 -35 35 -35Q50 -50 50 -50Q60 -60 60 -60z"></path>
 </svg>
 <slot name="count"></slot>
@@ -402,40 +423,17 @@ stroke-width:0;
 path.ban {
 stroke-width:calc(var(--ico-stroke-width) * 2);
 }
-:host(:not([ban])) path.ban {
+:host(:not([ban])) path.ban,
+svg.main:not(.emoji) webui-emoji,
+svg.main.emoji path:not(.backing) {
 display:none;
+}
+svg.overlay {
+display:block;
+position:absolute;
+top:0;
+left:0;
 }
 </style>`
     });
 }
-/*
-:host([fill]) path.tri,
-:host([fill]) path.tri {
-fill:var(--ico-color-tertiary);
-}
-:host([fill]) path.duo,
-:host([fill]) path.duo,
-:host([fill]) path.duo {
-fill:var(--ico-color-secondary);
-}
-:host([fill]) path:not(.backing) {
-fill:color-mix(in srgb, var(--ico-color-primary) 80%, var(--ico-color-offset));
-}
-:host([shade="duo"][fill]) path:not(.backing),
-:host([shade="tri"][fill]) path:not(.backing) {
-fill:color-mix(in srgb, var(--ico-color-primary) 90%, var(--ico-color-offset));
-}
-:host([shade="duo"][fill]) path:not(.backing).tri {
-fill:var(--ico-color-tertiary);
-}
-:host([shade="duo"][fill]) path:not(.backing).duo {
-fill:var(--ico-color-secondary);
-}
-
-:host([shade="tri"][fill]) path:not(.backing).tri {
-fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
-}
-:host([shade="tri"][fill]) path:not(.backing).duo {
-fill:color-mix(in srgb, var(--ico-color-primary) 20%, var(--ico-color-offset));
-}
-*/

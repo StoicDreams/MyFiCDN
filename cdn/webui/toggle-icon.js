@@ -9,7 +9,8 @@
 {
     webui.define('webui-toggle-icon', {
         preload: 'icon',
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._button = t.template.querySelector('button');
             t._label = t.template.querySelector('span');
             t._icon = t._button.querySelector('webui-icon');
@@ -23,7 +24,8 @@
         },
         linkCss: true,
         attr: ['label', 'title-on', 'title-off', 'icon', 'icon-on', 'icon-off', 'flags-on', 'flags-off', 'data-enabled', 'enabled', 'theme-on', 'theme-off', 'class'],
-        attrChanged: (t, prop, _v) => {
+        attrChanged(prop, _v) {
+            const t = this;
             switch (prop) {
                 case '_class':
                     t._button.classList = t.classList;
@@ -31,7 +33,8 @@
             }
             t.updateElements();
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             t.updateElements();
         },
         props: {

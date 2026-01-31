@@ -15,16 +15,14 @@
     const defaultPath = 'M0 -85Q5 -85 5 -85Q10 -85 10 -85Q15 -85 15 -85Q20 -85 20 -85Q25 -85 25 -85Q30 -85 30 -85Q35 -85 35 -85Q40 -85 40 -85Q45 -85 45 -85Q50 -85 50 -85Q55 -85 55 -85z';
     webui.define('webui-icon-creator', {
         preload: "icon dropdown input-range input-text input-message",
-        constructor: (t) => {
-        },
-        onResize: function (_) {
+        onResize(_) {
             const t = this;
             let cols = t.clientWidth > 1200 ? '2fr 1fr' : '1fr';
             if (t._inputs.getAttribute('columns') !== cols) {
                 t._inputs.setAttribute('columns', cols);
             }
         },
-        setupComponent: function () {
+        setupComponent() {
             const t = this;
             t.style.display = 'flex';
             t.style.flexDirection = 'column';
@@ -605,14 +603,14 @@
             t.appendChild(t._bottomGrid);
             t.loadIcons();
         },
-        connected: (t) => {
-            t.setupComponent();
+        connected() {
+            this.setupComponent();
         },
-        loadFromDefinition: function (iconDef) {
+        loadFromDefinition(iconDef) {
             const t = this;
             if (!iconDef) return;
         },
-        loadIcons: async function () {
+        async loadIcons() {
             const t = this;
             try {
                 let result = await fetch(`${srcRoot}all.json`);

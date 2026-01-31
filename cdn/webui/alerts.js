@@ -82,7 +82,8 @@
     webui.define("webui-alerts", {
         preload: "icon alert dialogs",
         alertTitle: 'Alerts',
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t.count = 0;
             t.icon = t.template.querySelector('webui-icon');
             if (!window.webuiAlert) {
@@ -142,7 +143,8 @@
             setTimeout(() => t.checkCounts(), 1000);
         },
         attr: ['data-toggleclass', 'data-title'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'dataTitle':
                     t.alertTitle = value;
@@ -158,28 +160,30 @@
                     break;
             }
         },
-        setCount: function (value) {
-            this.count = value;
-            this.icon.setAttribute('count', value === 0 ? '' : value.toLocaleString());
-            if (this.count === 0) {
-                this.icon.setAttribute('theme', 'info');
+        setCount(value) {
+            const t = this;
+            t.count = value;
+            t.icon.setAttribute('count', value === 0 ? '' : value.toLocaleString());
+            if (t.count === 0) {
+                t.icon.setAttribute('theme', 'info');
             } else {
-                this.icon.setAttribute('theme', 'success');
+                t.icon.setAttribute('theme', 'success');
             }
         },
-        checkCounts: function () {
+        checkCounts() {
+            const t = this;
             let newCount = 0;
             alertList.map(a => {
                 if (!a.userclosed) {
                     newCount++;
                 }
             });
-            if (newCount != this.count) {
-                this.setCount(newCount);
+            if (newCount != t.count) {
+                t.setCount(newCount);
             }
-            setTimeout(() => this.checkCounts(), 1000);
+            setTimeout(() => t.checkCounts(), 1000);
         },
-        triggerAlert: function (data, a) {
+        triggerAlert(data, a) {
             const t = this;
             if (!data) return;
             if (!data.message || !data.show) {
@@ -210,7 +214,8 @@
                 t._lastTrigger = undefined;
             }, 100);
         },
-        connected: function (t) {
+        connected() {
+            const t = this;
             if (t.dataset.subscribe) {
                 alertTrigger = t.dataset.subscribe;
             };

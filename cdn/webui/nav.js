@@ -12,7 +12,8 @@
     webui.define('webui-nav', {
         preload: 'fa paper nav-group nav-link',
         attr: ['routes', 'nav-routes'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'routes':
                     t.loadRoutes(value);
@@ -22,7 +23,8 @@
                     break;
             }
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             t.userRole = 0;
             t.addDataset('subscribe', 'session-user-role:setUserRole');
             t._buildNav();
@@ -32,22 +34,22 @@
                 show[key] = cachedShow[key];
             });
         },
-        setUserRole: function (userRole) {
+        setUserRole(userRole) {
             const t = this;
             t.userRole = userRole || 0;
             t._buildNav();
         },
-        setNavRoutes: function (data) {
+        setNavRoutes(data) {
             this.buildNav(data);
         },
-        loadRoutes: async function (url) {
+        async loadRoutes(url) {
             if (!url) return;
             let loaded = await fetch(url);
             if (!loaded.ok) return;
             let data = await loaded.text();
             this.buildNav(data);
         },
-        buildLink: function (parent, link) {
+        buildLink(parent, link) {
             const t = this;
             let el = null;
             if (link.role && link.role > 0 && (link.role & t.userRole) === 0) {
@@ -91,14 +93,14 @@
             el.setAttribute('name', link.name);
             parent.appendChild(el);
         },
-        buildNav: function (navJson) {
+        buildNav(navJson) {
             if (!navJson) return;
             let nav = typeof navJson === 'string' ? JSON.parse(navJson) : typeof navJson.forEach === 'function' ? navJson : [];
             const t = this;
             t._navData = nav;
             t._buildNav();
         },
-        _buildNav: function () {
+        _buildNav() {
             const t = this;
             let nav = t._navData;
             if (!nav) return;

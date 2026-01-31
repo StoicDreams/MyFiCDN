@@ -7,12 +7,15 @@
  */
 "use strict"
 webui.define("webui-card", {
-    constructor: (t) => { },
+    constructor() {
+        const t = this;
+    },
     attr: ['name', 'theme', 'width', 'avatar', 'link', 'elevation'],
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         t.buildHeader();
     },
-    buildHeader: function () {
+    buildHeader() {
         const t = this;
         if (!t._header) {
             t._header = t.querySelector('slot[name="header"]');
@@ -50,10 +53,12 @@ webui.define("webui-card", {
             t.appendChild(t._header);
         }, 1);
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         t.classList.add('elevation-10');
     },
-    disconnected: (t) => {
+    disconnected() {
+        const t = this;
         t.innerHTML = '';
         if (t._header) {
             t._header.remove();

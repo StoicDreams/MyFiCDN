@@ -15,13 +15,12 @@
         watchVisibility: false,
         isInput: false,
         preload: 'input-range',
-        constructor: (t) => {
+        constructor() {
+            const t = this;
         },
-        connected: function (t) {
-            t.setupComponent();
+        connected() {
+            this.setupComponent();
         },
-        disconnected: function (t) { },
-        reconnected: function (t) { },
         setupComponent: function () {
             const t = this;
             t.innerHTML = webui.parseWebuiMarkdown(content);

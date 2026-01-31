@@ -7,7 +7,8 @@
  */
 "use strict"
 webui.define('webui-stoic-social-links', {
-    connected: (t) => {
+    connected() {
+        const t = this;
         if (!t.innerHTML) {
             t.innerHTML = webui.trimLinePreTabs(`
             <webui-paper class="mx-a">

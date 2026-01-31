@@ -15,7 +15,8 @@
 "use strict"
 {
     webui.define("webui-page-requires", {
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             Object.keys(t.dataset).forEach(key => {
                 let subTo = t.dataset[key];
                 let setter = webui.toCamel(`set-${subTo}`);

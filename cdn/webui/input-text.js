@@ -7,7 +7,8 @@
  */
 "use strict"
 webui.define('webui-input-text', {
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._field = t.template.querySelector('input');
         t._field.setAttribute('name', 'text');
         t._label = t.template.querySelector('label');
@@ -52,7 +53,8 @@ webui.define('webui-input-text', {
         });
     },
     attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'type', 'placeholder', 'maxlength', 'minlength', 'min', 'max'],
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'id':
                 if (value) {
@@ -101,10 +103,11 @@ webui.define('webui-input-text', {
             }
         }
     },
-    setValue: function (value) {
+    setValue(value) {
         this.value = value;
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         if (!t.getAttribute('type')) {
             t._field.setAttribute('type', 'text');
         }

@@ -7,12 +7,14 @@
  */
 "use strict"
 webui.define('webui-link', {
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._startIcon = t.template.querySelector('slot[name="start-icon"]');
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
     },
     attr: ['href', 'target', 'icon', 'start-icon', 'end-icon'],
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'icon':
             case 'startIcon':
@@ -37,7 +39,8 @@ webui.define('webui-link', {
                 break;
         }
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         t.addEventListener('click', _ => {
             if (t.href) {
                 if (t.target) {

@@ -9,9 +9,12 @@
 {
     webui.define('webui-grid', {
         linkCss: true,
-        constructor: (t) => { },
+        constructor() {
+            const t = this;
+        },
         attr: ['columns', 'min', 'max', 'gap', 'width', 'height'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'gap':
                     t.style.gap = webui.pxIfNumber(value);
@@ -38,7 +41,8 @@
                     break;
             }
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
         },
         shadowTemplate: `
 <slot></slot>

@@ -23,7 +23,8 @@
         _columns: [],
         linkCss: true,
         columnFormats: {},
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._table = webui.create('table');
             t._columnTemplates = {};
             webui.removeElements(t, '[slot="column"]', n => {
@@ -33,7 +34,8 @@
             });
         },
         attr: ['bordered', 'columns', 'sortable', 'current-sort', 'current-sort-dir', 'column-formats'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'bordered':
                     t._table.classList.add('bordered');
@@ -61,7 +63,7 @@
                     break;
             }
         },
-        setData: function (data) {
+        setData(data) {
             const t = this;
             data = data || {};
             if (typeof data === 'string') {
@@ -73,7 +75,7 @@
             t._data = data;
             t.render();
         },
-        render: function () {
+        render() {
             const t = this;
             t._table.innerHTML = '';
             let h = webui.create('tr');
@@ -169,7 +171,8 @@
                 });
             }
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             t.appendChild(t._table);
             t.render();
             setTimeout(() => {

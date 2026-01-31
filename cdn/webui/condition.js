@@ -8,7 +8,8 @@
 "use strict"
 {
     webui.define("webui-condition", {
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._data = {};
             t._slotValid = t.template.querySelector('slot[name="valid"]');
             t._slotInvalid = t.template.querySelector('slot[name="invalid"]');
@@ -32,7 +33,8 @@
             });
         },
         attr: ['data-subscribe', 'value'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'dataSubscribe':
                     t.checkConditions();
@@ -43,7 +45,8 @@
                     break;
             }
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             t._isConnected = true;
             let content = [], invalid = [];
             t._slotValid.assignedElements().forEach(template => {
@@ -56,7 +59,7 @@
             t._cacheInvalid = invalid.join('\n');
             t.checkConditions();
         },
-        setValue: function (value, key) {
+        setValue(value, key) {
             const t = this;
             switch (key) {
                 case 'value':
@@ -66,14 +69,14 @@
             t._data[key] = value === undefined ? '' : value;
             t.checkConditions();
         },
-        valueIsGood: function (val) {
+        valueIsGood(val) {
             if (!val || ['0', 'false', 'null', 'undefined', '[]', '{}'].indexOf(val) !== -1 || (val.forEach && val.length === 0)) {
                 return false;
             }
             if (typeof val === 'string' && val.startsWith('{TEMPLATE_')) return false;
             return true;
         },
-        checkConditions: function () {
+        checkConditions() {
             const t = this;
             if (!t._isConnected) return;
             let keys = t.dataset.subscribe;
@@ -133,7 +136,7 @@
             }
         },
 
-        showContent: function () {
+        showContent() {
             const t = this;
             webui.removeChildren(t, ch => {
                 return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');
@@ -142,7 +145,7 @@
                 webui.transferChildren(webui.create('div', { html: webui.applyAppDataToContent(t._cacheContent, t._data) }), t);
             }
         },
-        showInvalid: function () {
+        showInvalid() {
             const t = this;
             webui.removeChildren(t, ch => {
                 return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');

@@ -8,12 +8,14 @@
 "use strict"
 {
     webui.define("webui-data-loader", {
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t.map = {};
             t.delay = 10;
         },
         attr: ['src', 'keymap', 'auth', 'apiroot', 'delay'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'auth':
                     t.usesAuth = true;
@@ -31,10 +33,11 @@
                 t.process();
             }
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             t.process();
         },
-        processPath: async function (src, dataKey) {
+        async processPath(src, dataKey) {
             const t = this;
             async function handleProcess() {
                 if (t.usesAuth && !t.auth) {
@@ -72,7 +75,7 @@
                 handleProcess();
             }, t.delay || 10);
         },
-        process: async function () {
+        async process() {
             const t = this;
             if (!t._sid) {
                 t._sid = webui.uuid();

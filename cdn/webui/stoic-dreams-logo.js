@@ -7,7 +7,8 @@
  */
 "use strict"
 webui.define('webui-stoic-dreams-logo', {
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         if (!document.getElementById('webui-font-nunito')) {
             const fontStyle = document.createElement('style');
             fontStyle.id = 'webui-font-nunito';
@@ -77,16 +78,17 @@ stroke-miterlimit:10;
         t.render();
     },
     attr: ['title', 'text', 'text2'],
-    attrChanged: (t, _p, _v) => {
+    attrChanged(property, value) {
+        const t = this;
         t.render();
     },
-    render: function () {
+    render() {
         const t = this;
         let title = t.title || `${(`${t.text} ${t.text2}`.trim())} Logo`;
         t.svg.setAttribute('title', title);
         t._text.innerHTML = t.getText();
     },
-    getText: function () {
+    getText() {
         const t = this;
         if (t.text2 && t.text) {
             return `<tspan class="line1" x="75" y="50">${t.text}</tspan><tspan class="line2" x="75" y="105">${t.text2}</tspan>`;

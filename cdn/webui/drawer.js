@@ -25,7 +25,8 @@
     webui.define("webui-drawer", {
         preload: 'icon flex toggle-icon',
         linkCss: false,
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._idselector = `#${t._id}`;
             t.headerSlot = t.template.querySelector('slot[name=header]');
             t.footerSlot = t.template.querySelector('slot[name=footer]');
@@ -49,7 +50,8 @@
             };
             startObserving(t);
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             // delay setting id, which enables transitions, to avoid undocked drawers from displaying on page load.
             setTimeout(() => {
                 t.setAttribute('id', t._id);
@@ -58,11 +60,13 @@
             window.addEventListener('resize', t._resizeHandler);
             t.checkResponsiveDocking();
         },
-        disconnected: (t) => {
+        disconnected() {
+            const t = this;
             window.removeEventListener('resize', t._resizeHandler);
         },
         attr: ['position', 'docked', 'data-dockable', 'data-moveable'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'docked':
                     if (!t._forceUndocked) {
@@ -79,7 +83,7 @@
                     break;
             }
         },
-        buildFooterContent: function () {
+        buildFooterContent() {
             this.querySelectorAll('[slot="footer"]').forEach(el => el.remove());
             let content = '';
             let fb = webui.create('webui-flex');
@@ -90,7 +94,7 @@
             fb.innerHTML = content;
             this.appendChild(fb);
         },
-        checkResponsiveDocking: function () {
+        checkResponsiveDocking() {
             const isNarrow = window.innerWidth < 900;
             const t = this;
             t._forceUndocked = isNarrow;

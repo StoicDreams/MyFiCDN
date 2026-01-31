@@ -8,7 +8,8 @@
 "use strict"
 {
     webui.define('webui-tabs', {
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._index = 0;
             t._slotContent = t.template.querySelector('slot[name="content"]');
             t._slotTabs = t.template.querySelector('slot[name="tabs"]');
@@ -16,7 +17,8 @@
             t._section = t.template.querySelector('section');
         },
         attr: ['pad', 'transition-timing', 'index', 'theme', 'content-theme'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'pad':
                     {
@@ -30,13 +32,15 @@
                     break;
             }
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             t.render();
             t._resizeHandler = () => t.checkResponsiveVertical();
             window.addEventListener('resize', t._resizeHandler);
             t.checkResponsiveVertical();
         },
-        disconnected: (t) => {
+        disconnected() {
+            const t = this;
             window.removeEventListener('resize', t._resizeHandler);
         },
         setData: function (data, key) {

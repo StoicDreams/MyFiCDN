@@ -7,7 +7,8 @@
  */
 "use strict"
 webui.define("webui-app", {
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         webui.setApp(t);
         t.dynstyles = webui.create('style');
         t.dynstyles.setAttribute('type', 'text/css');
@@ -28,7 +29,7 @@ webui.define("webui-app", {
 
     },
     attr: ['page-content', 'page-data', 'page-content-encrypt', 'page-data-encrypt', 'root-page', 'content-extension'],
-    setPageContent: function (content) {
+    setPageContent(content) {
         this.mainSlot.assignedElements().forEach(node => {
             node.remove();
         });
@@ -36,29 +37,31 @@ webui.define("webui-app", {
         temp.innerHTML = content;
         this.append(...temp.childNodes);
     },
-    attrChanged: (t, property, newValue) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'rootPage':
-                webui._appSettings.rootPage = newValue;
+                webui._appSettings.rootPage = value;
                 break;
             case 'contentExtension':
-                webui._appSettings.contentExtension = newValue;
+                webui._appSettings.contentExtension = value;
                 break;
             case 'pageContent':
-                appSettings.pageContentEndpoint = newValue;
+                appSettings.pageContentEndpoint = value;
                 break;
             case 'pageData':
-                webui._appSettings.pageDataEndpoint = newValue;
+                webui._appSettings.pageDataEndpoint = value;
                 break;
             case 'pageDataEncrypt':
-                webui._appSettings.encryptPageData = newValue;
+                webui._appSettings.encryptPageData = value;
                 break;
             case 'pageContentEncrypt':
-                webui._appSettings.encryptPageContent = newValue;
+                webui._appSettings.encryptPageContent = value;
                 break;
         }
     },
-    setBodyClasses: () => {
+    setBodyClasses() {
+        const t = this;
         let winWidth = window.innerWidth;
         // Flag general width by class
         let w = winWidth > 3800 ? 'w-4k'
@@ -82,21 +85,22 @@ webui.define("webui-app", {
             document.body.classList.add(`${w}`);
         }
     },
-    applyDynamicStyles: function () {
+    applyDynamicStyles() {
+        const t = this;
         this.setBodyClasses();
-        let h = this.getSlot('header') || { clientHeight: 0 };
-        let f = this.getSlot('footer') || { clientHeight: 0 };
-        let t = this.getSlot('top') || { clientHeight: 0 };
-        let r = this.getSlot('right') || { clientWidth: 0 };
-        let b = this.getSlot('bottom') || { clientHeight: 0 };
-        let l = this.getSlot('left') || { clientWidth: 0 };
-        let m = this.shadowRoot.querySelector('main');
+        let h = t.getSlot('header') || { clientHeight: 0 };
+        let f = t.getSlot('footer') || { clientHeight: 0 };
+        let u = t.getSlot('top') || { clientHeight: 0 };
+        let r = t.getSlot('right') || { clientWidth: 0 };
+        let b = t.getSlot('bottom') || { clientHeight: 0 };
+        let l = t.getSlot('left') || { clientWidth: 0 };
+        let m = t.shadowRoot.querySelector('main');
         let w = window;
         let wb = document.body;
         let ww = w.innerWidth || wb.clientWidth;
         let wh = w.innerHeight || wb.clientHeight;
         let mw = m.clientWidth;
-        let mh = wh - (h.clientHeight + f.clientHeight + t.clientHeight + b.clientHeight);
+        let mh = wh - (h.clientHeight + f.clientHeight + u.clientHeight + b.clientHeight);
         let value = `
 :root {
 --window-width: ${ww}px;
@@ -107,13 +111,13 @@ webui.define("webui-app", {
 --footer-height: ${f.clientHeight}px;
 --drawer-left-width: ${l.clientWidth}px;
 --drawer-right-width: ${r.clientWidth}px;
---drawer-top-height: ${t.clientHeight}px;
+--drawer-top-height: ${u.clientHeight}px;
 --drawer-bottom-height: ${b.clientHeight}px;
 }
 `;
-        if (this._adsrCache !== value) {
-            this._adsrCache = value;
-            this.dynstyles.innerHTML = value;
+        if (t._adsrCache !== value) {
+            t._adsrCache = value;
+            t.dynstyles.innerHTML = value;
         }
     },
     _adsrCache: {},

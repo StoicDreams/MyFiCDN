@@ -7,7 +7,8 @@
  */
 "use strict"
 webui.define("webui-under-construction", {
-    connected: (t) => {
+    connected() {
+        const t = this;
         let container = webui.create('webui-sideimage');
         container.setAttribute('src', 'https://cdn.myfi.ws/v/Vecteezy/people-are-building-a-spaceship-rocket-cohesive-teamwork-in.svg');
         container.innerHTML = webui.applyAppDataToContent(`

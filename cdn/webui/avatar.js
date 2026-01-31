@@ -7,11 +7,13 @@
  */
 "use strict"
 webui.define("webui-avatar", {
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._slot = t.template.querySelector('slot');
     },
     attr: ['src'],
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'src':
                 if (!value) {

@@ -8,13 +8,15 @@
 "use strict"
 webui.define("webui-gallery", {
     preload: 'flex cards card',
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t.flexImage = webui.create('webui-flex');
         t.flexName = webui.create('webui-flex');
         t.cards = webui.create('webui-cards');
     },
     attr: ['src', 'card-width'],
-    loadGallery: async function (t) {
+    async loadGallery() {
+        const t = this;
         if (!t.src) { return; }
         let result = await fetch(t.src);
         if (!result.ok) { return; }
@@ -78,7 +80,7 @@ webui.define("webui-gallery", {
         webui.setData('page-gallery-image', t.currentImage.src);
         webui.setData('page-gallery-image-name', t.currentImage.name);
     },
-    connected: (t) => {
-        t.loadGallery(t);
+    connected() {
+        this.loadGallery();
     }
 });

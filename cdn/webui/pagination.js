@@ -11,7 +11,8 @@
         preload: "button",
         _pageCount: 0,
         _totalCount: 0,
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._input = t.template.querySelector('input');
             t._slot = t.template.querySelector('slot');
             t._prev = t.template.querySelector('div.prev');
@@ -72,16 +73,16 @@
             'pageCount': {
                 get() { return this._pageCount; },
                 set(v) {
-                    if (this._pageCount !== v) {
-                        this._pageCount = v;
-                        this.setAttribute('page-count', v);
-                    }
+                    if (this._pageCount === v) return;
+                    this._pageCount = v;
+                    this.setAttribute('page-count', v);
                     this.process();
                 }
             }
         },
         attr: ['data-current', 'data-subscribe', 'value', 'page', 'per-page', 'hide-prev-next-buttons', 'hide-pages', 'loop', 'max-pages'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'perPage':
                     let num = parseInt(value);
@@ -98,7 +99,8 @@
                     break;
             }
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             let data = '';
             if (t._slot.assignedElements().length) {
                 let ch = [];
@@ -130,7 +132,7 @@
             });
             t.process();
         },
-        process: function () {
+        process() {
             const t = this;
             if (t._data && t._data.forEach) {
                 let current = t._currentData || {};
@@ -172,7 +174,7 @@
             }
             t.render();
         },
-        render: function () {
+        render() {
             const t = this;
             if (!t.hasChanges) return;
             if (t.page === 1) {
@@ -221,7 +223,7 @@
             }
             t._hasRendered = true;
         },
-        setValue: function (value, key, toSet) {
+        setValue(value, key, toSet) {
             const t = this;
             value = value || 1;
             if (value === undefined || value === undefined) return;
@@ -238,7 +240,7 @@
             t.value = t.page;
             t.process();
         },
-        setData: function (value) {
+        setData(value) {
             const t = this;
             if (typeof value === 'string') {
                 try {

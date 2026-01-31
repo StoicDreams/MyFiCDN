@@ -14,7 +14,8 @@
 
     webui.define('webui-feedback', {
         preload: 'dialogs input-message alert alerts',
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             let extraContent = t.innerHTML;
             t._icon = t.template.querySelector('webui-icon');
             t.addEventListener('click', async _ => {
@@ -93,12 +94,13 @@
                 }
             });
         },
-        setTheme: function (value) {
+        setTheme(value) {
             const t = this;
             t._icon.setAttribute('theme', value);
         },
         attr: ['title', 'data-post', 'flags'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'flags':
                     if (typeof value === 'string') {
@@ -110,7 +112,8 @@
                     break;
             }
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             t.addDataset('subscribe', 'feedback:click');
         },
         shadowTemplate: `

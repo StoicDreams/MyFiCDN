@@ -36,7 +36,7 @@
         { regex: /\b(\d+(\.\d+)?)\b/g, class: 'number' },
         { regex: /(=&gt;|&gt;|&lt;|&amp;|;)/g, class: 'symbol' },
         { regex: /[\+\-\*\/=><!&|\(\)\{\}\[\]\.,]/g, class: 'operator' },
-        { regex: /\b([A-Za-z-_]+[A-Za-z0-9-_])\b/g, class: 'selector-tag'}
+        { regex: /\b([A-Za-z-_]+[A-Za-z0-9-_])\b/g, class: 'selector-tag' }
     ];
     const cssPatterns = [
         { regex: /(\/\*[\s\S]*?\*\/)/g, class: 'comment' },
@@ -174,7 +174,8 @@
 </pre>`;
     webui.define('webui-code', {
         preload: 'icon',
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             let code = t.innerHTML;
             t.innerHTML = '';
             t._template = webui.create('div', { html: template });
@@ -191,7 +192,8 @@
             t._code.innerHTML = highlightCode(webui.trimLinePreTabs(code.trim()), t.lang || t.language || t.getAttribute('lang') || t.getAttribute('language'));
         },
         attr: ['language', 'lang', 'label', 'lines', 'nocopy', 'src'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'label':
                     t._label.innerHTML = value;
@@ -222,7 +224,7 @@
                     break;
             }
         },
-        loadFromSrc: function () {
+        loadFromSrc() {
             const t = this;
             let src = t.src;
             if (!src) return;
@@ -238,7 +240,7 @@
                 set(v) { this.setValue(v); }
             }
         },
-        setValue: function (value) {
+        setValue(value) {
             const t = this;
             if (value === undefined) {
                 value = '';
@@ -249,7 +251,7 @@
             value = webui.escapeCode(value);
             t._code.innerHTML = highlightCode(webui.trimLinePreTabs(value.trim()), t.lang || t.language || t.getAttribute('lang') || t.getAttribute('language'));
         },
-        applyLabelDisplay: function () {
+        applyLabelDisplay() {
             const t = this;
             if (t._label.innerHTML || !t.nocopy) {
                 t.classList.remove('hide-label');
@@ -257,7 +259,8 @@
                 t.classList.add('hide-label');
             }
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             while (t._template.childNodes.length > 0) {
                 t.appendChild(t._template.childNodes[0]);
             }

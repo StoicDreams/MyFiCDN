@@ -43,13 +43,15 @@
         return { key, value };
     }
     webui.define("webui-data", {
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._slot = t.template.querySelector('slot:not([name])');
             t._slotHtml = t.template.querySelector('slot[name="html"]');
             t._slotText = t.template.querySelector('slot[name="text"]');
             t._slotJson = t.template.querySelector('slot[name="json"]');
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             t._slotText.assignedElements().forEach(template => {
                 let { key, value } = extractText(template);
                 if (key && value) {
@@ -83,7 +85,7 @@
                 webui.setData(key, value);
             });
         },
-        pushItem: function (value, key) {
+        pushItem(value, key) {
             const t = this;
             if (!key || !value) return;
             let template = t.querySelector('template[slot="json"][data-update]');
@@ -109,7 +111,7 @@
             data.push(value);
             webui.setData(setKey, data);
         },
-        setDefault: function (value, key) {
+        setDefault(value, key) {
             let current = webui.getData(key);
             if (current) return;
             const t = this;

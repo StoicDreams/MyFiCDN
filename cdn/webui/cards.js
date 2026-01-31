@@ -8,14 +8,15 @@
 "use strict"
 webui.define("webui-cards", {
     attr: ['elevation', 'card-width', 'src', 'theme'],
-    buildContentFromSource: async function (t) {
+    async buildContentFromSource() {
+        const t = this;
         if (!t.src) return;
         let result = await fetch(t.src);
         if (!result.ok) return;
         let cards = await result.text();
         t.setCards(cards);
     },
-    setCards: function (json) {
+    setCards(json) {
         const t = this;
         t.innerHTML = '';
         try {
@@ -37,10 +38,11 @@ webui.define("webui-cards", {
             t.innerHTML = `Error parsing card information: ${ex}`;
         }
     },
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'src':
-                t.options.buildContentFromSource(t);
+                t.buildContentFromSource();
                 break;
             case 'cardWidth':
                 t.style.gridTemplateColumns = `repeat(auto-fit, minmax(1em, ${value}px))`

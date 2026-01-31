@@ -6,11 +6,13 @@
  * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
  */
 webui.define("webui-quote", {
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._cite = t.template.querySelector('cite');
     },
     attr: ['cite', 'elevation', 'theme'],
-    connected: (t) => {
+    connected() {
+        const t = this;
         if (t.cite) {
             t._cite.innerHTML = t.cite;
         }

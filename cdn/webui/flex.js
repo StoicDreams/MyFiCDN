@@ -8,18 +8,20 @@
 "use strict"
 webui.define('webui-flex', {
     linkCss: true,
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._style = t.template.querySelector('style');
     },
     attr: ['gap', 'grow', 'column', 'align', 'justify', 'wrap-at'],
-    attrChanged: (t, _property, _value) => {
+    attrChanged(property, value) {
+        const t = this;
         t.setStyles();
     },
-    getDim: function (value) {
+    getDim(value) {
         if (!value) return '';
         return webui.pxIfNumber(value);
     },
-    setStyles: function () {
+    setStyles() {
         const t = this;
         let a = t.attributes;
         if (!!a.justify) { t.style.justifyContent = `${a.justify.value}`; }
@@ -27,7 +29,8 @@ webui.define('webui-flex', {
         if (a.gap && a.gap.value) { t.style.gap = `${t.getDim(t.attributes.gap.value)}`; }
         else { t.style.gap = 'var(--flexgap,var(--padding,1em))'; }
     },
-    connected: function (t) {
+    connected() {
+        const t = this;
         const wrapAt = parseInt(t.getAttribute('wrap-at'));
         if (Number.isFinite(wrapAt)) {
             const observer = new ResizeObserver(entries => {
@@ -44,7 +47,8 @@ webui.define('webui-flex', {
             t._wrapObserver = observer;
         }
     },
-    disconnected: function (t) {
+    disconnected() {
+        const t = this;
         if (t._wrapObserver) {
             t._wrapObserver.disconnect();
             t._wrapObserver = null;

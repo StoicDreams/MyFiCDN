@@ -24,10 +24,13 @@
         watchVisibility: false,
         isInput: false,
         preload: '',
-        constructor: (t) => { },
+        constructor() {
+            const t = this;
+        },
         flags: [],
         attr: ['height', 'max-height', 'emoji'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'emoji':
                     t.render();
@@ -40,7 +43,7 @@
                     break;
             }
         },
-        render: function () {
+        render() {
             const t = this;
             if (!t.emoji) return;
             if (!isLoaded) {
@@ -52,8 +55,8 @@
             }
             t.innerHTML = emojiMap[t.emoji];
         },
-        connected: function (t) {
-            t.render();
+        connected() {
+            this.render();
         },
     });
 }

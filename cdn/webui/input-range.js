@@ -8,7 +8,8 @@
 "use strict"
 webui.define('webui-input-range', {
     isInput: true,
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._field = t.template.querySelector('input');
         t._valueDisplay = t.template.querySelector('span');
         t._label = t.template.querySelector('label');
@@ -30,7 +31,8 @@ webui.define('webui-input-range', {
         });
     },
     attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'placeholder', 'min', 'max', 'step', 'onrender'],
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'onrender':
                 t.onRender = webui.resolveFunctionFromString(value);
@@ -75,7 +77,7 @@ webui.define('webui-input-range', {
             set(v) { this.setValue(v); }
         }
     },
-    setValue: function (value) {
+    setValue(value) {
         const t = this;
         if (value === undefined) return;
         value = webui.getDefined(value, '');
@@ -89,7 +91,8 @@ webui.define('webui-input-range', {
         t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         t.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         t.renderValue();
     },
     renderValue() {

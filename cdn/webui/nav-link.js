@@ -8,14 +8,15 @@
 "use strict"
 webui.define('webui-nav-link', {
     preload: 'icon',
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._anchor = webui.create('a');
         t._anchor.classList.add('navlink');
         t._display = webui.create('span');
         t._anchor.appendChild(t._display);
     },
     attr: ['icon', 'name', 'url'],
-    setPagePath: function (value) {
+    setPagePath(value) {
         const t = this;
         if (value === '' || value === '/root') {
             value = '/';
@@ -28,7 +29,8 @@ webui.define('webui-nav-link', {
             t._anchor.removeAttribute('disabled');
         }
     },
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'url':
                 t._anchor.setAttribute('href', value);
@@ -58,7 +60,8 @@ webui.define('webui-nav-link', {
                 break;
         }
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         if (t.innerHTML) {
             t._anchor.innerHTML = t.innerHTML;
             t.innerHTML = '';

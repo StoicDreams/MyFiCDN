@@ -8,12 +8,14 @@
 "use strict"
 {
     webui.define('webui-file-preview', {
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._iframe = t.template.querySelector('iframe');
             t._img = t.template.querySelector('img');
         },
         attr: ['height', 'max-height'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'height':
                     t.style.height = webui.pxIfNumber(value);
@@ -26,7 +28,7 @@
                     break;
             }
         },
-        setFile: function (files) {
+        setFile(files) {
             let t = this;
             if (!files || !files[0] || !files[0].content) {
                 t.clear();
@@ -43,7 +45,7 @@
                 t._iframe.srcdoc = file.content;
             }
         },
-        clear: function () {
+        clear() {
             let t = this;
             t._img.removeAttribute('src');
             t._iframe.removeAttribute('srcdoc');

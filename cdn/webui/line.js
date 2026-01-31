@@ -12,19 +12,16 @@
         watchVisibility: false,
         isInput: false,
         preload: '',
-        constructor: (t) => {
-        },
         flags: [],
         attr: ['size'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'size':
                     t.style.setProperty('--line-size', webui.pxIfNumber(value));
                     break;
             }
         },
-        connected: function (t) { },
-        disconnected: function (t) { },
         shadowTemplate: `
 <style type="text/css">
 :host {

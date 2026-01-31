@@ -43,11 +43,13 @@
     }
     webui.define('webui-json-condensed', {
         preload: "message",
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t.limit = 20;
         },
         attr: ['limit', 'data-subscribe', 'data-trigger', 'value'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'limit':
                     t.limit = parseInt(value) || 20;
@@ -57,8 +59,10 @@
                     break;
             }
         },
-        connected: (t) => { },
-        setValue: function (value) {
+        connected() {
+            const t = this;
+        },
+        setValue(value) {
             const t = this;
             t.condensed = condenseJson(value, t.limit);
             if (t.dataTrigger) {

@@ -45,7 +45,8 @@
         }
     }
     webui.define("webui-fa", {
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t.loadid = 0;
             t.svg = webui.create('svg');
             t.icon = "triangle-exclamation";
@@ -53,7 +54,8 @@
             t.countSlot = t.template.querySelector('slot[name=count]');
         },
         attr: ['icon', 'family', 'class', 'count'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             if (property === 'icon' || property === 'family') {
                 let loadid = t.loadid + 1;
                 t.loadid = loadid;
@@ -74,7 +76,7 @@
                     break;
             }
         },
-        updateIcon: async function () {
+        async updateIcon() {
             const t = this;
             let name = t.icon;
             let family = t.family;

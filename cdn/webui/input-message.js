@@ -44,7 +44,8 @@
 
     webui.define('webui-input-message', {
         preload: 'flex',
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t.autosize = () => {
                 if (t._lav !== t.value) {
                     t._lav = t.value;
@@ -71,7 +72,8 @@
             t._field.addEventListener('input', onInput);
         },
         attr: ['title', 'name', 'autofocus', 'value', 'label', 'placeholder', 'tab', 'height', 'max-height'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'height':
                     t.style.height = webui.pxIfNumber(value);
@@ -105,13 +107,14 @@
                 set(v) { this.setValue(webui.getDefined(v, '')); }
             }
         },
-        setValue: function (value) {
+        setValue(value) {
             const t = this;
             t._field.value = value;
             t._field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
             t._field.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             let id = webui.uuid();
             t._label.setAttribute('for', id);
             t._field.setAttribute('id', id);

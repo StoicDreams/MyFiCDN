@@ -49,14 +49,16 @@
         sortColumn: '',
         requiredFilters: [],
         columnFormats: '',
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._id = webui.uuid();
             t._tableActions = t.innerHTML;
             t._preSubscribe = t.getAttribute('data-subscribe');
         },
         flags: ['bordered'],
         attr: ['height', 'max-height', 'label', 'api', 'per-page', 'columns', 'append-columns', 'sort-order', 'sort-column', 'theme', 'filters', 'sortable', 'required-filters', 'column-formats'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'requiredFilters':
                     t.requiredFilters = value?.replace(/;/g, '|').split('|') || [];
@@ -76,16 +78,17 @@
                     break;
             }
         },
-        connected: function (t) {
+        connected() {
+            const t = this;
             t.setupComponent();
         },
-        disconnected: function (t) { },
-        reconnected: function (t) { },
-        setupComponent: function () {
+        disconnected() { },
+        reconnected() { },
+        setupComponent() {
             const t = this;
             t.render();
         },
-        loadData: function (refresh) {
+        loadData(refresh) {
             const t = this;
             if (!t.sortColumn) {
                 t.appendChild(createError('Report is missing default sort-column'));
@@ -186,13 +189,13 @@
                     });
             }, 400);
         },
-        setPage: function (page) {
+        setPage(page) {
             const t = this;
             if (!page || page === t.page) return;
             t.page = page;
             t.loadData();
         },
-        render: function () {
+        render() {
             const t = this;
             t.innerHTML = getReportHtml(t);
             t.loadData();

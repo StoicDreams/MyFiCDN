@@ -7,7 +7,8 @@
  */
 "use strict"
 webui.define('webui-page-footer', {
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._footer = webui.create('footer', { slot: 'footer' });
         t.parentNode.appendChild(t._footer);
         t._copyright = webui.create('webui-paper', { class: 'nowrap' });
@@ -28,7 +29,8 @@ webui.define('webui-page-footer', {
         }
     },
     attr: ['copyright', 'company'],
-    attrChanged: (t, property, _value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'company':
                 t.buildCopyright();
@@ -38,10 +40,11 @@ webui.define('webui-page-footer', {
                 break;
         }
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         t.remove();
     },
-    buildCopyright: function () {
+    buildCopyright() {
         const t = this;
         let currentYear = new Date().getFullYear();
         let company = t.company || '';

@@ -9,7 +9,8 @@
 webui.define("webui-alert", {
     preload: 'icon',
     _counter: 1,
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t.icon = t.template.querySelector('#icon');
         t.btnClose = t.template.querySelector('#close');
         t.btnClose.addEventListener('click', _ev => {
@@ -18,7 +19,8 @@ webui.define("webui-alert", {
         });
     },
     attr: ['variant', 'show'],
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'theme':
             case 'variant':
@@ -26,7 +28,8 @@ webui.define("webui-alert", {
                 break;
         }
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         if (!t.variant) {
             t.setVariant('warning');
         }
@@ -34,7 +37,7 @@ webui.define("webui-alert", {
             t.removeAttribute('show');
         }
     },
-    setValue: function (options, variant) {
+    setValue(options, variant) {
         const t = this;
         if (typeof options === 'string') {
             try {
@@ -62,38 +65,39 @@ webui.define("webui-alert", {
         }
         t.setAttribute('show', true);
     },
-    display: function () {
+    display() {
         const t = this;
         if (t.hasAttribute('show')) return;
         t.setAttribute('show', true);
     },
-    hide: function () {
+    hide() {
         const t = this;
         if (!t.hasAttribute('show')) return;
         t.removeAttribute('show');
     },
-    setVariant: function (theme) {
-        this.setTheme(theme);
+    setVariant(theme) {
+        const t = this;
+        t.setTheme(theme);
         switch (theme) {
             case "danger":
-                this.icon.setAttribute('icon', 'exclamation');
-                this.icon.setAttribute('shape', 'octogon');
+                t.icon.setAttribute('icon', 'exclamation');
+                t.icon.setAttribute('shape', 'octogon');
                 break;
             case "success":
-                this.icon.setAttribute('icon', 'thumbs-up|has-shadow:true|fill|shade:tri');
-                this.icon.setAttribute('shape', 'circle');
+                t.icon.setAttribute('icon', 'thumbs-up|has-shadow:true|fill|shade:tri');
+                t.icon.setAttribute('shape', 'circle');
                 break;
             case "info":
-                this.icon.setAttribute('icon', 'exclamation');
-                this.icon.setAttribute('shape', 'circle');
+                t.icon.setAttribute('icon', 'exclamation');
+                t.icon.setAttribute('shape', 'circle');
                 break;
             default:
-                this.icon.setAttribute('icon', 'exclamation');
-                this.icon.setAttribute('shape', 'triangle');
+                t.icon.setAttribute('icon', 'exclamation');
+                t.icon.setAttribute('shape', 'triangle');
                 break;
         }
     },
-    increment: function () {
+    increment() {
         const t = this;
         t._counter++;
         if (!t._counterEl) {

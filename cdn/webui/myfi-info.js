@@ -51,7 +51,8 @@
         });
     }
     webui.define('webui-myfi-info', {
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._icon = t.template.querySelector('webui-icon');
             t._slotContent = t.template.querySelector('slot[name="panel-content"]');
             t.addEventListener('click', async ev => {
@@ -87,15 +88,15 @@
             });
         },
         attr: ['exclude'],
-        connected: function (t) {
-            t.setupComponent();
+        connected() {
+            this.setupComponent();
         },
-        setupComponent: function () {
+        setupComponent() {
             const t = this;
             t.addDataset('subscribe', 'session-user-role:render');
             t.render();
         },
-        render: function () {
+        render() {
             const t = this;
             if (t._lastRender == webui.isSignedIn) return;
             let isSignedIn = webui.isSignedIn;

@@ -14,13 +14,14 @@
         _page: 1,
         _perPage: 20,
         _filteredKeys: [],
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._search = t.template.querySelector('[label="Search"]');
             t._size = t.template.querySelector('[label="Size"]');
             t._grid = t.template.querySelector('.grid');
             t._pag = t.template.querySelector('webui-pagination');
         },
-        applyPagination: (t) => {
+        applyPagination(t) {
             t = t || this;
             let id = webui.uuid();
             t._apid = id;
@@ -66,7 +67,8 @@
             }
         },
         attr: ['height', 'max-height'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'height':
                     t.style.height = webui.pxIfNumber(value);
@@ -76,11 +78,12 @@
                     break;
             }
         },
-        applyStyles: function () {
+        applyStyles() {
             const t = this;
             t.style.setProperty('--font-size', `${t._size.value}em`);
         },
-        connected: function (t) {
+        connected() {
+            const t = this;
             t._size.addEventListener('change', _ => {
                 t.applyStyles();
             });
@@ -110,7 +113,7 @@
                 t.render();
             });
         },
-        applyFilter: function () {
+        applyFilter() {
             const t = this;
             if (typeof t._search.value !== 'string') return;
             let filter = t._search.value.trim();
@@ -121,7 +124,7 @@
             });
             t.totalCount = t._filteredKeys.length;
         },
-        render: function () {
+        render() {
             const t = this;
             if (!t.emojis) { return; }
             t._grid.innerText = '';

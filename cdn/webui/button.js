@@ -8,7 +8,8 @@
 "use strict"
 webui.define("webui-button", {
     isInput: true,
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._label = t.template.querySelector('slot:not([name])');
         t._startIcon = t.template.querySelector('slot[name="start-icon"]');
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
@@ -47,7 +48,8 @@ webui.define("webui-button", {
         });
     },
     attr: ['label', 'align', 'href', 'start-icon', 'end-icon', 'start-icon-class', 'end-icon-class', 'elevation', 'submit'],
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'label':
                 t.childNodes.forEach(node => {
@@ -87,7 +89,8 @@ webui.define("webui-button", {
                 break;
         }
     },
-    connected: function (t) {
+    connected() {
+        const t = this;
         if (t.dataset.trigger && t.dataset.value === undefined) {
             t.dataset.value = 1;
         }

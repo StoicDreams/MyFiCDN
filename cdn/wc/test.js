@@ -5,11 +5,15 @@
         watchVisibility: false,
         isInput: false,
         preload: '',
-        constructor: (t) => {
+        constructor() {
+            const t = this;
         },
-        connected: function (t) {
+        connected() {
+            const t = this;
         },
-        disconnected: function () { },
+        disconnected() {
+            const t = this;
+        },
         shadowTemplate: `
 <style type="text/css">
 :host {

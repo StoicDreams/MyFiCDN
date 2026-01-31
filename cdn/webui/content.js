@@ -9,7 +9,8 @@
 webui.define("webui-content", {
     watchVisibility: true,
     fetchCount: 0,
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t.loadDelay = 300;
         t._storedNodes = null;
         t._fixedHeight = null;
@@ -19,7 +20,8 @@ webui.define("webui-content", {
     linkCss: true,
     attr: ["src", 'load-delay', 'height', 'width'],
     flags: ['cache', 'nodetach', 'nofix', 'preload'],
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'height':
                 t.style.height = webui.pxIfNumber(value);
@@ -43,7 +45,8 @@ webui.define("webui-content", {
                 break;
         }
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         if (t.innerHTML) {
             if (!t.src) {
                 t.src = 'html';
@@ -54,7 +57,7 @@ webui.define("webui-content", {
         }
         setTimeout(() => t.updateContent(), 10);
     },
-    updateContent: function () {
+    updateContent() {
         const t = this;
         if (t.preload) {
             t.fetchContent();
@@ -65,7 +68,7 @@ webui.define("webui-content", {
         }
         setTimeout(() => t.fetchContent(), t.loadDelay);
     },
-    setHtml: function (html) {
+    setHtml(html) {
         const t = this;
         t.src = 'html';
         t._contentLoaded = 'html';
@@ -74,13 +77,13 @@ webui.define("webui-content", {
         t.innerHTML = html;
         t.contentAttached = true;
     },
-    setSrc: function (value) {
+    setSrc(value) {
         let t = this;
         t.src = value;
         t._contentLoaded = false;
         t.fetchContent();
     },
-    loadSrc: async function () {
+    async loadSrc() {
         const t = this;
         if (!t.src || t.src === 'html') {
             return;
@@ -111,7 +114,7 @@ webui.define("webui-content", {
             t._isLoading = false;
         }
     },
-    fetchContent: async function () {
+    async fetchContent() {
         const t = this;
         if (t.fetchCount++ === 0) {
             // Giving time when attached to allow transitions to complete to assure content is truly visible to the user before determining if loading is needed.
@@ -159,7 +162,7 @@ webui.define("webui-content", {
             t.classList.add('loaded');
         }
     },
-    _detachChildrenIfNeeded: function () {
+    _detachChildrenIfNeeded() {
         const t = this;
         if (t.nodetach) return;
         if (t._storedNodes) return;
@@ -180,7 +183,7 @@ webui.define("webui-content", {
         }
         t._storedNodes = frag;
     },
-    _reattachChildrenIfNeeded: function () {
+    _reattachChildrenIfNeeded() {
         const t = this;
         if (!t._storedNodes) return;
         t.appendChild(t._storedNodes);

@@ -11,16 +11,10 @@
     webui.define('webui-icon-search', {
         pipedValue: '',
         preload: "icon dropdown input-range input-text input-message",
-        constructor: (t) => {
+        connected() {
+            this.setupComponent();
         },
-        attr: [],
-        attrChanged: (t, property, value) => {
-
-        },
-        connected: (t) => {
-            t.setupComponent();
-        },
-        setupComponent: function () {
+        setupComponent() {
             const t = this;
             t.style.display = 'flex';
             t.style.flexDirection = 'column';
@@ -144,7 +138,7 @@
                 t.updateDisplayedIcons();
             })
         },
-        buildIconCode: function () {
+        buildIconCode() {
             const t = this;
             let ico = t._icons[0].cloneNode();
             ico.removeAttribute('style');
@@ -172,7 +166,7 @@
             let ev = new CustomEvent('icon-update', { detail: t.pipedValue });
             t.dispatchEvent(ev);
         },
-        resetOptions: function () {
+        resetOptions() {
             let t = this;
             ['_backingToggle', '_sharpToggle', '_fillToggle', '_borderedToggle', '_banToggle', '_invertedToggle'].forEach(toggle => {
                 if (!t[toggle]) return;
@@ -184,7 +178,7 @@
             });
             t._rotate.value = 0;
         },
-        setIconFromCode: function (pipedValue) {
+        setIconFromCode(pipedValue) {
             const t = this;
             t.resetOptions();
             let pipedData = pipedValue.split('|');
@@ -205,13 +199,13 @@
                 }
             });
         },
-        setIcon: function (icon) {
+        setIcon(icon) {
             const t = this;
             t._current = icon;
             t._icons[0].setAttribute('icon', icon);
             t.buildIconCode();
         },
-        updateDisplayedIcons: function () {
+        updateDisplayedIcons() {
             const t = this;
             let isFirst = true;
             let filter = t._inputSearch.value;
@@ -263,7 +257,7 @@
             });
             t.buildIconCode();
         },
-        loadIcons: async function () {
+        async loadIcons() {
             const t = this;
             t._iconContainers = [];
             try {

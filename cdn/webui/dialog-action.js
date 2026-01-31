@@ -15,7 +15,8 @@
         preload: '',
         apiMethod: 'post',
         contentType: 'application/json',
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._slotMain = t.template.querySelector('slot:not([name])');
             t._slotSomething = t.template.querySelector('slot[name="something"]');
         },
@@ -27,7 +28,8 @@
         },
         flags: [],
         attr: ['api', 'confirm', 'content-type', 'data-success', 'data-exception', 'json-success', 'header-message'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'api':
                     let segments = value.split('|');
@@ -45,7 +47,7 @@
                     break;
             }
         },
-        setValue: async function (value) {
+        async setValue(value) {
             if (value === undefined) return;
             const t = this;
             let content = '';
@@ -134,14 +136,12 @@
                 }
             }).catch(_ => { });
         },
-        connected: function (t) {
-            t.setupComponent();
+        connected() {
+            this.setupComponent();
         },
-        disconnected: function (t) { },
-        reconnected: function (t) { },
-        setupComponent: function () {
-            const t = this;
-        },
+        disconnected() { },
+        reconnected() { },
+        setupComponent() { },
         shadowTemplate: `
 <slot></slot>
 <slot name="something"></slot>

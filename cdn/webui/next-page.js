@@ -7,7 +7,8 @@
  */
 "use strict"
 webui.define("webui-next-page", {
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._preContent = webui.create("webui-flex", { class: "next-page-pre" });
         t._link = webui.create("webui-flex", { class: "next-page-link" });
         t._postContent = webui.create("webui-flex", { class: "next-page-post" });
@@ -19,7 +20,7 @@ webui.define("webui-next-page", {
         t.appendChild(t._postContent);
     },
     attr: ['name', 'href', 'icon'],
-    setValue: function (value) {
+    setValue(value) {
         const t = this;
         if (!value) {
             value = {};
@@ -29,7 +30,7 @@ webui.define("webui-next-page", {
         t.icon = value.icon || 'arrow|backing|shape:circle';
         t.render();
     },
-    render: function () {
+    render() {
         const t = this;
         if (t._isRendering) return;
         t._isRendering = true;
@@ -55,7 +56,8 @@ webui.define("webui-next-page", {
             }
         }, toWait);
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         t._preContent.classList.add('mt-a', 'flex-grow');
         t._preContent.setAttribute('column', true);
         t._preContent.setAttribute('justify', 'center');

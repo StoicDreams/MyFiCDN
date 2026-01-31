@@ -41,7 +41,8 @@
         preload: 'icon',
         apiMethod: 'GET',
         _value: undefined,
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._template = t.template.querySelector('slot[name="template"]');
             let optionTemplate = t.querySelector('[slot="template"]');
             if (optionTemplate) {
@@ -63,7 +64,8 @@
         },
         flags: ['multiple'],
         attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'api'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'api':
                     let segments = value.split('|');
@@ -109,7 +111,7 @@
                     break;
             }
         },
-        getApiData: function () {
+        getApiData() {
             const t = this;
             let key = t.dataset.api;
             if (!key || typeof key !== 'string') return [true, {}];
@@ -125,7 +127,7 @@
             }
             return [true, data];
         },
-        loadData: function () {
+        loadData() {
             const t = this;
             if (!t.apiUrl) return;
             let method = t.apiMethod;
@@ -181,12 +183,13 @@
                     webui.log.error('Fetch API Error:', ex);
                 });
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             let id = webui.uuid();
             t._forLabel.setAttribute('for', id);
             t._select.setAttribute('id', id);
         },
-        applyDataChange: function () {
+        applyDataChange() {
             const t = this;
             let dn = t.dataset.name;
             if (!dn || !t._optionsSet) { return; }
@@ -206,10 +209,10 @@
                 }
             }
         },
-        options: function (options) {
+        options(options) {
             this.setOptions(options);
         },
-        setOptions: function (options) {
+        setOptions(options) {
             const t = this;
             options = extractOptions(options);
             let oJson = JSON.stringify(options);
@@ -264,7 +267,7 @@
                 }
             }
         },
-        setValue: function (value) {
+        setValue(value) {
             const t = this;
             if (!t._isConnected || !t._optionsSet) return;
             value = `${value}`;

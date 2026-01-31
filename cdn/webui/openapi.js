@@ -39,26 +39,27 @@
     }
     webui.define('webui-openapi', {
         preload: 'dropdown alert flex button tabs input-message input-text grid',
-        constructor: t => {
-            t.baseUrl = '';
+        constructor() {
+            this.baseUrl = '';
         },
         attr: ['src', 'hash'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'src':
                     t.setSource(value);
                     break;
             }
         },
-        connected: t => {
-            t.loadDoc();
+        connected() {
+            this.loadDoc();
         },
-        setSource: function (value) {
+        setSource(value) {
             const t = this;
             t.src = value;
             t.loadDoc();
         },
-        loadDoc: async function () {
+        async loadDoc() {
             const t = this;
             t.innerHTML = `<webui-alert theme="info" show>Enter your URL to view</webui-alert>`;
             if (!t.src) return;
@@ -78,7 +79,7 @@
                 t.innerHTML = `<webui-alert theme="danger" show>Failed to load OpenAPI: ${ex}</webui-alert>`;
             }
         },
-        render: function () {
+        render() {
             const t = this;
             t.innerHTML = '';
             if (!t.doc || !t.doc.paths) return;

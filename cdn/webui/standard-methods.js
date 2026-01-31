@@ -156,10 +156,10 @@
         watchVisibility: false,
         isInput: false,
         preload: 'tabs content alert button',
-        constructor: (t) => { },
         flags: [],
         attr: ['height', 'max-height'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'height':
                     t.style.height = webui.pxIfNumber(value);
@@ -169,12 +169,12 @@
                     break;
             }
         },
-        connected: function (t) {
-            t.setupComponent();
+        connected() {
+            this.setupComponent();
         },
-        disconnected: function (t) { },
-        reconnected: function (t) { },
-        setupComponent: function () {
+        disconnected() { },
+        reconnected() { },
+        setupComponent() {
             const t = this;
             t.innerHTML = '';
             let alert = webui.create('webui-alert');

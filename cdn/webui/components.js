@@ -14,10 +14,13 @@
         watchVisibility: false,
         isInput: false,
         preload: 'tabs content alert button',
-        constructor: (t) => { },
+        constructor() {
+            const t = this;
+        },
         flags: [],
         attr: ['height', 'max-height'],
-        attrChanged: (t, property, value) => {
+        attrChanged(property, value) {
+            const t = this;
             switch (property) {
                 case 'height':
                     t.style.height = webui.pxIfNumber(value);
@@ -27,12 +30,17 @@
                     break;
             }
         },
-        connected: function (t) {
+        connected() {
+            const t = this;
             t.setupComponent();
         },
-        disconnected: function (t) { },
-        reconnected: function (t) { },
-        setupComponent: async function () {
+        disconnected() {
+            const t = this;
+        },
+        reconnected() {
+            const t = this;
+        },
+        setupComponent() {
             const t = this;
             t.innerHTML = '';
             let alert = webui.create('webui-alert');

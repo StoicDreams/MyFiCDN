@@ -9,11 +9,13 @@
 {
     const appConfig = {};
     webui.define('webui-app-config', {
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             webui.appConfig = appConfig;
         },
         attr: ['src'],
-        connected: (t) => {
+        connected() {
+            const t = this;
             for (const attr of t.attributes) {
                 if (['src'].indexOf(attr.name) !== -1) continue;
                 appConfig[attr.name] = attr.value;

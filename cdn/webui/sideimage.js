@@ -7,7 +7,8 @@
  */
 "use strict"
 webui.define("webui-sideimage", {
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._cWrap = webui.create('webui-flex');
         t._content = webui.create('webui-paper');
         t._cWrap.appendChild(t._content);
@@ -15,7 +16,8 @@ webui.define("webui-sideimage", {
         t._imgContainer = webui.create('webui-flex');
     },
     attr: ['reverse', 'src', 'alt'],
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'alt':
                 t._sideImage.setAttribute('alt', value);
@@ -34,7 +36,8 @@ webui.define("webui-sideimage", {
                 break;
         }
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         t.classList.add('side-by-side');
         t._cWrap.setAttribute('column', true);
         t._cWrap.setAttribute('justify', 'center');

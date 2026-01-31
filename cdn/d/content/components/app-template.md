@@ -13,7 +13,9 @@
             watchVisibility: false,
             isInput: false,
             preload: '',
-            constructor: (t) => { },
+            constructor() {
+                const t = this;
+            },
             props: {
                 'sample': {
                     get() { return this._sample; },
@@ -22,7 +24,8 @@
             },
             flags: [],
             attr: ['height', 'max-height'],
-            attrChanged: (t, property, value) => {
+            attrChanged(property, value) {
+                const t = this;
                 switch (property) {
                     case 'height':
                         t.style.height = webui.pxIfNumber(value);
@@ -32,12 +35,17 @@
                         break;
                 }
             },
-            connected: function (t) {
+            connected() {
+                const t = this;
                 t.setupComponent();
             },
-            disconnected: function (t) { },
-            reconnected: function (t) { },
-            setupComponent: function () {
+            disconnected() {
+                const t = this;
+            },
+            reconnected() {
+                const t = this;
+            },
+            setupComponent() {
                 const t = this;
             },
         });
@@ -53,7 +61,8 @@
             watchVisibility: false,
             isInput: false,
             preload: '',
-            constructor: (t) => {
+            constructor(){
+                const t = this;
                 t._slotMain = t.template.querySelector('slot:not([name])');
                 t._slotSomething = t.template.querySelector('slot[name="something"]');
             },
@@ -65,7 +74,8 @@
             },
             flags: [],
             attr: ['height', 'max-height'],
-            attrChanged: (t, property, value) => {
+            attrChanged(property, value) {
+                const t = this;
                 switch (property) {
                     case 'height':
                         t.style.height = webui.pxIfNumber(value);
@@ -75,12 +85,17 @@
                         break;
                 }
             },
-            connected: function (t) {
+            connected() {
+                const t = this;
                 t.setupComponent();
             },
-            disconnected: function (t) { },
-            reconnected: function (t) { },
-            setupComponent: function () {
+            disconnected() {
+                const t = this;
+            },
+            reconnected() {
+                const t = this;
+            },
+            setupComponent() {
                 const t = this;
             },
             shadowTemplate: `
@@ -113,7 +128,9 @@
                     watchVisibility: false,
                     isInput: false,
                     preload: '',
-                    constructor: (t) => { },
+                    constructor() {
+                        const t = this;
+                    },
                     props: {
                         'sample': {
                             get() { return this._sample; },
@@ -122,7 +139,8 @@
                     },
                     flags: [],
                     attr: ['height', 'max-height'],
-                    attrChanged: (t, property, value) => {
+                    attrChanged(property, value) {
+                        const t = this;
                         switch (property) {
                             case 'height':
                                 t.style.height = webui.pxIfNumber(value);
@@ -132,12 +150,17 @@
                                 break;
                         }
                     },
-                    connected: function (t) {
+                    connected() {
+                        const t = this;
                         t.setupComponent();
                     },
-                    disconnected: function (t) { },
-                    reconnected: function (t) { },
-                    setupComponent: function () {
+                    disconnected() {
+                        const t = this;
+                    },
+                    reconnected() {
+                        const t = this;
+                    },
+                    setupComponent() {
                         const t = this;
                     },
                 });
@@ -160,7 +183,8 @@
                     watchVisibility: false,
                     isInput: false,
                     preload: '',
-                    constructor: (t) => {
+                    constructor() {
+                        const t = this;
                         t._slotMain = t.template.querySelector('slot:not([name])');
                         t._slotSomething = t.template.querySelector('slot[name="something"]');
                     },
@@ -172,7 +196,8 @@
                     },
                     flags: [],
                     attr: ['height', 'max-height'],
-                    attrChanged: (t, property, value) => {
+                    attrChanged(property, value) {
+                        const t = this;
                         switch (property) {
                             case 'height':
                                 t.style.height = webui.pxIfNumber(value);
@@ -182,12 +207,17 @@
                                 break;
                         }
                     },
-                    connected: function (t) {
+                    connected() {
+                        const t = this;
                         t.setupComponent();
                     },
-                    disconnected: function (t) { },
-                    reconnected: function (t) { },
-                    setupComponent: function () {
+                    disconnected() {
+                        const t = this;
+                    },
+                    reconnected() {
+                        const t = this;
+                    },
+                    setupComponent() {
                         const t = this;
                     },
                     shadowTemplate: `

@@ -16,13 +16,9 @@
         watchVisibility: false,
         isInput: false,
         preload: '',
-        constructor: (t) => {
+        connected() {
+            this.setupComponent();
         },
-        connected: function (t) {
-            t.setupComponent();
-        },
-        disconnected: function (t) { },
-        reconnected: function (t) { },
         setupComponent: function () {
             const t = this;
             t.innerHTML = webui.parseWebuiMarkdown(content);

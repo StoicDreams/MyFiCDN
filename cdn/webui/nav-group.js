@@ -8,7 +8,8 @@
 "use strict"
 webui.define('webui-nav-group', {
     preload: 'icon',
-    constructor: (t) => {
+    constructor() {
+        const t = this;
         t._anchor = webui.create('button');
         t._anchor.classList.add('navlink');
         t._display = webui.create('span');
@@ -32,7 +33,7 @@ webui.define('webui-nav-group', {
             get() { return this._anchor.classList.contains('show'); }
         }
     },
-    setShow: function (value) {
+    setShow(value) {
         let t = this;
         t.open = value;
         t._caret.setAttribute('rotate', t.open ? '0' : '180');
@@ -45,7 +46,8 @@ webui.define('webui-nav-group', {
     },
     flags: ['show'],
     attr: ['icon', 'name'],
-    attrChanged: (t, property, value) => {
+    attrChanged(property, value) {
+        const t = this;
         switch (property) {
             case 'show':
                 t.setShow(value);
@@ -75,7 +77,8 @@ webui.define('webui-nav-group', {
                 break;
         }
     },
-    connected: (t) => {
+    connected() {
+        const t = this;
         if (t.childNodes[0]) {
             t.insertBefore(t._anchor, t.childNodes[0]);
         } else {

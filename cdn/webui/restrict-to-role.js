@@ -9,27 +9,30 @@
 {
     webui.define("webui-restrict-to-role", {
         content: false,
-        constructor: (t) => {
+        constructor() {
+            const t = this;
             t._slotValid = t.template.querySelector('slot[name="valid"]');
             t._slotInvalid = t.template.querySelector('slot[name="invalid"]');
         },
         attr: ['role'],
-        attrChanged: (t, _property, _value) => {
+        attrChanged(property, value) {
+            const t = this;
             t.checkRole();
         },
-        connected: (t) => {
+        connected() {
+            const t = this;
             t.addDataset('subscribe', 'session-user-role:setUserRole');
             t.checkRole();
         },
-        setSessionUserRole: function (userRole) {
+        setSessionUserRole(userRole) {
             this.setUserRole(userRole);
         },
-        setUserRole: function (userRole) {
+        setUserRole(userRole) {
             const t = this;
             t.userRole = userRole || 0;
             t.checkRole();
         },
-        checkRole: function () {
+        checkRole() {
             const t = this;
             if (t.userRole === undefined || t.role === undefined) {
                 t.showInvalid();
@@ -51,7 +54,7 @@
                 }
             }
         },
-        showValid: function () {
+        showValid() {
             const t = this;
             if (t._showing === 'content') return;
             t._showing = 'content';
@@ -59,7 +62,7 @@
             let html = webui.getHtmlFromTemplate(t._slotValid);
             webui.transferChildren(webui.create('div', { html: html }), t);
         },
-        showInvalid: function () {
+        showInvalid() {
             const t = this;
             if (t._showing === 'invalid') return;
             t._showing = 'invalid';
