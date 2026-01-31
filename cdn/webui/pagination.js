@@ -64,6 +64,7 @@
                 get() { return this._totalCount; },
                 set(v) {
                     if (!v || this._totalCount === v) return;
+                    console.log('v', v);
                     this._totalCount = v;
                     this._total.innerText = v.toLocaleString('en-US');
                     this.process();
@@ -139,6 +140,7 @@
                     if (t.dataCurrent) {
                         webui.setData(t.dataCurrent, current);
                     }
+                    console.log('pag process no data', t._data);
                     return;
                 }
                 t.page = t.page;
@@ -174,6 +176,7 @@
         render: function () {
             const t = this;
             if (!t.hasChanges) return;
+            console.log('pag render start:page:%d;perPage:%d;pages:%o', t.page, t.perPage, t.pageCount);
             if (t.page === 1) {
                 t._btnFirst.setAttribute('disabled', 'true');
             } else {
@@ -219,6 +222,7 @@
                 }
             }
             t._hasRendered = true;
+            console.log('page render finished');
         },
         setValue: function (value, key, toSet) {
             const t = this;
