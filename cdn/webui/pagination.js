@@ -103,6 +103,7 @@
             }
         },
         connected: (t) => {
+            console.log('pag connected');
             let data = '';
             if (t._slot.assignedElements().length) {
                 let ch = [];
@@ -136,6 +137,7 @@
         },
         process: function () {
             const t = this;
+            console.log('pag process');
             if (t._data && t._data.forEach) {
                 let current = t._currentData || {};
                 if (t._data.length === 0) {
