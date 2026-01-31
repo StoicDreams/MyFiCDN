@@ -28,22 +28,18 @@
             setTimeout(async () => {
                 if (t._apid !== id) return;
                 if (!t._pag) return;
-                let toWait = 10;
-                while (!t._pag._isConstructed) {
-                    console.log('apply pagination wait for construction', t, t._pag._isConstructed);
-                    await webui.wait(toWait);
-                    toWait *= 2;
-                }
-                console.log('apply pagination start:page:%o;perPage:%o;count:%o;total:%o', t.page, t.perPage, t.pageCount, t.totalCount);
-                t._pag.page = t.page;
-                t._pag.perPage = t.perPage;
-                t._pag.pageCount = t.pageCount;
-                t._pag.totalCount = t.totalCount;
-                if (t.page > t.pageCount) {
-                    t.page = t.pageCount;
-                }
-                console.log('applied pagination:page:%o;perPage:%o;count:%o;total:%o', t._pag.page, t._pag.perPage, t._pag.pageCount, t._pag.totalCount);
-                t.render();
+                webui.waitForConstruction(t._pag, _ => {
+                    console.log('apply pagination start:page:%o;perPage:%o;count:%o;total:%o', t.page, t.perPage, t.pageCount, t.totalCount);
+                    t._pag.page = t.page;
+                    t._pag.perPage = t.perPage;
+                    t._pag.pageCount = t.pageCount;
+                    t._pag.totalCount = t.totalCount;
+                    if (t.page > t.pageCount) {
+                        t.page = t.pageCount;
+                    }
+                    console.log('applied pagination:page:%o;perPage:%o;count:%o;total:%o', t._pag.page, t._pag.perPage, t._pag.pageCount, t._pag.totalCount);
+                    t.render();
+                });
             }, 10);
         },
         props: {

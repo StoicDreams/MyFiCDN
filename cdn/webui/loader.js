@@ -2149,6 +2149,23 @@ const webui = (() => {
             }
         }
         /**
+         * Wait for a specified component to be constructed.
+         *
+         * @param {object} el - the Web UI component element.
+         * @param {function} handler - The function to call when construction has finished.
+         * @returns {string} The proxy instance.
+         */
+        async waitForConstruction(el, handler) {
+            let toWait = 10;
+            while (!el._isConstructed) {
+                await webui.wait(10);
+                toWait *= 2;
+            }
+            if (typeof handler === 'function') {
+                handler(el);
+            }
+        }
+        /**
          * Create a proxy to watch for changes on a data object and call handler on changes.
          *
          * @param {object} data - The data object to watch.
