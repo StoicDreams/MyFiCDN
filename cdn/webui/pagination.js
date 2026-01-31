@@ -12,6 +12,7 @@
         _pageCount: 0,
         _totalCount: 0,
         constructor: (t) => {
+            console.log('pag constructor');
             t._input = t.template.querySelector('input');
             t._slot = t.template.querySelector('slot');
             t._prev = t.template.querySelector('div.prev');
@@ -58,24 +59,27 @@
                     }
                 }
             });
+            console.log('pag constructed');
         },
         props: {
             'totalCount': {
                 get() { return this._totalCount; },
                 set(v) {
-                    if (!v || this._totalCount === v) return;
-                    console.log('v', v);
-                    this._totalCount = v;
-                    this._total.innerText = v.toLocaleString('en-US');
+                    if (!v || this._totalCount !== v) {
+                        console.log('v', v);
+                        this._totalCount = v;
+                        this._total.innerText = v.toLocaleString('en-US');
+                    }
                     this.process();
                 }
             },
             'pageCount': {
                 get() { return this._pageCount; },
                 set(v) {
-                    if (this._pageCount === v) return;
-                    this._pageCount = v;
-                    this.setAttribute('page-count', v);
+                    if (this._pageCount === v) {
+                        this._pageCount = v;
+                        this.setAttribute('page-count', v);
+                    }
                     this.process();
                 }
             }
