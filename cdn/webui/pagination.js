@@ -139,6 +139,7 @@
                     if (t.dataCurrent) {
                         webui.setData(t.dataCurrent, current);
                     }
+                    console.log('pag process no data', t._data);
                     return;
                 }
                 t.page = t.page;
@@ -173,6 +174,7 @@
         },
         render: function () {
             const t = this;
+            console.log('pag render', t.hasChanges);
             if (!t.hasChanges) return;
             if (t.page === 1) {
                 t._btnFirst.setAttribute('disabled', 'true');
