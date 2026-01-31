@@ -19,6 +19,7 @@
             t._size = t.template.querySelector('[label="Size"]');
             t._grid = t.template.querySelector('.grid');
             t._pag = t.template.querySelector('webui-pagination');
+            console.log('emojis constructed');
         },
         props: {
             'page': {
@@ -67,6 +68,7 @@
             t.style.setProperty('--font-size', `${t._size.value}em`);
         },
         connected: function (t) {
+            console.log('emojis connected');
             webui.fetchWithCache(emojiSource, true).then(emojis => {
                 t.emojis = emojis;
                 t.applyFilter();
@@ -109,6 +111,7 @@
         },
         render: function () {
             const t = this;
+            console.log('emojis rendered', t.emojis);
             if (!t.emojis) { return; }
             t._grid.innerText = '';
             let perPage = t.perPage || 20;
