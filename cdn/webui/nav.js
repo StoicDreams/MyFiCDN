@@ -62,13 +62,14 @@
                     show[link.name] = true;
                 }
                 if (show[link.name]) {
-                    if (typeof el.setShow === 'function') {
-                        el.setShow(true);
-                    } else {
-                        setTimeout(() => {
+                    setTimeout(async () => {
+                        while (el.parentNode && typeof el.setShow !== 'function') {
+                            await webui.wait(100);
+                        }
+                        if (typeof el.setShow === 'function') {
                             el.setShow(true);
-                        }, 100);
-                    }
+                        }
+                    }, 100);
                 }
                 el.addEventListener('change', _ => {
                     show[link.name] = el.isOpen;
