@@ -103,7 +103,7 @@
             }
         },
         connected: (t) => {
-            console.log('pag connected');
+            console.log('pag connected:page:%o;perPage:%o;pages:%o', t.page, t.perPage, t.pageCount);
             let data = '';
             if (t._slot.assignedElements().length) {
                 let ch = [];
@@ -133,11 +133,11 @@
                     tryGetData();
                 }
             });
-
+            t.process();
         },
         process: function () {
             const t = this;
-            console.log('pag process');
+            console.log('pag process start:page:%o;perPage:%o;pages:%o', t.page, t.perPage, t.pageCount);
             if (t._data && t._data.forEach) {
                 let current = t._currentData || {};
                 if (t._data.length === 0) {
@@ -182,7 +182,7 @@
         render: function () {
             const t = this;
             if (!t.hasChanges) return;
-            console.log('pag render start:page:%d;perPage:%d;pages:%o', t.page, t.perPage, t.pageCount);
+            console.log('pag render start:page:%o;perPage:%o;pages:%o', t.page, t.perPage, t.pageCount);
             if (t.page === 1) {
                 t._btnFirst.setAttribute('disabled', 'true');
             } else {
