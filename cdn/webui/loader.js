@@ -2807,7 +2807,12 @@ const webui = (() => {
         }
     }
     function loadWebUIComponent(wc) {
-        return new Promise(async (resolve, reject) => {
+        const nodeName = `${wuiPrefix}${wc}`.toUpperCase();
+        if (wcLoaded[wc]) return Promise.resolve();
+        if (wcLoading[nodeName] instanceof Promise) {
+            return wcLoading[nodeName];
+        }
+        const loadPromise = new Promise(async (resolve, reject) => {
             await waitForComponentLoad(`${wuiPrefix}${wc}`);
             if (wcLoaded[wc]) {
                 resolve();
@@ -2825,6 +2830,8 @@ const webui = (() => {
             };
             document.head.append(script);
         });
+        wcLoading[nodeName] = loadPromise;
+        return loadPromise;
     }
     function loadAppComponent(wc) {
         return new Promise(async (resolve, reject) => {
