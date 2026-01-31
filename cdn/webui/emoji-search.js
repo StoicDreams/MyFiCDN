@@ -30,7 +30,7 @@
                 if (!t._pag) return;
                 while (!t._pag._isConstructed) {
                     console.log('apply pagination wait for construction', t, t._pag._isConstructed);
-                    await webui.wait(10);
+                    await webui.wait(10000);
                 }
                 console.log('apply pagination start:page:%o;perPage:%o;count:%o;total:%o', t.page, t.perPage, t.pageCount, t.totalCount);
                 t._pag.page = t.page;
