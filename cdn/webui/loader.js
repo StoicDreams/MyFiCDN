@@ -683,7 +683,7 @@ const webui = (() => {
                         options.attrChanged(this, property, newValue);
                     }
                 }
-                connectedCallback() {
+                async connectedCallback() {
                     const t = this;
                     if (typeof options.onResize === 'function') {
                         resizeSubscribers[t._id] = options.onResize.bind(t);
@@ -703,7 +703,7 @@ const webui = (() => {
                     t._isConnected = true;
                     checkAddedNode(t);
                     if (options.preload) {
-                        t.setAttribute('preload', options.preload);
+                        await preloadComponents(options.preload);
                     }
                     if (typeof options.connected === 'function') {
                         setTimeout(() => {
@@ -2776,40 +2776,94 @@ const webui = (() => {
     const appLoaded = {};
     const wcRoot = location.port === '3180' ? '' : 'https://cdn.myfi.ws/';
     const wcMin = '.min';
-    function processNode(nodeName) {
+    async function processWebUINode(nodeName) {
+        nodeName = nodeName.toUpperCase();
         if (wcLoading[nodeName]) return;
         wcLoading[nodeName] = true;
         let wc = nodeName.split('-').splice(1).join('-').toLowerCase();
         if (nodeName.startsWith(appPrefix)) {
-            loadAppComponent(wc);
+            await loadAppComponent(wc)
+                .catch(() => {
+                    delete wcLoading[nodeName];
+                });
         } else {
-            loadWebUIComponent(wc);
+            await loadWebUIComponent(wc)
+                .catch(() => {
+                    delete wcLoading[nodeName];
+                });
+        }
+    }
+    async function waitForComponentLoad(name) {
+        const prefix = `${name.split('-')[0]}-`;
+        const wc = name.split('-').splice(1).join('-').toLowerCase();
+        if (prefix.toLowerCase() === appPrefix.toLowerCase()) {
+            while (wcLoading[name] && !appLoaded[wc]) {
+                await webui.wait(10);
+            }
+        } else {
+            while (wcLoading[name] && !wcLoaded[wc]) {
+                await webui.wait(10);
+            }
         }
     }
     function loadWebUIComponent(wc) {
-        if (wcLoaded[wc]) return;
-        wcLoaded[wc] = true;
-        let script = webui.create('script');
-        script.setAttribute('async', true);
-        script.setAttribute('src', `${wcRoot}webui/${wc}${wcMin}.js`)
-        document.head.append(script);
+        return new Promise(async (resolve, reject) => {
+            await waitForComponentLoad(`${wuiPrefix}${wc}`);
+            if (wcLoaded[wc]) {
+                resolve();
+                return;
+            };
+            let script = webui.create('script');
+            script.setAttribute('async', true);
+            script.setAttribute('src', `${wcRoot}webui/${wc}${wcMin}.js`);
+            script.onload = () => {
+                wcLoaded[wc] = true;
+                resolve();
+            };
+            script.onerror = () => {
+                reject(new Error(`Failed to load component: ${wc}`));
+            };
+            document.head.append(script);
+        });
     }
     function loadAppComponent(wc) {
-        if (appLoaded[wc]) return;
-        appLoaded[wc] = true;
-        let script = webui.create('script');
-        script.setAttribute('async', true);
-        script.setAttribute('src', `${webui.appSrc}/${wc}${webui.appMin}.js`)
-        document.head.append(script);
+        return new Promise(async (resolve, reject) => {
+            await waitForComponentLoad(`${appPrefix}${wc}`);
+            if (appLoaded[wc]) {
+                resolve();
+                return;
+            };
+            let script = webui.create('script');
+            script.setAttribute('async', true);
+            script.setAttribute('src', `${webui.appSrc}/${wc}${webui.appMin}.js`);
+            script.onload = () => {
+                appLoaded[wc] = true;
+                resolve();
+            };
+            script.onerror = () => {
+                reject(new Error(`Failed to load component: ${wc}`));
+            };
+            document.head.append(script);
+        });
+    }
+    async function preloadFromAttribute(componentName) {
+        await processWebUINode(`${wuiPrefix}${componentName}`);
     }
     function componentPreload(el) {
         if (!el) return;
         if (el.nodeName.startsWith(wuiPrefix) || el.nodeName.startsWith(appPrefix)) {
-            processNode(el.nodeName);
+            processWebUINode(el.nodeName);
         }
         let pl = el.getAttribute('preload');
         if (pl) {
-            pl.replace(';', ' ').replace(',', ' ').split(' ').forEach(loadWebUIComponent);
+            pl.replace(';', ' ').replace(',', ' ').split(' ').forEach(preloadFromAttribute);
+        }
+    }
+    async function preloadComponents(pl) {
+        pl = pl.replace(';', ' ').replace(',', ' ').split(' ');
+        for (let index = 0; index < pl.length; ++index) {
+            await preloadFromAttribute(pl[index])
+                .catch(err => console.error('Failed to preload from attribute', pl[index], err));
         }
     }
     function checkMutation(mutation) {
@@ -2838,7 +2892,7 @@ const webui = (() => {
             checkNodes(el.shadowRoot.childNodes);
         }
         if (el.nodeName && el.nodeName.startsWith(wuiPrefix) || el.nodeName.startsWith(appPrefix)) {
-            processNode(el.nodeName);
+            processWebUINode(el.nodeName);
         }
         checkNodes(el.childNodes);
     }

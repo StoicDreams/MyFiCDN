@@ -15,9 +15,20 @@
         "url": "/webui-methods"
     },
     {
-        "name": "Test",
+        "name": "Tests",
         "icon": "test|fill|shade:tri",
         "children": [
+            {
+                "name": "Components",
+                "icon": "hierarchy|has-shadow:true|rotate:270|theme:tertiary",
+                "children": [
+                    {
+                        "name": "Emojis",
+                        "icon": "compass|fill|bordered|backing|shape:circle",
+                        "url": "/tests/component/emojis"
+                    }
+                ]
+            },
             {
                 "name": "404 Not Found",
                 "icon": "compass|fill|bordered|backing|shape:circle",
