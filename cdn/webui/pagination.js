@@ -63,7 +63,7 @@
             'totalCount': {
                 get() { return this._totalCount; },
                 set(v) {
-                    if (this._totalCount === v) return;
+                    if (!v || this._totalCount === v) return;
                     this._totalCount = v;
                     this._total.innerText = v.toLocaleString('en-US');
                     this.process();
@@ -139,7 +139,6 @@
                     if (t.dataCurrent) {
                         webui.setData(t.dataCurrent, current);
                     }
-                    console.log('pag process no data', t._data);
                     return;
                 }
                 t.page = t.page;
@@ -174,7 +173,6 @@
         },
         render: function () {
             const t = this;
-            console.log('pag render', t.hasChanges);
             if (!t.hasChanges) return;
             if (t.page === 1) {
                 t._btnFirst.setAttribute('disabled', 'true');

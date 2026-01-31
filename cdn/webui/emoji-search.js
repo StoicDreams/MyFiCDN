@@ -23,13 +23,22 @@
         },
         applyPagination: (t) => {
             t = t || this;
-            console.log('apply pagination', t, t._pag);
-            if (!t._pag) return;
-            t._pag.page = t.page;
-            t._pag.perPage = t.perPage;
-            t._pag.pageCount = t.pageCount;
-            t._pag.totalCount = t.totalCount;
-            console.log('apply pagination', t._pag.page, t._pag.perPage, t._pag.pageCount, t._pag.totalCount);
+            let id = webui.uuid();
+            t._apid = id;
+            setTimeout(() => {
+                if (t._apid !== id) return;
+                console.log('apply pagination', t, t._pag);
+                if (!t._pag) return;
+                t._pag.page = t.page;
+                t._pag.perPage = t.perPage;
+                t._pag.pageCount = t.pageCount;
+                t._pag.totalCount = t.totalCount;
+                if (t.page > t.pageCount) {
+                    t.page = t.pageCount;
+                }
+                console.log('apply pagination', t._pag.page, t._pag.perPage, t._pag.pageCount, t._pag.totalCount);
+                t.render();
+            }, 10);
         },
         props: {
             'page': {
@@ -37,7 +46,6 @@
                 set(v) {
                     this._page = v;
                     this.applyPagination(this);
-                    this.render();
                 }
             },
             'perPage': {
@@ -55,9 +63,6 @@
                 set(v) {
                     this._totalCount = v;
                     this.applyPagination(this);
-                    if (this.page > this.pageCount) {
-                        this.page = this.pageCount;
-                    }
                 }
             }
         },
@@ -78,11 +83,6 @@
         },
         connected: function (t) {
             console.log('emojis connected');
-            webui.fetchWithCache(emojiSource, true).then(emojis => {
-                t.emojis = emojis;
-                t.applyFilter();
-                t.render();
-            });
             t._size.addEventListener('change', _ => {
                 t.applyStyles();
             });
@@ -106,6 +106,11 @@
             if (!page) {
                 webui.setData('session-emoji-search-index', 1);
             }
+            webui.fetchWithCache(emojiSource, true).then(emojis => {
+                t.emojis = emojis;
+                t.applyFilter();
+                t.render();
+            });
         },
         applyFilter: function () {
             const t = this;
@@ -120,8 +125,8 @@
         },
         render: function () {
             const t = this;
-            console.log('emojis rendered', t.emojis);
             if (!t.emojis) { return; }
+            console.log('emojis render start');
             t._grid.innerText = '';
             let perPage = t.perPage || 20;
             let page = t.page || 1;
@@ -141,6 +146,7 @@
                 });
             });
             t.applyStyles();
+            console.log('emojis render finish');
         },
         shadowTemplate: `
 <webui-flex gap="10">
