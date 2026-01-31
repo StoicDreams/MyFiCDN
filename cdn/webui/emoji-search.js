@@ -10,7 +10,7 @@
     const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json' : 'https://cdn.myfi.ws/i/emojis.json';
     webui.define("webui-emoji-search", {
         linkCss: false,
-        preload: 'input-range grid input-text',
+        preload: 'pagination input-range flex grid input-text',
         _page: 1,
         _perPage: 20,
         _filteredKeys: [],
@@ -91,6 +91,10 @@
             }
             t._size.value = size;
             t.setAttribute('data-subscribe', 'session-emoji-search-index:page');
+            let page = webui.getData('session-emoji-search-index:page');
+            if (!page) {
+                webui.setData('session-emoji-search-index', 1);
+            }
         },
         applyFilter: function () {
             const t = this;
