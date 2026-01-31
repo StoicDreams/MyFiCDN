@@ -45,6 +45,7 @@
                 { value: '', display: 'Square' },
                 { value: 'badge', display: 'Badge' },
                 { value: 'circle', display: 'Circle' },
+                { value: 'cloud', display: 'Cloud' },
                 { value: 'triangle', display: 'Triangle' },
                 { value: 'octo', display: 'Octogon' },
             ]);
