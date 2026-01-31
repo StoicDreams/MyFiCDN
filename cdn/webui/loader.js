@@ -628,6 +628,7 @@ const webui = (() => {
                         });
                         shadow.appendChild(t.template);
                     }
+                    t._isConstructed = true;
                 }
                 static get observedAttributes() {
                     return options.attr.concat(options.flags);

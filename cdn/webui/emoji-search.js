@@ -25,10 +25,14 @@
             t = t || this;
             let id = webui.uuid();
             t._apid = id;
-            setTimeout(() => {
+            setTimeout(async () => {
                 if (t._apid !== id) return;
-                console.log('apply pagination', t, t._pag);
                 if (!t._pag) return;
+                while (!t._pag._isConstructed) {
+                    console.log('apply pagination wait for construction', t, t._pag._isConstructed);
+                    await webui.wait(10);
+                }
+                console.log('apply pagination start:page:%o;perPage:%o;count:%o;total:%o', t.page, t.perPage, t.pageCount, t.totalCount);
                 t._pag.page = t.page;
                 t._pag.perPage = t.perPage;
                 t._pag.pageCount = t.pageCount;
@@ -36,7 +40,7 @@
                 if (t.page > t.pageCount) {
                     t.page = t.pageCount;
                 }
-                console.log('apply pagination', t._pag.page, t._pag.perPage, t._pag.pageCount, t._pag.totalCount);
+                console.log('applied pagination:page:%o;perPage:%o;count:%o;total:%o', t._pag.page, t._pag.perPage, t._pag.pageCount, t._pag.totalCount);
                 t.render();
             }, 10);
         },
