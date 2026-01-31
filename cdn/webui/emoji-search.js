@@ -19,7 +19,6 @@
             t._size = t.template.querySelector('[label="Size"]');
             t._grid = t.template.querySelector('.grid');
             t._pag = t.template.querySelector('webui-pagination');
-            console.log('emojis constructed');
         },
         applyPagination: (t) => {
             t = t || this;
@@ -29,7 +28,6 @@
                 if (t._apid !== id) return;
                 if (!t._pag) return;
                 webui.waitForConstruction(t._pag, _ => {
-                    console.log('apply pagination start:page:%o;perPage:%o;count:%o;total:%o', t.page, t.perPage, t.pageCount, t.totalCount);
                     t._pag.page = t.page;
                     t._pag.perPage = t.perPage;
                     t._pag.pageCount = t.pageCount;
@@ -37,7 +35,6 @@
                     if (t.page > t.pageCount) {
                         t.page = t.pageCount;
                     }
-                    console.log('applied pagination:page:%o;perPage:%o;count:%o;total:%o', t._pag.page, t._pag.perPage, t._pag.pageCount, t._pag.totalCount);
                     t.render();
                 });
             }, 10);
@@ -84,7 +81,6 @@
             t.style.setProperty('--font-size', `${t._size.value}em`);
         },
         connected: function (t) {
-            console.log('emojis connected');
             t._size.addEventListener('change', _ => {
                 t.applyStyles();
             });
@@ -128,7 +124,6 @@
         render: function () {
             const t = this;
             if (!t.emojis) { return; }
-            console.log('emojis render start');
             t._grid.innerText = '';
             let perPage = t.perPage || 20;
             let page = t.page || 1;
@@ -148,7 +143,6 @@
                 });
             });
             t.applyStyles();
-            console.log('emojis render finish');
         },
         shadowTemplate: `
 <webui-flex gap="10">

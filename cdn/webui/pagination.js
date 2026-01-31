@@ -12,7 +12,6 @@
         _pageCount: 0,
         _totalCount: 0,
         constructor: (t) => {
-            console.log('pag constructor');
             t._input = t.template.querySelector('input');
             t._slot = t.template.querySelector('slot');
             t._prev = t.template.querySelector('div.prev');
@@ -59,14 +58,12 @@
                     }
                 }
             });
-            console.log('pag constructed');
         },
         props: {
             'totalCount': {
                 get() { return this._totalCount; },
                 set(v) {
                     if (!v || this._totalCount !== v) return;
-                    console.log('v', v);
                     this._totalCount = v;
                     this._total.innerText = v.toLocaleString('en-US');
                     this.process();
@@ -102,7 +99,6 @@
             }
         },
         connected: (t) => {
-            console.log('pag connected:page:%o;perPage:%o;pages:%o', t.page, t.perPage, t.pageCount);
             let data = '';
             if (t._slot.assignedElements().length) {
                 let ch = [];
@@ -136,7 +132,6 @@
         },
         process: function () {
             const t = this;
-            console.log('pag process start:page:%o;perPage:%o;pages:%o', t.page, t.perPage, t.pageCount);
             if (t._data && t._data.forEach) {
                 let current = t._currentData || {};
                 if (t._data.length === 0) {
@@ -145,7 +140,6 @@
                     if (t.dataCurrent) {
                         webui.setData(t.dataCurrent, current);
                     }
-                    console.log('pag process no data', t._data);
                     return;
                 }
                 t.page = t.page;
@@ -181,7 +175,6 @@
         render: function () {
             const t = this;
             if (!t.hasChanges) return;
-            console.log('pag render start:page:%o;perPage:%o;pages:%o', t.page, t.perPage, t.pageCount);
             if (t.page === 1) {
                 t._btnFirst.setAttribute('disabled', 'true');
             } else {
@@ -227,7 +220,6 @@
                 }
             }
             t._hasRendered = true;
-            console.log('page render finished');
         },
         setValue: function (value, key, toSet) {
             const t = this;

@@ -59,7 +59,7 @@
             } else if (link.children) {
                 el = webui.create('webui-nav-group');
                 if (show[link.name] === undefined) {
-                    show[link.name] = true;
+                    show[link.name] = false;
                 }
                 if (show[link.name]) {
                     setTimeout(async () => {
