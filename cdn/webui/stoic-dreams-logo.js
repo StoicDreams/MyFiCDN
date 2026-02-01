@@ -47,7 +47,7 @@ stroke-miterlimit:10;
 .bottom-right{fill:var(--color-primary);stroke:var(--color-primary);stroke-miterlimit:10;}
 .bottom-left{fill:var(--color-secondary);stroke:var(--color-secondary);stroke-miterlimit:10;}
 .diamond{fill:var(--color-title);stroke:var(--color-title);stroke-miterlimit:10;}
-.text{fill:#FFFFFF;font-family:'Nunito', Arial, sans-serif;font-size:3em;font-weight:700;}
+.text{fill:#FFFFFF;font-family:'Nunito', Arial, sans-serif;font-weight:700;letter-spacing:-1px;}
 </style>
 </defs>
 <g class="background">
@@ -68,12 +68,10 @@ stroke-miterlimit:10;
 <g class="diamond">
 <path d="M 58.703125 141.28125 L 7.859375 90.757812 C -1.179688 81.773438 -1.179688 67.199219 7.859375 58.214844 L 58.703125 7.6875 C 67.746094 -1.296875 82.414062 -1.296875 91.453125 7.6875 L 142.296875 58.214844 C 151.339844 67.199219 151.339844 81.773438 142.296875 90.757812 L 91.453125 141.28125 C 82.414062 150.265625 67.75 150.265625 58.703125 141.28125 Z M 58.703125 141.28125 "/>
 </g>
-<g class="text">
-<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central"></text>
-</g>
+<svg x="0%" y="5%" width="100%" height="90%" viewBox="0 0 150 150" preserveAspectRatio="xMidYMid meet" class="text"></svg>
 </svg>`;
         t.svg = tempDiv.firstChild;
-        t._text = t.svg.querySelector('text');
+        t._text = t.svg.querySelector('.text');
         t._slot.appendChild(t.svg);
         t.render();
     },
@@ -91,13 +89,16 @@ stroke-miterlimit:10;
     getText() {
         const t = this;
         if (t.text2 && t.text) {
-            return `<tspan class="line1" x="75" y="50">${t.text}</tspan><tspan class="line2" x="75" y="105">${t.text2}</tspan>`;
+            return `
+<text x="75" y="65" textLength="150" lengthAdjust="spacingAndGlyphs" text-anchor="middle" class="text-style" font-size="60">${t.text}</text>
+<text x="75" y="125" textLength="150" lengthAdjust="spacingAndGlyphs" text-anchor="middle" class="text-style" font-size="60">${t.text2}</text>
+`;
         }
         if (t.text2) {
-            return `<tspan class="single" x="75" y="75">${t.text2}</tspan>`;
+            return `<text x="75" y="95" textLength="150" lengthAdjust="spacingAndGlyphs" text-anchor="middle" class="text-style" font-size="60">${t.text2}</text>`;
         }
         if (t.text) {
-            return `<tspan class="single" x="75" y="75">${t.text}</tspan>`
+            return `<text x="75" y="95" textLength="150" lengthAdjust="spacingAndGlyphs" text-anchor="middle" class="text-style" font-size="60">${t.text}</text>`;
         }
         return '';
     },
