@@ -6,12 +6,12 @@
     },
     {
         "name": "Components",
-        "icon": "hierarchy|has-shadow:true|rotate:270|theme:secondary",
+        "icon": "hierarchy|rotate:270|theme:secondary",
         "url": "/components"
     },
     {
         "name": "Web UI Methods",
-        "icon": "hierarchy|has-shadow:true|rotate:270|theme:primary",
+        "icon": "hierarchy|rotate:270|theme:primary",
         "url": "/webui-methods"
     },
     {
@@ -20,7 +20,7 @@
         "children": [
             {
                 "name": "Components",
-                "icon": "hierarchy|has-shadow:true|rotate:270|theme:tertiary",
+                "icon": "hierarchy|rotate:270|theme:tertiary",
                 "children": [
                     {
                         "name": "Emojis",

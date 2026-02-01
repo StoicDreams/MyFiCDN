@@ -84,7 +84,7 @@ webui.define("webui-alert", {
                 t.icon.setAttribute('shape', 'octogon');
                 break;
             case "success":
-                t.icon.setAttribute('icon', 'thumbs-up|has-shadow:true|fill|shade:tri');
+                t.icon.setAttribute('icon', 'thumbs-up|fill|shade:tri');
                 t.icon.setAttribute('shape', 'circle');
                 break;
             case "info":

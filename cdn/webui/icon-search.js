@@ -244,12 +244,14 @@
             const t = this;
             let ico = t._iconPreview.cloneNode();
             ico.removeAttribute('style');
+            ico.removeAttribute('has-shadow');
             let code = ico.outerHTML;
             t._codeSample.value = code;
             let pipeData = [];
             pipeData.push(ico.getAttribute('icon'));
             ico.getAttributeNames().forEach(attr => {
                 switch (attr) {
+                    case 'has-shadow':
                     case 'icon':
                         break;
                     default:

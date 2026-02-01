@@ -113,7 +113,7 @@
                     c.style.cursor = 'pointer';
                     c.appendChild(webui.create('span', { html: display }));
                     if (t.currentSort === key) {
-                        let ico = webui.create('webui-icon', { icon: t.currentSortDir === 'asc' ? "caret|has-shadow:true|fill|rotate:0" : "caret|has-shadow:true|fill|rotate:180" });
+                        let ico = webui.create('webui-icon', { icon: t.currentSortDir === 'asc' ? "caret|fill|rotate:0" : "caret|fill|rotate:180" });
                         c.appendChild(ico);
                     }
                     c.addEventListener('click', _ => {
