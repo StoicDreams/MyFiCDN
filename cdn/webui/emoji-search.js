@@ -11,8 +11,6 @@
     webui.define("webui-emoji-search", {
         linkCss: false,
         preload: 'pagination input-range flex grid input-text',
-        _page: 1,
-        _perPage: 20,
         _filteredKeys: [],
         constructor() {
             const t = this;
@@ -20,6 +18,7 @@
             t._size = t.template.querySelector('[label="Size"]');
             t._grid = t.template.querySelector('.grid');
             t._pag = t.template.querySelector('webui-pagination');
+            t._pag.addEventListener('change', _ => { t.applyPagination(); })
         },
         applyPagination() {
             const t = this;
@@ -29,46 +28,33 @@
                 if (t._apid !== id) return;
                 if (!t._pag) return;
                 webui.waitForConstruction(t._pag, _ => {
-                    t._pag.page = t.page;
-                    t._pag.perPage = t.perPage;
-                    t._pag.pageCount = t.pageCount;
-                    t._pag.totalCount = t.totalCount;
-                    if (t.page > t.pageCount) {
-                        t.page = t.pageCount;
-                    }
                     t.render();
                 });
             }, 10);
         },
         props: {
             'page': {
-                get() { return this._page; },
+                get() { return this._pag.page; },
                 set(v) {
                     const t = this;
-                    if (!v || t._page === v) return;
-                    t._page = v;
-                    t.applyPagination();
+                    t._pag.page = v;
                 }
             },
             'perPage': {
-                get() { return this._perPage; },
+                get() { return this._pag.perPage; },
                 set(v) {
                     const t = this;
-                    if (!v || t._perPage === v) return;
-                    t._perPage = v;
-                    t.applyPagination();
+                    t._pag.perPage = v;
                 }
             },
             'pageCount': {
-                get() { return Math.floor(this._filteredKeys.length / this.perPage); }
+                get() { return t._pag.pageCount; }
             },
             'totalCount': {
-                get() { return this._totalCount; },
+                get() { return this._pag.totalCount; },
                 set(v) {
                     const t = this;
-                    if (!v || t._totalCount === v) return;
-                    t._totalCount = v;
-                    t.applyPagination();
+                    t._pag.totalCount = v;
                 }
             }
         },

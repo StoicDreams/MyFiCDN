@@ -13,8 +13,6 @@
         pipedValue: '',
         preload: "icon dropdown input-range input-text input-message",
         _emojiEnabled: false,
-        _page: 1,
-        _perPage: 20,
         _filteredKeys: [],
         _viewEl: [],
         _icons: [],
@@ -23,60 +21,45 @@
         connected() {
             this.setupComponent();
         },
-        applyPagination(t) {
-            t = t || this;
+        applyPagination() {
+            const t = this;
             let id = webui.uuid();
             t._apid = id;
             setTimeout(async () => {
                 if (t._apid !== id) return;
                 if (!t._pag) return;
-                webui.waitForConstruction(t._pag, _ => {
-                    t._pag.page = t.page;
-                    t._pag.perPage = t.perPage;
-                    t._pag.pageCount = t.pageCount;
-                    t._pag.totalCount = t.totalCount;
-                    if (t.page > t.pageCount) {
-                        t.page = t.pageCount;
-                    }
-                    t.applyFilter();
-                });
+                t.applyFilter();
             }, 10);
         },
         props: {
             'currentFilter': {
                 get() {
                     const t = this;
-                    return `${t._page};${t._perPage};${t._totalCount};${t.pageCount};${t._filteredKeys.length};${t._emojiEnabled};${t._inputSearch.value}`;
+                    return `${t.page};${t.perPage};${t.totalCount};${t.pageCount};${t._filteredKeys.length};${t._emojiEnabled};${t._inputSearch.value}`;
                 }
             },
             'page': {
-                get() { return this._page; },
+                get() { return this._pag.page; },
                 set(v) {
                     const t = this;
-                    if (!v || t._page === v) return;
-                    t._page = v;
-                    t.applyPagination();
+                    t._pag.page = v;
                 }
             },
             'perPage': {
-                get() { return this._perPage; },
+                get() { return this._pag.perPage; },
                 set(v) {
                     const t = this;
-                    if (!v || t._perPage === v) return;
-                    t._perPage = v;
-                    t.applyPagination();
+                    t._pag.perPage = v;
                 }
             },
             'pageCount': {
-                get() { return Math.floor(this._filteredKeys.length / this.perPage); }
+                get() { return this._pag.pageCount; }
             },
             'totalCount': {
-                get() { return this._totalCount; },
+                get() { return this._pag.totalCount; },
                 set(v) {
                     const t = this;
-                    if (!v || t._totalCount === v) return;
-                    t._totalCount = v;
-                    t.applyPagination();
+                    t._pag.totalCount = v;
                 }
             }
         },
@@ -122,10 +105,8 @@
             t._inputs.appendChild(inputsColumn);
             inputsColumn.appendChild(webui.create('h6', { html: `<strong>Icon Search</strong>` }));
             t._inputSearch = webui.create('webui-input-text', { 'label': `Search / Filter Icons`, value: '', placeholder: "menu" });
-            t._pag = webui.create('webui-pagination', {});
-            t._pag.addEventListener('change', (ev, d) => {
-                t.page = t._pag.page;
-            });
+            t._pag = webui.create('webui-pagination', { loop: true });
+            t._pag.addEventListener('change', _ => { t.applyPagination(); });
             t._iconFlags = webui.create('webui-flex', { name: 'icon-options', justify: 'flex-start', align: 'center', wrap: true, gap: 5, html: `<h6 class="f1">Flags:</h6>` });
             inputsColumn.appendChild(t._iconFlags);
             function setupDropdown(key, label, attr, options) {
@@ -213,7 +194,7 @@
             t._inputSearch.addEventListener('input', _ => {
                 t.page = 1;
                 t.applyFilter();
-            })
+            });
         },
         applyFilter() {
             const t = this;
@@ -333,7 +314,9 @@
             let endIndex = startIndex + perPage;
             let pageIcons = t._filteredKeys.slice(startIndex, endIndex);
             t._bottomGrid.innerHTML = '';
+            t._containers.length = 0;
             if (pageIcons.length === 0) {
+                t.buildIconCode();
                 return;
             }
             t.setIcon(pageIcons[0].name);

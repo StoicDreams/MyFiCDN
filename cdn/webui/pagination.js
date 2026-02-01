@@ -69,6 +69,7 @@
                     t._page = v;
                     t._index = t.page - 1;
                     t.value = t.page;
+                    t._input.value = t.page;
                     t.process();
                 }
             },
@@ -78,6 +79,7 @@
                     const t = this;
                     if (!v || t._perPage === v) return;
                     t._perPage = v;
+                    t.calcPageCount();
                     t.process();
                 }
             },
@@ -85,22 +87,21 @@
                 get() { return this._totalCount; },
                 set(v) {
                     const t = this;
-                    if (!v || t._totalCount === v) return;
-                    t._totalCount = v;
+                    if (typeof v !== 'number' || t._totalCount === v) return;
+                    t._totalCount = v || 0;
                     t._total.innerText = v.toLocaleString('en-US');
+                    t.calcPageCount();
                     t.process();
                 }
             },
             'pageCount': {
-                get() { return this._pageCount; },
-                set(v) {
-                    const t = this;
-                    if (t._pageCount === v) return;
-                    t._pageCount = v;
-                    t.setAttribute('page-count', v);
-                    t.process();
-                }
+                get() { return this._pageCount; }
             }
+        },
+        calcPageCount() {
+            const t = this;
+            t._pageCount = Math.ceil(t._totalCount / t._perPage);
+            t.setAttribute('page-count', t._pageCount);
         },
         attr: ['data-current', 'data-subscribe', 'value', 'page', 'per-page', 'hide-prev-next-buttons', 'hide-pages', 'loop', 'max-pages'],
         attrChanged(property, value) {
@@ -154,98 +155,113 @@
             });
             t.process();
         },
+        processData() {
+            const t = this;
+            if (!t._data || !t._data.forEach) return;
+            console.log('process data');
+            let current = t._currentData || {};
+            if (t._data.length === 0) {
+                t.page = 1;
+                t.pageCount = 0;
+                t.totalCount = 0;
+                if (t.dataCurrent) {
+                    webui.setData(t.dataCurrent, current);
+                }
+                t.render();
+                return;
+            }
+            t.totalCount = t._data.length;
+            if (t.page > t.pageCount) {
+                t.page = t.pageCount;
+                t._index = t.page - 1;
+                t.value = t.page;
+            }
+            if (t.perPage === 1) {
+                current = t._data[t._index];
+            } else {
+                current = [];
+                for (let index = t._index; index < t._data.length; ++index) {
+                    current.push(t._data[index]);
+                }
+            }
+            t._currentData = current;
+            webui.setData(t.dataCurrent, current);
+        },
         process() {
             const t = this;
-            if (t._data && t._data.forEach) {
-                let current = t._currentData || {};
-                if (t._data.length === 0) {
-                    t.pageCount = 0;
-                    t.totalCount = 0;
-                    if (t.dataCurrent) {
-                        webui.setData(t.dataCurrent, current);
-                    }
-                    return;
+            const pid = webui.uuid();
+            t._pid = pid;
+            setTimeout(() => {
+                if (t._pid !== pid) return;
+                t.processData();
+                t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+                if (t.dataset.subscribe) {
+                    t.dataset.subscribe.split('|').forEach(ds => {
+                        let dk = ds.split(':');
+                        if (dk.length === 1) return;
+                        if (dk[1] === 'setValue') {
+                            webui.setData(dk[0], t.page);
+                        }
+                    });
                 }
-                t.pageCount = Math.ceil(t._data.length / t.perPage);
-                t.totalCount = t._data.length;
-                if (t.page > t.pageCount) {
-                    t.page = t.pageCount;
-                    t._index = t.page - 1;
-                    t.value = t.page;
-                }
-                if (t.perPage === 1) {
-                    current = t._data[t._index];
-                } else {
-                    current = [];
-                    for (let index = t._index; index < t._data.length; ++index) {
-                        current.push(t._data[index]);
-                    }
-                }
-                t._currentData = current;
-                webui.setData(t.dataCurrent, current);
-            }
-            t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
-            if (t.dataset.subscribe) {
-                t.dataset.subscribe.split('|').forEach(ds => {
-                    let dk = ds.split(':');
-                    if (dk.length === 1) return;
-                    if (dk[1] === 'setValue') {
-                        webui.setData(dk[0], t.page);
-                    }
-                });
-            }
-            t.render();
+                if (t._pid !== pid) return;
+                t.render();
+            }, 100);
         },
         render() {
             const t = this;
-            if (!t.hasChanges) return;
-            if (t.page === 1) {
-                t._btnFirst.setAttribute('disabled', 'true');
-            } else {
-                t._btnFirst.removeAttribute('disabled');
-            }
-            if (t.page === t.pageCount) {
-                t._btnLast.setAttribute('disabled', 'true');
-            } else {
-                t._btnLast.removeAttribute('disabled');
-            }
-            t._input.value = t.page || 1;
-            let cw = `${t.page}`.length + 5;
-            t._input.style.width = `${cw}ch`;
-            t._pages.querySelectorAll('webui-button').forEach(b => b.remove());
-            if (!t.hidePages && t.maxPages !== 0) {
-                let mp = t.maxPages === undefined ? 10 : Math.abs(t.maxPages);
-                let pl = Math.floor(mp / 2);
-                let ps = t.page - pl;
-                if (ps < 1) {
-                    ps = 1;
+            const rid = webui.uuid();
+            t._rid = rid;
+            setTimeout(() => {
+                if (t._rid !== rid) return;
+                if (!t.hasChanges) return;
+                if (t.page === 1) {
+                    t._btnFirst.setAttribute('disabled', 'true');
+                } else {
+                    t._btnFirst.removeAttribute('disabled');
                 }
-                let pr = ps + mp - 1;
-                if (pr > t.pageCount) {
-                    pr = t.pageCount;
-                    if (ps > 1) {
-                        ps = Math.max(1, pr - (mp - 1));
+                if (t.page === t.pageCount) {
+                    t._btnLast.setAttribute('disabled', 'true');
+                } else {
+                    t._btnLast.removeAttribute('disabled');
+                }
+                let cw = `${t.page}`.length + 5;
+                t._input.style.width = `${cw}ch`;
+                t._pages.querySelectorAll('webui-button').forEach(b => b.remove());
+                if (!t.hidePages && t.maxPages !== 0) {
+                    let mp = t.maxPages === undefined ? 10 : Math.abs(t.maxPages);
+                    let pl = Math.floor(mp / 2);
+                    let ps = t.page - pl;
+                    if (ps < 1) {
+                        ps = 1;
                     }
-                }
-                for (let pn = ps; pn <= pr; ++pn) {
-                    if (pn === t.page) {
-                    } else {
-                        let pageNumber = pn;
-                        let page = webui.create('webui-button', { html: `${pageNumber}` });
-                        page.addEventListener('click', _ => {
-                            t.setValue(pageNumber);
-                        });
-                        if (pageNumber < t.page) {
-                            t._pages.insertBefore(page, t._input);
+                    let pr = ps + mp - 1;
+                    if (pr > t.pageCount) {
+                        pr = t.pageCount;
+                        if (ps > 1) {
+                            ps = Math.max(1, pr - (mp - 1));
+                        }
+                    }
+                    for (let pn = ps; pn <= pr; ++pn) {
+                        if (pn === t.page) {
                         } else {
-                            t._pages.appendChild(page);
+                            let pageNumber = pn;
+                            let page = webui.create('webui-button', { html: `${pageNumber}` });
+                            page.addEventListener('click', _ => {
+                                t.setValue(pageNumber);
+                            });
+                            if (pageNumber < t.page) {
+                                t._pages.insertBefore(page, t._input);
+                            } else {
+                                t._pages.appendChild(page);
+                            }
                         }
                     }
                 }
-            }
-            t._hasRendered = true;
+                t._hasRendered = true;
+            }, 100);
         },
-        setValue(value, key, toSet) {
+        setValue(value) {
             const t = this;
             value = value || 1;
             if (value === undefined || value === undefined) return;
@@ -256,7 +272,7 @@
             if (value < 1) {
                 value = 1;
             }
-            if (value === t.page && t._hasRendered) return;
+            if (value === t.page) return;
             t.page = value;
         },
         setData(value) {
