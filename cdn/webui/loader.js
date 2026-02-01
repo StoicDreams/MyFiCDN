@@ -581,16 +581,16 @@ const webui = (() => {
                         t.template = shadowTemplate.content.cloneNode(true);
                     }
                     Object.keys(options).forEach(key => {
-                        if (typeof options[key] === 'function') {
+                        if (key === 'constructor') {
+                            t._constructor = options[key].bind(t);
+                        } else if (typeof options[key] === 'function') {
                             t[key] = options[key].bind(t);
                         } else {
                             t[key] = options[key];
                         }
                     });
-                    if (options.constructor) {
-                        let con = options.constructor.bind(t);
-                        con();
-                        //t.constructor();
+                    if (t._constructor) {
+                        t._constructor();
                     }
                     if (options.watchVisibility) {
                         let observer = new IntersectionObserver(onIntersection, {
