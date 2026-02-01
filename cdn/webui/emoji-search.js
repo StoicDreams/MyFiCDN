@@ -27,9 +27,8 @@
             setTimeout(async () => {
                 if (t._apid !== id) return;
                 if (!t._pag) return;
-                webui.waitForConstruction(t._pag, _ => {
-                    t.render();
-                });
+                await customElements.whenDefined('webui-pagination');
+                t.render();
             }, 10);
         },
         props: {
