@@ -118,6 +118,7 @@ Stroke line joins: miter|round|bevel
                 case 'rotate':
                     let number = parseFloat(value);
                     let style = number > 0 || number < 0 ? `rotate(${number}deg)` : '';
+                    t._emoji.style.transform = style;
                     t._dynPaths.forEach(p => {
                         p.style.transform = style;
                     });
@@ -181,6 +182,7 @@ Stroke line joins: miter|round|bevel
                         t.setEmoji(icon);
                         return;
                     }
+                    t._emoji.removeAttribute('emoji');
                     getIcon(icon, (iconDef) => {
                         t.setIconDefinition(iconDef);
                     });
@@ -202,16 +204,15 @@ Stroke line joins: miter|round|bevel
             }
         },
         setEmoji(emoji) {
-            console.log('set emoji', this, emoji);
             const t = this;
             const emojiChar = emoji.replace('emoji-', '');
-            console.log('set emoji', this, t._svg);
             t._svg.classList.add('emoji');
             t._emoji.setAttribute('emoji', emojiChar);
         },
         setIconDefinition(iconDef) {
-            if (!iconDef || typeof iconDef !== 'string') return;
             const t = this;
+            t._emoji.removeAttribute('emoji');
+            if (!iconDef || typeof iconDef !== 'string') return;
             t._svg.classList.remove('emoji');
             t._definition = iconDef;
             let defs = iconDef.split('\n');
@@ -422,6 +423,16 @@ stroke-width:0;
 }
 path.ban {
 stroke-width:calc(var(--ico-stroke-width) * 2);
+}
+webui-emoji {
+display:flex;
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+justify-content:center;
+align-items:center;
 }
 :host(:not([ban])) path.ban,
 svg.main:not(.emoji) webui-emoji,

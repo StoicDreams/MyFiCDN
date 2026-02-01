@@ -7,13 +7,12 @@
  */
 "use strict"
 {
-    const emojiMapUrl = "https://cdn.myfi.ws/i/emojis.json";
+    const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json' : 'https://cdn.myfi.ws/i/emojis.json';
     let emojiMap = {};
     let isLoaded = false;
     setTimeout(async () => {
         try {
-            const response = await fetch(emojiMapUrl);
-            emojiMap = await response.json();
+            emojiMap = await webui.fetchWithCache(emojiSource, true);
         } catch (err) {
             console.error("Failed to load emoji map:", err);
         }
@@ -37,6 +36,7 @@
                     break;
                 case 'height':
                     t.style.height = webui.pxIfNumber(value);
+                    t.style.width = webui.pxIfNumber(value);
                     break;
                 case 'maxHeight':
                     t.style.maxHeight = webui.pxIfNumber(value);
@@ -45,6 +45,7 @@
         },
         render() {
             const t = this;
+            t.innerHTML = '';
             if (!t.emoji) return;
             if (!isLoaded) {
                 setTimeout(() => { t.render(); }, 100);
@@ -58,5 +59,26 @@
         connected() {
             this.render();
         },
+        shadowTemplate: `
+<slot></slot>
+<style type="text/css">
+:host {
+display:inline-flex;
+align-items:center;
+justify-content:center;
+vertical-align: middle;
+container-type:size;
+aspect-ratio:1 / 1;
+min-height:1.2em;
+}
+slot {
+display: flex;
+align-items: center;
+justify-content: center;
+font-size:70cqmin;
+font-family: "Noto Color Emoji";
+}
+</style>
+        `,
     });
 }

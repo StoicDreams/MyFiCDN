@@ -9,6 +9,8 @@
 {
     webui.define('webui-pagination', {
         preload: "button",
+        _page: 1,
+        _perPage: 20,
         _pageCount: 0,
         _totalCount: 0,
         constructor() {
@@ -24,9 +26,7 @@
             t._btnLast = t.template.querySelector('webui-button.last');
             t._total = t.template.querySelector('.total > strong');
             t._data = undefined;
-            t.perPage = 1;
             t._index = 0;
-            t.page = 1;
             t._input.value = 1;
             t._btnFirst.addEventListener('click', _ => {
                 if (t.page === 1) return;
@@ -61,22 +61,44 @@
             });
         },
         props: {
+            'page': {
+                get() { return this._page; },
+                set(v) {
+                    const t = this;
+                    if (!v || t._page === v) return;
+                    t._page = v;
+                    t._index = t.page - 1;
+                    t.value = t.page;
+                    t.process();
+                }
+            },
+            'perPage': {
+                get() { return this._perPage; },
+                set(v) {
+                    const t = this;
+                    if (!v || t._perPage === v) return;
+                    t._perPage = v;
+                    t.process();
+                }
+            },
             'totalCount': {
                 get() { return this._totalCount; },
                 set(v) {
-                    if (!v || this._totalCount !== v) return;
-                    this._totalCount = v;
-                    this._total.innerText = v.toLocaleString('en-US');
-                    this.process();
+                    const t = this;
+                    if (!v || t._totalCount === v) return;
+                    t._totalCount = v;
+                    t._total.innerText = v.toLocaleString('en-US');
+                    t.process();
                 }
             },
             'pageCount': {
                 get() { return this._pageCount; },
                 set(v) {
-                    if (this._pageCount === v) return;
-                    this._pageCount = v;
-                    this.setAttribute('page-count', v);
-                    this.process();
+                    const t = this;
+                    if (t._pageCount === v) return;
+                    t._pageCount = v;
+                    t.setAttribute('page-count', v);
+                    t.process();
                 }
             }
         },
@@ -144,7 +166,6 @@
                     }
                     return;
                 }
-                t.page = t.page;
                 t.pageCount = Math.ceil(t._data.length / t.perPage);
                 t.totalCount = t._data.length;
                 if (t.page > t.pageCount) {
@@ -163,6 +184,7 @@
                 t._currentData = current;
                 webui.setData(t.dataCurrent, current);
             }
+            t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
             if (t.dataset.subscribe) {
                 t.dataset.subscribe.split('|').forEach(ds => {
                     let dk = ds.split(':');
@@ -236,9 +258,6 @@
             }
             if (value === t.page && t._hasRendered) return;
             t.page = value;
-            t._index = t.page - 1;
-            t.value = t.page;
-            t.process();
         },
         setData(value) {
             const t = this;

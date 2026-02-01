@@ -2170,7 +2170,7 @@ const webui = (() => {
             }
             if (!el._isConstructed) {
                 Promise.reject(`Construction failed for ${el}`);
-                console.error('Construction failed for %o', el);
+                console.error('Construction failed', el);
                 return;
             }
             if (typeof handler === 'function') {
@@ -3103,11 +3103,8 @@ const webui = (() => {
         function errorHandler(event) {
             event.preventDefault();
             const message = buildMessage(event);
-            // const hc = webui.hashCode(message);
-            // if (lastError[hc] !== undefined && (Date.now() - lastError[hc]) < FIVE_MINUTES_MS) {
-            //     return true;
-            // }
-            // lastError[hc] = Date.now();
+            const errorObj = event.error || event.reason;
+            console.error(errorObj);
             webui.alert(message, 'danger');
             return true;
         }

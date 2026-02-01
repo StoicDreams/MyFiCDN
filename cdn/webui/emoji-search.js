@@ -21,8 +21,8 @@
             t._grid = t.template.querySelector('.grid');
             t._pag = t.template.querySelector('webui-pagination');
         },
-        applyPagination(t) {
-            t = t || this;
+        applyPagination() {
+            const t = this;
             let id = webui.uuid();
             t._apid = id;
             setTimeout(async () => {
@@ -44,15 +44,19 @@
             'page': {
                 get() { return this._page; },
                 set(v) {
-                    this._page = v;
-                    this.applyPagination(this);
+                    const t = this;
+                    if (!v || t._page === v) return;
+                    t._page = v;
+                    t.applyPagination();
                 }
             },
             'perPage': {
                 get() { return this._perPage; },
                 set(v) {
-                    this._perPage = v;
-                    this.applyPagination(this);
+                    const t = this;
+                    if (!v || t._perPage === v) return;
+                    t._perPage = v;
+                    t.applyPagination();
                 }
             },
             'pageCount': {
@@ -61,8 +65,10 @@
             'totalCount': {
                 get() { return this._totalCount; },
                 set(v) {
-                    this._totalCount = v;
-                    this.applyPagination(this);
+                    const t = this;
+                    if (!v || t._totalCount === v) return;
+                    t._totalCount = v;
+                    t.applyPagination();
                 }
             }
         },

@@ -8,11 +8,77 @@
 "use strict"
 {
     const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
+    const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json' : 'https://cdn.myfi.ws/i/emojis.json';
     webui.define('webui-icon-search', {
         pipedValue: '',
         preload: "icon dropdown input-range input-text input-message",
+        _emojiEnabled: false,
+        _page: 1,
+        _perPage: 20,
+        _filteredKeys: [],
+        _viewEl: [],
+        _icons: [],
+        _emojis: [],
+        _containers: [],
         connected() {
             this.setupComponent();
+        },
+        applyPagination(t) {
+            t = t || this;
+            let id = webui.uuid();
+            t._apid = id;
+            setTimeout(async () => {
+                if (t._apid !== id) return;
+                if (!t._pag) return;
+                webui.waitForConstruction(t._pag, _ => {
+                    t._pag.page = t.page;
+                    t._pag.perPage = t.perPage;
+                    t._pag.pageCount = t.pageCount;
+                    t._pag.totalCount = t.totalCount;
+                    if (t.page > t.pageCount) {
+                        t.page = t.pageCount;
+                    }
+                    t.applyFilter();
+                });
+            }, 10);
+        },
+        props: {
+            'currentFilter': {
+                get() {
+                    const t = this;
+                    return `${t._page};${t._perPage};${t._totalCount};${t.pageCount};${t._filteredKeys.length};${t._emojiEnabled};${t._inputSearch.value}`;
+                }
+            },
+            'page': {
+                get() { return this._page; },
+                set(v) {
+                    const t = this;
+                    if (!v || t._page === v) return;
+                    t._page = v;
+                    t.applyPagination();
+                }
+            },
+            'perPage': {
+                get() { return this._perPage; },
+                set(v) {
+                    const t = this;
+                    if (!v || t._perPage === v) return;
+                    t._perPage = v;
+                    t.applyPagination();
+                }
+            },
+            'pageCount': {
+                get() { return Math.floor(this._filteredKeys.length / this.perPage); }
+            },
+            'totalCount': {
+                get() { return this._totalCount; },
+                set(v) {
+                    const t = this;
+                    if (!v || t._totalCount === v) return;
+                    t._totalCount = v;
+                    t.applyPagination();
+                }
+            }
         },
         setupComponent() {
             const t = this;
@@ -52,11 +118,14 @@
             t._svgContainer.appendChild(t._iconPreview);
             let icons = [];
             icons.push(t._iconPreview);
-            t._icons = icons;
             let inputsColumn = webui.create('webui.flex', { column: '' });
             t._inputs.appendChild(inputsColumn);
             inputsColumn.appendChild(webui.create('h6', { html: `<strong>Icon Search</strong>` }));
             t._inputSearch = webui.create('webui-input-text', { 'label': `Search / Filter Icons`, value: '', placeholder: "menu" });
+            t._pag = webui.create('webui-pagination', {});
+            t._pag.addEventListener('change', (ev, d) => {
+                t.page = t._pag.page;
+            });
             t._iconFlags = webui.create('webui-flex', { name: 'icon-options', justify: 'flex-start', align: 'center', wrap: true, gap: 5, html: `<h6 class="f1">Flags:</h6>` });
             inputsColumn.appendChild(t._iconFlags);
             function setupDropdown(key, label, attr, options) {
@@ -75,16 +144,21 @@
                 });
                 t[key] = dd;
             }
-            function setupToggleIcon(name, label, flagAttr) {
+            function setupToggleIcon(name, label, flagAttr, emojiFlag = false) {
                 t[name] = webui.create('webui-toggle-icon', { label: label, 'title-on': `Disable ${label}`, 'title-off': `Enable ${label}`, 'theme-on': 'success', 'theme-off': 'shade', 'flags-on': 'fill', 'flags-off': '' });
                 t[name].addEventListener('change', _ => {
-                    icons.forEach(icon => {
-                        if (t[name].value) {
-                            icon.setAttribute(flagAttr, '');
-                        } else {
-                            icon.removeAttribute(flagAttr);
-                        }
-                    });
+                    if (emojiFlag) {
+                        t._emojiEnabled = t[name].value;
+                        t.applyFilter();
+                    } else {
+                        icons.forEach(icon => {
+                            if (t[name].value) {
+                                icon.setAttribute(flagAttr, '');
+                            } else {
+                                icon.removeAttribute(flagAttr);
+                            }
+                        });
+                    }
                     t.buildIconCode();
                 });
                 t._iconFlags.appendChild(t[name]);
@@ -117,6 +191,7 @@
                 }
                 t._rotate.addEventListener('input', inputUpdated);
             }
+            setupToggleIcon('_emojisToggle', 'Emojis', null, true);
             setupToggleIcon('_backingToggle', 'Backing', 'backing');
             setupToggleIcon('_sharpToggle', 'Sharp', 'sharp');
             setupToggleIcon('_fillToggle', 'Fill', 'fill');
@@ -124,6 +199,7 @@
             setupToggleIcon('_banToggle', 'Ban', 'ban');
             setupToggleIcon('_invertedToggle', 'Inverted', 'inverted');
             t.appendChild(t._inputSearch);
+            t.appendChild(t._pag);
             t._codeSample = webui.create('webui-code', { 'lang': 'html', 'label': `Icon Code` });
             inputsColumn.appendChild(t._codeSample);
             inputsColumn.appendChild(webui.create('p', { html: `Icon components also accept pipe delimited configurations, useful when passing icon data to parent components that pass icon values to child webui-icon components.` }));
@@ -133,14 +209,40 @@
             inputsColumn.appendChild(t._codePipedAttr);
             t._bottomGrid = webui.create('webui-grid', { gap: '1', theme: 'white', width: '100', height: '100' });
             t.appendChild(t._bottomGrid);
-            t.loadIcons();
+            t.loadAllData();
             t._inputSearch.addEventListener('input', _ => {
-                t.updateDisplayedIcons();
+                t.page = 1;
+                t.applyFilter();
             })
+        },
+        applyFilter() {
+            const t = this;
+            const cf = t.currentFilter;
+            if (cf === t._cf) return;
+            t._cf = cf;
+            if (typeof t._inputSearch.value !== 'string') return;
+            let filter = t._inputSearch.value.trim().toLowerCase();
+            t._filteredKeys = [];
+            let source = t._emojiEnabled ? t._emojis : t._icons;
+            source.forEach(icon => {
+                if (!filter) {
+                    t._filteredKeys.push(icon);
+                    return;
+                }
+                if (icon.name.toLowerCase().indexOf(filter) !== -1) {
+                    t._filteredKeys.push(icon);
+                    return;
+                }
+                if (icon.tags.indexOf(filter) !== -1) {
+                    t._filteredKeys.push(icon);
+                }
+            });
+            t.totalCount = t._filteredKeys.length;
+            t.render();
         },
         buildIconCode() {
             const t = this;
-            let ico = t._icons[0].cloneNode();
+            let ico = t._iconPreview.cloneNode();
             ico.removeAttribute('style');
             let code = ico.outerHTML;
             t._codeSample.value = code;
@@ -161,13 +263,26 @@
                 }
             })
             t.pipedValue = pipeData.join('|');
+            t._pipedPostfix = pipeData.splice(1).join('|');
             t._codeSamplePiped.value = `<webui-icon icon="${t.pipedValue}"></webui-icon>`;
             t._codePipedAttr.value = t.pipedValue;
+            t.applyPipedValues();
             let ev = new CustomEvent('icon-update', { detail: t.pipedValue });
             t.dispatchEvent(ev);
         },
+        appendPipe(name) {
+            const t = this;
+            if (!t._pipedPostfix) return name;
+            return `${name}|${t._pipedPostfix}`;
+        },
+        applyPipedValues() {
+            const t = this;
+            t._containers.forEach(con => {
+                con.el.setAttribute('icon', t.appendPipe(con.icon.name));
+            });
+        },
         resetOptions() {
-            let t = this;
+            const t = this;
             ['_backingToggle', '_sharpToggle', '_fillToggle', '_borderedToggle', '_banToggle', '_invertedToggle'].forEach(toggle => {
                 if (!t[toggle]) return;
                 t[toggle].value = false;
@@ -202,88 +317,76 @@
         setIcon(icon) {
             const t = this;
             t._current = icon;
-            t._icons[0].setAttribute('icon', icon);
+            t._iconPreview.setAttribute('icon', icon);
             t.buildIconCode();
         },
-        updateDisplayedIcons() {
+        render() {
             const t = this;
-            let isFirst = true;
-            let filter = t._inputSearch.value;
-            if (typeof filter === 'string') {
-                filter = filter.toLowerCase();
-            } else {
-                filter = '';
+            let perPage = t.perPage || 20;
+            let page = t.page || 1;
+            let startIndex = (page - 1) * perPage;
+            if (startIndex > t._filteredKeys.length) {
+                startIndex = 0;
             }
-            let current = t._current;
-            let valid = [];
-            function setIsFirst(icon) {
-                valid.push(icon);
-                if (isFirst) {
-                    isFirst = false;
-                    setTimeout(() => {
-                        if (valid.indexOf(current) === -1) {
-                            t.setIcon(icon);
-                        }
-                    }, 100);
-                }
+            let endIndex = startIndex + perPage;
+            let pageIcons = t._filteredKeys.slice(startIndex, endIndex);
+            t._bottomGrid.innerHTML = '';
+            if (pageIcons.length === 0) {
+                return;
             }
-            t._iconContainers.forEach(c => {
-                let icon = c.icon.name;
-                if (!filter) {
-                    t._bottomGrid.appendChild(c);
-                    setIsFirst(icon);
-                    return;
-                }
-                let tags = c.icon.tags.split(' ');
-                if (icon.toLowerCase().indexOf(filter) !== -1) {
-                    t._bottomGrid.appendChild(c);
-                    setIsFirst(icon);
-                    return;
-                }
-                let isMatched = false;
-                tags.forEach(tag => {
-                    if (isMatched) return;
-                    if (tag.toLowerCase().indexOf(filter) !== -1) {
-                        isMatched = true;
-                        t._bottomGrid.appendChild(c);
-                        setIsFirst(icon);
-                    }
-                });
-                if (!isMatched) {
-                    if (c.parentNode && c.parentNode.removeChild) {
-                        c.parentNode.removeChild(c);
-                    }
-                }
+            t.setIcon(pageIcons[0].name);
+            t._containers.length = 0;
+            pageIcons.forEach(icon => {
+                const container = t.createIconContainer(icon);
+                t._containers.push(container);
+                t._bottomGrid.appendChild(container);
             });
             t.buildIconCode();
+        },
+        createIconContainer(data) {
+            const t = this;
+            let icon = data.name;
+            let display = data.display || data.name;
+            let container = webui.create('a', { style: 'flex-direction:column;' });
+            container.icon = data;
+            let el = webui.create('webui-icon', { icon: t.appendPipe(icon), width: '32' });
+            container.appendChild(el);
+            container.el = el;
+            let label = webui.create('label', { text: display });
+            container.appendChild(label);
+            container.addEventListener('click', _ => {
+                t.setIcon(icon);
+            });
+            return container;
+        },
+        async loadAllData() {
+            await Promise.all([this.loadIcons(), this.loadEmojis()]);
+            this.applyFilter();
         },
         async loadIcons() {
             const t = this;
             t._iconContainers = [];
+            t._icons.length = 0;
             try {
-                let result = await fetch(`${srcRoot}all.json`);
-                if (!result.ok) return;
-                let icons = await result.json();
-                let isFirst = true;
-                icons.forEach(data => {
-                    let icon = data.name;
-                    let container = webui.create('a', { style: 'flex-direction:column;' });
-                    container.icon = data;
-                    t._iconContainers.push(container);
-                    t._bottomGrid.appendChild(container);
-                    let el = webui.create('webui-icon', { icon: `${icon}`, width: '32' });
-                    container.appendChild(el);
-                    t._icons.push(el);
-                    let label = webui.create('label', { text: icon });
-                    container.appendChild(label);
-                    container.addEventListener('click', _ => {
-                        t.setIcon(icon);
-                    });
+                t._icons = await webui.fetchWithCache(`${srcRoot}all.json`, true);
+                t._icons.forEach(icon => {
+                    icon.display = icon.name.replace(/[-_]+/g, ' ');
                 });
-                t.updateDisplayedIcons();
             } catch (ex) {
                 console.error('Failed loading icons list', ex);
             }
+        },
+        async loadEmojis() {
+            const t = this;
+            t._emojis.length = 0;
+            try {
+                const _emojiMap = await webui.fetchWithCache(emojiSource, true);
+                Object.keys(_emojiMap).forEach(key => t._emojis.push({
+                    name: `emoji-${key}`,
+                    display: key.replace(/[_]+/g, ' '),
+                    tags: key
+                }));
+            } catch (ex) { console.error('Failed loading emojis', ex); }
         },
         shadowTemplate: `
 <slot></slot>
