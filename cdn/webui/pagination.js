@@ -161,7 +161,6 @@
             let current = t._currentData || {};
             if (t._data.length === 0) {
                 t.page = 1;
-                t.pageCount = 0;
                 t.totalCount = 0;
                 if (t.dataCurrent) {
                     webui.setData(t.dataCurrent, current);
