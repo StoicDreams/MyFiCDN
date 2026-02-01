@@ -346,7 +346,7 @@
         },
         async loadAllData() {
             await Promise.all([this.loadIcons(), this.loadEmojis()]);
-            this.applyFilter();
+            this.applyPagination();
         },
         async loadIcons() {
             const t = this;
