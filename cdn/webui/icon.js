@@ -31,7 +31,6 @@ Stroke line joins: miter|round|bevel
     M0 -70Q25 -45 25 -45Q45 -25 45 -25Q70 0 70 0Q50 20 50 20Q25 45 25 45Q0 70 0 70Q-35 35 -35 35Q-70 0 -70 0Q-45 -25 -45 -25Q-25 -45 -25 -45Q0 -70 0 -70z`;
     const pathCount = 10;
     const cache = {}, waiter = {};
-    const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     const defUnused = 'M0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0z';
     const defShield = 'M-90 -25Q-90 -75 -90 -75Q-40 -75 0 -90Q50 -75 90 -75Q90 -30 90 -30Q90 -20 90 -20Q90 0 90 0Q90 25 60 50Q0 90 0 90Q-60 50 -60 50Q-90 25 -90 0Q-90 -15 -90 -15z';
     const defBadge = 'M-28 68Q0 115 28 68Q86 86 68 28Q115 0 68 -28Q86 -86 28 -68Q1 -115 -28 -68Q-86 -86 -68 -28Q-115 0 -68 28Q-86 86 -28 68Q-28 68 -28 68Q-28 68 -28 68Q-28 68 -28 68z';
@@ -45,7 +44,7 @@ Stroke line joins: miter|round|bevel
     function noteMissingIcon(name, ex) {
         if (missing[name]) return;
         missing[name] = true;
-        console.log('missing icon', name, ex || '');
+        console.warn('missing icon', name, ex || '');
     }
     async function getIcon(name, handler) {
         if (!name) {
@@ -61,18 +60,13 @@ Stroke line joins: miter|round|bevel
         } else {
             waiter[name] = [];
             try {
-                let result = await fetch(`${srcRoot}${name}.webui`);
-                if (!result.ok) {
+                const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
+                iconDef = await webui.fetchWithCache(`${srcRoot}${name}.webui`);
+                if (!iconDef.startsWith("WEBUI-ICON-")) {
                     noteMissingIcon(name);
                     iconDef = notFoundDef;
                 } else {
-                    iconDef = await result.text();
-                    if (!iconDef.startsWith("WEBUI-ICON-")) {
-                        noteMissingIcon(name);
-                        iconDef = notFoundDef;
-                    } else {
-                        iconDef = iconDef.replace(/\r/g, '');
-                    }
+                    iconDef = iconDef.replace(/\r/g, '');
                 }
             } catch (ex) {
                 noteMissingIcon(name, ex);

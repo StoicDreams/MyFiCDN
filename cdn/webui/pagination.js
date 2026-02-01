@@ -158,7 +158,6 @@
         processData() {
             const t = this;
             if (!t._data || !t._data.forEach) return;
-            console.log('process data');
             let current = t._currentData || {};
             if (t._data.length === 0) {
                 t.page = 1;

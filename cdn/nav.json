@@ -16,7 +16,7 @@
     },
     {
         "name": "Tests",
-        "icon": "test|fill|shade:tri",
+        "icon": "emoji-test_tube",
         "children": [
             {
                 "name": "Components",
@@ -24,24 +24,24 @@
                 "children": [
                     {
                         "name": "Emojis",
-                        "icon": "compass|fill|bordered|backing|shape:circle",
+                        "icon": "emoji-face_holding_back_tears",
                         "url": "/tests/component/emojis"
                     }
                 ]
             },
             {
                 "name": "404 Not Found",
-                "icon": "compass|fill|bordered|backing|shape:circle",
+                "icon": "emoji-ghost",
                 "url": "/notfound"
             },
             {
                 "name": "Under Construction",
-                "icon": "traffic-cone|stroke:thin|fill|shade|tri",
+                "icon": "traffic-cone|theme:warning|fill|shade:tri",
                 "url": "/under-construction"
             },
             {
                 "name": "Test",
-                "icon": "test|fill|shade:tri",
+                "icon": "test|fill|shade:duo|theme:tertiary",
                 "url": "/test/hello"
             }
         ]

@@ -364,13 +364,15 @@
         async loadEmojis() {
             const t = this;
             t._emojis.length = 0;
+            let emojis = [];
             try {
                 const _emojiMap = await webui.fetchWithCache(emojiSource, true);
-                Object.keys(_emojiMap).forEach(key => t._emojis.push({
+                Object.keys(_emojiMap).forEach(key => emojis.push({
                     name: `emoji-${key}`,
                     display: key.replace(/[_]+/g, ' '),
                     tags: key
                 }));
+                t._emojis = emojis;
             } catch (ex) { console.error('Failed loading emojis', ex); }
         },
         shadowTemplate: `

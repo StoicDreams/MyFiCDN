@@ -52,6 +52,7 @@
                 return;
             }
             if (!emojiMap[t.emoji]) {
+                console.error("Emoji map is missing %o", t.emoji);
                 return;
             }
             t.innerHTML = emojiMap[t.emoji];
