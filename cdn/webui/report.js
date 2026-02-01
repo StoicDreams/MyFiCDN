@@ -171,10 +171,9 @@
                             }
                             t._table.setData(data.items);
                             t._pag.forEach(p => {
+                                p.page = data.page;
                                 p.perPage = t.perPage;
-                                p.pageCount = data.pageCount;
                                 p.totalCount = data.total;
-                                p.setValue(data.page);
                             });
                         } else {
                             let ex = await resp.text();
