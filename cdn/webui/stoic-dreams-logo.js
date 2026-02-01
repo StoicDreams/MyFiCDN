@@ -47,7 +47,7 @@ stroke-miterlimit:10;
 .bottom-right{fill:var(--color-primary);stroke:var(--color-primary);stroke-miterlimit:10;}
 .bottom-left{fill:var(--color-secondary);stroke:var(--color-secondary);stroke-miterlimit:10;}
 .diamond{fill:var(--color-title);stroke:var(--color-title);stroke-miterlimit:10;}
-.text{fill:#FFFFFF;font-family:'Nunito', Arial, sans-serif;font-weight:700;letter-spacing:-1px;}
+.text{fill:#FFFFFF;font-family:'Nunito', Arial, sans-serif;font-weight:700;letter-spacing:-1px;text-shadow:0 0 10px black;}
 </style>
 </defs>
 <g class="background">
