@@ -6,12 +6,12 @@
     },
     {
         "name": "Components",
-        "icon": "hierarchy|rotate:270|theme:secondary",
+        "icon": "emoji-package",
         "url": "/components"
     },
     {
         "name": "Web UI Methods",
-        "icon": "hierarchy|rotate:270|theme:primary",
+        "icon": "emoji-gear",
         "url": "/webui-methods"
     },
     {
@@ -20,7 +20,7 @@
         "children": [
             {
                 "name": "Components",
-                "icon": "hierarchy|rotate:270|theme:tertiary",
+                "icon": "emoji-puzzle_piece",
                 "children": [
                     {
                         "name": "Emojis",
@@ -36,12 +36,12 @@
             },
             {
                 "name": "Under Construction",
-                "icon": "traffic-cone|theme:warning|fill|shade:tri",
+                "icon": "emoji-construction",
                 "url": "/under-construction"
             },
             {
                 "name": "Test",
-                "icon": "test|fill|shade:duo|theme:tertiary",
+                "icon": "emoji-alembic",
                 "url": "/test/hello"
             }
         ]
