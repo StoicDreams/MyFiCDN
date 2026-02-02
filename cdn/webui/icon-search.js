@@ -105,7 +105,7 @@
             t._inputs.appendChild(inputsColumn);
             inputsColumn.appendChild(webui.create('h6', { html: `<strong>Icon Search</strong>` }));
             t._inputSearch = webui.create('webui-input-text', { 'label': `Search / Filter Icons`, value: '', placeholder: "menu" });
-            t._pag = webui.create('webui-pagination', { loop: true });
+            t._pag = webui.create('webui-pagination', { loop: true, 'max-pages': 3 });
             t._pag.addEventListener('change', _ => { t.applyPagination(); });
             t._iconFlags = webui.create('webui-flex', { name: 'icon-options', justify: 'flex-start', align: 'center', wrap: true, gap: 5, html: `<h6 class="f1">Flags:</h6>` });
             inputsColumn.appendChild(t._iconFlags);
