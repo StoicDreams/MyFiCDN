@@ -38,7 +38,7 @@
         }
     }
     webui.define('webui-openapi', {
-        preload: 'dropdown alert flex button tabs input-message input-text grid',
+        preload: 'dropdown alert flex button tabs input-message input-text grid code',
         constructor() {
             this.baseUrl = '';
         },
@@ -340,6 +340,7 @@
                                 result.appendChild(headersDisplay);
                                 result.appendChild(webui.create('h6', { text: 'Response Body' }));
                                 const code = webui.create('webui-code', { lang, label });
+                                await customElements.whenDefined('webui-code');
                                 result.appendChild(code);
                                 code.setValue(text);
                             } catch (ex) {
