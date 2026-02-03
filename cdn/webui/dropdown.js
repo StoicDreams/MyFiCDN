@@ -121,7 +121,8 @@
                 let data = webui.getData(key);
                 console.log('getApiData data', key, data);
                 if (data === undefined) {
-                    await webui.wait(10 * count);
+                    await webui.wait(Math.pow(2, count));
+                    if (t._lid !== lid) return [false, {}];
                     continue;
                 }
                 console.log('getApiData typeof data', typeof data);
