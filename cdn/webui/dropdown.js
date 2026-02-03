@@ -111,24 +111,29 @@
                     break;
             }
         },
-        getApiData() {
+        async getApiData(lid) {
             const t = this;
+            let count = 0;
             let key = t.dataset.api;
             console.log('getApiData key', key);
             if (!key || typeof key !== 'string') return [true, {}];
-            let data = webui.getData(key);
-            console.log('getApiData data', key, data);
-            if (data === undefined) {
-                return [false, {}];
+            while (++count < 10) {
+                let data = webui.getData(key);
+                console.log('getApiData data', key, data);
+                if (data === undefined) {
+                    await webui.wait(10 * count);
+                    continue;
+                }
+                console.log('getApiData typeof data', typeof data);
+                if (typeof data !== 'object') {
+                    key = key.split('.').pop();
+                    let d = {};
+                    d[key] = data;
+                    return [true, d];
+                }
+                return [true, data];
             }
-            console.log('getApiData typeof data', typeof data);
-            if (typeof data !== 'object') {
-                key = key.split('.').pop();
-                let d = {};
-                d[key] = data;
-                return [true, d];
-            }
-            return [true, data];
+            return [false, {}];
         },
         async loadData() {
             const t = this;
@@ -141,7 +146,7 @@
             let url = t.apiUrl;
             let ct = t.contentType || 'application/json';
             let fetchData = null;
-            const [hasRequiredData, data] = t.getApiData();
+            const [hasRequiredData, data] = await t.getApiData(lid);
             if (!hasRequiredData) {
                 t.setOptions([]);
                 return;
