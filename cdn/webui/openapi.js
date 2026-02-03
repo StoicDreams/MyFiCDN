@@ -62,13 +62,15 @@
         },
         async loadDoc() {
             const t = this;
-            t.innerHTML = `<webui-alert theme="info" show>Enter your URL to view</webui-alert>`;
-            console.log('source', t.src, webui.validateUrl(t.src));
-            if (!t.src) return;
-            if (t._loadedSrc === t.src) return;
-            if (!webui.validateUrl(t.src)) return;
-            t.innerHTML = `<webui-alert theme="info" show>Loading</webui-alert>`;
+            if (t._loadedSrc && t._loadedSrc === t.src) return;
             t._loadedSrc = t.src;
+            t.innerHTML = `<webui-alert theme="info" show>Enter your URL to view</webui-alert>`;
+            if (!t.src) return;
+            if (!webui.validateUrl(t.src)) {
+                t.innerHTML = `<webui-alert theme="info" show>URL is not valid.</webui-alert>`;
+                return;
+            }
+            t.innerHTML = `<webui-alert theme="info" show>Loading</webui-alert>`;
             try {
                 let doc = await webui.fetchWithCache(t.src, true);
                 if (typeof doc === 'string') {
