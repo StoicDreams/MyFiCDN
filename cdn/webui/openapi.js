@@ -43,11 +43,11 @@
             this.baseUrl = '';
         },
         attr: ['src', 'hash'],
-        attrChanged(property, value) {
+        attrChanged(property, _) {
             const t = this;
             switch (property) {
                 case 'src':
-                    t.setSource(value);
+                    t.loadDoc();
                     break;
             }
         },
@@ -62,6 +62,7 @@
         async loadDoc() {
             const t = this;
             t.innerHTML = `<webui-alert theme="info" show>Enter your URL to view</webui-alert>`;
+            console.log('source', t.src);
             if (!t.src) return;
             if (t._loadedSrc === t.src) return;
             if (!webui.validateUrl(t.src)) return;
