@@ -45,6 +45,7 @@
         attr: ['src', 'hash'],
         attrChanged(property, _) {
             const t = this;
+            console.log('attr changed', t.src);
             switch (property) {
                 case 'src':
                     t.loadDoc();
