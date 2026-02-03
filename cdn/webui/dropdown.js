@@ -130,9 +130,13 @@
             }
             return [true, data];
         },
-        loadData() {
+        async loadData() {
             const t = this;
             if (!t.apiUrl) return;
+            const lid = webui.uuid();
+            t._lid = lid;
+            await webui.wait(100);
+            if (t._lid !== lid) return;
             let method = t.apiMethod;
             let url = t.apiUrl;
             let ct = t.contentType || 'application/json';
