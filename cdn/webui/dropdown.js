@@ -115,22 +115,32 @@
             const t = this;
             let count = 0;
             let key = t.dataset.api;
-            console.log('getApiData key', key);
             if (!key || typeof key !== 'string') return [true, {}];
             while (++count < 10) {
                 let data = webui.getData(key);
-                console.log('getApiData data', key, data);
                 if (data === undefined) {
                     await webui.wait(Math.pow(2, count));
                     if (t._lid !== lid) return [false, {}];
                     continue;
                 }
-                console.log('getApiData typeof data', typeof data);
                 if (typeof data !== 'object') {
                     key = key.split('.').pop();
                     let d = {};
                     d[key] = data;
-                    return [true, d];
+                    data = d;
+                }
+                let fields = t.dataset.fields;
+                if (fields && fields.split) {
+                    fields = fields.split('|');
+                    let matches = 0;
+                    fields.forEach(key => {
+                        if (data[key] != undefined) {
+                            matches++;
+                        }
+                    });
+                    if (matches !== fields.length) {
+                        return [false, data];
+                    }
                 }
                 return [true, data];
             }
