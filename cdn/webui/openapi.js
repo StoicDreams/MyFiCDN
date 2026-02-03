@@ -83,7 +83,6 @@
         },
         render() {
             const t = this;
-            t.innerHTML = '';
             if (!t.doc || !t.doc.paths) return;
             const serverOptions = [];
             for (let index = 0; index < t.doc.servers.length; ++index) {
@@ -348,6 +347,7 @@
                     });
                 });
             });
+            t.innerHTML = '';
             t.appendChild(tabs);
         }
     });
