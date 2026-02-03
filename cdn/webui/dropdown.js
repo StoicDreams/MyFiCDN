@@ -117,7 +117,7 @@
             console.log('getApiData key', key);
             if (!key || typeof key !== 'string') return [true, {}];
             let data = webui.getData(key);
-            console.log('getApiData data', data);
+            console.log('getApiData data', key, data);
             if (data === undefined) {
                 return [false, {}];
             }
