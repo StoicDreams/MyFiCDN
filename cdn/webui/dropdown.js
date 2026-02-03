@@ -114,11 +114,14 @@
         getApiData() {
             const t = this;
             let key = t.dataset.api;
+            console.log('getApiData key', key);
             if (!key || typeof key !== 'string') return [true, {}];
             let data = webui.getData(key);
+            console.log('getApiData data', data);
             if (data === undefined) {
                 return [false, {}];
             }
+            console.log('getApiData typeof data', typeof data);
             if (typeof data !== 'object') {
                 key = key.split('.').pop();
                 let d = {};
