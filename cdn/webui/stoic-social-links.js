@@ -15,7 +15,7 @@ webui.define('webui-stoic-social-links', {
                 <a class="pa-1" title="Sponser us to help support development" href="https://github.com/sponsors/StoicDreams">
                 <webui-icon icon="dollar|shape:badge|bordered"></webui-icon>
                 </a>
-                <a class="pa-1" title="Link to Stoic Dreams Discord server" href="https://discord.com/channels/972856291909332993/1025781071608037466">
+                <a class="pa-1" title="Link to Stoic Dreams Discord server" href="https://discord.gg/5X4YSDFdHD">
                 <webui-icon icon="discord|stroke:thin|inverted|shape:circle"></webui-icon>
                 </a>
                 <a class="pa-1" title="Link to Stoic Dreams on Facebook" href="https://www.facebook.com/stoicdreams">
