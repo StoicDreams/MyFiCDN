@@ -26,7 +26,6 @@ webui.define("webui-app", {
             t.setAttribute('preload', 'dialogs');
         }
         webui.applyDynamicStyles = () => { t.applyDynamicStyles(); };
-
     },
     attr: ['page-content', 'page-data', 'page-content-encrypt', 'page-data-encrypt', 'root-page', 'content-extension'],
     setPageContent(content) {
@@ -35,7 +34,9 @@ webui.define("webui-app", {
         });
         let temp = webui.create('div');
         temp.innerHTML = content;
-        this.append(...temp.childNodes);
+        while (temp.firstChild) {
+            this.appendChild(temp.firstChild);
+        }
     },
     attrChanged(property, value) {
         const t = this;
@@ -47,7 +48,7 @@ webui.define("webui-app", {
                 webui._appSettings.contentExtension = value;
                 break;
             case 'pageContent':
-                appSettings.pageContentEndpoint = value;
+                webui._appSettings.pageContentEndpoint = value;
                 break;
             case 'pageData':
                 webui._appSettings.pageDataEndpoint = value;
@@ -73,17 +74,12 @@ webui.define("webui-app", {
                                 : winWidth > 500 ? 'w-tab'
                                     : 'w-mob'
             ;
-        let hasClass = false;
-        document.body.classList.forEach(cl => {
-            if (cl.startsWith('w-') && cl !== w) {
-                document.body.classList.remove(cl);
-            } else if (cl === w) {
-                hasClass = true;
-            }
-        });
-        if (!hasClass) {
-            document.body.classList.add(`${w}`);
+        if (t._currentWClass == w) return;
+        if (t._currentWClass !== undefined) {
+            document.body.classList.remove(t._currentWClass);
         }
+        t._currentWClass = w;
+        document.body.classList.add(w);
     },
     applyDynamicStyles() {
         const t = this;
@@ -101,26 +97,22 @@ webui.define("webui-app", {
         let wh = w.innerHeight || wb.clientHeight;
         let mw = m.clientWidth;
         let mh = wh - (h.clientHeight + f.clientHeight + u.clientHeight + b.clientHeight);
-        let value = `
-:root {
---window-width: ${ww}px;
---window-height: ${wh}px;
---main-width: ${mw}px;
---main-height: ${mh}px;
---header-height: ${h.clientHeight}px;
---footer-height: ${f.clientHeight}px;
---drawer-left-width: ${l.clientWidth}px;
---drawer-right-width: ${r.clientWidth}px;
---drawer-top-height: ${u.clientHeight}px;
---drawer-bottom-height: ${b.clientHeight}px;
-}
-`;
-        if (t._adsrCache !== value) {
-            t._adsrCache = value;
-            t.dynstyles.innerHTML = value;
+        const rootStyle = document.documentElement.style;
+        setProperty('--window-width', `${ww}px`);
+        setProperty('--window-height', `${wh}px`);
+        setProperty('--main-width', `${mw}px`);
+        setProperty('--main-height', `${mh}px`);
+        setProperty('--header-height', `${h.clientHeight}px`);
+        setProperty('--footer-height', `${f.clientHeight}px`);
+        setProperty('--drawer-left-width', `${l.clientWidth}px`);
+        setProperty('--drawer-right-width', `${r.clientWidth}px`);
+        setProperty('--drawer-top-height', `${u.clientHeight}px`);
+        setProperty('--drawer-bottom-height', `${b.clientHeight}px`);
+        function setProperty(key, val) {
+            if (rootStyle.getPropertyValue(key) === val) return;
+            rootStyle.setProperty(key, val);
         }
     },
-    _adsrCache: {},
     shadowTemplate: `
 <slot name="header"></slot>
 <main><slot></slot><slot name="content-footer"></slot></main>

@@ -1150,7 +1150,7 @@ const webui = (() => {
          * @returns {number}
          */
         hashCode(text) {
-            if (typeof text === undefined) return 0;
+            if (typeof text === 'undefined') return 0;
             if (typeof text !== 'string') return -1;
             let hash = 0x811c9dc5;
             text = text || '';
