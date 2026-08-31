@@ -20,6 +20,9 @@ export class MarkdownParser {
         'literal': (html, token, commands) => {
             return `${html}${token.content}\n`;
         },
+        'literal_inline': (html, token, commands) => {
+            return `${html}${commands.renderInline(token.content)}\n`;
+        },
         'paragraph': (html, token, commands) => {
             return `${html}<p>${commands.renderInline(token.content)}</p>\n`;
         },
@@ -35,7 +38,7 @@ export class MarkdownParser {
         this.rules.push({ test, processor });
         this.renderers[type] = render;
     }
-    insertRule(index, test, processor, render) {
+    insertRule(index, type, test, processor, render) {
         this.rules.splice(index, 0, { test, processor });
         this.renderers[type] = render;
     }
@@ -102,40 +105,40 @@ export class MarkdownParser {
             let cite = token.cite || '';
             return `${html}<webui-quote theme="${t.escapeQuote(theme)}" cite="${t.escapeQuote(cite)}">` + t.parse(token.content.join('\n')) + `</webui-quote>\n`;
         });
-        t.addRule('precode_start', /^[\s]*<pre><code>.*/, (line, state) => {
-            if (state.inCodeBlock || state.inTemplate) return { type: 'literal', content: line };
-            // TODO: Needs more refinement
+        t.addRule('precode_start', (line, state) => {
+            if (state.inCodeBlock || state.inTemplate) return false;
+            return /^[\s]*<pre><code>/i.test(line) && !/<\/code><\/pre>/i.test(line);
+        }, (line, state) => {
             state.inCodeBlock = true;
-            state.codeBlockTag = '<pre><code>'
+            state.codeBlockTag = '<pre><code>';
             return { type: 'literal', content: line };
         }, (html, token, commands) => {
-            return html;
+            return `${html}${token.content}\n`;
         });
-        t.addRule('precode_end', /^.*<\/code><\/pre>.*/, (line, state) => {
-            // TODO: Needs more refinement
-            if (state.codeBlockTag === '<pre><code>') {
-                state.inCodeBlock = false;
-            }
+        t.addRule('precode_end', (line, state) => {
+            return state.inCodeBlock && state.codeBlockTag === '<pre><code>' && /<\/code><\/pre>/i.test(line);
+        }, (line, state) => {
+            state.inCodeBlock = false;
+            state.codeBlockTag = '';
             return { type: 'literal', content: line };
         }, (html, token, commands) => {
-            return html;
+            return `${html}${token.content}\n`;
         });
-        t.addRule('webui_code_start', /^[\s]*<webui-code*/, (line, state) => {
-            if (state.inCodeBlock) {
-                return { type: 'literal', content: line };
-            }
+        t.addRule('webui_code_start', (line, state) => {
+            if (state.inCodeBlock || state.inTemplate) return false;
+            return /^[\s]*<webui-code\b[^>]*>/i.test(line) && !/<\/webui-code>/i.test(line);
+        }, (line, state) => {
             state.inCodeBlock = true;
             state.codeBlockTag = '<webui-code>';
             return { type: "webui_code_start", line };
         }, (html, token, commands) => {
             return `${html}${token.line}\n`;
         });
-        t.addRule('webui_code_end', /^[\s]*<\/webui-code>[\s]*/, (line, state) => {
-            if (state.codeBlockTag !== '<webui-code>') {
-                return { type: 'literal', content: line };
-            }
-            state.inCodeBlock = false;
+        t.addRule('webui_code_end', (line, state) => {
+            return state.inCodeBlock && state.codeBlockTag === '<webui-code>' && /<\/webui-code>/i.test(line);
+        }, (line, state) => {
             state.codeBlockTag = '';
+            state.inCodeBlock = false;
             return { type: "webui_code_end", line };
         }, (html, token, commands) => {
             return `${html}${token.line}\n`;
@@ -159,9 +162,9 @@ export class MarkdownParser {
             }
         }, (html, token, commands) => {
             if (token.label) {
-                return `${html}<webui-code lang="${t.escapeQuote(token.lang)}" label="${t.escapeQuote(token.label)}">`;
+                return `${html}<webui-code lang="${t.escapeQuote(token.lang)}" label="${t.escapeQuote(token.label)}">\n`;
             }
-            return `${html}<webui-code lang="${t.escapeQuote(token.lang)}">`;
+            return `${html}<webui-code lang="${t.escapeQuote(token.lang)}">\n`;
         });
         t.addRule('code_block_end', /^[\s]*```/, (line, state) => {
             webui.log.warn('Unexpected use of code_block_end');
@@ -175,54 +178,37 @@ export class MarkdownParser {
         }, (html, token, commands) => {
             return `${html}${commands.escapeCode(token.content)}\n`;
         });
-        t.addRule('html_selfclose', /^[\s]*<([a-z][a-z0-9-_]*)([^>]*)\/>[\s]*$/, (line, state) => {
-            const [, tag, attrs] = line.match(/^[\s]*<([a-z][a-z0-9-_]*)([^>]*)\/>[\s]*$/);
-            return { type: "html_selfclose", tag, attrs };
-        }, (html, token, commands) => {
-            return `${html}<${token.tag}${token.attrs} />\n`;
-        });
-        t.addRule('html_withclose', /^[\s]*<([a-z][a-z0-9-_]*)([^>]*)>.*<\/\1>[\s]*$/, (line, state) => {
-            const [, tag, attrs, contents] = line.match(/^[\s]*<([a-z][a-z0-9-_]*)([^>]*)>(.*)<\/\1>[\s]*$/);
-            return { type: "html_withclose", tag, attrs, contents };
-        }, (html, token, commands) => {
-            if (token.tag === 'template') {
-                return `${html}<${token.tag}${token.attrs}>${token.contents}</${token.tag}>\n`;
-            }
-            return `${html}<${token.tag}${token.attrs}>${commands.renderInline(token.contents)}</${token.tag}>\n`;
-        });
-        t.addRule('template_open', /^[\s]*<template([^>]*)>.*$/, (line, state) => {
-            if (state.inCodeBlock) return { type: 'literal', content: line };
-            const [, attrs, contents] = line.match(/^[\s]*<template([^>]*)>(.*)$/);
+        t.addRule('template_open', (line, state) => {
+            if (state.inCodeBlock) return false;
+            return /^[\s]*<template\b[^>]*>/i.test(line) && !/<\/template>/i.test(line);
+        }, (line, state) => {
             state.templateLayer++;
-            if (!state.inTemplate) {
-                state.inTemplate = true;
-            }
-            return { type: "template_open", attrs, contents };
+            state.inTemplate = true;
+            return { type: "literal_inline", content: line };
         }, (html, token, commands) => {
-            return `${html}<template${token.attrs}>${commands.renderInline(token.contents)}\n`;
+            return `${html}${commands.renderInline(token.content)}\n`;
         });
-        t.addRule('template_close', /^[^<]*<\/template>.*$/, (line, state) => {
-            if (state.inCodeBlock) return { type: 'literal', content: line };
-            const [, prefix, contents] = line.match(/^([^<]*)<\/template>(.*)$/);
+        t.addRule('template_close', (line, state) => {
+            if (state.inCodeBlock) return false;
+            return state.inTemplate && /<\/template>/i.test(line);
+        }, (line, state) => {
             state.templateLayer--;
-            if (state.templateLayer === 0) {
+            if (state.templateLayer <= 0) {
+                state.templateLayer = 0;
                 state.inTemplate = false;
             }
-            return { type: "template_close", prefix, contents };
+            return { type: "literal_inline", content: line };
         }, (html, token, commands) => {
-            return `${html}${token.prefix}</template>${commands.renderInline(token.contents)}\n`;
+            return `${html}${commands.renderInline(token.content)}\n`;
         });
-        t.addRule('html_open', /^[\s]*<([a-z][a-z0-9-_]*)([^>]*)>.*$/, (line, state) => {
-            const [, tag, attrs, contents] = line.match(/^[\s]*<([a-z][a-z0-9-_]*)([^>]*)>(.*)$/);
-            return { type: "html_open", tag, attrs, contents };
+        t.addRule('html_line', (line, state) => {
+            if (state.inCodeBlock || state.inTemplate) return false;
+            const trimmed = line.trim();
+            return /^<([a-z0-9-_]+|\/[a-z0-9-_]+|!--|!DOCTYPE)[^>]*>/i.test(trimmed);
+        }, (line, state) => {
+            return { type: 'literal_inline', content: line };
         }, (html, token, commands) => {
-            return `${html}<${token.tag}${token.attrs}>${commands.renderInline(token.contents)}\n`;
-        });
-        t.addRule('html_close', /^[\s]*<\/([a-z][a-z0-9-_]*)>.*$/, (line, state) => {
-            const [, tag, contents] = line.match(/^[\s]*<\/([a-z][a-z0-9-_]*)>(.*)$/);
-            return { type: "html_close", tag, contents };
-        }, (html, token, commands) => {
-            return `${html}</${token.tag}>${commands.renderInline(token.contents)}\n`;
+            return `${html}${commands.renderInline(token.content)}\n`;
         });
         t.addRule('table', (line, state) => {
             return line.includes("|");
@@ -309,7 +295,7 @@ export class MarkdownParser {
                 if (typeof rule.test === 'function' ? rule.test(line, state) : rule.test.test(line)) {
                     matched = true;
                     const result = rule.processor(line, state);
-                    if (state.inTemplate) {
+                    if (state.inTemplate && result.type !== 'literal_inline') {
                         state.tokens.push({ type: 'literal', content: line });
                     } else if (state.inCodeBlock && result.type === 'code_block_end') {
                         state.tokens.push({ type: 'literal', content: line });

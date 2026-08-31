@@ -18,7 +18,9 @@ const webui = (() => {
     const AsyncFunction = (async () => { }).constructor;
     window.AsyncFunction = AsyncFunction;
     const map = {
-        subs: {}
+        subs: {},
+        triggers: {},
+        hides: new Set()
     };
     // TODO: Temp debug
     window.subs = map.subs;
@@ -2301,7 +2303,8 @@ const webui = (() => {
         });
     }
     function applyDataHide() {
-        webui.querySelectorAll('[data-hide]').forEach(el => {
+        map.hides.forEach(el => {
+            if (!el.isConnected) return;
             let sel = el.dataset.hide;
             if (!sel) return;
             let found = document.querySelector(sel);
@@ -2323,11 +2326,13 @@ const webui = (() => {
         applyDataHide();
     }
     // Data signalling/transfers
-    function handleDataClick(ev) {
-        let key = ev.dataset.click;
-        if (!key) { return; }
-        webui.querySelectorAll(`[data-subscribe*="${key}:click"]`).forEach(sub => {
-            sub.click();
+    function handleDataClick(_) {
+        map.subs[key].forEach(sub => {
+            let subAttr = sub.getAttribute('data-subscribe') || '';
+            let subscriptions = subAttr.split('|').map(s => s.trim());
+            if (subscriptions.includes(`${key}:click`)) {
+                sub.click();
+            }
         });
     }
     async function handleDataTrigger(ev) {
@@ -2526,22 +2531,74 @@ const webui = (() => {
     function updateActivity() {
         lastActive = Date.now();
     }
-    function checkForSubscription(node) {
-        if (!node || !node.getAttribute) return;
-        let dataKey = node.getAttribute('data-subscribe');
-        if (dataKey) {
-            dataKey.split('|').forEach(dk => {
+    function updateNodeRegistry(node, action) {
+        if (!node || !node.dataset) return;
+        const manageSet = (registry, key, element) => {
+            if (!registry[key]) registry[key] = new Set();
+            action === 'add' ? registry[key].add(element) : registry[key].delete(element);
+        };
+        if (node.dataset.subscribe) {
+            node.dataset.subscribe.split('|').forEach(dk => {
                 let dataKey = dk.split(':')[0];
-                if (!map.subs[dataKey]) {
-                    map.subs[dataKey] = [];
-                }
-                if (map.subs[dataKey].indexOf(node) === -1) {
-                    map.subs[dataKey].push(node);
-                }
+                manageSet(map.subs, dataKey, node);
+                if (action === 'add') setDataToEl(node, dataKey);
+            });
+        }
+        if (node.dataset.trigger) {
+            node.dataset.trigger.split('|').forEach(tk => manageSet(map.triggers, tk.split(':')[0], node));
+        }
+        if (node.dataset.hide) {
+            manageSet(map.hides, node.dataset.hide, node);
+        }
+    }
+    function registerNode(node) {
+        if (!node || !node.dataset) return;
+
+        if (node.dataset.subscribe) {
+            node.dataset.subscribe.split('|').forEach(dk => {
+                let dataKey = dk.split(':')[0];
+                if (!map.subs[dataKey]) map.subs[dataKey] = new Set();
+                map.subs[dataKey].add(node);
                 setDataToEl(node, dataKey);
             });
         }
+        if (node.dataset.trigger) {
+            node.dataset.trigger.split('|').forEach(tk => {
+                let triggerKey = tk.split(':')[0];
+                if (!map.triggers[triggerKey]) map.triggers[triggerKey] = new Set();
+                map.triggers[triggerKey].add(node);
+            });
+        }
+        if (node.dataset.hide) {
+            map.hides.add(node);
+        }
     }
+
+    function registerTree(node) {
+        registerNode(node);
+        if (node.querySelectorAll) {
+            node.querySelectorAll('[data-subscribe], [data-trigger], [data-hide]').forEach(registerNode);
+        }
+    }
+
+    function unregisterNode(node) {
+        const scrubNode = (set) => set.delete(node);
+        Object.values(map.subs).forEach(scrubNode);
+        Object.values(map.triggers).forEach(scrubNode);
+        map.hides.delete(node);
+    }
+
+    function unregisterDetachedNodes() {
+        const scrubDetached = (set) => {
+            set.forEach(el => {
+                if (!el.isConnected) set.delete(el);
+            });
+        };
+        Object.values(map.subs).forEach(scrubDetached);
+        Object.values(map.triggers).forEach(scrubDetached);
+        scrubDetached(map.hides);
+    }
+
     function checkAttributeMutations(mutation) {
         if (mutation.type !== 'attributes') return;
         if (mutation.target && mutation.target.nodeName === 'INPUT' && mutation.target.getAttribute('type') === 'hidden' && mutation.attributeName === 'value') {
@@ -2550,6 +2607,7 @@ const webui = (() => {
         const t = mutation.target;
         applyAttributeSettings(t, mutation.attributeName);
     }
+
     function applyAttributeSettings(target, attr) {
         if (webui.closest(target.parentNode, 'webui-code,code,template')) {
             return;
@@ -2566,20 +2624,12 @@ const webui = (() => {
         }
         let value = target.getAttribute(attr);
         switch (attr) {
-            case 'top':
-                target.style.top = webui.pxIfNumber(value);
-                break;
-            case 'right':
-                target.style.right = webui.pxIfNumber(value);
-                break;
-            case 'bottom':
-                target.style.bottom = webui.pxIfNumber(value);
-                break;
-            case 'left':
-                target.style.left = webui.pxIfNumber(value);
-                break;
+            case 'top': target.style.top = webui.pxIfNumber(value); break;
+            case 'right': target.style.right = webui.pxIfNumber(value); break;
+            case 'bottom': target.style.bottom = webui.pxIfNumber(value); break;
+            case 'left': target.style.left = webui.pxIfNumber(value); break;
             case 'data-subscribe':
-                checkForSubscription(target);
+                registerNode(target); // Safely handles specific dynamic attribute changes
                 break;
             case 'elevation':
                 webui.removeClass(target, 'elevation-');
@@ -2593,8 +2643,7 @@ const webui = (() => {
             case 'theme':
                 if (typeof target.setTheme === 'function') {
                     target.setTheme(value);
-                }
-                else if (value) {
+                } else if (value) {
                     target.style.setProperty('--theme-color', `var(--color-${value})`);
                     target.style.setProperty('--theme-color-offset', `var(--color-${value}-offset)`);
                 } else {
@@ -2604,42 +2653,26 @@ const webui = (() => {
                 break;
         }
     }
-    function checkForSubscriptionAttr(node) {
-        checkForSubscription(node);
-        webui.querySelectorAll('[data-subscribe]', node).forEach(node => {
-            checkForSubscription(node);
-        });
-    }
-    function removeNodeFromSubs(node) {
-        Object.keys(map.subs).forEach(key => {
-            let index = map.subs[key].indexOf(node);
-            if (index !== -1) {
-                map.subs[key].splice(index, 1);
-            }
-        });
-    }
-    function handleRemovedNodes(node) {
-        if (node.dataset && node.dataset.subscribe) {
-            removeNodeFromSubs(node);
-        }
-        webui.querySelectorAll('[data-subscribe]', node).forEach(node => {
-            removeNodeFromSubs(node);
-        });
-    }
+
     function checkDataSubscriptionMutations(mutations) {
+        let needsCleanup = false;
         mutations.forEach(function (mutation) {
             checkAttributeMutations(mutation);
-            if (mutation.type === 'attributes' && mutation.attributeName === 'data-subscribe') {
-                checkForSubscription(mutation.target);
+            if (mutation.type === 'attributes' && ['data-subscribe', 'data-trigger', 'data-hide'].includes(mutation.attributeName)) {
+                unregisterNode(mutation.target);
+                registerNode(mutation.target);
             }
             Array.from(mutation.addedNodes).forEach(el => {
                 applyAttributeSettings(el);
-                checkForSubscriptionAttr(el);
+                registerTree(el);
             });
-            Array.from(mutation.removedNodes).forEach(el => {
-                handleRemovedNodes(el);
-            });
+            if (mutation.removedNodes.length > 0) {
+                needsCleanup = true;
+            }
         });
+        if (needsCleanup) {
+            unregisterDetachedNodes();
+        }
     }
     function transitionDelay(ms) {
         return new Promise((resolve, _) => {
@@ -2893,11 +2926,11 @@ const webui = (() => {
         });
     }
     function checkAddedNode(el) {
+        updateNodeRegistry(el, 'add');
         applyAttributeSettings(el);
         if (el.dataset && el.dataset.state) {
             loadState(el);
         }
-        //checkForSubscription(el);
         if (el.shadowRoot) {
             if (!el._isObserved) {
                 el._isObserved = 1;
@@ -2937,11 +2970,8 @@ const webui = (() => {
     }
     runWhenBodyIsReady(() => {
         checkNodes(document.childNodes);
+        registerTree(document.body);
         applyDataHide();
-        webui.querySelectorAll('[data-subscribe]').forEach(el => {
-            let key = el.dataset.subscribe;
-            setDataToEl(el, key);
-        });
         webui.querySelectorAll('[theme]').forEach(el => {
             applyAttributeSettings(el, 'theme');
         });
@@ -2952,7 +2982,6 @@ const webui = (() => {
             componentPreload(document.querySelector(`webui-${preload}`));
         });
         startObserving(document.body);
-        checkForSubscriptionAttr(document.body);
         loadPage();
         loadWebUIComponent('alert');
         loadWebUIComponent('content');
