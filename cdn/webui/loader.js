@@ -3091,16 +3091,18 @@ const webui = (() => {
     window.throwTestError = () => {
         throw new Error("This is a simulated uncaught error!");
     };
+    let resizeTimer;
     window.addEventListener('resize', ev => {
-        webui.applyDynamicStyles();
-        Object.keys(resizeSubscribers).forEach(key => {
-            resizeSubscribers[key](ev);
-        });
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            webui.applyDynamicStyles();
+            Object.keys(resizeSubscribers).forEach(key => {
+                resizeSubscribers[key](ev);
+            });
+        }, 150);
     });
-    (function applyDynamicStylesTimer() {
-        webui.applyDynamicStyles();
-        setTimeout(() => applyDynamicStylesTimer(), 1000);
-    })();
+    webui.applyDynamicStyles();
+    setTimeout(() => webui.applyDynamicStyles(), 1000);
     return webui;
 })();
 
@@ -3141,29 +3143,38 @@ setTimeout(() => {
     let tooltipDistancePadding = 30;
     document.body.addEventListener('click', CloseIfOpen);
     document.body.addEventListener('input', CloseIfOpen);
+    let isTooltipTicking = false;
     document.body.addEventListener('mousemove', ev => {
-        if (!window.tooltipsEnabled) return;
-        let [target, display] = CheckContainersForAriaLabel(ev.composedPath()[0]);
-        if (!target) { CloseIfOpen(); return; }
-        if (target === capturedElement) { return; }
-        let client = target.getBoundingClientRect();
-        isShowing = true;
-        let targetDisplay = `${target.innerText}`.trim();
-        if (targetDisplay === display && !webui.isTextOverflowing(target)) {
-            return;
-        }
-        capturedElement = target;
-        Tooltip.innerText = display;
-        Tooltip.className = 'tooltip open';
-        let myposition = {
-            x: client.left + (client.width / 2) - (Tooltip.clientWidth / 2),
-            y: client.top - tooltipDistancePadding
-        };
-        if (myposition.x + Tooltip.clientWidth > window.innerWidth) { myposition.x = window.innerWidth - Tooltip.clientWidth - 10; }
-        if (myposition.x < 0) { myposition.x = 10; }
-        if (myposition.y < 0) { myposition.y = client.top + client.height; }
+        if (!window.tooltipsEnabled || isTooltipTicking) return;
+        isTooltipTicking = true;
+        const eventTarget = ev.composedPath ? ev.composedPath()[0] : ev.target;
+        requestAnimationFrame(() => {
+            try {
+                let [target, display] = CheckContainersForAriaLabel(eventTarget);
+                if (!target) { CloseIfOpen(); return; }
+                if (target === capturedElement) { return; }
+                let client = target.getBoundingClientRect();
+                isShowing = true;
+                let targetDisplay = `${target.innerText}`.trim();
+                if (targetDisplay === display && !webui.isTextOverflowing(target)) {
+                    return;
+                }
+                capturedElement = target;
+                Tooltip.innerText = display;
+                Tooltip.className = 'tooltip open';
+                let myposition = {
+                    x: client.left + (client.width / 2) - (Tooltip.clientWidth / 2),
+                    y: client.top - tooltipDistancePadding
+                };
+                if (myposition.x + Tooltip.clientWidth > window.innerWidth) { myposition.x = window.innerWidth - Tooltip.clientWidth - 10; }
+                if (myposition.x < 0) { myposition.x = 10; }
+                if (myposition.y < 0) { myposition.y = client.top + client.height; }
 
-        Tooltip.style.left = `${myposition.x}px`;
-        Tooltip.style.top = `${myposition.y}px`;
+                Tooltip.style.left = `${myposition.x}px`;
+                Tooltip.style.top = `${myposition.y}px`;
+            } finally {
+                isTooltipTicking = false;
+            }
+        });
     });
 }, 100);
