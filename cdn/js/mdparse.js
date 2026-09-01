@@ -6,31 +6,38 @@
  * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
  */
 "use strict"
+
+const RX_CODE_SPAN = /`([^`]+)`/g;
+const RX_HTML_TAG = /<[a-zA-Z\/!][^>]*>/g;
+const RX_EMOJI = /:([a-zA-Z0-9_+-]+):/g;
+const RX_IMG_TITLE = /!\[(.*?)\]\((.*?) "(.*?)"\)/g;
+const RX_LINK_TITLE = /\[(.*?)\]\((.*?) "(.*?)"\)/g;
+const RX_IMG = /!\[(.*?)\]\((.*?)\)/g;
+const RX_LINK = /\[(.*?)\]\((.*?)\)/g;
+const RX_AST = /\\\*/g;
+const RX_STRONG_AST = /\*\*(.+?)\*\*/g;
+const RX_STRONG_US = /__(.+?)__/g;
+const RX_EM_AST = /\*(?!\s)(.+?)(?!\s)\*/g;
+const RX_EM_US = /(?<!\S)_(?!\s)(.+?)(?<!\s)_(?!\.\,\S)/g;
+const RX_HTML_ESCAPE = /[&"'<>]/g;
+const RX_CODE_ESCAPE = /[&<>]/g;
+const RX_QUOTE_ESCAPE = /[&"]/g;
+
 export class MarkdownParser {
     emojiMap = {};
     cache = {};
-    renderers = {
-        'blank': (html, token, commands) => {
-            return `${html}\n`;
-        },
-        'html_block': (html, token, commands) => {
-            const body = token.content.replace(new RegExp(`^<${token.tag}[^>]*>`), '').replace(new RegExp(`</${token.tag}>$`), '');
-            return `${html}<${token.tag}${token.attrs}>${commands.parse(body)}</${token.tag}>\n`;
-        },
-        'literal': (html, token, commands) => {
-            return `${html}${token.content}\n`;
-        },
-        'literal_inline': (html, token, commands) => {
-            return `${html}${commands.renderInline(token.content)}\n`;
-        },
-        'paragraph': (html, token, commands) => {
-            return `${html}<p>${commands.renderInline(token.content)}</p>\n`;
-        },
-        'no_paragraph': (html, token, commands) => {
-            return `${html}${commands.renderInline(token.content)}\n`;
-        }
-    };
     rules = [];
+    renderers = {
+        'blank': (html, token, parser) => `${html}\n`,
+        'html_block': (html, token, parser) => {
+            const body = token.content.replace(new RegExp(`^<${token.tag}[^>]*>`), '').replace(new RegExp(`</${token.tag}>$`), '');
+            return `${html}<${token.tag}${token.attrs}>${parser.parse(body)}</${token.tag}>\n`;
+        },
+        'literal': (html, token, parser) => `${html}${token.content}\n`,
+        'literal_inline': (html, token, parser) => `${html}${parser.renderInline(token.content)}\n`,
+        'paragraph': (html, token, parser) => `${html}<p>${parser.renderInline(token.content)}</p>\n`,
+        'no_paragraph': (html, token, parser) => `${html}${parser.renderInline(token.content)}\n`
+    };
     constructor() {
         this.initDefaultRules();
     }
@@ -44,50 +51,40 @@ export class MarkdownParser {
     }
     initDefaultRules() {
         const t = this;
-        const makeListRenderer = (listTag) => (html, token, commands) => {
-            const last = commands.stack[commands.stack.length - 1];
+        const makeListRenderer = (listTag) => (html, token, parser, stack) => {
+            const last = stack[stack.length - 1];
             if (!last || token.indent < last.indent || last.tag !== listTag) {
-                html = commands.closeListsAbove(html, token.indent);
+                html = parser.closeListsAbove(html, stack, token.indent);
             }
-            const top = commands.stack[commands.stack.length - 1];
+            const top = stack[stack.length - 1];
             if (!top || top.tag !== listTag || top.indent < token.indent) {
                 html += `<${listTag}>`;
-                commands.stack.push({ tag: listTag, indent: token.indent });
+                stack.push({ tag: listTag, indent: token.indent });
             }
             if (token.check) {
-                return html + `<li class="${commands.escapeQuote(token.check)}">${commands.renderInline(token.content)}</li>\n`;
+                return html + `<li class="${parser.escapeQuote(token.check)}">${parser.renderInline(token.content)}</li>\n`;
             }
-            return html + `<li>${commands.renderInline(token.content)}</li>\n`;
+            return html + `<li>${parser.renderInline(token.content)}</li>\n`;
         };
-        t.addRule('line-break', (line, state) => {
-            return /^[\s]*---.*/.test(line) && state.tableBuffer.length === 0;
-        }, (line, state) => {
+        t.addRule('line-break', (line, state) => /^[\s]*---.*/.test(line) && state.tableBuffer.length === 0,
+        (line, state) => {
             const res = line.match(/^[\s]*[-]+([^-]+).*/);
-            if (res) {
-                const [, theme] = res;
-                return { type: "line-break", theme };
-            }
-            return { type: "line-break" };
-        }, (html, token, commands) => {
-            if (token.theme) {
-                return `${html}<webui-line theme="${t.escapeQuote(token.theme)}"></webui-line>\n`;
-            }
-            return `${html}<webui-line></webui-line>\n`;
+            return res ? { type: "line-break", theme: res[1] } : { type: "line-break" };
+        }, (html, token, parser) => {
+            return token.theme
+                ? `${html}<webui-line theme="${parser.escapeQuote(token.theme)}"></webui-line>\n`
+                : `${html}<webui-line></webui-line>\n`;
         });
         t.addRule('heading', /^[\s]*#{1,6} /, (line, state) => {
             line = line.trim();
             const level = line.match(/^#+/)[0].length;
             return { type: "heading", level, content: line.slice(level + 1).trim() };
-        }, (html, token, commands) => {
-            return `${html}<h${token.level}>${commands.renderInline(token.content)}</h${token.level}>\n`;
-        });
+        }, (html, token, parser) => `${html}<h${token.level}>${parser.renderInline(token.content)}</h${token.level}>\n`);
         t.addRule('ul_item', /^[\s]*[\-\*]{1} /, (line, state) => {
             const indent = line.match(/^\s*/)[0].length;
-            let [, check] = line.match(/^\s*[\-\*]{1} ?(\[( |x)?\])?/);
-            if (check !== undefined) {
-                check = check === '[x]' ? 'checked' : 'unchecked';
-            }
-            return { type: "ul_item", content: line.replace(/^\s*[\-\*]{1}( \[( |x)?\])?/, '').trim(), indent, check };
+            let [, check] = line.match(/^\s*[\-\*]{1} ?(\[( \vert{}x)?\])?/);
+            if (check !== undefined) check = check === '[x]' ? 'checked' : 'unchecked';
+            return { type: "ul_item", content: line.replace(/^\s*[\-\*]{1}( \[( \vert{}x)?\])?/, '').trim(), indent, check };
         }, makeListRenderer('ul'));
         t.addRule('ol_item', /^[\s]*\d+\. /, (line, state) => {
             const indent = line.match(/^\s*/)[0].length;
@@ -97,52 +94,31 @@ export class MarkdownParser {
             line = line.trim();
             if (state.inCodeBlock || state.inTemplate) return { type: 'literal', content: line };
             let [, , , theme, cite, content] = line.match(/^[\s]*(>| )*(\[([a-z]+)?\:?([A-Za-z-_ ]+)?\])?(.*)/);
-            theme = theme?.replace(/(\[|\])/g, '') || 'info';
+            theme = theme?.replace(/(\[\vert{}\])/g, '') || 'info';
             state.inBlockquote = true;
             return { type: "blockquote", content: line.replace(/^> ?(\[([a-z]+)?:?([A-Za-z-_ ]+)?\])? ?/, ""), theme, cite };
-        }, (html, token, commands) => {
+        }, (html, token, parser) => {
             let theme = token.theme || 'info';
             let cite = token.cite || '';
-            return `${html}<webui-quote theme="${t.escapeQuote(theme)}" cite="${t.escapeQuote(cite)}">` + t.parse(token.content.join('\n')) + `</webui-quote>\n`;
+            return `${html}<webui-quote theme="${parser.escapeQuote(theme)}" cite="${parser.escapeQuote(cite)}">${parser.parse(token.content.join('\n'))}</webui-quote>\n`;
         });
-        t.addRule('precode_start', (line, state) => {
+        t.addRule('html_line', (line, state) => {
             if (state.inCodeBlock || state.inTemplate) return false;
-            return /^[\s]*<pre><code>/i.test(line) && !/<\/code><\/pre>/i.test(line);
+            return /^<([a-z0-9-_]+|\/[a-z0-9-_]+|!--|!DOCTYPE)[^>]*>/i.test(line.trim());
         }, (line, state) => {
-            state.inCodeBlock = true;
-            state.codeBlockTag = '<pre><code>';
-            return { type: 'literal', content: line };
-        }, (html, token, commands) => {
-            return `${html}${token.content}\n`;
-        });
-        t.addRule('precode_end', (line, state) => {
-            return state.inCodeBlock && state.codeBlockTag === '<pre><code>' && /<\/code><\/pre>/i.test(line);
-        }, (line, state) => {
-            state.inCodeBlock = false;
-            state.codeBlockTag = '';
-            return { type: 'literal', content: line };
-        }, (html, token, commands) => {
-            return `${html}${token.content}\n`;
-        });
-        t.addRule('webui_code_start', (line, state) => {
-            if (state.inCodeBlock || state.inTemplate) return false;
-            return /^[\s]*<webui-code\b[^>]*>/i.test(line) && !/<\/webui-code>/i.test(line);
-        }, (line, state) => {
-            state.inCodeBlock = true;
-            state.codeBlockTag = '<webui-code>';
-            return { type: "webui_code_start", line };
-        }, (html, token, commands) => {
-            return `${html}${token.line}\n`;
-        });
-        t.addRule('webui_code_end', (line, state) => {
-            return state.inCodeBlock && state.codeBlockTag === '<webui-code>' && /<\/webui-code>/i.test(line);
-        }, (line, state) => {
-            state.codeBlockTag = '';
-            state.inCodeBlock = false;
-            return { type: "webui_code_end", line };
-        }, (html, token, commands) => {
-            return `${html}${token.line}\n`;
-        });
+            if (/^[\s]*<pre><code>/i.test(line) && !/<\/code><\/pre>/i.test(line)) {
+                state.inCodeBlock = true; state.codeBlockTag = '<pre><code>';
+                return { type: 'literal', content: line };
+            }
+            if (/^[\s]*<webui-code\b[^>]*>/i.test(line) && !/<\/webui-code>/i.test(line)) {
+                state.inCodeBlock = true; state.codeBlockTag = '<webui-code>';
+                return { type: "literal", content: line };
+            }
+            if (/^[\s]*<template\b[^>]*>/i.test(line) && !/<\/template>/i.test(line)) {
+                state.templateLayer++; state.inTemplate = true;
+            }
+            return { type: 'literal_inline', content: line };
+        }, (html, token, parser) => `${html}${parser.renderInline(token.content)}\n`);
         t.addRule('code_block_start', /^[\s]*```/, (line, state) => {
             line = line.trim();
             let [, tag, lang, , label] = line.match(/^([`]+)([^:\|;]*)(:|\||;)?(.*)/);
@@ -151,72 +127,37 @@ export class MarkdownParser {
                     state.inCodeBlock = false;
                     state.codeBlockTag = '';
                     return { type: "code_block_end" };
-                } else {
-                    return { type: 'literal', content: line };
                 }
-            } else {
-                state.inCodeBlock = true;
-                state.codeBlockTag = tag;
-                lang = !!lang ? lang.trim() : 'text';
-                return { type: "code_block_start", lang, label };
+                return { type: 'literal', content: line };
             }
-        }, (html, token, commands) => {
-            if (token.label) {
-                return `${html}<webui-code lang="${t.escapeQuote(token.lang)}" label="${t.escapeQuote(token.label)}">\n`;
-            }
-            return `${html}<webui-code lang="${t.escapeQuote(token.lang)}">\n`;
+            state.inCodeBlock = true;
+            state.codeBlockTag = tag;
+            return { type: "code_block_start", lang: lang ? lang.trim() : 'text', label };
+        }, (html, token, parser) => {
+            return token.label
+                ? `${html}<webui-code lang="${parser.escapeQuote(token.lang)}" label="${parser.escapeQuote(token.label)}">\n`
+                : `${html}<webui-code lang="${parser.escapeQuote(token.lang)}">\n`;
         });
-        t.addRule('code_block_end', /^[\s]*```/, (line, state) => {
+        t.addRule('code_block_end', /^[\s]*```/, () => {
             webui.log.warn('Unexpected use of code_block_end');
-        }, (html, token, commands) => {
-            return `${html}</webui-code>\n`;
-        });
-        t.addRule('code_line', (line, state) => {
-            return state.inCodeBlock && !/^[\s]*```/.test(line);
-        }, (line, state) => {
-            return { type: 'code_line', content: line };
-        }, (html, token, commands) => {
-            return `${html}${commands.escapeCode(token.content)}\n`;
-        });
-        t.addRule('template_open', (line, state) => {
-            if (state.inCodeBlock) return false;
-            return /^[\s]*<template\b[^>]*>/i.test(line) && !/<\/template>/i.test(line);
-        }, (line, state) => {
-            state.templateLayer++;
-            state.inTemplate = true;
-            return { type: "literal_inline", content: line };
-        }, (html, token, commands) => {
-            return `${html}${commands.renderInline(token.content)}\n`;
-        });
-        t.addRule('template_close', (line, state) => {
-            if (state.inCodeBlock) return false;
-            return state.inTemplate && /<\/template>/i.test(line);
-        }, (line, state) => {
-            state.templateLayer--;
-            if (state.templateLayer <= 0) {
-                state.templateLayer = 0;
-                state.inTemplate = false;
+        }, (html, token, parser) => `${html}</webui-code>\n`);
+        t.addRule('code_line', (line, state) => state.inCodeBlock && !/^[\s]*```/.test(line),
+        (line, state) => {
+            if (state.codeBlockTag === '<pre><code>' && /<\/code><\/pre>/i.test(line)) {
+                state.inCodeBlock = false; state.codeBlockTag = '';
+                return { type: 'literal', content: line };
             }
-            return { type: "literal_inline", content: line };
-        }, (html, token, commands) => {
-            return `${html}${commands.renderInline(token.content)}\n`;
-        });
-        t.addRule('html_line', (line, state) => {
-            if (state.inCodeBlock || state.inTemplate) return false;
-            const trimmed = line.trim();
-            return /^<([a-z0-9-_]+|\/[a-z0-9-_]+|!--|!DOCTYPE)[^>]*>/i.test(trimmed);
-        }, (line, state) => {
-            return { type: 'literal_inline', content: line };
-        }, (html, token, commands) => {
-            return `${html}${commands.renderInline(token.content)}\n`;
-        });
-        t.addRule('table', (line, state) => {
-            if (state.inCodeBlock || state.inTemplate) return false;
-            return line.includes("|");
-        }, (line, state) => {
+            if (state.codeBlockTag === '<webui-code>' && /<\/webui-code>/i.test(line)) {
+                state.inCodeBlock = false; state.codeBlockTag = '';
+                return { type: 'literal', content: line };
+            }
+            return { type: 'code_line', content: line };
+        }, (html, token, parser) => `${html}${parser.escapeCode(token.content)}\n`);
+        t.addRule('table', (line, state) => !state.inCodeBlock && !state.inTemplate && line.includes("|"),
+        (line, state) => {
             state.tableBuffer.push(line);
             return false;
-        }, (html, token, commands) => {
+        }, (html, token, parser) => {
             const rows = token.rows.map(r => r.trim().replace(/^\|/, '').replace(/\|$/, '').split("|").map(c => c.trim()));
             const head = rows[0];
             const alignments = (rows[1] || []).map(cell => {
@@ -226,33 +167,45 @@ export class MarkdownParser {
                 if (/^:-+$/.test(trimmed)) return 'justify';
                 return 'justify';
             });
-            const body = rows.slice(2);
             html += `<table class="bordered" theme="info"><thead><tr>` + head.map((h, i) => {
                 const align = alignments[i];
-                const cls = align ? ` class="text-${t.escapeQuote(align)}"` : '';
-                return `<th${cls}>${commands.renderInline(h)}</th>`;
+                const cls = align ? ` class="text-${parser.escapeQuote(align)}"` : '';
+                return `<th${cls}>${parser.renderInline(h)}</th>`;
             }).join('') + "</tr></thead><tbody>";
-            for (const row of body) {
+            for (const row of rows.slice(2)) {
                 html += "<tr>" + row.map((c, i) => {
                     const align = alignments[i];
-                    const cls = align ? ` class="text-${t.escapeQuote(align)}"` : '';
-                    return `<td${cls}>${commands.renderInline(c)}</td>`;
+                    const cls = align ? ` class="text-${parser.escapeQuote(align)}"` : '';
+                    return `<td${cls}>${parser.renderInline(c)}</td>`;
                 }).join('') + "</tr>";
             }
             return `${html}</tbody></table>\n`;
         });
     }
+    normalizeMultiLineTags(text) {
+        let inTag = false, inStr = false, strChar = '', out = '';
+        for (let i = 0; i < text.length; i++) {
+            let c = text[i];
+            if (!inTag && c === '<' && /[a-zA-Z\/!]/.test(text[i + 1] || '')) inTag = true;
+            else if (inTag && !inStr && (c === '"' || c === "'")) { inStr = true; strChar = c; }
+            else if (inTag && inStr && c === strChar) inStr = false;
+            else if (inTag && !inStr && c === '>') inTag = false;
+            if (inTag && c === '\n') out += ' ';
+            else if (inTag && c === '\r');
+            else out += c;
+        }
+        return out;
+    }
     parse(text, noParagraph) {
-        if (text === undefined || text === null || text === '') return '';
-        const t = this;
-        if (t.cache[text]) return t.cache[text];
-        const tokens = t.tokenize(t.trimLinePreTabs(text), noParagraph);
-        let html = t.render(tokens);
-        t.cache[text] = html;
+        if (!text) return '';
+        if (this.cache[text]) return this.cache[text];
+        let cleanText = this.normalizeMultiLineTags(text);
+        const tokens = this.tokenize(this.trimLinePreTabs(cleanText), noParagraph);
+        let html = this.render(tokens);
+        this.cache[text] = html;
         return html;
     }
     tokenize(text, noParagraph) {
-        const t = this;
         const state = {
             tokens: [],
             lines: text.split(/\r?\n/),
@@ -262,11 +215,10 @@ export class MarkdownParser {
             codeBlockTag: '',
             tableBuffer: [],
             blockquoteBuffer: [],
-            templateLayer: 0,
-            captureLiteral: false
+            templateLayer: 0
         };
         const flushTable = () => {
-            if (state.tableBuffer.length !== 0) {
+            if (state.tableBuffer.length > 0) {
                 state.tokens.push({ type: "table", rows: [...state.tableBuffer] });
                 state.tableBuffer = [];
             }
@@ -277,7 +229,7 @@ export class MarkdownParser {
             if (state.blockquoteBuffer.length) {
                 state.tokens.push({
                     type: "blockquote_group",
-                    content: [...state.blockquoteBuffer.map(b => b.content)],
+                    content: state.blockquoteBuffer.map(b => b.content),
                     theme: state.blockquoteBuffer[0].theme,
                     cite: state.blockquoteBuffer[0].cite
                 });
@@ -287,12 +239,11 @@ export class MarkdownParser {
         for (let line of state.lines) {
             let matched = false;
             if (line.trim() === '') {
-                flushTable();
-                flushBlockquote();
+                flushTable(); flushBlockquote();
                 state.tokens.push({ type: "blank" });
                 continue;
             }
-            for (let rule of t.rules) {
+            for (let rule of this.rules) {
                 if (typeof rule.test === 'function' ? rule.test(line, state) : rule.test.test(line)) {
                     matched = true;
                     const result = rule.processor(line, state);
@@ -300,12 +251,10 @@ export class MarkdownParser {
                         state.tokens.push({ type: 'literal', content: line });
                     } else if (state.inCodeBlock && result.type === 'code_block_end') {
                         state.tokens.push({ type: 'literal', content: line });
-                    } else if (state.inCodeBlock && result.type !== 'code_block_start' && result.type !== 'webui_code_start') {
+                    } else if (state.inCodeBlock && !['code_block_start', 'webui_code_start'].includes(result.type)) {
                         state.tokens.push({ type: 'code_line', content: line });
                     } else if (result) {
-                        if (result.type !== 'table') {
-                            flushTable();
-                        }
+                        if (result.type !== 'table') flushTable();
                         if (result.type === "blockquote") {
                             state.blockquoteBuffer.push(result);
                             continue;
@@ -317,6 +266,17 @@ export class MarkdownParser {
                 }
             }
             if (matched) continue;
+            if (state.inTemplate && /<\/template>/i.test(line)) {
+                state.templateLayer--;
+                if (state.templateLayer <= 0) {
+                    state.templateLayer = 0;
+                    state.inTemplate = false;
+                }
+                // ✨ FIX: Safely push the closing tag as a literal and skip the paragraph wrap
+                state.tokens.push({ type: 'literal', content: line });
+                continue;
+            }
+
             if (state.inTemplate || state.inCodeBlock) {
                 state.tokens.push({ type: 'literal', content: line });
                 continue;
@@ -326,133 +286,91 @@ export class MarkdownParser {
                 state.inBlockquote = false;
             }
             flushTable();
-            const type = noParagraph ? 'no_paragraph' : 'paragraph';
-            state.tokens.push({ type, content: line.trim() });
+            state.tokens.push({ type: noParagraph ? 'no_paragraph' : 'paragraph', content: line.trim() });
         }
-        flushTable();
-        flushBlockquote();
+        flushTable(); flushBlockquote();
         return state.tokens;
     }
     render(tokens) {
-        const t = this;
         let html = "";
         const stack = [];
-        const commands = {
-            stack: stack,
-            closeListsAbove: (html, level) => {
-                while (stack.length && stack[stack.length - 1].indent > level) {
-                    const tag = stack.pop().tag;
-                    html += `</${tag}>\n`;
-                }
-                return html;
-            },
-            escapeCode: t.escapeCode.bind(t),
-            escapeHtml: t.escapeHtml.bind(t),
-            escapeQuote: t.escapeQuote.bind(t),
-            parse: t.parse.bind(t),
-            renderInline: t.renderInline.bind(t)
-        }
         for (const token of tokens) {
-            if (['ol_item', 'ul_item'].indexOf(token.type) === -1 && stack.length > 0) {
-                html = commands.closeListsAbove(html, -1);
+            if (!['ol_item', 'ul_item'].includes(token.type) && stack.length > 0) {
+                html = this.closeListsAbove(html, stack, -1);
             }
-            const render = t.renderers[token.type];
-            if (typeof render !== 'function') {
-                continue;
+            const render = this.renderers[token.type];
+            if (typeof render === 'function') {
+                html = render(html, token, this, stack);
             }
-            html = render(html, token, commands);
         }
-        html = commands.closeListsAbove(html, -1);
+        return this.closeListsAbove(html, stack, -1);
+    }
+    closeListsAbove(html, stack, level) {
+        while (stack.length && stack[stack.length - 1].indent > level) {
+            html += `</${stack.pop().tag}>\n`;
+        }
         return html;
     }
     trimLinePreTabs(html, tabLength = 4) {
-        let lines = [], ls = 0;
-        let tabRepl = webui.repeat(' ', tabLength);
-        let startLines = html.replace(/\t/g, tabRepl).split('\n');
+        const tabRepl = ' '.repeat(tabLength);
+        const startLines = html.replace(/\t/g, tabRepl).split('\n');
         let tabLen = 999;
-        let index = 0;
-        for (let line of startLines) {
-            if (index++ == 0) continue;
-            let m = line.match(/^([ ]*)/)[0].length;
+        for (let i = 1; i < startLines.length; i++) {
+            let m = startLines[i].match(/^([ ]*)/)[0].length;
             if (m === 0) return html;
-            if (m < tabLen) {
-                tabLen = m;
-            }
-        };
-        if (tabLen === 999) {
-            tabLen = 0;
+            if (m < tabLen) tabLen = m;
         }
-        if (tabLen === 0) return html;
-        let rgx = new RegExp(`^[ ]{1,${tabLen}}`);
-        for (let line of startLines) {
-            lines.push(line.replace(rgx, ''));
-        }
-        return lines.join('\n');
+        if (tabLen === 999 || tabLen === 0) return html;
+        const rgx = new RegExp(`^[ ]{1,${tabLen}}`);
+        return startLines.map(line => line.replace(rgx, '')).join('\n');
     }
     renderInline(text) {
         const t = this;
-        const codeSpans = [];
-        text = text.replace(/`([^`]+)`/g, (_, code) => {
+        const codeSpans = [], htmlTags = [], emojis = [];
+        text = text.replace(RX_CODE_SPAN, (_, code) => {
             const token = `^^CODE${codeSpans.length}^^`;
             const [, , theme, refined] = code.match(/^(([a-z]+):)?(.*)/);
-            if (theme) {
-                codeSpans.push(`<code theme="${t.escapeQuote(theme)}">${t.escapeCode(refined)}</code>`);
-            } else {
-                codeSpans.push(`<code>${t.escapeCode(code)}</code>`);
-            }
+            codeSpans.push(theme
+                ? `<code theme="${t.escapeQuote(theme)}">${t.escapeCode(refined)}</code>`
+                : `<code>${t.escapeCode(code)}</code>`);
             return token;
         });
-        const htmlTags = [];
-        text = text.replace(/<[a-zA-Z\/!][^>]*>/g, (match) => {
+        text = text.replace(RX_HTML_TAG, (match) => {
             const token = `^^HTML${htmlTags.length}^^`;
             htmlTags.push(match);
             return token;
         });
-        const emojis = [];
-        text = text.replace(/:([a-zA-Z0-9_+-]+):/g, (_, emoji) => {
+        text = text.replace(RX_EMOJI, (_, emoji) => {
             const token = `^^EMOJI${emojis.length}^^`;
             emojis.push(`<webui-emoji emoji="${t.escapeQuote(emoji)}"></webui-emoji>`);
             return token;
         });
         text = text
-            .replace(/!\[(.*?)\]\((.*?) "(.*?)"\)/g, '<img alt="$1" src="$2" title="$3" />')
-            .replace(/\[(.*?)\]\((.*?) "(.*?)"\)/g, '<a href="$2" title="$3">$1</a>')
-            .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" />')
-            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
-        text = text.replace(/\\\*/g, '&ast;');
-        text = text
-            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-            .replace(/__(.+?)__/g, '<strong>$1</strong>')
-            .replace(/\*(?!\s)(.+?)(?!\s)\*/g, '<em>$1</em>')
-            .replace(/(?<!\S)_(?!\s)(.+?)(?<!\s)_(?!\.\,\S)/g, '<em>$1</em>');
-        codeSpans.forEach((val, i) => {
-            text = text.replace(`^^CODE${i}^^`, val);
-        });
-        emojis.forEach((val, i) => {
-            text = text.replace(`^^EMOJI${i}^^`, val);
-        });
-        htmlTags.forEach((val, i) => {
-            text = text.replace(`^^HTML${i}^^`, val);
-        });
+            .replace(RX_IMG_TITLE, '<img alt="$1" src="$2" title="$3" />')
+            .replace(RX_LINK_TITLE, '<a href="$2" title="$3">$1</a>')
+            .replace(RX_IMG, '<img alt="$1" src="$2" />')
+            .replace(RX_LINK, '<a href="$2">$1</a>')
+            .replace(RX_AST, '&ast;')
+            .replace(RX_STRONG_AST, '<strong>$1</strong>')
+            .replace(RX_STRONG_US, '<strong>$1</strong>')
+            .replace(RX_EM_AST, '<em>$1</em>')
+            .replace(RX_EM_US, '<em>$1</em>');
+        codeSpans.forEach((val, i) => text = text.replace(`^^CODE${i}^^`, val));
+        emojis.forEach((val, i) => text = text.replace(`^^EMOJI${i}^^`, val));
+        htmlTags.forEach((val, i) => text = text.replace(`^^HTML${i}^^`, val));
+
         return text;
     }
     escapeHtml(text) {
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
+        const map = { '&': '&amp;', '"': '&quot;', "'": '&#039;', '<': '&lt;', '>': '&gt;' };
+        return text.replace(RX_HTML_ESCAPE, m => map[m]);
     }
     escapeCode(text) {
-        return text
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;");
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+        return text.replace(RX_CODE_ESCAPE, m => map[m]);
     }
     escapeQuote(text) {
-        return text
-            .replace(/&/g, '&amp;')
-            .replace(/"/g, "&quot;");
+        const map = { '&': '&amp;', '"': '&quot;' };
+        return text.replace(RX_QUOTE_ESCAPE, m => map[m]);
     }
 }

@@ -18,7 +18,9 @@
         try {
             value = JSON.parse(value);
             return { key, value };
-        } catch (ex) { console.error('Failed to parse JSON from template data', value, t); }
+        } catch (ex) {
+            console.error('Failed to parse JSON from template data', value, ex);
+        }
     }
     function extractHTML(template, key) {
         if (!key) {
@@ -53,19 +55,19 @@
         connected() {
             const t = this;
             t._slotText.assignedElements().forEach(template => {
-                let { key, value } = extractText(template);
+                let { key, value } = extractText(template) || {};
                 if (key && value) {
                     webui.setData(key, value);
                 }
             });
             t._slotHtml.assignedElements().forEach(template => {
-                let { key, value } = extractHTML(template);
+                let { key, value } = extractHTML(template) || {};
                 if (key && value) {
                     webui.setData(key, value);
                 }
             });
             t._slotJson.assignedElements().forEach(template => {
-                let { key, value } = extractJSON(template);
+                let { key, value } = extractJSON(template) || {};
                 if (key && value) {
                     webui.setData(key, value);
                 }
