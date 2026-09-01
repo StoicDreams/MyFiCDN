@@ -1,6 +1,6 @@
 <webui-grid  theme="info" columns="auto max-content">
     <h3>Year: <strong class="ml-1" data-subscribe="page-mock-report-current.year:text"></strong></h3>
-    <webui-pagination class="my-a" data-subscribe="mock-data-index:setValue|mock-report:setData" data-current="page-mock-report-current" loop max-pages="3"></webui-pagination>
+    <webui-pagination class="my-a" data-subscribe="mock-data-index:setValue|mock-report:setData" data-current="page-mock-report-current" per-page="1" loop max-pages="3"></webui-pagination>
 </webui-grid>
 <webui-table theme="tertiary" columns="Id|_rowId;:Name|name;:Usage Percentage:|usage_percentage;Custom;:Action:" data-subscribe="page-mock-report-current.languages:setData" sortable="_rowId;name;usage_percentage" bordered class="my-3" current-sort="usage_percentage" current-sort-dir="desc" column-formats="action:html;custom:html">
     <template slot="column" name="action">

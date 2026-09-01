@@ -2531,56 +2531,30 @@ const webui = (() => {
     function updateActivity() {
         lastActive = Date.now();
     }
-    function updateNodeRegistry(node, action) {
-        if (!node || !node.dataset) return;
-        const manageSet = (registry, key, element) => {
-            if (!registry[key]) registry[key] = new Set();
-            action === 'add' ? registry[key].add(element) : registry[key].delete(element);
-        };
-        if (node.dataset.subscribe) {
-            node.dataset.subscribe.split('|').forEach(dk => {
-                let dataKey = dk.split(':')[0];
-                manageSet(map.subs, dataKey, node);
-                if (action === 'add') setDataToEl(node, dataKey);
-            });
-        }
-        if (node.dataset.trigger) {
-            node.dataset.trigger.split('|').forEach(tk => manageSet(map.triggers, tk.split(':')[0], node));
-        }
-        if (node.dataset.hide) {
-            manageSet(map.hides, node.dataset.hide, node);
-        }
-    }
     function registerNode(node) {
-        if (!node || !node.dataset) return;
-
-        if (node.dataset.subscribe) {
-            node.dataset.subscribe.split('|').forEach(dk => {
-                let dataKey = dk.split(':')[0];
+        if (!node || typeof node.getAttribute !== 'function') return;
+        let sub = node.getAttribute('data-subscribe');
+        if (sub) {
+            sub.split('|').forEach(dk => {
+                let dataKey = dk.split(':')[0].trim();
                 if (!map.subs[dataKey]) map.subs[dataKey] = new Set();
                 map.subs[dataKey].add(node);
                 setDataToEl(node, dataKey);
             });
         }
-        if (node.dataset.trigger) {
-            node.dataset.trigger.split('|').forEach(tk => {
-                let triggerKey = tk.split(':')[0];
+        let trig = node.getAttribute('data-trigger');
+        if (trig) {
+            trig.split('|').forEach(tk => {
+                let triggerKey = tk.split(':')[0].trim();
                 if (!map.triggers[triggerKey]) map.triggers[triggerKey] = new Set();
                 map.triggers[triggerKey].add(node);
             });
         }
-        if (node.dataset.hide) {
+        let hide = node.getAttribute('data-hide');
+        if (hide) {
             map.hides.add(node);
         }
     }
-
-    function registerTree(node) {
-        registerNode(node);
-        if (node.querySelectorAll) {
-            node.querySelectorAll('[data-subscribe], [data-trigger], [data-hide]').forEach(registerNode);
-        }
-    }
-
     function unregisterNode(node) {
         const scrubNode = (set) => set.delete(node);
         Object.values(map.subs).forEach(scrubNode);
@@ -2662,10 +2636,6 @@ const webui = (() => {
                 unregisterNode(mutation.target);
                 registerNode(mutation.target);
             }
-            Array.from(mutation.addedNodes).forEach(el => {
-                applyAttributeSettings(el);
-                registerTree(el);
-            });
             if (mutation.removedNodes.length > 0) {
                 needsCleanup = true;
             }
@@ -2926,7 +2896,7 @@ const webui = (() => {
         });
     }
     function checkAddedNode(el) {
-        updateNodeRegistry(el, 'add');
+        registerNode(el);
         applyAttributeSettings(el);
         if (el.dataset && el.dataset.state) {
             loadState(el);
@@ -2970,7 +2940,6 @@ const webui = (() => {
     }
     runWhenBodyIsReady(() => {
         checkNodes(document.childNodes);
-        registerTree(document.body);
         applyDataHide();
         webui.querySelectorAll('[theme]').forEach(el => {
             applyAttributeSettings(el, 'theme');

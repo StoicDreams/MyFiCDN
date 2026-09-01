@@ -211,6 +211,7 @@ export class MarkdownParser {
             return `${html}${commands.renderInline(token.content)}\n`;
         });
         t.addRule('table', (line, state) => {
+            if (state.inCodeBlock || state.inTemplate) return false;
             return line.includes("|");
         }, (line, state) => {
             state.tableBuffer.push(line);
@@ -401,6 +402,12 @@ export class MarkdownParser {
             }
             return token;
         });
+        const htmlTags = [];
+        text = text.replace(/<[a-zA-Z\/!][^>]*>/g, (match) => {
+            const token = `^^HTML${htmlTags.length}^^`;
+            htmlTags.push(match);
+            return token;
+        });
         const emojis = [];
         text = text.replace(/:([a-zA-Z0-9_+-]+):/g, (_, emoji) => {
             const token = `^^EMOJI${emojis.length}^^`;
@@ -418,12 +425,14 @@ export class MarkdownParser {
             .replace(/__(.+?)__/g, '<strong>$1</strong>')
             .replace(/\*(?!\s)(.+?)(?!\s)\*/g, '<em>$1</em>')
             .replace(/(?<!\S)_(?!\s)(.+?)(?<!\s)_(?!\.\,\S)/g, '<em>$1</em>');
-
         codeSpans.forEach((val, i) => {
             text = text.replace(`^^CODE${i}^^`, val);
         });
         emojis.forEach((val, i) => {
             text = text.replace(`^^EMOJI${i}^^`, val);
+        });
+        htmlTags.forEach((val, i) => {
+            text = text.replace(`^^HTML${i}^^`, val);
         });
         return text;
     }
