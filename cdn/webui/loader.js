@@ -2831,6 +2831,7 @@ const webui = (() => {
             let script = webui.create('script');
             script.setAttribute('async', true);
             script.setAttribute('src', `${wcRoot}webui/${wc}${wcMin}.js`);
+            script.setAttribute('crossorigin', 'anonymous');
             script.onload = () => {
                 wcLoaded[wc] = true;
                 resolve();
@@ -2853,6 +2854,7 @@ const webui = (() => {
             let script = webui.create('script');
             script.setAttribute('async', true);
             script.setAttribute('src', `${webui.appSrc}/${wc}${webui.appMin}.js`);
+            script.setAttribute('crossorigin', 'anonymous');
             script.onload = () => {
                 appLoaded[wc] = true;
                 resolve();
