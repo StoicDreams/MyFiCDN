@@ -76,7 +76,7 @@ Stroke line joins: miter|round|bevel
                 handler(notFoundDef);
             }
             setTimeout(() => {
-                waiter[name].forEach(h => h(iconDef));
+                waiter[name].forEach(h => h(cache[name]));
                 delete waiter[name];
             }, 10);
         }
