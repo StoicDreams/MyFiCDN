@@ -3080,8 +3080,7 @@ const webui = (() => {
         function errorHandler(event) {
             event.preventDefault();
             const message = buildMessage(event);
-            const errorObj = event.error || event.reason || event;
-            console.error(errorObj);
+            console.error(event.error || event.reason || event);
             webui.alert(message, 'danger');
             return true;
         }
