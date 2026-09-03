@@ -64,16 +64,17 @@ Stroke line joins: miter|round|bevel
                 iconDef = await webui.fetchWithCache(`${srcRoot}${name}.webui`);
                 if (!iconDef.startsWith("WEBUI-ICON-")) {
                     noteMissingIcon(name);
-                    iconDef = notFoundDef;
+                    cache[name] = notFoundDef;
+                    handler(notFoundDef);
                 } else {
-                    iconDef = iconDef.replace(/\r/g, '');
+                    cache[name] = iconDef.replace(/\r/g, '');
+                    handler(cache[name]);
                 }
             } catch (ex) {
                 noteMissingIcon(name, ex);
-                iconDef = notFoundDef;
+                cache[name] = notFoundDef;
+                handler(notFoundDef);
             }
-            cache[name] = iconDef;
-            handler(iconDef);
             setTimeout(() => {
                 waiter[name].forEach(h => h(iconDef));
                 delete waiter[name];
