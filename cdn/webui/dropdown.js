@@ -339,6 +339,7 @@ display:grid;
 div {
 display:flex;
 flex-grow:1;
+min-width:0;
 }
 select {
 display:block;
@@ -348,6 +349,7 @@ height:100%;
 background-color:var(--theme-color);
 color:var(--theme-color-offset);
 border-radius:var(--corners);
+max-width:100%;
 }
 label.hide {display:none;}
 label {
