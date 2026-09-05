@@ -2748,7 +2748,8 @@ const webui = (() => {
                 await transitionDelay(300 - elapsed);
             }
             clearPageData();
-            appSettings.app.setPageContent('<webui-page-not-found></webui-page-not-found>', watchedAppData);
+            let fallbackHtml = webui.getData('app-not-found-html') || '<webui-page-not-found></webui-page-not-found>';
+            appSettings.app.setPageContent(fallbackHtml, watchedAppData);
         }
         try {
             let data = await fetchData;
