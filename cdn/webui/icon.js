@@ -422,7 +422,7 @@ stroke-width:calc(var(--ico-stroke-width) * 2);
 webui-emoji {
 display:flex;
 position:absolute;
-top:4ch;
+top:0.4ch;
 left:0;
 width:100%;
 height:100%;
