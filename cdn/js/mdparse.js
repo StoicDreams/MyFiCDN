@@ -8,14 +8,13 @@
 "use strict"
 
 const RX_AUTOLINK = /(?<!["'=])\b(https?:\/\/[^\s<]+)/g;
-const RX_CODE_SPAN = /`([^`]+)`/g;
+const RX_CODE_SPAN = /(`+)(.+?)\1/g;
 const RX_HTML_TAG = /<[a-zA-Z\/!][^>]*>/g;
 const RX_EMOJI = /:([a-zA-Z0-9_+-]+):/g;
 const RX_IMG_TITLE = /!\[(.*?)\]\((.*?) "(.*?)"\)/g;
 const RX_LINK_TITLE = /\[(.*?)\]\((.*?) "(.*?)"\)/g;
 const RX_IMG = /!\[(.*?)\]\((.*?)\)/g;
 const RX_LINK = /\[(.*?)\]\((.*?)\)/g;
-const RX_AST = /\\\*/g;
 const RX_STRONG_AST = /\*\*(.+?)\*\*/g;
 const RX_STRONG_US = /__(.+?)__/g;
 const RX_EM_AST = /\*(?!\s)(.+?)(?!\s)\*/g;
@@ -25,6 +24,7 @@ const RX_CODE_ESCAPE = /[&<>]/g;
 const RX_QUOTE_ESCAPE = /[&"]/g;
 const RX_STRIKE_DOUBLE = /~~(.+?)~~/g;
 const RX_STRIKE_SINGLE = /~(.+?)~/g;
+const RX_ESCAPE = /\\([\\`*_{}[\]()#+\-.!])/g;
 
 export class MarkdownParser {
     emojiMap = {};
@@ -69,7 +69,14 @@ export class MarkdownParser {
             }
             return html + `<li>${parser.renderInline(token.content)}</li>\n`;
         };
-        t.addRule('line-break', (line, state) => /^[\s]*(---|___|\*\*\*).*/.test(line) && state.tableBuffer.length === 0,
+        t.addRule('setext_heading', (line, state) => {
+            return /^[\s]*(=+|-+)[\s]*$/.test(line) && state.tokens.length > 0 && state.tokens[state.tokens.length - 1].type === 'paragraph';
+        }, (line, state) => {
+            const isH1 = line.includes('=');
+            const prev = state.tokens.pop();
+            return { type: "heading", level: isH1 ? 1 : 2, content: prev.content };
+        }, (html, token, parser) => `${html}<h${token.level}>${parser.renderInline(token.content)}</h${token.level}>\n`);
+       t.addRule('line-break', (line, state) => /^[\s]*(---|___|\*\*\*).*/.test(line) && state.tableBuffer.length === 0,
         (line, state) => {
             const res = line.match(/^[\s]*[-]+([^-]+).*/);
             return res ? { type: "line-break", theme: res[1] } : { type: "line-break" };
@@ -94,12 +101,18 @@ export class MarkdownParser {
             return { type: "ol_item", content: line.replace(/^\s*\d+\.\s+/, "").trim(), indent };
         }, makeListRenderer('ol'));
         t.addRule('blockquote_group', /^[\s]*> ?/, (line, state) => {
-            line = line.trim();
             if (state.inCodeBlock || state.inTemplate) return { type: 'literal', content: line };
-            let [, , , theme, cite, content] = line.match(/^[\s]*(>| )*(\[([a-z]+)?\:?([A-Za-z-_ ]+)?\])?(.*)/);
-            theme = theme?.replace(/(\[\vert{}\])/g, '') || 'info';
+            let lineContent = line.replace(/^[\s]*> ?/, '');
+            let themeMatch = lineContent.match(/^\[([a-z]+)?\:?([A-Za-z-_ ]+)?\] ?/);
+            let theme = 'info';
+            let cite = '';
+            if (themeMatch) {
+                theme = themeMatch[1] || 'info';
+                cite = themeMatch[2] || '';
+                lineContent = lineContent.substring(themeMatch[0].length);
+            }
             state.inBlockquote = true;
-            return { type: "blockquote", content: line.replace(/^> ?(\[([a-z]+)?:?([A-Za-z-_ ]+)?\])? ?/, ""), theme, cite };
+            return { type: "blockquote", content: lineContent, theme, cite };
         }, (html, token, parser) => {
             let theme = token.theme || 'info';
             let cite = token.cite || '';
@@ -275,11 +288,9 @@ export class MarkdownParser {
                     state.templateLayer = 0;
                     state.inTemplate = false;
                 }
-                // ✨ FIX: Safely push the closing tag as a literal and skip the paragraph wrap
                 state.tokens.push({ type: 'literal', content: line });
                 continue;
             }
-
             if (state.inTemplate || state.inCodeBlock) {
                 state.tokens.push({ type: 'literal', content: line });
                 continue;
@@ -329,10 +340,20 @@ export class MarkdownParser {
     }
     renderInline(text) {
         const t = this;
-        const codeSpans = [], htmlTags = [], emojis = [];
-        text = text.replace(RX_CODE_SPAN, (_, code) => {
+        const codeSpans = [], htmlTags = [], emojis = [], escapes = [];
+        text = text.replace(RX_ESCAPE, (_, char) => {
+            const token = `^^ESC${escapes.length}^^`;
+            escapes.push(char);
+            return token;
+        });
+        text = text.replace(RX_CODE_SPAN, (_, backticks, code) => {
             const token = `^^CODE${codeSpans.length}^^`;
-            const [, , theme, refined] = code.match(/^(([a-z]+):)?(.*)/);
+            if (code.startsWith(' ') && code.endsWith(' ') && code.trim().length > 0) {
+                code = code.substring(1, code.length - 1);
+            }
+            const match = code.match(/^(([a-z]+):)?(.*)/);
+            const theme = match && match[2] ? match[2] : null;
+            const refined = match ? match[3] : code;
             codeSpans.push(theme
                 ? `<code theme="${t.escapeQuote(theme)}">${t.escapeCode(refined)}</code>`
                 : `<code>${t.escapeCode(code)}</code>`);
@@ -354,7 +375,6 @@ export class MarkdownParser {
             .replace(RX_IMG, '<img alt="$1" src="$2" />')
             .replace(RX_LINK, '<a href="$2">$1</a>')
             .replace(RX_AUTOLINK, '<a href="$1">$1</a>')
-            .replace(RX_AST, '&ast;')
             .replace(RX_STRONG_AST, '<strong>$1</strong>')
             .replace(RX_STRONG_US, '<strong>$1</strong>')
             .replace(RX_EM_AST, '<em>$1</em>')
@@ -364,7 +384,7 @@ export class MarkdownParser {
         codeSpans.forEach((val, i) => text = text.replace(`^^CODE${i}^^`, val));
         emojis.forEach((val, i) => text = text.replace(`^^EMOJI${i}^^`, val));
         htmlTags.forEach((val, i) => text = text.replace(`^^HTML${i}^^`, val));
-
+        escapes.forEach((val, i) => text = text.replace(`^^ESC${i}^^`, val));
         return text;
     }
     escapeHtml(text) {
@@ -374,7 +394,7 @@ export class MarkdownParser {
     escapeCode(text) {
         const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
         return text.replace(RX_CODE_ESCAPE, m => map[m]);
-    }
+    }    
     escapeQuote(text) {
         const map = { '&': '&amp;', '"': '&quot;' };
         return text.replace(RX_QUOTE_ESCAPE, m => map[m]);
