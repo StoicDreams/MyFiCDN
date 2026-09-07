@@ -7,6 +7,7 @@
  */
 "use strict"
 
+const RX_AUTOLINK = /(?<!["'=])\b(https?:\/\/[^\s<]+)/g;
 const RX_CODE_SPAN = /`([^`]+)`/g;
 const RX_HTML_TAG = /<[a-zA-Z\/!][^>]*>/g;
 const RX_EMOJI = /:([a-zA-Z0-9_+-]+):/g;
@@ -22,6 +23,8 @@ const RX_EM_US = /(?<!\S)_(?!\s)(.+?)(?<!\s)_(?!\.\,\S)/g;
 const RX_HTML_ESCAPE = /[&"'<>]/g;
 const RX_CODE_ESCAPE = /[&<>]/g;
 const RX_QUOTE_ESCAPE = /[&"]/g;
+const RX_STRIKE_DOUBLE = /~~(.+?)~~/g;
+const RX_STRIKE_SINGLE = /~(.+?)~/g;
 
 export class MarkdownParser {
     emojiMap = {};
@@ -66,7 +69,7 @@ export class MarkdownParser {
             }
             return html + `<li>${parser.renderInline(token.content)}</li>\n`;
         };
-        t.addRule('line-break', (line, state) => /^[\s]*---.*/.test(line) && state.tableBuffer.length === 0,
+        t.addRule('line-break', (line, state) => /^[\s]*(---|___|\*\*\*).*/.test(line) && state.tableBuffer.length === 0,
         (line, state) => {
             const res = line.match(/^[\s]*[-]+([^-]+).*/);
             return res ? { type: "line-break", theme: res[1] } : { type: "line-break" };
@@ -350,11 +353,14 @@ export class MarkdownParser {
             .replace(RX_LINK_TITLE, '<a href="$2" title="$3">$1</a>')
             .replace(RX_IMG, '<img alt="$1" src="$2" />')
             .replace(RX_LINK, '<a href="$2">$1</a>')
+            .replace(RX_AUTOLINK, '<a href="$1">$1</a>')
             .replace(RX_AST, '&ast;')
             .replace(RX_STRONG_AST, '<strong>$1</strong>')
             .replace(RX_STRONG_US, '<strong>$1</strong>')
             .replace(RX_EM_AST, '<em>$1</em>')
-            .replace(RX_EM_US, '<em>$1</em>');
+            .replace(RX_EM_US, '<em>$1</em>')
+            .replace(RX_STRIKE_DOUBLE, '<del>$1</del>') 
+            .replace(RX_STRIKE_SINGLE, '<sub>$1</sub>');
         codeSpans.forEach((val, i) => text = text.replace(`^^CODE${i}^^`, val));
         emojis.forEach((val, i) => text = text.replace(`^^EMOJI${i}^^`, val));
         htmlTags.forEach((val, i) => text = text.replace(`^^HTML${i}^^`, val));
