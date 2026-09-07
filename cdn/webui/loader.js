@@ -2733,7 +2733,9 @@ const webui = (() => {
             appSettings.app.setPageContent('', watchedAppData, fullContentUrl);
             clearPageData();
             if (body.startsWith(`<!DOCTYPE`)) {
-                throw Error(`Invalid page content loaded from ${fullContentUrl}`);
+                let err = new Error(`Invalid page content loaded from ${fullContentUrl}`);
+                err.status = 404; 
+                throw err;
             }
             let content = webui.applyAppDataToContent(body);
             appSettings.app.setPageContent(content, watchedAppData, fullContentUrl);
@@ -2742,13 +2744,16 @@ const webui = (() => {
                 applyHash();
             }, 100);
         } catch (ex) {
-            webui.log.error('Failed loading page content', ex);
             let elapsed = Date.now() - timerStart;
             if (elapsed < 300) {
                 await transitionDelay(300 - elapsed);
             }
             clearPageData();
-            let fallbackHtml = webui.getData('app-not-found-html') || '<webui-page-not-found></webui-page-not-found>';
+            let fallbackHtml = webui.getData('app-not-found-html') ;
+            if (!fallbackHtml) {
+                webui.log.error('Failed loading page content', ex);
+                fallbackHtml = '<webui-page-not-found></webui-page-not-found>';
+            }
             appSettings.app.setPageContent(fallbackHtml, watchedAppData);
         }
         try {
