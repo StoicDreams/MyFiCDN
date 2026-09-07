@@ -2867,7 +2867,12 @@ const webui = (() => {
         });
     }
     async function preloadFromAttribute(componentName) {
-        await processWebUINode(`${wuiPrefix}${componentName}`);
+        if (componentName.toLowerCase().startsWith('app:')) {
+            let name = componentName.substring(4);
+            await processWebUINode(`${appPrefix}${name}`);
+        } else {
+            await processWebUINode(`${wuiPrefix}${componentName}`);
+        }
     }
     function componentPreload(el) {
         if (!el) return;
