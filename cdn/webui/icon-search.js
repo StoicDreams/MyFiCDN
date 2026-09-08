@@ -337,9 +337,12 @@
                 }
             });
         },
-        setIcon(icon) {
+        async setIcon(icon) {
             const t = this;
             t._current = icon;
+            while (!t._iconPreview) {
+                await webui.wait(10);
+            }
             t._iconPreview.setAttribute('icon', icon);
             t.buildIconCode();
         },
