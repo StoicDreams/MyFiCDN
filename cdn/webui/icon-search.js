@@ -312,7 +312,9 @@
                 if (!t[dd]) return;
                 t[dd].value = '';
             });
-            t._rotate.value = 0;
+            if (t._rotate) {
+                t._rotate.value = 0;
+            }
         },
         setIconFromCode(pipedValue) {
             const t = this;
@@ -411,6 +413,9 @@
                     tags: key
                 }));
                 t._emojis = emojis;
+                if (webui.proxy?.initEmojiSearch) {
+                    webui.proxy.initEmojiSearch(Object.keys(_emojiMap));
+                }
             } catch (ex) { console.error('Failed loading emojis', ex); }
         },
         shadowTemplate: `
