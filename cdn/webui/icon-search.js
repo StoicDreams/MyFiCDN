@@ -239,6 +239,26 @@
             }
             t.runLocalFilter(filter);
         },
+        runLocalFilter(filter) {
+            const t = this;
+            t._filteredKeys = [];
+            let source = t._emojiEnabled ? t._emojis : t._icons;
+            source.forEach(icon => {
+                if (!filter) {
+                    t._filteredKeys.push(icon);
+                    return;
+                }
+                if (icon.name.toLowerCase().indexOf(filter) !== -1) {
+                    t._filteredKeys.push(icon);
+                    return;
+                }
+                if (icon.tags && icon.tags.indexOf(filter) !== -1) {
+                    t._filteredKeys.push(icon);
+                }
+            });
+            t.totalCount = t._filteredKeys.length;
+            t.render();
+        },
         buildIconCode() {
             const t = this;
             let ico = t._iconPreview.cloneNode();
