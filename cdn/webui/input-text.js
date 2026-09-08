@@ -98,7 +98,9 @@ webui.define('webui-input-text', {
         'value': {
             get() { return webui.getDefined(this._field.value, ''); },
             set(v) {
-                this._field.value = webui.getDefined(v, '');
+                let value = webui.getDefined(v, '');
+                if (this._field.value === value) return;
+                this._field.value = value;
                 this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
             }
         }
