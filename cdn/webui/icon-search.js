@@ -196,30 +196,48 @@
                 t.applyFilter();
             });
         },
-        applyFilter() {
+        _searchDebounceTimer: null,
+        _searchOpId: 0,
+        async applyFilter() {
             const t = this;
             const cf = t.currentFilter;
             if (cf === t._cf) return;
             t._cf = cf;
             if (typeof t._inputSearch.value !== 'string') return;
             let filter = t._inputSearch.value.trim().toLowerCase();
-            t._filteredKeys = [];
-            let source = t._emojiEnabled ? t._emojis : t._icons;
-            source.forEach(icon => {
-                if (!filter) {
-                    t._filteredKeys.push(icon);
-                    return;
-                }
-                if (icon.name.toLowerCase().indexOf(filter) !== -1) {
-                    t._filteredKeys.push(icon);
-                    return;
-                }
-                if (icon.tags.indexOf(filter) !== -1) {
-                    t._filteredKeys.push(icon);
-                }
-            });
-            t.totalCount = t._filteredKeys.length;
-            t.render();
+            const searchHandler = t.customSearch || webui.iconSearchHandler || (t._emojiEnabled && webui.proxy?.searchEmojis ? (q) => webui.proxy.searchEmojis(q) : null);
+            if (filter && t._emojiEnabled && typeof searchHandler === 'function') {
+                const currentOpId = ++t._searchOpId;
+                clearTimeout(t._searchDebounceTimer);
+                t._searchDebounceTimer = setTimeout(async () => {
+                    try {
+                        const results = await searchHandler(filter, t);
+                        if (t._searchOpId !== currentOpId) return;
+                        if (Array.isArray(results) && results.length > 0) {
+                            t._filteredKeys = results.map(item => {
+                                if (typeof item === 'string') {
+                                    return { name: item.startsWith('emoji-') ? item : `emoji-${item}`, display: item };
+                                }
+                                let key = item.shortcode || item.name || item.emoji;
+                                let iconName = item.iconName || (key ? `emoji-${key.replace(/[\s-]+/g, '_').toLowerCase()}` : '');
+                                return {
+                                    name: iconName,
+                                    display: item.display || item.name || key,
+                                    tags: item.tags || key
+                                };
+                            });
+                            t.totalCount = t._filteredKeys.length;
+                            t.render();
+                            return;
+                        }
+                    } catch (err) {
+                        webui.log?.warn?.('Custom icon search failed, falling back to local filter:', err);
+                    }
+                    t.runLocalFilter(filter);
+                }, 250);
+                return;
+            }
+            t.runLocalFilter(filter);
         },
         buildIconCode() {
             const t = this;
