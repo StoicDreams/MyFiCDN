@@ -1,14 +1,30 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-button>` component provides an interactive button element that can act as a standard click target, a form submission trigger, or a navigational link. It features built-in data manipulation capabilities, allowing it to transfer data, clear global data keys, or remove specific items from stored arrays or objects directly via HTML attributes. It also supports `start-icon` and `end-icon` integrations.
 </webui-page-segment>
+
+## Button Variations
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <!-- Standard Button -->
+        <webui-button theme="primary">Primary Button</webui-button>
+
+        <!-- Button with Icons -->
+        <webui-button theme="success" start-icon="check" end-icon="arrow-right">With Icons</webui-button>
+
+        <!-- Navigational Link Button -->
+        <webui-button theme="info" href="/about">Go to About</webui-button>
+
+        <!-- Data Manipulation (Clear Data) -->
+        <webui-button theme="danger" data-clear="session-temp-data">Clear Data</webui-button>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-flex column>
+            <webui-button theme="primary">Primary Button</webui-button>
+            <webui-button theme="success" start-icon="check" end-icon="arrow-right">With Icons</webui-button>
+            <webui-button theme="info" href="/about">Go to About</webui-button>
+            <webui-button theme="danger" data-clear="session-temp-data">Clear Data</webui-button>
+        </webui-flex>
     </webui-page-segment>
 </webui-side-by-side>
 
