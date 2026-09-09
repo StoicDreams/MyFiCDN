@@ -54,7 +54,7 @@
             t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
             t.updateElements();
         },
-        getIconOn: function () { return this.iconOn || this.getAttribute('icon-on') || this.icon || 'toggle-on'; },
+        getIconOn: function () { return this.iconOn || this.getAttribute('icon-on') || this.icon || 'toggle-on|fill'; },
         getIconOff: function () { return this.iconOff || this.getAttribute('icon-off') || this.icon || 'toggle-off'; },
         getTitleOn: function () { return this.titleOn || this.getAttribute('title-on') || this.getAttribute('title') || null; },
         getTitleOff: function () { return this.titleOff || this.getAttribute('title-off') || this.getAttribute('title') || null; },
