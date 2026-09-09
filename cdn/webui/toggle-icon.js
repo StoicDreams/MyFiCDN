@@ -86,10 +86,23 @@
                 }
             }
             t._label.innerHTML = webui.getDefined(t.label, '');
-            if (t._enabled && t.themeOn) {
-                t.setAttribute('theme', t.themeOn);
-            } else if (!t._enabled && t.themeOff) {
-                t.setAttribute('theme', t.themeOff);
+            let themeOn = t.themeOn || t.getAttribute('theme-on');
+            let themeOff = t.themeOff || t.getAttribute('theme-off');
+            let activeTheme = t._enabled ? themeOn : themeOff;
+            if (activeTheme) {
+                t.setAttribute('theme', activeTheme);
+            } else {
+                t.removeAttribute('theme');
+            }
+            let iconOn = t.getIconOn();
+            let iconOff = t.getIconOff();
+            let flagsOn = t.flagsOn || '';
+            if (typeof iconOn === 'string' && iconOn.includes('|')) {
+                flagsOn += ' ' + iconOn.split('|').slice(1).join(' ');
+            }
+            let flagsOff = t.flagsOff || '';
+            if (typeof iconOff === 'string' && iconOff.includes('|')) {
+                flagsOff += ' ' + iconOff.split('|').slice(1).join(' ');
             }
             if (t._enabled) {
                 t.removeFlags(t.flagsOff);
