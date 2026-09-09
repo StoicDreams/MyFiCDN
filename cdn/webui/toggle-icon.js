@@ -107,7 +107,7 @@
             if (t._enabled) {
                 t.removeFlags(flagsOff);
                 t.applyFlags(flagsOn);
-            } else if (!t._enabled) {
+            } else {
                 t.removeFlags(flagsOn);
                 t.applyFlags(flagsOff);
             }
