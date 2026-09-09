@@ -105,11 +105,11 @@
                 flagsOff += ' ' + iconOff.split('|').slice(1).join(' ');
             }
             if (t._enabled) {
-                t.removeFlags(t.flagsOff);
-                t.applyFlags(t.flagsOn);
+                t.removeFlags(flagsOff);
+                t.applyFlags(flagsOn);
             } else if (!t._enabled) {
-                t.removeFlags(t.flagsOn);
-                t.applyFlags(t.flagsOff);
+                t.removeFlags(flagsOn);
+                t.applyFlags(flagsOff);
             }
             t._icon.setAttribute('icon', t._enabled ? t.getIconOn() : t.getIconOff());
             let title = t._enabled ? t.getTitleOn() : t.getTitleOff();
