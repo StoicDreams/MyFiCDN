@@ -2339,7 +2339,7 @@ const webui = (() => {
         let el = ev.srcElement || ev.target || ev;
         if (ev.composedPath) {
             for (let path of ev.composedPath()) {
-                if (path.dataset && path.dataset.trigger) {
+                if (path.dataset && (path.dataset.trigger || path.dataset.bind)) {
                     el = path;
                     break;
                 }
@@ -2355,7 +2355,7 @@ const webui = (() => {
                 return;
             }
         }
-        let key = el.dataset.trigger;
+        let key = [el.dataset.trigger, el.dataset.bind].filter(Boolean).join('|');
         if (!key) return;
         key.split('|').forEach(key => {
             let oldData = webui.getData(key);
@@ -2382,7 +2382,8 @@ const webui = (() => {
         }
         function getToSet(key) {
             let toSet = 'setter';
-            el.dataset.subscribe.split('|').forEach(ds => {
+            let combinedAttrs = [el.dataset.subscribe, el.dataset.bind].filter(Boolean).join('|');
+            combinedAttrs.split('|').forEach(ds => {
                 let kts = ds.trim().split(':');
                 if (!(key === ds || kts[0] === key)) return;
                 if (kts.length === 2) {
@@ -2550,6 +2551,17 @@ const webui = (() => {
                 map.triggers[triggerKey].add(node);
             });
         }
+        let bind = node.getAttribute('data-bind');
+        if (bind) {
+            bind.split('|').forEach(bk => {
+                let bindKey = bk.split(':')[0].trim();
+                if (!map.subs[bindKey]) map.subs[bindKey] = new Set();
+                map.subs[bindKey].add(node);
+                setDataToEl(node, bindKey);
+                if (!map.triggers[bindKey]) map.triggers[bindKey] = new Set();
+                map.triggers[bindKey].add(node);
+            });
+        }
         let hide = node.getAttribute('data-hide');
         if (hide) {
             map.hides.add(node);
@@ -2588,7 +2600,7 @@ const webui = (() => {
         }
         if (!attr) {
             if (target && typeof target.getAttribute === 'function') {
-                ['elevation', 'theme', 'data-subscribe', 'top', 'right', 'bottom', 'left'].forEach(attr => {
+                ['elevation', 'theme', 'data-subscribe', 'data-bind', 'top', 'right', 'bottom', 'left'].forEach(attr => {
                     if (target.hasAttribute(attr)) {
                         applyAttributeSettings(target, attr);
                     }
@@ -2602,6 +2614,7 @@ const webui = (() => {
             case 'right': target.style.right = webui.pxIfNumber(value); break;
             case 'bottom': target.style.bottom = webui.pxIfNumber(value); break;
             case 'left': target.style.left = webui.pxIfNumber(value); break;
+            case 'data-bind':
             case 'data-subscribe':
                 registerNode(target); // Safely handles specific dynamic attribute changes
                 break;
@@ -2632,7 +2645,7 @@ const webui = (() => {
         let needsCleanup = false;
         mutations.forEach(function (mutation) {
             checkAttributeMutations(mutation);
-            if (mutation.type === 'attributes' && ['data-subscribe', 'data-trigger', 'data-hide'].includes(mutation.attributeName)) {
+            if (mutation.type === 'attributes' && ['data-subscribe', 'data-trigger', 'data-bind', 'data-hide'].includes(mutation.attributeName)) {
                 unregisterNode(mutation.target);
                 registerNode(mutation.target);
             }
