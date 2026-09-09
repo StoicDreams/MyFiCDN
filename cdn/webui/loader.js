@@ -1774,6 +1774,30 @@ const webui = (() => {
             }
         }
         /**
+         * Set global or session data only if it does not already exist.
+         *
+         * @param {string|object} key - The data key, or an object of key:value pairs.
+         * @param {any} [value] - The value to set if passing a single key.
+         * @returns {undefined}
+         * @example
+         * webui.setDefault('theme-mode', 'dark');
+         * webui.setDefault({ 'theme-mode': 'dark', 'sidebar-open': true });
+         */
+        setDefault(key, value) {
+            const t = this;
+            if (!key) return;
+            if (typeof key === 'object' && key !== null) {
+                Object.keys(key).forEach(k => {
+                    t.setDefault(k, key[k]);
+                });
+                return;
+            }
+            const existing = t.getData(key);
+            if (existing === undefined || existing === null) {
+                t.setData(key, value);
+            }
+        }
+        /**
          * Query selector all elements matching the selector, including those in shadow DOMs.
          *
          * @param {string} selector - The CSS selector to match elements.
@@ -2534,6 +2558,15 @@ const webui = (() => {
     }
     function registerNode(node) {
         if (!node || typeof node.getAttribute !== 'function') return;
+        let def = node.getAttribute('data-default');
+        if (def) {
+            def.split('|').forEach(pair => {
+                let [defKey, defVal] = pair.split(':');
+                if (defKey && defVal !== undefined) {
+                    webui.setDefault(defKey.trim(), defVal.trim());
+                }
+            });
+        }
         let sub = node.getAttribute('data-subscribe');
         if (sub) {
             sub.split('|').forEach(dk => {
@@ -2600,7 +2633,7 @@ const webui = (() => {
         }
         if (!attr) {
             if (target && typeof target.getAttribute === 'function') {
-                ['elevation', 'theme', 'data-subscribe', 'data-bind', 'top', 'right', 'bottom', 'left'].forEach(attr => {
+                ['elevation', 'theme', 'data-subscribe', 'data-bind', 'data-default', 'top', 'right', 'bottom', 'left'].forEach(attr => {
                     if (target.hasAttribute(attr)) {
                         applyAttributeSettings(target, attr);
                     }
@@ -2614,6 +2647,7 @@ const webui = (() => {
             case 'right': target.style.right = webui.pxIfNumber(value); break;
             case 'bottom': target.style.bottom = webui.pxIfNumber(value); break;
             case 'left': target.style.left = webui.pxIfNumber(value); break;
+            case 'data-default':
             case 'data-bind':
             case 'data-subscribe':
                 registerNode(target); // Safely handles specific dynamic attribute changes
@@ -2645,7 +2679,7 @@ const webui = (() => {
         let needsCleanup = false;
         mutations.forEach(function (mutation) {
             checkAttributeMutations(mutation);
-            if (mutation.type === 'attributes' && ['data-subscribe', 'data-trigger', 'data-bind', 'data-hide'].includes(mutation.attributeName)) {
+            if (mutation.type === 'attributes' && ['data-subscribe', 'data-trigger', 'data-bind', 'data-default', 'data-hide'].includes(mutation.attributeName)) {
                 unregisterNode(mutation.target);
                 registerNode(mutation.target);
             }
