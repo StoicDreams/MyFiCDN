@@ -11,13 +11,13 @@
             <webui-card name="Example">
                 Example Card
             </webui-card>
-            <webui-card avatar="solid star">
+            <webui-card avatar="star|fill">
                 Example Card
             </webui-card>
-            <webui-card name="Example" avatar="solid star">
+            <webui-card name="Example" avatar="star|fill">
                 Example Card
             </webui-card>
-            <webui-card name="Example" avatar="solid star" link="/">
+            <webui-card name="Example" avatar="star|fill" link="/">
                 Example Card
             </webui-card>
             ...
@@ -30,13 +30,13 @@
         <webui-card name="Example">
             Example Card
         </webui-card>
-        <webui-card avatar="solid star">
+        <webui-card avatar="star|fill">
             Example Card
         </webui-card>
-        <webui-card name="Example" avatar="solid star">
+        <webui-card name="Example" avatar="star|fill">
             Example Card
         </webui-card>
-        <webui-card name="Example" avatar="solid star" link="/">
+        <webui-card name="Example" avatar="star|fill" link="/">
             Example Card
         </webui-card>
         <webui-card>
