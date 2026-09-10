@@ -39,7 +39,8 @@ export class MarkdownParser {
         'literal': (html, token, parser) => `${html}${token.content}\n`,
         'literal_inline': (html, token, parser) => `${html}${parser.renderInline(token.content)}\n`,
         'paragraph': (html, token, parser) => `${html}<p>${parser.renderInline(token.content)}</p>\n`,
-        'no_paragraph': (html, token, parser) => `${html}${parser.renderInline(token.content)}\n`
+        'no_paragraph': (html, token, parser) => `${html}${parser.renderInline(token.content)}\n`,
+        'webui_code_start': (html, token, parser) => `${html}${token.content}\n`
     };
     constructor() {
         this.initDefaultRules();
@@ -124,11 +125,11 @@ export class MarkdownParser {
         }, (line, state) => {
             if (/^[\s]*<pre><code>/i.test(line) && !/<\/code><\/pre>/i.test(line)) {
                 state.inCodeBlock = true; state.codeBlockTag = '<pre><code>';
-                return { type: 'literal', content: line };
+                return { type: 'webui_code_start', content: line };
             }
             if (/^[\s]*<webui-code\b[^>]*>/i.test(line) && !/<\/webui-code>/i.test(line)) {
                 state.inCodeBlock = true; state.codeBlockTag = '<webui-code>';
-                return { type: "literal", content: line };
+                return { type: "webui_code_start", content: line };
             }
             if (/^[\s]*<template\b[^>]*>/i.test(line) && !/<\/template>/i.test(line)) {
                 state.templateLayer++; state.inTemplate = true;

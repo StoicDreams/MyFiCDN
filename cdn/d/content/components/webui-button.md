@@ -10,7 +10,7 @@
         <webui-button theme="primary">Primary Button</webui-button>
 
         <!-- Button with Icons -->
-        <webui-button theme="success" start-icon="check" end-icon="arrow-right">With Icons</webui-button>
+        <webui-button theme="success" start-icon="arrow|rotate:180" end-icon="arrow">With Icons</webui-button>
 
         <!-- Navigational Link Button -->
         <webui-button theme="info" href="/about">Go to About</webui-button>
