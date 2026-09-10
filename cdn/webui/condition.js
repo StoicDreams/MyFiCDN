@@ -38,11 +38,15 @@
                 set(v) { this.setValue(webui.getDefined(v, ''), 'value'); }
             }
         },
-        attr: ['data-subscribe'],
+        attr: ['data-subscribe', 'value'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
                 case 'dataSubscribe':
+                    t.checkConditions();
+                    break;
+                case 'value':
+                    t.dataset.value = value;
                     t.checkConditions();
                     break;
             }
