@@ -32,15 +32,17 @@
                 }
             });
         },
-        attr: ['data-subscribe', 'value'],
+        props: {
+            'value': {
+                get() { return t.dataset.value; },
+                set(v) { this.setValue(webui.getDefined(v, ''), 'value'); }
+            }
+        },
+        attr: ['data-subscribe'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
                 case 'dataSubscribe':
-                    t.checkConditions();
-                    break;
-                case 'value':
-                    t.dataset.value = value;
                     t.checkConditions();
                     break;
             }
