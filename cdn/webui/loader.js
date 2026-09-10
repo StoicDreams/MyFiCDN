@@ -2932,11 +2932,12 @@ const webui = (() => {
             processWebUINode(el.nodeName);
         }
         let pl = el.getAttribute('preload');
-        if (pl) {
+        if (pl && typeof pl.replace === 'function') {
             pl.replace(';', ' ').replace(',', ' ').split(' ').forEach(preloadFromAttribute);
         }
     }
     async function preloadComponents(pl) {
+        if (!pl || typeof pl.replace !== 'function') return;
         pl = pl.replace(';', ' ').replace(',', ' ').split(' ');
         for (let index = 0; index < pl.length; ++index) {
             await preloadFromAttribute(pl[index])
