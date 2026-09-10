@@ -304,7 +304,42 @@ export class MarkdownParser {
             state.tokens.push({ type: noParagraph ? 'no_paragraph' : 'paragraph', content: line.trim() });
         }
         flushTable(); flushBlockquote();
-        return state.tokens;
+        let equalizedTokens = [];
+        let blockBuf = [];
+        let inEqBlock = false;
+        for (let i = 0; i < state.tokens.length; i++) {
+            let t = state.tokens[i];
+            if (!inEqBlock && (t.type === 'code_block_start' || t.type === 'webui_code_start' || (t.type === 'literal_inline' && /^[\s]*<template\b[^>]*>/i.test(t.content)))) {
+                inEqBlock = true;
+            }
+            if (inEqBlock) {
+                blockBuf.push(t);
+                if (t.type === 'code_block_end' || 
+                   (t.type === 'literal' && /<\/webui-code>/i.test(t.content)) || 
+                   (t.type === 'literal' && /<\/code><\/pre>/i.test(t.content)) || 
+                   (t.type === 'literal' && /<\/template>/i.test(t.content))) {
+                    const text = blockBuf.map(b => b.content).join('\n');
+                    const equalized = this.trimLinePreTabs(text);
+                    const equalizedLines = equalized.split('\n');
+                    for (let j = 0; j < equalizedLines.length; j++) {
+                        equalizedTokens.push({ ...blockBuf[j], content: equalizedLines[j] });
+                    }
+                    blockBuf = [];
+                    inEqBlock = false;
+                }
+            } else {
+                equalizedTokens.push(t);
+            }
+        }
+        if (blockBuf.length > 0) {
+            const text = blockBuf.map(b => b.content).join('\n');
+            const equalized = this.trimLinePreTabs(text);
+            const equalizedLines = equalized.split('\n');
+            for (let j = 0; j < equalizedLines.length; j++) {
+                equalizedTokens.push({ ...blockBuf[j], content: equalizedLines[j] });
+            }
+        }
+        return equalizedTokens;
     }
     render(tokens) {
         let html = "";
@@ -331,6 +366,7 @@ export class MarkdownParser {
         const startLines = html.replace(/\t/g, tabRepl).split('\n');
         let tabLen = 999;
         for (let i = 1; i < startLines.length; i++) {
+            if (startLines[i].trim() === '') continue;
             let m = startLines[i].match(/^([ ]*)/)[0].length;
             if (m === 0) return html;
             if (m < tabLen) tabLen = m;
