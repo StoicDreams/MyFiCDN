@@ -42,7 +42,6 @@
         }
     }
     webui.define('webui-json-condensed', {
-        preload: "message",
         constructor() {
             const t = this;
             t.limit = 20;
