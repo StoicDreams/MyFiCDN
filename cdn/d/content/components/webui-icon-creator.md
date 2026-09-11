@@ -1,14 +1,13 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-icon-creator>` component is a fully-featured interactive tool for designing, modifying, and previewing custom SVG icons natively within the Web UI framework. It features drag-and-drop coordinate mapping, real-time path generation, and visual toggles for modifiers like borders, backing shapes, and color themes.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-icon-creator></webui-icon-creator>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-icon-creator></webui-icon-creator>
     </webui-page-segment>
 </webui-side-by-side>
 

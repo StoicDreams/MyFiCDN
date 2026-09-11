@@ -4,10 +4,10 @@
 
 <webui-side-by-side>
     ```html:Code Snippet
-        <webui-gallery src="/api/gallery.json" card-width="150"></webui-gallery>
+        <webui-gallery src="https://cdn.myfi.ws/api/gallery.json" card-width="150"></webui-gallery>
     ```
     <webui-page-segment elevation="10">
-        <webui-gallery src="/api/gallery.json" card-width="150"></webui-gallery>
+        <webui-gallery src="https://cdn.myfi.ws/api/gallery.json" card-width="150"></webui-gallery>
     </webui-page-segment>
 </webui-side-by-side>
 
