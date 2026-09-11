@@ -63,6 +63,7 @@
         },
         setValue(value) {
             const t = this;
+            console.log('test', value);
             t.condensed = condenseJson(value, t.limit);
             if (t.dataTrigger) {
                 webui.setData(t.dataTrigger, t.condensed);
