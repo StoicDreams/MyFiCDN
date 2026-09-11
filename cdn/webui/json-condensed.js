@@ -53,6 +53,7 @@
         attr: ['limit', 'data-subscribe', 'data-trigger', 'value'],
         attrChanged(property, value) {
             const t = this;
+            console.log('prop', property, value);
             switch (property) {
                 case 'limit':
                     t.limit = parseInt(value) || 20;
@@ -69,7 +70,7 @@
             const t = this;
             console.log('test1', value);
             t.condensed = condenseJson(value, t.limit);
-            console.log('test2', t.condensed);
+            console.log('test2', t.condensed, t.dataTrigger);
             if (t.dataTrigger) {
                 console.log('set data', t.condensed);
                 webui.setData(t.dataTrigger, t.condensed);
