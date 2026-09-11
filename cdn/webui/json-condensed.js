@@ -35,7 +35,6 @@
             if (typeof json !== 'string') {
                 json = JSON.stringify(json);
             }
-
             let data = JSON.parse(json, null, 2);
             return condense(data, maxLength);
         } catch (ex) {
