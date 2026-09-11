@@ -35,7 +35,10 @@
             if (typeof json !== 'string') {
                 json = JSON.stringify(json);
             }
+
+            console.log('test3', json);
             let data = JSON.parse(json, null, 2);
+            console.log('test4', data);
             return condense(data, maxLength);
         } catch (ex) {
             console.error('Invalid data to condense', ex);
@@ -65,6 +68,7 @@
             const t = this;
             console.log('test1', value);
             t.condensed = condenseJson(value, t.limit);
+            console.log('test2', t.condensed);
             if (t.dataTrigger) {
                 console.log('set data', t.condensed);
                 webui.setData(t.dataTrigger, t.condensed);
