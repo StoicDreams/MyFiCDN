@@ -5,11 +5,11 @@
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Condense long text strings inside JSON payloads -->
-        <webui-json-condensed limit="15" value="{'title': 'Very long title description here', 'id': 1}" data-trigger="condensed-output"></webui-json-condensed>
+        <webui-json-condensed limit="15" value='{"title": "Very long title description here", "id": 1}' data-trigger="condensed-output"></webui-json-condensed>
         <webui-code lang="json" data-subscribe="condensed-output"></webui-code>
     ```
     <webui-page-segment elevation="10">
-        <webui-json-condensed limit="15" value="{'title': 'Very long title description here', 'id': 1}" data-trigger="condensed-output"></webui-json-condensed>
+        <webui-json-condensed limit="15" value='{"title": "Very long title description here", "id": 1}' data-trigger="condensed-output"></webui-json-condensed>
         <webui-code lang="json" data-subscribe="condensed-output"></webui-code>
     </webui-page-segment>
 </webui-side-by-side>
