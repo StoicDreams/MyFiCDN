@@ -8,7 +8,7 @@
     ```html:Code Snippet
         <!-- Trigger Button -->
         <webui-button theme="danger" data-trigger="delete-record-trigger" data-value="123">Delete Record</webui-button>
-        
+
         <!-- Dialog Action Definition -->
         <webui-dialog-action title="Confirm Deletion" confirm="Delete" api="delete|/api/records/{id}" data-subscribe="delete-record-trigger" data-success="record-deleted-event">
             <template>
