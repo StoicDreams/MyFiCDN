@@ -49,7 +49,6 @@
         attr: ['limit', 'data-subscribe', 'data-trigger', 'value'],
         attrChanged(property, value) {
             const t = this;
-            console.log('prop', property, value);
             switch (property) {
                 case 'limit':
                     t.limit = parseInt(value) || 20;
