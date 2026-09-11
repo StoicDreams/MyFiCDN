@@ -2,8 +2,6 @@
     The `<webui-code>` component displays formatted code snippets with automatic syntax highlighting. It supports various programming languages, features an integrated copy-to-clipboard button, allows custom labels, and can load code directly from external source files using the `src` attribute.
 </webui-page-segment>
 
-## Code Snippet Variations
-
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Basic Code Block -->

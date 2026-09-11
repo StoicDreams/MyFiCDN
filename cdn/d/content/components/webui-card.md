@@ -2,8 +2,6 @@
     The `<webui-card>` component displays content within a structured card layout. It automatically generates a styled header if the `name`, `avatar`, or `link` attributes are provided, and it projects nested child elements into its main body area.
 </webui-page-segment>
 
-## Card Variations
-
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Basic Card -->

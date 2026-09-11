@@ -2,8 +2,6 @@
     The `<webui-data>` component initializes and manages application state data. It extracts values from custom data attributes or nested `<template>` elements. Supported template slots include `json`, `html`, and `text`, utilizing the `name` attribute as the data key. It also provides built-in methods like `pushItem` and `setDefault` for advanced state manipulation.
 </webui-page-segment>
 
-## Data Initialization Variations
-
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Attribute-based Data Initialization -->

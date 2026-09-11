@@ -2,8 +2,6 @@
     The `<webui-dialog-action>` component defines a modal dialog template that triggers via a data subscription. It features native API integration, allowing the confirmation button to automatically execute an HTTP request (GET, POST, PUT, DELETE, PATCH) based on the `api` attribute. It handles the API response, surfaces success or failure alerts, and updates specified global state variables upon completion.
 </webui-page-segment>
 
-## Dialog Action Configurations
-
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Trigger Button -->

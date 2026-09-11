@@ -2,8 +2,6 @@
     The `<webui-content>` component dynamically loads and manages HTML or Markdown content. It optimizes page performance by lazy-loading external files only when they enter the viewport and temporarily detaching them from the DOM when they scroll out of view. It supports inline content, caching, preloading, and customizable load delays.
 </webui-page-segment>
 
-## Content Variations
-
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Inline Content -->

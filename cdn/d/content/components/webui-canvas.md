@@ -2,8 +2,6 @@
     The `<webui-canvas>` component renders text or HTML-extracted text directly onto an HTML5 `<canvas>` element. It is highly performant for displaying large blocks of text, logs, or code. It features built-in text wrapping, a custom scroll implementation, optional line numbers, and alternating background colors for improved readability.
 </webui-page-segment>
 
-## Canvas Variations
-
 <webui-side-by-side>
     ```html:Code Snippet
         <webui-data data-subscribe="canvas-sample-text:setDefault">

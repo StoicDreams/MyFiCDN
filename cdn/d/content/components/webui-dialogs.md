@@ -17,7 +17,6 @@
         </webui-button>
     ```
     <webui-page-segment elevation="10">
-        <webui-dialogs></webui-dialogs>
         <webui-button 
             theme="primary" 
             onclick="webui.dialog({ title: 'Interactive Dialog', content: 'This dialog was triggered directly from the HTML!', confirm: 'Close' })">

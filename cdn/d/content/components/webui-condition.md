@@ -2,8 +2,6 @@
     The `<webui-condition>` component conditionally renders content by evaluating its `value` or data bound via `data-subscribe`. It supports explicit condition rules including `data-equals`, `data-unequals`, `data-contains`, and `data-match`, along with an optional `data-ignore-case` modifier. If the condition is met, it renders the `valid` slot; otherwise, it renders the `invalid` slot.
 </webui-page-segment>
 
-## Condition Variations
-
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Basic Truthy Check -->

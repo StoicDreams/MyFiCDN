@@ -2,8 +2,6 @@
     The `<webui-data-loader>` component is designed to fetch external data from APIs or URLs and inject the responses directly into the application's data state. It supports automatic JSON parsing, request authorization, configurable load delays, and automatic retry logic for missing authentication or API root definitions.
 </webui-page-segment>
 
-## Data Loader Configurations
-
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Basic Data Load -->

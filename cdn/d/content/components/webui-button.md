@@ -2,8 +2,6 @@
     The `<webui-button>` component provides an interactive button element that can act as a standard click target, a form submission trigger, or a navigational link. It features built-in data manipulation capabilities, allowing it to transfer data, clear global data keys, or remove specific items from stored arrays or objects directly via HTML attributes. It also supports `start-icon` and `end-icon` integrations.
 </webui-page-segment>
 
-## Button Variations
-
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Standard Button -->
