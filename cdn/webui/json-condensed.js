@@ -68,13 +68,15 @@
         },
         setValue(value) {
             const t = this;
-            console.log('test1', value);
-            t.condensed = condenseJson(value, t.limit);
-            console.log('test2', t.condensed, t.dataTrigger);
-            if (t.dataTrigger) {
-                console.log('set data', t.condensed);
-                webui.setData(t.dataTrigger, t.condensed);
-            }
+            setTimeout(()=>{
+                console.log('test1', value);
+                t.condensed = condenseJson(value, t.limit);
+                console.log('test2', t.condensed, t.dataTrigger);
+                if (t.dataTrigger) {
+                    console.log('set data', t.condensed);
+                    webui.setData(t.dataTrigger, t.condensed);
+                }
+            },1);
         },
         shadowTemplate: `
 <slot name="template"></slot>
