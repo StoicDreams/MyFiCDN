@@ -201,15 +201,31 @@ export class MarkdownParser {
     }
     normalizeMultiLineTags(text) {
         let inTag = false, inStr = false, strChar = '', out = '';
+        let inCodeBlock = false;
         for (let i = 0; i < text.length; i++) {
+            if (text.substring(i, i + 3) === '```') {
+                inCodeBlock = !inCodeBlock;
+                out += '```';
+                i += 2;
+                continue;
+            }
             let c = text[i];
-            if (!inTag && c === '<' && /[a-zA-Z\/!]/.test(text[i + 1] || '')) inTag = true;
-            else if (inTag && !inStr && (c === '"' || c === "'")) { inStr = true; strChar = c; }
-            else if (inTag && inStr && c === strChar) inStr = false;
-            else if (inTag && !inStr && c === '>') inTag = false;
-            if (inTag && c === '\n') out += ' ';
-            else if (inTag && c === '\r');
-            else out += c;
+            if (!inCodeBlock) {
+                if (!inTag && c === '<' && /[a-zA-Z\/!]/.test(text[i + 1] || '')) inTag = true;
+                else if (inTag && !inStr && (c === '"' || c === "'")) { inStr = true; strChar = c; }
+                else if (inTag && inStr && c === strChar) inStr = false;
+                else if (inTag && !inStr && c === '>') inTag = false;
+                
+                if (inTag && c === '\n') {
+                    out += ' ';
+                } else if (inTag && c === '\r') {
+                    // Ignore \r
+                } else {
+                    out += c;
+                }
+            } else {
+                out += c;
+            }
         }
         return out;
     }
