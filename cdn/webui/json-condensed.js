@@ -25,6 +25,7 @@
                 let ret = {};
                 Object.keys(data).forEach(key => {
                     ret[key] = condense(data[key], maxLength);
+                    console.log('condense key', key, ret[key]);
                 });
                 return ret;
         }
@@ -38,7 +39,7 @@
 
             console.log('test3', json);
             let data = JSON.parse(json, null, 2);
-            console.log('test4', data);
+            console.log('test4', data, maxLength);
             return condense(data, maxLength);
         } catch (ex) {
             console.error('Invalid data to condense', ex);
