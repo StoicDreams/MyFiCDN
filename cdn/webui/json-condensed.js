@@ -25,7 +25,6 @@
                 let ret = {};
                 Object.keys(data).forEach(key => {
                     ret[key] = condense(data[key], maxLength);
-                    console.log('condense key', key, ret[key]);
                 });
                 return ret;
         }
@@ -37,9 +36,7 @@
                 json = JSON.stringify(json);
             }
 
-            console.log('test3', json);
             let data = JSON.parse(json, null, 2);
-            console.log('test4', data, maxLength);
             return condense(data, maxLength);
         } catch (ex) {
             console.error('Invalid data to condense', ex);
@@ -68,12 +65,9 @@
         },
         setValue(value) {
             const t = this;
-            setTimeout(()=>{
-                console.log('test1', value);
+            queueMicrotask(()=>{
                 t.condensed = condenseJson(value, t.limit);
-                console.log('test2', t.condensed, t.dataTrigger);
                 if (t.dataTrigger) {
-                    console.log('set data', t.condensed);
                     webui.setData(t.dataTrigger, t.condensed);
                 }
             },1);
