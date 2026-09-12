@@ -88,11 +88,8 @@
             let content = '';
             if (this.dataMoveable) { content += moveableTemplate.split('[ID]').join(this._idselector); }
             if (this.dataDockable && !this._forceUndocked) { content += dockableTemplate.split('[ID]').join(this._idselector); }
-            console.log(fb.length, content);
-            if (fb.length === 1) {
-                console.log(fb.length, fb[0].innerHTML);
-                if (fb[0].innerHTML === content) return;
-            }
+            if (fb.length === 1 && content === t._footerContent) return;
+            t._footerContent = content;
             fb.forEach(el => el.remove());
             fb = webui.create('webui-flex');
             fb.setAttribute('justify', 'center');
