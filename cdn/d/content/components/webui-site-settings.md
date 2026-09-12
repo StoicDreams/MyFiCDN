@@ -1,14 +1,13 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-site-settings>` component provides a standardized panel for users to manage site-wide application preferences (such as theming or layout options). It is currently under development and will be expanded with dynamic preference inputs soon.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-site-settings></webui-site-settings>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-site-settings></webui-site-settings>
     </webui-page-segment>
 </webui-side-by-side>
 
