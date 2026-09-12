@@ -1,14 +1,13 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-next-page>` component provides a standard navigational button to guide users to the next logical page or step in your application. It supports dynamically rendering the destination via attributes or data subscriptions, and includes optional `next-page-pre` and `next-page-post` content blocks.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-next-page name="Documentation" href="/docs" icon="arrow|backing|shape:circle"></webui-next-page>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-next-page name="Documentation" href="/docs" icon="arrow|backing|shape:circle"></webui-next-page>
     </webui-page-segment>
 </webui-side-by-side>
 
