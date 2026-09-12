@@ -1,14 +1,13 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-stoic-social-links>` component renders a pre-configured block of social media and sponsor links for Stoic Dreams. It outputs a standardized `<webui-paper>` container with styled `<webui-icon>` elements linking directly to official GitHub Sponsors, Discord, Facebook, and Instagram pages.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-stoic-social-links></webui-stoic-social-links>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-stoic-social-links></webui-stoic-social-links>
     </webui-page-segment>
 </webui-side-by-side>
 

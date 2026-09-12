@@ -1,14 +1,27 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-restrict-to-role>` component conditionally renders content based on the current user's role. It subscribes to the `session-user-role` state and performs a bitwise check against the required `role` attribute. If the user meets the requirement, it renders the `valid` slot; otherwise, it renders the `invalid` slot.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-restrict-to-role role="1">
+            <template slot="valid">
+                <webui-alert show variant="success">You have access to this feature!</webui-alert>
+            </template>
+            <template slot="invalid">
+                <webui-alert show variant="danger">Access Denied: Insufficient Permissions.</webui-alert>
+            </template>
+        </webui-restrict-to-role>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-restrict-to-role role="1">
+            <template slot="valid">
+                <webui-alert show variant="success">You have access to this feature!</webui-alert>
+            </template>
+            <template slot="invalid">
+                <webui-alert show variant="danger">Access Denied: Insufficient Permissions.</webui-alert>
+            </template>
+        </webui-restrict-to-role>
     </webui-page-segment>
 </webui-side-by-side>
 
