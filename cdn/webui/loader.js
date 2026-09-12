@@ -3137,6 +3137,10 @@ const webui = (() => {
             return `Unhandled Error: ${event.message}\nSource: ${event.filename}:${event.lineno}:${event.colno}`;
         }
         function errorHandler(event) {
+            if (typeof event === 'string') {
+                console.log('Event is string', event);
+                return true;
+            }
             event.preventDefault();
             const message = buildMessage(event);
             console.error(event.error || event.reason || event);
