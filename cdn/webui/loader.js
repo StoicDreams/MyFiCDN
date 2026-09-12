@@ -3143,6 +3143,7 @@ const webui = (() => {
             }
             event.preventDefault();
             const message = buildMessage(event);
+            console.log('message:%o, event:%o', message, event);
             console.error(event.error || event.reason || event);
             webui.alert(message, 'danger');
             return true;
