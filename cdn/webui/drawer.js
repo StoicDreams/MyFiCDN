@@ -90,7 +90,7 @@
             if (this.dataDockable && !this._forceUndocked) { content += dockableTemplate.split('[ID]').join(this._idselector); }
             console.log(fb.length, content);
             if (fb.length === 1) {
-                console.log(fb[0].innerHTML);
+                console.log(fb.length, fb[0].innerHTML);
                 if (fb[0].innerHTML === content) return;
             }
             fb.forEach(el => el.remove());
