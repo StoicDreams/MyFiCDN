@@ -36,6 +36,7 @@
                     mutations.forEach(function (_m) {
                         if (cache !== t.innerHTML) {
                             cache = t.innerHTML;
+                            console.log('cache updated', _m);
                             t.buildFooterContent();
                         }
                     });
