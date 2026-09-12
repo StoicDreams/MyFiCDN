@@ -6,8 +6,8 @@
     ```html:Code Snippet
         <webui-toggle-icon
             label="Feature Toggle"
-            icon-on="check|fill"
-            icon-off="xmark"
+            icon-on="toggle-on|fill"
+            icon-off="toggle-off"
             theme-on="success"
             theme-off="danger"
             title-on="Disable Feature"
