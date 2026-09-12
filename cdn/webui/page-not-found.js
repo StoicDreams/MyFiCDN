@@ -26,7 +26,8 @@
     </webui-side-by-side>
     `;
     webui.define('webui-page-not-found', {
-        connected: async (t) => {
+        connected: async () => {
+            const t = this;
             if (t.innerHTML) return;
             let html = webui.getData('app-not-found-html');
             if (html) {
