@@ -90,8 +90,8 @@
             if (this.dataDockable && !this._forceUndocked) { content += dockableTemplate.split('[ID]').join(this._idselector); }
             console.log(fb.length, content);
             if (fb.length === 1) {
-                console.log(fb.innerHTML);
-                if (fb.innerHTML === content) return;
+                console.log(fb[0].innerHTML);
+                if (fb[0].innerHTML === content) return;
             }
             fb.forEach(el => el.remove());
             fb = webui.create('webui-flex');
