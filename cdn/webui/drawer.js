@@ -90,6 +90,7 @@
             if (this.dataDockable && !this._forceUndocked) { content += dockableTemplate.split('[ID]').join(this._idselector); }
             if (fb.length === 1 && content === t._footerContent) return;
             t._footerContent = content;
+            console.log('update footer', content);
             fb.forEach(el => el.remove());
             fb = webui.create('webui-flex');
             fb.setAttribute('justify', 'center');
