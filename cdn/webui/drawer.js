@@ -33,16 +33,12 @@
             let cache = t.innerHTML;
             const startObserving = (domNode) => {
                 const observer = new MutationObserver(mutations => {
-                    let hasChanges = false;
                     mutations.forEach(function (_m) {
                         if (cache !== t.innerHTML) {
-                            hasChanges = true;
+                            cache = t.innerHTML;
+                            t.buildFooterContent();
                         }
                     });
-                    if (hasChanges) {
-                        t.buildFooterContent();
-                        cache = t.innerHTML;
-                    }
                 });
                 observer.observe(domNode, {
                     childList: true,
@@ -87,36 +83,32 @@
             }
         },
         buildFooterContent() {
-            console.log('build footer content');
             const t = this;
+            let fb = t.querySelectorAll('[slot="footer"]');
             let content = '';
-            if (t.dataMoveable) { content += moveableTemplate.split('[ID]').join(t._idselector); }
-            if (t.dataDockable && !t._forceUndocked) { content += dockableTemplate.split('[ID]').join(t._idselector); }
-            let fb = t.querySelector('[slot="footer"]');
-            if (!fb) {
-                fb = webui.create('webui-flex');
-                fb.setAttribute('justify', 'center');
-                fb.setAttribute('slot', 'footer');
-                t.appendChild(fb);
-                console.log('fb appended');
+            if (this.dataMoveable) { content += moveableTemplate.split('[ID]').join(this._idselector); }
+            if (this.dataDockable && !this._forceUndocked) { content += dockableTemplate.split('[ID]').join(this._idselector); }
+            console.log(fb.length, content);
+            if (fb.length === 1) {
+                console.log(fb.innerHTML);
+                if (fb.innerHTML === content) return;
             }
-            if (fb.innerHTML !== content) {
-                console.log('update fb html');
-                fb.innerHTML = content;
-            }
+            fb.forEach(el => el.remove());
+            fb = webui.create('webui-flex');
+            fb.setAttribute('justify', 'center');
+            fb.setAttribute('slot', 'footer');
+            fb.innerHTML = content;
+            this.appendChild(fb);
         },
         checkResponsiveDocking() {
-            console.log('check from resize');
             const isNarrow = window.innerWidth < 900;
             const t = this;
             t._forceUndocked = isNarrow;
             if (isNarrow) {
                 if (t.hasAttribute('docked')) {
-                    console.log('remove docked');
                     t.removeAttribute('docked');
                 }
             } else if (t._cacheDocked && !t.hasAttribute('docked')) {
-                console.log('set docked');
                 t.setAttribute('docked', true);
             }
             t.buildFooterContent();
