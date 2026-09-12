@@ -33,12 +33,16 @@
             let cache = t.innerHTML;
             const startObserving = (domNode) => {
                 const observer = new MutationObserver(mutations => {
+                    let hasChanges = false;
                     mutations.forEach(function (_m) {
                         if (cache !== t.innerHTML) {
-                            cache = t.innerHTML;
-                            t.buildFooterContent();
+                            hasChanges = true;
                         }
                     });
+                    if (hasChanges) {
+                        t.buildFooterContent();
+                        cache = t.innerHTML;
+                    }
                 });
                 observer.observe(domNode, {
                     childList: true,
@@ -52,7 +56,6 @@
         },
         connected() {
             const t = this;
-            // delay setting id, which enables transitions, to avoid undocked drawers from displaying on page load.
             setTimeout(() => {
                 t.setAttribute('id', t._id);
             }, 100);
@@ -84,15 +87,20 @@
             }
         },
         buildFooterContent() {
-            this.querySelectorAll('[slot="footer"]').forEach(el => el.remove());
+            const t = this;
             let content = '';
-            let fb = webui.create('webui-flex');
-            fb.setAttribute('justify', 'center');
-            fb.setAttribute('slot', 'footer');
-            if (this.dataMoveable) { content += moveableTemplate.split('[ID]').join(this._idselector); }
-            if (this.dataDockable && !this._forceUndocked) { content += dockableTemplate.split('[ID]').join(this._idselector); }
-            fb.innerHTML = content;
-            this.appendChild(fb);
+            if (t.dataMoveable) { content += moveableTemplate.split('[ID]').join(t._idselector); }
+            if (t.dataDockable && !t._forceUndocked) { content += dockableTemplate.split('[ID]').join(t._idselector); }
+            let fb = t.querySelector('[slot="footer"]');
+            if (!fb) {
+                fb = webui.create('webui-flex');
+                fb.setAttribute('justify', 'center');
+                fb.setAttribute('slot', 'footer');
+                t.appendChild(fb);
+            }
+            if (fb.innerHTML !== content) {
+                fb.innerHTML = content;
+            }
         },
         checkResponsiveDocking() {
             const isNarrow = window.innerWidth < 900;
