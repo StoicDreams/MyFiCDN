@@ -87,6 +87,7 @@
             }
         },
         buildFooterContent() {
+            console.log('build footer content');
             const t = this;
             let content = '';
             if (t.dataMoveable) { content += moveableTemplate.split('[ID]').join(t._idselector); }
@@ -97,20 +98,25 @@
                 fb.setAttribute('justify', 'center');
                 fb.setAttribute('slot', 'footer');
                 t.appendChild(fb);
+                console.log('fb appended');
             }
             if (fb.innerHTML !== content) {
+                console.log('update fb html');
                 fb.innerHTML = content;
             }
         },
         checkResponsiveDocking() {
+            console.log('check from resize');
             const isNarrow = window.innerWidth < 900;
             const t = this;
             t._forceUndocked = isNarrow;
             if (isNarrow) {
                 if (t.hasAttribute('docked')) {
+                    console.log('remove docked');
                     t.removeAttribute('docked');
                 }
             } else if (t._cacheDocked && !t.hasAttribute('docked')) {
+                console.log('set docked');
                 t.setAttribute('docked', true);
             }
             t.buildFooterContent();
