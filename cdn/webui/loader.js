@@ -3131,19 +3131,22 @@ const webui = (() => {
         // const FIVE_MINUTES_MS = 5 * 60 * 1000;
         // let lastError = {};
         function buildMessage(event) {
-            if (event.reason && event.reason.message) {
-                return `Unhandled Promise Rejection: ${event.reason.message || event.reason}\nStack: ${event.reason.stack}`;
-            }
-            return `Unhandled Error: ${event.message}\nSource: ${event.filename}:${event.lineno}:${event.colno}`;
+            let msg = [];
+            if (event.message) { msg.push(event.message);}
+            if (event.reason) {msg.push(`Reason: ${event.reason}`);}
+            if (event.filename) {msg.push(`Source: ${event.filename}`);}
+            if (event.lineno) {msg.push(event.lineno);}
+            if (event.colno) {msg.push(event.colno);}
+            if (msg.length === 0) return null;
+            return `Unhandled Error: ${msg.join(':')}`;
         }
         function errorHandler(event) {
-            if (typeof event === 'string') {
-                console.log('Event is string', event);
+            if (event.promise) {
                 return true;
             }
             event.preventDefault();
             const message = buildMessage(event);
-            console.log('message:%o, event:%o', message, event);
+            if (!message) return true;
             console.error(event.error || event.reason || event);
             webui.alert(message, 'danger');
             return true;
