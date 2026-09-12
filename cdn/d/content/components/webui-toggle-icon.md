@@ -16,7 +16,7 @@
     ```
     <webui-page-segment elevation="10">
         <webui-flex justify="center" align="center">
-            <webui-toggle-icon label="Feature Toggle" icon-on="check|fill" icon-off="xmark" theme-on="success" theme-off="danger" title-on="Disable Feature" title-off="Enable Feature"></webui-toggle-icon>
+            <webui-toggle-icon label="Feature Toggle" icon-on="toggle-on|fill" icon-off="toggle-off" theme-on="success" theme-off="danger" title-on="Disable Feature" title-off="Enable Feature"></webui-toggle-icon>
         </webui-flex>
     </webui-page-segment>
 </webui-side-by-side>
