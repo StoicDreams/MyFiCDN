@@ -62,7 +62,7 @@ const webuiDialog = function (data) {
                             }
                             alertNode.setAttribute('variant', variant);
                             if (message) {
-                                alertNode.setAttribute('show');
+                                alertNode.setAttribute('show', true);
                             } else {
                                 alertNode.removeAttribute('show');
                             }
