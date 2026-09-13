@@ -155,7 +155,7 @@ const webuiDialog = function (data) {
             }
         },
         shadowTemplate: `
-<dialog>
+<dialog data-stopclick>
 <form method="dialog">
 <header>
 <section></section>
