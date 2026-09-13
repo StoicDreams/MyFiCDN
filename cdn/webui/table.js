@@ -89,10 +89,10 @@
                         t.defaultSort = col[0];
                         t.defaultSortDir = dsb;
                     }
-                    col = col[0];
-                    sortable[col] = dsb;
+                    let colName = col[0].trim();
+                    sortable[colName] = dsb;
                     if (!t.defaultSort) {
-                        t.defaultSort = col;
+                        t.defaultSort = colName;
                         t.defaultSortDir = dsb;
                     }
                 });
@@ -120,6 +120,9 @@
                         let sortDir = t.currentSort === key ? t.currentSortDir === 'asc' ? 'desc' : 'asc' : sortable[key];
                         t.currentSort = key;
                         t.currentSortDir = sortDir;
+                        t.setAttribute('current-sort', key);
+                        t.setAttribute('current-sort-dir', sortDir);
+                        t.render();
                         t.dispatchEvent(new Event('update-sort', { bubbles: true, composed: true }));
                     });
                     th.appendChild(c);
