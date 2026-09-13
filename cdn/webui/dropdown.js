@@ -255,6 +255,9 @@
                 t._select.appendChild(option);
             }
             data.forEach(item => {
+                if (typeof item === 'string') {
+                    item = { id: item, value: item, display: item };
+                }
                 let id = webui.getDefined(item[t.dataset.id], item.id, item.value);
                 if (id === undefined && item.value !== undefined) {
                     id = item.value;
