@@ -695,8 +695,8 @@ webui-paper,
 webui-table {
     display: block;
 }
-webui-table table td,
-webui-table table th {
+webui-table table td > *,
+webui-table table th > * {
     vertical-align: middle;
 }
 webui-paper,
