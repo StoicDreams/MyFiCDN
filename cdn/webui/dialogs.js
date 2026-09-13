@@ -61,6 +61,11 @@ const webuiDialog = function (data) {
                                 t.content.appendChild(alertNode);
                             }
                             alertNode.setAttribute('variant', variant);
+                            if (message) {
+                                alertNode.setAttribute('show');
+                            } else {
+                                alertNode.removeAttribute('show');
+                            }
                             alertNode.innerHTML = message;
                         };
                         data = data || defaultDialogOptions;
@@ -71,6 +76,7 @@ const webuiDialog = function (data) {
                         t._onsubmit = async function () {
                             let formData = new FormData(t.form);
                             let result = undefined;
+                            content.alert();
                             if (data.onconfirm) {
                                 if (data.onconfirm.constructor && data.onconfirm.constructor.name === 'AsyncFunction') {
                                     result = await data.onconfirm(formData, t.content);
@@ -107,6 +113,7 @@ const webuiDialog = function (data) {
                             t.dialog.removeAttribute('data-hideclose');
                         }
                         close = (canceled) => {
+                            content.alert();
                             if (data.onclose) { data.onclose(); }
                             if (canceled) reject('canceled');
                             t.dialog.close();
