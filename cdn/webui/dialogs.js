@@ -76,7 +76,7 @@ const webuiDialog = function (data) {
                         t._onsubmit = async function () {
                             let formData = new FormData(t.form);
                             let result = undefined;
-                            content.alert();
+                            t.content.alert();
                             if (data.onconfirm) {
                                 if (data.onconfirm.constructor && data.onconfirm.constructor.name === 'AsyncFunction') {
                                     result = await data.onconfirm(formData, t.content);
@@ -113,7 +113,7 @@ const webuiDialog = function (data) {
                             t.dialog.removeAttribute('data-hideclose');
                         }
                         close = (canceled) => {
-                            content.alert();
+                            t.content.alert();
                             if (data.onclose) { data.onclose(); }
                             if (canceled) reject('canceled');
                             t.dialog.close();
