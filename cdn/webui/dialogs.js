@@ -52,6 +52,7 @@ const webuiDialog = function (data) {
             if (!webuiDialog._handler) {
                 webuiDialog._handler = function (data) {
                     let promise = new Promise((resolve, reject) => {
+                        resetNodes();
                         t.content.alert = function (message, variant = 'danger') {
                             let alertNode = t.content.querySelector('webui-alert');
                             if (!alertNode) {
@@ -62,7 +63,6 @@ const webuiDialog = function (data) {
                             alertNode.setAttribute('variant', variant);
                             alertNode.innerHTML = message;
                         };
-                        resetNodes();
                         data = data || defaultDialogOptions;
                         let defaultSet = data.isLoading ? defaultWaitOptions : defaultDialogOptions;
                         if (data.isLoading) {
