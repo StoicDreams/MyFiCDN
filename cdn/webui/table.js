@@ -199,7 +199,6 @@ width:-webkit-fill-available;
 slot[name="column"] {
 display:none;
 }
-td > * {verticle-align:middle}
 </style>
 `
     });
