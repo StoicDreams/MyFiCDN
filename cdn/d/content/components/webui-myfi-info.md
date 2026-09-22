@@ -1,14 +1,25 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-myfi-info>` component provides a user account button that toggles a shared side-panel drawer. It automatically adjusts its appearance and behavior based on the user's authentication state (`session-user-role`). When authenticated, it opens a customizable account panel equipped with default links for Site Settings and Sign-Out.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-myfi-info header="Account Overview">
+            <template slot="panel-content">
+                <webui-alert show variant="success">Welcome to your account panel!</webui-alert>
+                <p>This content is dynamically injected into the shared drawer.</p>
+            </template>
+        </webui-myfi-info>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-flex justify="center" align="center">
+            <webui-myfi-info header="Account Overview">
+                <template slot="panel-content">
+                    <webui-alert show variant="success">Welcome to your account panel!</webui-alert>
+                    <p>This content is dynamically injected into the shared drawer.</p>
+                </template>
+            </webui-myfi-info>
+        </webui-flex>
     </webui-page-segment>
 </webui-side-by-side>
 

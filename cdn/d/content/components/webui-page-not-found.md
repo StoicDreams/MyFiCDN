@@ -1,14 +1,13 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-page-not-found>` component provides a standard 404 error page layout. It displays a "Page Not Found" message along with an illustrative graphic. If the global data key `app-not-found-html` is populated within the application's configuration, it will render that custom HTML instead of the default layout.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-page-not-found></webui-page-not-found>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-page-not-found></webui-page-not-found>
     </webui-page-segment>
 </webui-side-by-side>
 

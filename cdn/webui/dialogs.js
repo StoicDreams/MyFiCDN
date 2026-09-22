@@ -53,6 +53,21 @@ const webuiDialog = function (data) {
                 webuiDialog._handler = function (data) {
                     let promise = new Promise((resolve, reject) => {
                         resetNodes();
+                        t.content.alert = function (message, variant = 'danger') {
+                            let alertNode = t.content.querySelector('webui-alert');
+                            if (!alertNode) {
+                                alertNode = document.createElement('webui-alert');
+                                alertNode.style.marginBottom = 'var(--padding)';
+                                t.content.appendChild(alertNode);
+                            }
+                            alertNode.setAttribute('variant', variant);
+                            if (message) {
+                                alertNode.setAttribute('show', true);
+                            } else {
+                                alertNode.removeAttribute('show');
+                            }
+                            alertNode.innerHTML = message;
+                        };
                         data = data || defaultDialogOptions;
                         let defaultSet = data.isLoading ? defaultWaitOptions : defaultDialogOptions;
                         if (data.isLoading) {
@@ -61,6 +76,7 @@ const webuiDialog = function (data) {
                         t._onsubmit = async function () {
                             let formData = new FormData(t.form);
                             let result = undefined;
+                            t.content.alert();
                             if (data.onconfirm) {
                                 if (data.onconfirm.constructor && data.onconfirm.constructor.name === 'AsyncFunction') {
                                     result = await data.onconfirm(formData, t.content);
@@ -97,6 +113,7 @@ const webuiDialog = function (data) {
                             t.dialog.removeAttribute('data-hideclose');
                         }
                         close = (canceled) => {
+                            t.content.alert();
                             if (data.onclose) { data.onclose(); }
                             if (canceled) reject('canceled');
                             t.dialog.close();
@@ -138,7 +155,7 @@ const webuiDialog = function (data) {
             }
         },
         shadowTemplate: `
-<dialog>
+<dialog data-stopclick>
 <form method="dialog">
 <header>
 <section></section>

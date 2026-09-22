@@ -1,14 +1,27 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-input-range>` component renders a responsive slider input field with a real-time numeric value display. It supports standard slider configuration attributes like `min`, `max`, `step`, and `value`, and can use custom rendering functions via `onrender` to format the displayed value.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-input-range
+            label="Volume Control"
+            min="0"
+            max="100"
+            step="5"
+            value="50"
+            theme="primary">
+        </webui-input-range>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-input-range
+            label="Volume Control"
+            min="0"
+            max="100"
+            step="5"
+            value="50"
+            theme="primary">
+        </webui-input-range>
     </webui-page-segment>
 </webui-side-by-side>
 

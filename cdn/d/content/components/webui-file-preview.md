@@ -1,14 +1,19 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-file-preview>` component provides an inline preview of files loaded into the application state. It dynamically swaps between an `<img>` element for image rendering and an `<iframe>` for other supported document types (like PDFs or text strings). It relies on a `setFile` data subscription to receive the file object array.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-flex column>
+            <webui-file-select label="Select an Image or PDF" accept="image/*,application/pdf" data-trigger="preview-file-data"></webui-file-select>
+            <webui-file-preview height="300" data-subscribe="preview-file-data:setFile"></webui-file-preview>
+        </webui-flex>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-flex column>
+            <webui-file-select label="Select an Image or PDF" accept="image/*,application/pdf" data-trigger="preview-file-data"></webui-file-select>
+            <webui-file-preview height="300" data-subscribe="preview-file-data:setFile"></webui-file-preview>
+        </webui-flex>
     </webui-page-segment>
 </webui-side-by-side>
 

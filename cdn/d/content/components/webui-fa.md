@@ -1,14 +1,21 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-fa>` component seamlessly integrates Font Awesome icons into your application. It dynamically fetches and caches the SVG path for the specified icon on demand, saving bandwidth. It also supports displaying an integrated numerical `count` badge overlaid on the icon.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-flex gap="4">
+            <!-- Basic Font Awesome Icon -->
+            <webui-fa icon="user"></webui-fa>
+            <!-- Font Awesome Icon with Count Badge -->
+            <webui-fa icon="bell" count="5"></webui-fa>
+        </webui-flex>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-flex gap="4" align="center" justify="center">
+            <webui-fa icon="user"></webui-fa>
+            <webui-fa icon="bell" count="5"></webui-fa>
+        </webui-flex>
     </webui-page-segment>
 </webui-side-by-side>
 

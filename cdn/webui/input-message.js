@@ -109,6 +109,7 @@
         },
         setValue(value) {
             const t = this;
+            if (t._field.value === value) return;
             t._field.value = value;
             t._field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
             t._field.dispatchEvent(new Event('change', { bubbles: true, composed: true }));

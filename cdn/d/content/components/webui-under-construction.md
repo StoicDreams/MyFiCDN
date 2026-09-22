@@ -1,14 +1,13 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-under-construction>` component provides a standardized, responsive placeholder for pages or sections that are currently being built. It automatically renders a helpful graphic alongside a localized message using the configured application name and domain data.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-under-construction></webui-under-construction>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-under-construction></webui-under-construction>
     </webui-page-segment>
 </webui-side-by-side>
 

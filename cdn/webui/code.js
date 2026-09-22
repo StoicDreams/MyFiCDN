@@ -8,7 +8,11 @@
 "use strict"
 {
     function quotedSegment(rgx, text) {
-        return text.replace(rgx, '<span class="quote">"</span><span class="string">$1</span><span class="quote">"</span>');
+        return text.replace(rgx, (match) => {
+            const q = match[0];
+            const inner = match.slice(1, -1);
+            return `<span class="quote">${q}</span><span class="string">${inner}</span><span class="quote">${q}</span>`;
+        });
     }
     function openTag(rgx, text) {
         return text.replace(rgx, () => {
@@ -30,7 +34,7 @@
         });
     }
     const jsPatterns = [
-        { regex: /(".*?"|'.*?'|`.*?`)/g, class: 'string' },
+        { regex: /(".*?"|'.*?'|`[\s\S]*?`)/g, class: 'string' },
         { regex: /(\/\/.*|\/\*[\s\S]*?\*\/)/g, class: 'comment' },
         { regex: /\b(const|let|var|function|return|if|else|for|while|do|break|continue|switch|case|default|try|catch|finally|throw|new|this|class|extends|super|import|export|await|async|of|console)\b/g, class: 'keyword' },
         { regex: /\b(\d+(\.\d+)?)\b/g, class: 'number' },
@@ -46,6 +50,12 @@
         { regex: /\b(\d+(\.\d+)?(px|em|rem|%|vh|vw|ch)?)\b/g, class: 'number' },
     ];
     const terminalPatterns = [
+        { regex: /^[\s]*([a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+:[^\$#\n]+[\$#]|PS [A-Za-z]:\\[^>\n]*>|[\$#>])(?=\s)/gm, class: 'meta' },
+        { regex: /( --?[a-zA-Z0-9-]+)/g, class: 'attribute' },
+        { regex: /(".*?"|'.*?'|`.*?`)/g, class: 'string' },
+        { regex: /\b(npm|yarn|pnpm|npx|node|yo|cd|code|git|docker|ls|mkdir|rm|cp|mv|echo|cat|grep|sudo|apt|brew|install|init)\b/g, class: 'built_in' },
+        { regex: /(?:\/[a-zA-Z0-9_-]+)+|[A-Za-z]:\\[a-zA-Z0-9_\\\-]*/g, class: 'string' },
+        { regex: /(#\s.*)/g, class: 'comment' }
     ];
     const languages = {
         javascript: { patterns: jsPatterns },
@@ -71,7 +81,7 @@
         },
         htmltagdef: {
             patterns: [
-                { regex: /"([^"]*)"/g, class: quotedSegment },
+                { regex: /(".*?"|'.*?')/g, class: quotedSegment },
                 { regex: /([A-Za-z0-9-]+)=/g, class: attributeEquals },
                 { regex: /([A-Za-z0-9-]+)/g, class: attribute },
             ]
@@ -80,7 +90,7 @@
             patterns: [
                 { regex: /(&lt;!--[\s\S]*?--&gt;)/g, class: 'comment' },
                 { regex: /&lt;(!?[A-Za-z0-9-]+)( ?\/?&gt;)/g, class: openTag },
-                { regex: /&lt;(!?[A-Za-z0-9-]+)([A-Za-z0-9-_=\" \:\;\.\,\!\?\|\\\/\#\+\*\@\$\%\^\(\)\{\}\[\]]+)(\/?&gt;)/g, class: highlightHtmlTagDef },
+                { regex: /&lt;(!?[A-Za-z0-9-]+)((?:(?!&lt;|&gt;)[\s\S])*)(\/?&gt;)/g, class: highlightHtmlTagDef },
                 { regex: /&lt;\/([a-zA-Z0-9-]+)&gt;/g, class: closeTag },
                 { regex: /(&lt;\/?)/g, class: 'symbol' },
                 { regex: /(\/?&gt;)/g, class: 'symbol' },

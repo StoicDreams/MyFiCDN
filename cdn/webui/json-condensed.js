@@ -42,7 +42,6 @@
         }
     }
     webui.define('webui-json-condensed', {
-        preload: "message",
         constructor() {
             const t = this;
             t.limit = 20;
@@ -64,10 +63,12 @@
         },
         setValue(value) {
             const t = this;
-            t.condensed = condenseJson(value, t.limit);
-            if (t.dataTrigger) {
-                webui.setData(t.dataTrigger, t.condensed);
-            }
+            queueMicrotask(()=>{
+                t.condensed = condenseJson(value, t.limit);
+                if (t.dataTrigger) {
+                    webui.setData(t.dataTrigger, t.condensed);
+                }
+            },1);
         },
         shadowTemplate: `
 <slot name="template"></slot>

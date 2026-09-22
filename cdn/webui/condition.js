@@ -32,6 +32,12 @@
                 }
             });
         },
+        props: {
+            'value': {
+                get() { return t.dataset.value; },
+                set(v) { this.setValue(webui.getDefined(v, ''), 'value'); }
+            }
+        },
         attr: ['data-subscribe', 'value'],
         attrChanged(property, value) {
             const t = this;

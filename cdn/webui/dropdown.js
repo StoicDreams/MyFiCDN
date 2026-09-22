@@ -255,6 +255,9 @@
                 t._select.appendChild(option);
             }
             data.forEach(item => {
+                if (typeof item === 'string') {
+                    item = { id: item, value: item, display: item };
+                }
                 let id = webui.getDefined(item[t.dataset.id], item.id, item.value);
                 if (id === undefined && item.value !== undefined) {
                     id = item.value;
@@ -339,6 +342,7 @@ display:grid;
 div {
 display:flex;
 flex-grow:1;
+min-width:0;
 }
 select {
 display:block;
@@ -348,6 +352,7 @@ height:100%;
 background-color:var(--theme-color);
 color:var(--theme-color-offset);
 border-radius:var(--corners);
+max-width:100%;
 }
 label.hide {display:none;}
 label {

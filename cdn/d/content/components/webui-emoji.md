@@ -1,14 +1,21 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-emoji>` component displays a specific emoji using the cross-platform "Noto Color Emoji" font to ensure visual consistency. It loads the emoji mapping dynamically from the CDN and requires the exact emoji string identifier via the `emoji` attribute.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-flex gap="4">
+            <webui-emoji emoji="rocket"></webui-emoji>
+            <webui-emoji emoji="fire"></webui-emoji>
+            <webui-emoji emoji="sparkles"></webui-emoji>
+        </webui-flex>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-flex gap="4" align="center" justify="center">
+            <webui-emoji emoji="rocket"></webui-emoji>
+            <webui-emoji emoji="fire"></webui-emoji>
+            <webui-emoji emoji="sparkles"></webui-emoji>
+        </webui-flex>
     </webui-page-segment>
 </webui-side-by-side>
 

@@ -1,14 +1,13 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-myfi-dev-settings>` component provides a developer-specific configuration panel for testing and debugging environments. It is currently under development and acts as a placeholder for upcoming developer tools.
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-myfi-dev-settings></webui-myfi-dev-settings>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-myfi-dev-settings></webui-myfi-dev-settings>
     </webui-page-segment>
 </webui-side-by-side>
 

@@ -1774,6 +1774,30 @@ const webui = (() => {
             }
         }
         /**
+         * Set global or session data only if it does not already exist.
+         *
+         * @param {string|object} key - The data key, or an object of key:value pairs.
+         * @param {any} [value] - The value to set if passing a single key.
+         * @returns {undefined}
+         * @example
+         * webui.setDefault('theme-mode', 'dark');
+         * webui.setDefault({ 'theme-mode': 'dark', 'sidebar-open': true });
+         */
+        setDefault(key, value) {
+            const t = this;
+            if (!key) return;
+            if (typeof key === 'object' && key !== null) {
+                Object.keys(key).forEach(k => {
+                    t.setDefault(k, key[k]);
+                });
+                return;
+            }
+            const existing = t.getData(key);
+            if (existing === undefined || existing === null) {
+                t.setData(key, value);
+            }
+        }
+        /**
          * Query selector all elements matching the selector, including those in shadow DOMs.
          *
          * @param {string} selector - The CSS selector to match elements.
@@ -2339,7 +2363,7 @@ const webui = (() => {
         let el = ev.srcElement || ev.target || ev;
         if (ev.composedPath) {
             for (let path of ev.composedPath()) {
-                if (path.dataset && path.dataset.trigger) {
+                if (path.dataset && (path.dataset.trigger || path.dataset.bind)) {
                     el = path;
                     break;
                 }
@@ -2355,7 +2379,7 @@ const webui = (() => {
                 return;
             }
         }
-        let key = el.dataset.trigger;
+        let key = [el.dataset.trigger, el.dataset.bind].filter(Boolean).join('|');
         if (!key) return;
         key.split('|').forEach(key => {
             let oldData = webui.getData(key);
@@ -2382,7 +2406,8 @@ const webui = (() => {
         }
         function getToSet(key) {
             let toSet = 'setter';
-            el.dataset.subscribe.split('|').forEach(ds => {
+            let combinedAttrs = [el.dataset.subscribe, el.dataset.bind].filter(Boolean).join('|');
+            combinedAttrs.split('|').forEach(ds => {
                 let kts = ds.trim().split(':');
                 if (!(key === ds || kts[0] === key)) return;
                 if (kts.length === 2) {
@@ -2533,6 +2558,15 @@ const webui = (() => {
     }
     function registerNode(node) {
         if (!node || typeof node.getAttribute !== 'function') return;
+        let def = node.getAttribute('data-default');
+        if (def) {
+            def.split('|').forEach(pair => {
+                let [defKey, defVal] = pair.split(':');
+                if (defKey && defVal !== undefined) {
+                    webui.setDefault(defKey.trim(), defVal.trim());
+                }
+            });
+        }
         let sub = node.getAttribute('data-subscribe');
         if (sub) {
             sub.split('|').forEach(dk => {
@@ -2548,6 +2582,17 @@ const webui = (() => {
                 let triggerKey = tk.split(':')[0].trim();
                 if (!map.triggers[triggerKey]) map.triggers[triggerKey] = new Set();
                 map.triggers[triggerKey].add(node);
+            });
+        }
+        let bind = node.getAttribute('data-bind');
+        if (bind) {
+            bind.split('|').forEach(bk => {
+                let bindKey = bk.split(':')[0].trim();
+                if (!map.subs[bindKey]) map.subs[bindKey] = new Set();
+                map.subs[bindKey].add(node);
+                setDataToEl(node, bindKey);
+                if (!map.triggers[bindKey]) map.triggers[bindKey] = new Set();
+                map.triggers[bindKey].add(node);
             });
         }
         let hide = node.getAttribute('data-hide');
@@ -2588,7 +2633,7 @@ const webui = (() => {
         }
         if (!attr) {
             if (target && typeof target.getAttribute === 'function') {
-                ['elevation', 'theme', 'data-subscribe', 'top', 'right', 'bottom', 'left'].forEach(attr => {
+                ['elevation', 'theme', 'data-subscribe', 'data-bind', 'data-default', 'top', 'right', 'bottom', 'left'].forEach(attr => {
                     if (target.hasAttribute(attr)) {
                         applyAttributeSettings(target, attr);
                     }
@@ -2602,6 +2647,8 @@ const webui = (() => {
             case 'right': target.style.right = webui.pxIfNumber(value); break;
             case 'bottom': target.style.bottom = webui.pxIfNumber(value); break;
             case 'left': target.style.left = webui.pxIfNumber(value); break;
+            case 'data-default':
+            case 'data-bind':
             case 'data-subscribe':
                 registerNode(target); // Safely handles specific dynamic attribute changes
                 break;
@@ -2632,7 +2679,7 @@ const webui = (() => {
         let needsCleanup = false;
         mutations.forEach(function (mutation) {
             checkAttributeMutations(mutation);
-            if (mutation.type === 'attributes' && ['data-subscribe', 'data-trigger', 'data-hide'].includes(mutation.attributeName)) {
+            if (mutation.type === 'attributes' && ['data-subscribe', 'data-trigger', 'data-bind', 'data-default', 'data-hide'].includes(mutation.attributeName)) {
                 unregisterNode(mutation.target);
                 registerNode(mutation.target);
             }
@@ -2733,7 +2780,9 @@ const webui = (() => {
             appSettings.app.setPageContent('', watchedAppData, fullContentUrl);
             clearPageData();
             if (body.startsWith(`<!DOCTYPE`)) {
-                throw Error(`Invalid page content loaded from ${fullContentUrl}`);
+                let err = new Error(`Invalid page content loaded from ${fullContentUrl}`);
+                err.status = 404; 
+                throw err;
             }
             let content = webui.applyAppDataToContent(body);
             appSettings.app.setPageContent(content, watchedAppData, fullContentUrl);
@@ -2742,13 +2791,17 @@ const webui = (() => {
                 applyHash();
             }, 100);
         } catch (ex) {
-            webui.log.error('Failed loading page content', ex);
             let elapsed = Date.now() - timerStart;
             if (elapsed < 300) {
                 await transitionDelay(300 - elapsed);
             }
             clearPageData();
-            appSettings.app.setPageContent('<webui-page-not-found></webui-page-not-found>', watchedAppData);
+            let fallbackHtml = webui.getData('app-not-found-html') ;
+            if (!fallbackHtml) {
+                webui.log.error('Failed loading page content', ex);
+                fallbackHtml = '<webui-page-not-found></webui-page-not-found>';
+            }
+            appSettings.app.setPageContent(fallbackHtml, watchedAppData);
         }
         try {
             let data = await fetchData;
@@ -2866,7 +2919,12 @@ const webui = (() => {
         });
     }
     async function preloadFromAttribute(componentName) {
-        await processWebUINode(`${wuiPrefix}${componentName}`);
+        if (componentName.toLowerCase().startsWith('app:')) {
+            let name = componentName.substring(4);
+            await processWebUINode(`${appPrefix}${name}`);
+        } else {
+            await processWebUINode(`${wuiPrefix}${componentName}`);
+        }
     }
     function componentPreload(el) {
         if (!el) return;
@@ -2874,11 +2932,12 @@ const webui = (() => {
             processWebUINode(el.nodeName);
         }
         let pl = el.getAttribute('preload');
-        if (pl) {
+        if (pl && typeof pl.replace === 'function') {
             pl.replace(';', ' ').replace(',', ' ').split(' ').forEach(preloadFromAttribute);
         }
     }
     async function preloadComponents(pl) {
+        if (!pl || typeof pl.replace !== 'function') return;
         pl = pl.replace(';', ' ').replace(',', ' ').split(' ');
         for (let index = 0; index < pl.length; ++index) {
             await preloadFromAttribute(pl[index])
@@ -3072,14 +3131,22 @@ const webui = (() => {
         // const FIVE_MINUTES_MS = 5 * 60 * 1000;
         // let lastError = {};
         function buildMessage(event) {
-            if (event.reason && event.reason.message) {
-                return `Unhandled Promise Rejection: ${event.reason.message || event.reason}\nStack: ${event.reason.stack}`;
-            }
-            return `Unhandled Error: ${event.message}\nSource: ${event.filename}:${event.lineno}:${event.colno}`;
+            let msg = [];
+            if (event.message) { msg.push(event.message);}
+            if (event.reason) {msg.push(`Reason: ${event.reason}`);}
+            if (event.filename) {msg.push(`Source: ${event.filename}`);}
+            if (event.lineno) {msg.push(event.lineno);}
+            if (event.colno) {msg.push(event.colno);}
+            if (msg.length === 0) return null;
+            return `Unhandled Error: ${msg.join(':')}`;
         }
         function errorHandler(event) {
+            if (event.promise) {
+                return true;
+            }
             event.preventDefault();
             const message = buildMessage(event);
+            if (!message) return true;
             console.error(event.error || event.reason || event);
             webui.alert(message, 'danger');
             return true;

@@ -7,14 +7,14 @@
  */
 "use strict"
 
-const RX_CODE_SPAN = /`([^`]+)`/g;
+const RX_AUTOLINK = /(?<!["'=])\b(https?:\/\/[^\s<]+)/g;
+const RX_CODE_SPAN = /(`+)(.+?)\1/g;
 const RX_HTML_TAG = /<[a-zA-Z\/!][^>]*>/g;
 const RX_EMOJI = /:([a-zA-Z0-9_+-]+):/g;
 const RX_IMG_TITLE = /!\[(.*?)\]\((.*?) "(.*?)"\)/g;
 const RX_LINK_TITLE = /\[(.*?)\]\((.*?) "(.*?)"\)/g;
 const RX_IMG = /!\[(.*?)\]\((.*?)\)/g;
 const RX_LINK = /\[(.*?)\]\((.*?)\)/g;
-const RX_AST = /\\\*/g;
 const RX_STRONG_AST = /\*\*(.+?)\*\*/g;
 const RX_STRONG_US = /__(.+?)__/g;
 const RX_EM_AST = /\*(?!\s)(.+?)(?!\s)\*/g;
@@ -22,6 +22,9 @@ const RX_EM_US = /(?<!\S)_(?!\s)(.+?)(?<!\s)_(?!\.\,\S)/g;
 const RX_HTML_ESCAPE = /[&"'<>]/g;
 const RX_CODE_ESCAPE = /[&<>]/g;
 const RX_QUOTE_ESCAPE = /[&"]/g;
+const RX_STRIKE_DOUBLE = /~~(.+?)~~/g;
+const RX_STRIKE_SINGLE = /~(.+?)~/g;
+const RX_ESCAPE = /\\([\\`*_{}[\]()#+\-.!])/g;
 
 export class MarkdownParser {
     emojiMap = {};
@@ -36,7 +39,8 @@ export class MarkdownParser {
         'literal': (html, token, parser) => `${html}${token.content}\n`,
         'literal_inline': (html, token, parser) => `${html}${parser.renderInline(token.content)}\n`,
         'paragraph': (html, token, parser) => `${html}<p>${parser.renderInline(token.content)}</p>\n`,
-        'no_paragraph': (html, token, parser) => `${html}${parser.renderInline(token.content)}\n`
+        'no_paragraph': (html, token, parser) => `${html}${parser.renderInline(token.content)}\n`,
+        'webui_code_start': (html, token, parser) => `${html}${token.content}\n`
     };
     constructor() {
         this.initDefaultRules();
@@ -66,7 +70,14 @@ export class MarkdownParser {
             }
             return html + `<li>${parser.renderInline(token.content)}</li>\n`;
         };
-        t.addRule('line-break', (line, state) => /^[\s]*---.*/.test(line) && state.tableBuffer.length === 0,
+        t.addRule('setext_heading', (line, state) => {
+            return /^[\s]*(=+|-+)[\s]*$/.test(line) && state.tokens.length > 0 && state.tokens[state.tokens.length - 1].type === 'paragraph';
+        }, (line, state) => {
+            const isH1 = line.includes('=');
+            const prev = state.tokens.pop();
+            return { type: "heading", level: isH1 ? 1 : 2, content: prev.content };
+        }, (html, token, parser) => `${html}<h${token.level}>${parser.renderInline(token.content)}</h${token.level}>\n`);
+       t.addRule('line-break', (line, state) => /^[\s]*(---|___|\*\*\*).*/.test(line) && state.tableBuffer.length === 0,
         (line, state) => {
             const res = line.match(/^[\s]*[-]+([^-]+).*/);
             return res ? { type: "line-break", theme: res[1] } : { type: "line-break" };
@@ -91,12 +102,18 @@ export class MarkdownParser {
             return { type: "ol_item", content: line.replace(/^\s*\d+\.\s+/, "").trim(), indent };
         }, makeListRenderer('ol'));
         t.addRule('blockquote_group', /^[\s]*> ?/, (line, state) => {
-            line = line.trim();
             if (state.inCodeBlock || state.inTemplate) return { type: 'literal', content: line };
-            let [, , , theme, cite, content] = line.match(/^[\s]*(>| )*(\[([a-z]+)?\:?([A-Za-z-_ ]+)?\])?(.*)/);
-            theme = theme?.replace(/(\[\vert{}\])/g, '') || 'info';
+            let lineContent = line.replace(/^[\s]*> ?/, '');
+            let themeMatch = lineContent.match(/^\[([a-z]+)?\:?([A-Za-z-_ ]+)?\] ?/);
+            let theme = 'info';
+            let cite = '';
+            if (themeMatch) {
+                theme = themeMatch[1] || 'info';
+                cite = themeMatch[2] || '';
+                lineContent = lineContent.substring(themeMatch[0].length);
+            }
             state.inBlockquote = true;
-            return { type: "blockquote", content: line.replace(/^> ?(\[([a-z]+)?:?([A-Za-z-_ ]+)?\])? ?/, ""), theme, cite };
+            return { type: "blockquote", content: lineContent, theme, cite };
         }, (html, token, parser) => {
             let theme = token.theme || 'info';
             let cite = token.cite || '';
@@ -108,11 +125,11 @@ export class MarkdownParser {
         }, (line, state) => {
             if (/^[\s]*<pre><code>/i.test(line) && !/<\/code><\/pre>/i.test(line)) {
                 state.inCodeBlock = true; state.codeBlockTag = '<pre><code>';
-                return { type: 'literal', content: line };
+                return { type: 'webui_code_start', content: line };
             }
             if (/^[\s]*<webui-code\b[^>]*>/i.test(line) && !/<\/webui-code>/i.test(line)) {
                 state.inCodeBlock = true; state.codeBlockTag = '<webui-code>';
-                return { type: "literal", content: line };
+                return { type: "webui_code_start", content: line };
             }
             if (/^[\s]*<template\b[^>]*>/i.test(line) && !/<\/template>/i.test(line)) {
                 state.templateLayer++; state.inTemplate = true;
@@ -184,15 +201,31 @@ export class MarkdownParser {
     }
     normalizeMultiLineTags(text) {
         let inTag = false, inStr = false, strChar = '', out = '';
+        let inCodeBlock = false;
         for (let i = 0; i < text.length; i++) {
+            if (text.substring(i, i + 3) === '```') {
+                inCodeBlock = !inCodeBlock;
+                out += '```';
+                i += 2;
+                continue;
+            }
             let c = text[i];
-            if (!inTag && c === '<' && /[a-zA-Z\/!]/.test(text[i + 1] || '')) inTag = true;
-            else if (inTag && !inStr && (c === '"' || c === "'")) { inStr = true; strChar = c; }
-            else if (inTag && inStr && c === strChar) inStr = false;
-            else if (inTag && !inStr && c === '>') inTag = false;
-            if (inTag && c === '\n') out += ' ';
-            else if (inTag && c === '\r');
-            else out += c;
+            if (!inCodeBlock) {
+                if (!inTag && c === '<' && /[a-zA-Z\/!]/.test(text[i + 1] || '')) inTag = true;
+                else if (inTag && !inStr && (c === '"' || c === "'")) { inStr = true; strChar = c; }
+                else if (inTag && inStr && c === strChar) inStr = false;
+                else if (inTag && !inStr && c === '>') inTag = false;
+                
+                if (inTag && c === '\n') {
+                    out += ' ';
+                } else if (inTag && c === '\r') {
+                    // Ignore \r
+                } else {
+                    out += c;
+                }
+            } else {
+                out += c;
+            }
         }
         return out;
     }
@@ -272,11 +305,9 @@ export class MarkdownParser {
                     state.templateLayer = 0;
                     state.inTemplate = false;
                 }
-                // ✨ FIX: Safely push the closing tag as a literal and skip the paragraph wrap
                 state.tokens.push({ type: 'literal', content: line });
                 continue;
             }
-
             if (state.inTemplate || state.inCodeBlock) {
                 state.tokens.push({ type: 'literal', content: line });
                 continue;
@@ -289,7 +320,42 @@ export class MarkdownParser {
             state.tokens.push({ type: noParagraph ? 'no_paragraph' : 'paragraph', content: line.trim() });
         }
         flushTable(); flushBlockquote();
-        return state.tokens;
+        let equalizedTokens = [];
+        let blockBuf = [];
+        let inEqBlock = false;
+        for (let i = 0; i < state.tokens.length; i++) {
+            let t = state.tokens[i];
+            if (!inEqBlock && (t.type === 'code_block_start' || t.type === 'webui_code_start' || (t.type === 'literal_inline' && /^[\s]*<template\b[^>]*>/i.test(t.content)))) {
+                inEqBlock = true;
+            }
+            if (inEqBlock) {
+                blockBuf.push(t);
+                if (t.type === 'code_block_end' || 
+                   (t.type === 'literal' && /<\/webui-code>/i.test(t.content)) || 
+                   (t.type === 'literal' && /<\/code><\/pre>/i.test(t.content)) || 
+                   (t.type === 'literal' && /<\/template>/i.test(t.content))) {
+                    const text = blockBuf.map(b => b.content).join('\n');
+                    const equalized = this.trimLinePreTabs(text);
+                    const equalizedLines = equalized.split('\n');
+                    for (let j = 0; j < equalizedLines.length; j++) {
+                        equalizedTokens.push({ ...blockBuf[j], content: equalizedLines[j] });
+                    }
+                    blockBuf = [];
+                    inEqBlock = false;
+                }
+            } else {
+                equalizedTokens.push(t);
+            }
+        }
+        if (blockBuf.length > 0) {
+            const text = blockBuf.map(b => b.content).join('\n');
+            const equalized = this.trimLinePreTabs(text);
+            const equalizedLines = equalized.split('\n');
+            for (let j = 0; j < equalizedLines.length; j++) {
+                equalizedTokens.push({ ...blockBuf[j], content: equalizedLines[j] });
+            }
+        }
+        return equalizedTokens;
     }
     render(tokens) {
         let html = "";
@@ -316,6 +382,7 @@ export class MarkdownParser {
         const startLines = html.replace(/\t/g, tabRepl).split('\n');
         let tabLen = 999;
         for (let i = 1; i < startLines.length; i++) {
+            if (startLines[i].trim() === '') continue;
             let m = startLines[i].match(/^([ ]*)/)[0].length;
             if (m === 0) return html;
             if (m < tabLen) tabLen = m;
@@ -326,10 +393,20 @@ export class MarkdownParser {
     }
     renderInline(text) {
         const t = this;
-        const codeSpans = [], htmlTags = [], emojis = [];
-        text = text.replace(RX_CODE_SPAN, (_, code) => {
+        const codeSpans = [], htmlTags = [], emojis = [], escapes = [];
+        text = text.replace(RX_ESCAPE, (_, char) => {
+            const token = `^^ESC${escapes.length}^^`;
+            escapes.push(char);
+            return token;
+        });
+        text = text.replace(RX_CODE_SPAN, (_, backticks, code) => {
             const token = `^^CODE${codeSpans.length}^^`;
-            const [, , theme, refined] = code.match(/^(([a-z]+):)?(.*)/);
+            if (code.startsWith(' ') && code.endsWith(' ') && code.trim().length > 0) {
+                code = code.substring(1, code.length - 1);
+            }
+            const match = code.match(/^(([a-z]+):)?(.*)/);
+            const theme = match && match[2] ? match[2] : null;
+            const refined = match ? match[3] : code;
             codeSpans.push(theme
                 ? `<code theme="${t.escapeQuote(theme)}">${t.escapeCode(refined)}</code>`
                 : `<code>${t.escapeCode(code)}</code>`);
@@ -350,15 +427,17 @@ export class MarkdownParser {
             .replace(RX_LINK_TITLE, '<a href="$2" title="$3">$1</a>')
             .replace(RX_IMG, '<img alt="$1" src="$2" />')
             .replace(RX_LINK, '<a href="$2">$1</a>')
-            .replace(RX_AST, '&ast;')
+            .replace(RX_AUTOLINK, '<a href="$1">$1</a>')
             .replace(RX_STRONG_AST, '<strong>$1</strong>')
             .replace(RX_STRONG_US, '<strong>$1</strong>')
             .replace(RX_EM_AST, '<em>$1</em>')
-            .replace(RX_EM_US, '<em>$1</em>');
+            .replace(RX_EM_US, '<em>$1</em>')
+            .replace(RX_STRIKE_DOUBLE, '<del>$1</del>') 
+            .replace(RX_STRIKE_SINGLE, '<sub>$1</sub>');
         codeSpans.forEach((val, i) => text = text.replace(`^^CODE${i}^^`, val));
         emojis.forEach((val, i) => text = text.replace(`^^EMOJI${i}^^`, val));
         htmlTags.forEach((val, i) => text = text.replace(`^^HTML${i}^^`, val));
-
+        escapes.forEach((val, i) => text = text.replace(`^^ESC${i}^^`, val));
         return text;
     }
     escapeHtml(text) {
@@ -368,7 +447,7 @@ export class MarkdownParser {
     escapeCode(text) {
         const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
         return text.replace(RX_CODE_ESCAPE, m => map[m]);
-    }
+    }    
     escapeQuote(text) {
         const map = { '&': '&amp;', '"': '&quot;' };
         return text.replace(RX_QUOTE_ESCAPE, m => map[m]);

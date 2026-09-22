@@ -52,7 +52,6 @@
         },
         connected() {
             const t = this;
-            // delay setting id, which enables transitions, to avoid undocked drawers from displaying on page load.
             setTimeout(() => {
                 t.setAttribute('id', t._id);
             }, 100);
@@ -84,13 +83,17 @@
             }
         },
         buildFooterContent() {
-            this.querySelectorAll('[slot="footer"]').forEach(el => el.remove());
+            const t = this;
+            let fb = t.querySelectorAll('[slot="footer"]');
             let content = '';
-            let fb = webui.create('webui-flex');
-            fb.setAttribute('justify', 'center');
-            fb.setAttribute('slot', 'footer');
             if (this.dataMoveable) { content += moveableTemplate.split('[ID]').join(this._idselector); }
             if (this.dataDockable && !this._forceUndocked) { content += dockableTemplate.split('[ID]').join(this._idselector); }
+            if (fb.length === 1 && content === t._footerContent) return;
+            t._footerContent = content;
+            fb.forEach(el => el.remove());
+            fb = webui.create('webui-flex');
+            fb.setAttribute('justify', 'center');
+            fb.setAttribute('slot', 'footer');
             fb.innerHTML = content;
             this.appendChild(fb);
         },

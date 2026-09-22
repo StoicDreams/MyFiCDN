@@ -54,7 +54,7 @@
             t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
             t.updateElements();
         },
-        getIconOn: function () { return this.iconOn || this.getAttribute('icon-on') || this.icon || 'toggle-on'; },
+        getIconOn: function () { return this.iconOn || this.getAttribute('icon-on') || this.icon || 'toggle-on|fill'; },
         getIconOff: function () { return this.iconOff || this.getAttribute('icon-off') || this.icon || 'toggle-off'; },
         getTitleOn: function () { return this.titleOn || this.getAttribute('title-on') || this.getAttribute('title') || null; },
         getTitleOff: function () { return this.titleOff || this.getAttribute('title-off') || this.getAttribute('title') || null; },
@@ -86,17 +86,30 @@
                 }
             }
             t._label.innerHTML = webui.getDefined(t.label, '');
-            if (t._enabled && t.themeOn) {
-                t.setAttribute('theme', t.themeOn);
-            } else if (!t._enabled && t.themeOff) {
-                t.setAttribute('theme', t.themeOff);
+            let themeOn = t.themeOn || t.getAttribute('theme-on');
+            let themeOff = t.themeOff || t.getAttribute('theme-off');
+            let activeTheme = t._enabled ? themeOn : themeOff;
+            if (activeTheme) {
+                t.setAttribute('theme', activeTheme);
+            } else {
+                t.removeAttribute('theme');
+            }
+            let iconOn = t.getIconOn();
+            let iconOff = t.getIconOff();
+            let flagsOn = t.flagsOn || '';
+            if (typeof iconOn === 'string' && iconOn.includes('|')) {
+                flagsOn += ' ' + iconOn.split('|').slice(1).join(' ');
+            }
+            let flagsOff = t.flagsOff || '';
+            if (typeof iconOff === 'string' && iconOff.includes('|')) {
+                flagsOff += ' ' + iconOff.split('|').slice(1).join(' ');
             }
             if (t._enabled) {
-                t.removeFlags(t.flagsOff);
-                t.applyFlags(t.flagsOn);
-            } else if (!t._enabled) {
-                t.removeFlags(t.flagsOn);
-                t.applyFlags(t.flagsOff);
+                t.removeFlags(flagsOff);
+                t.applyFlags(flagsOn);
+            } else {
+                t.removeFlags(flagsOn);
+                t.applyFlags(flagsOff);
             }
             t._icon.setAttribute('icon', t._enabled ? t.getIconOn() : t.getIconOff());
             let title = t._enabled ? t.getTitleOn() : t.getTitleOff();

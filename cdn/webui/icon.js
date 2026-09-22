@@ -314,7 +314,7 @@ position: relative;
 aspect-ratio:1;
 align-items: center;
 justify-items: center;
-height: auto;
+height: 1ch;
 width: auto;
 min-height: var(--ico-height);
 margin:0;
@@ -422,7 +422,7 @@ stroke-width:calc(var(--ico-stroke-width) * 2);
 webui-emoji {
 display:flex;
 position:absolute;
-top:0;
+top:0.4ch;
 left:0;
 width:100%;
 height:100%;

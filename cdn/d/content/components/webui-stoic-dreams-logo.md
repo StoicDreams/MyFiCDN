@@ -1,14 +1,21 @@
-
 <webui-page-segment elevation="10">
-    Details coming soon
+    The `<webui-stoic-dreams-logo>` component renders the official Stoic Dreams scalable vector (SVG) logo. It allows dynamic text injection for customized internal branding utilizing the `text` and `text2` attributes while maintaining the core shape, colors, and layout of the emblem. 
 </webui-page-segment>
 
 <webui-side-by-side>
     ```html:Code Snippet
-        Demo Placeholder
+        <webui-flex column gap="4" align="center">
+            <!-- Logo with single text line -->
+            <webui-stoic-dreams-logo text="App"></webui-stoic-dreams-logo>
+            <!-- Logo with two text lines -->
+            <webui-stoic-dreams-logo text="Web" text2="UI"></webui-stoic-dreams-logo>
+        </webui-flex>
     ```
     <webui-page-segment elevation="10">
-        Demo Placeholder
+        <webui-flex column gap="4" align="center">
+            <webui-stoic-dreams-logo text="App"></webui-stoic-dreams-logo>
+            <webui-stoic-dreams-logo text="Web" text2="UI"></webui-stoic-dreams-logo>
+        </webui-flex>
     </webui-page-segment>
 </webui-side-by-side>
 
