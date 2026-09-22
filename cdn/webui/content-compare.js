@@ -80,7 +80,6 @@
 /* Layout overrides based on git change status */
 .compare-container.mode-add { grid-template-columns: 0fr 1fr; }
 .compare-container.mode-delete { grid-template-columns: 1fr 0fr; }
-.mode-add .pane-old, .mode-delete .pane-new { display: none; }
 .pane {
     overflow: auto;
     background-color: var(--theme-color, #1e1e1e);

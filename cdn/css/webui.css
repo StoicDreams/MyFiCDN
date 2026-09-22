@@ -3932,6 +3932,11 @@ code .emphasis {
     animation-duration: 1s;
 }
 
+select {
+    appearance: none;
+    -webkit-appearance: none;
+}
+
 .dropdown {
     display: block;
     position: relative;
