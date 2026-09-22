@@ -353,6 +353,8 @@ background-color:var(--theme-color);
 color:var(--theme-color-offset);
 border-radius:var(--corners);
 max-width:100%;
+appearance: none;
+-webkit-appearance: none;
 }
 label.hide {display:none;}
 label {
