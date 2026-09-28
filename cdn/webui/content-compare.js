@@ -6,61 +6,131 @@
         isInput: false,
         constructor() {
             const t = this;
-            t._paneOld = t.template.querySelector('.pane-old');
-            t._paneNew = t.template.querySelector('.pane-new');
-            t._container = t.template.querySelector('.compare-container');
-            let isSyncingLeft = false;
-            let isSyncingRight = false;
-            t._paneOld.addEventListener('scroll', () => {
-                if (!isSyncingLeft) {
-                    isSyncingRight = true;
-                    t._paneNew.scrollTop = t._paneOld.scrollTop;
-                    t._paneNew.scrollLeft = t._paneOld.scrollLeft;
+            t._scrollContainer = t.template.querySelector('.compare-container');
+            t._toggle = t.template.querySelector('.toggle-mode');
+            t._viewMode = 'changes'; // changes|full
+            t._renderId = 0;
+            t._toggle.addEventListener('change', (e) => {
+                t._viewMode = e.target.checked ? 'full' : 'changes';
+                t._scrollContainer.scrollTop = 0;
+                if (t._oldLinesOriginal) {
+                    t._buildDisplayMap();
                 }
-                isSyncingLeft = false;
-            });
-            t._paneNew.addEventListener('scroll', () => {
-                if (!isSyncingRight) {
-                    isSyncingLeft = true;
-                    t._paneOld.scrollTop = t._paneNew.scrollTop;
-                    t._paneOld.scrollLeft = t._paneNew.scrollLeft;
-                }
-                isSyncingRight = false;
             });
         },
         clear() {
             const t = this;
-            t._paneOld.innerHTML = '';
-            t._paneNew.innerHTML = '';
+            t._oldLinesOriginal = [];
+            t._newLinesOriginal = [];
+            t._displayMap = [];
+            t._renderId++;
+            t._scrollContainer.innerHTML = '';
         },
         setDiff(oldLines, newLines, changeType) {
             const t = this;
-            t._container.className = `compare-container mode-${(changeType || 'compare').toLowerCase()}`;
-            t._paneOld.innerHTML = t._buildHtml(oldLines || []);
-            t._paneNew.innerHTML = t._buildHtml(newLines || []);
+            t._scrollContainer.className = `compare-container mode-${(changeType || 'compare').toLowerCase()}`;
+            t._oldLinesOriginal = oldLines || [];
+            t._newLinesOriginal = newLines || [];
+            t._buildDisplayMap();
         },
-        _buildHtml(lines) {
-            if (!lines || lines.length === 0) return '';
-            let buffer = [];
-            for (let i = 0; i < lines.length; i++) {
-                let entry = lines[i];
-                if (!entry) continue;
-                let bg = entry.background ? (entry.background.startsWith('--') ? `var(${entry.background})` : entry.background) : '';
-                let fg = entry.color ? (entry.color.startsWith('--') ? `var(${entry.color})` : entry.color) : '';
-                let style = '';
-                if (bg) style += `background-color: ${bg}; `;
-                if (fg) style += `color: ${fg};`;
-                style = style ? `style="${style}"` : '';
-                let num = entry.isFiller ? '' : (entry.lineNumber || '');
-                let text = (entry.line || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-                buffer.push(`<div class="line" ${style}><span class="num">${num}</span><span class="txt">${text}</span></div>`);
+        _isChange(oldEntry, newEntry) {
+            if (!oldEntry || !newEntry) return true;
+            if (oldEntry.isFiller || newEntry.isFiller) return true;
+            if (oldEntry.background || newEntry.background) return true;
+            if (oldEntry.line !== newEntry.line) return true;
+            return false;
+        },
+        _buildDisplayMap() {
+            const t = this;
+            t._displayMap = [];
+            const len = Math.max(t._oldLinesOriginal.length, t._newLinesOriginal.length);
+            if (t._viewMode === 'full') {
+                for (let i = 0; i < len; i++) {
+                    t._displayMap.push(i);
+                }
+            } else {
+                const contextLines = 3;
+                let visibleSet = new Set();
+                for (let i = 0; i < len; i++) {
+                    if (t._isChange(t._oldLinesOriginal[i], t._newLinesOriginal[i])) {
+                        for (let j = Math.max(0, i - contextLines); j <= Math.min(len - 1, i + contextLines); j++) {
+                            visibleSet.add(j);
+                        }
+                    }
+                }
+                let sortedVisible = Array.from(visibleSet).sort((a,b) => a - b);
+                let lastIdx = -1;
+                for (let idx of sortedVisible) {
+                    if (lastIdx !== -1 && idx > lastIdx + 1) {
+                        t._displayMap.push('gap');
+                    }
+                    t._displayMap.push(idx);
+                    lastIdx = idx;
+                }
             }
-            return buffer.join('');
+            t._renderChunked();
+        },
+        _renderChunked() {
+            const t = this;
+            t._scrollContainer.innerHTML = '';
+            t._renderId++;
+            const currentRenderId = t._renderId;
+            let i = 0;
+            const CHUNK_SIZE = 150;
+            function renderNextChunk() {
+                if (t._renderId !== currentRenderId) return;
+                if (i >= t._displayMap.length) return;
+                let htmlBuffer = [];
+                let end = Math.min(i + CHUNK_SIZE, t._displayMap.length);
+                for (let j = i; j < end; j++) {
+                    let mapVal = t._displayMap[j];
+                    if (mapVal === 'gap') {
+                        htmlBuffer.push(`<div class="diff-row"><div class="diff-cell gap"><span>...</span></div></div>`);
+                    } else {
+                        let oldEntry = t._oldLinesOriginal[mapVal];
+                        let newEntry = t._newLinesOriginal[mapVal];
+                        htmlBuffer.push(`
+                            <div class="diff-row">
+                                ${t._buildCellHtml(oldEntry)}
+                                ${t._buildCellHtml(newEntry)}
+                            </div>
+                        `);
+                    }
+                }
+                t._scrollContainer.insertAdjacentHTML('beforeend', htmlBuffer.join(''));
+                i = end;
+                if (i < t._displayMap.length) {
+                    window.requestAnimationFrame(renderNextChunk);
+                }
+            }
+            window.requestAnimationFrame(renderNextChunk);
+        },
+        _buildCellHtml(entry) {
+            if (!entry || entry.isFiller) {
+                return `<div class="diff-cell empty"></div>`;
+            }
+            let bg = entry.background ? (entry.background.startsWith('--') ? `var(${entry.background})` : entry.background) : '';
+            let fg = entry.color ? (entry.color.startsWith('--') ? `var(${entry.color})` : entry.color) : '';
+            let style = '';
+            if (bg) style += `background-color: ${bg}; `;
+            if (fg) style += `color: ${fg};`;
+            style = style ? `style="${style}"` : '';
+            let num = entry.lineNumber || '';
+            let text = (entry.line || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return `
+                <div class="diff-cell" ${style}>
+                    <div class="line">
+                        <span class="num">${num}</span>
+                        <span class="txt">${text}</span>
+                    </div>
+                </div>
+            `;
         },
         shadowTemplate: `
 <style type="text/css">
 :host {
-    display: block;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
     min-height: 3em;
@@ -69,27 +139,68 @@
     font-family: monospace;
     font-size: 14px;
 }
+.toolbar {
+    padding: 8px 16px;
+    background-color: #252525;
+    border-bottom: 1px solid #444;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+.toggle-label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: sans-serif;
+    font-size: 13px;
+    color: #ccc;
+    user-select: none;
+}
 .compare-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background-color: #333;
+    contain: strict;
+}
+.diff-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2px;
     width: 100%;
-    height: 100%;
-    background-color: #333;
+    content-visibility: auto;
+    contain-intrinsic-size: 24px;
 }
-/* Layout overrides based on git change status */
-.compare-container.mode-add { grid-template-columns: 0fr 1fr; }
-.compare-container.mode-delete { grid-template-columns: 1fr 0fr; }
-.pane {
-    overflow: auto;
+.mode-add .diff-row { grid-template-columns: 0fr 1fr; }
+.mode-delete .diff-row { grid-template-columns: 1fr 0fr; }
+.diff-cell {
+    display: flex;
+    min-width: 0; /* Allows 0fr grid columns to properly hide */
     background-color: var(--theme-color, #1e1e1e);
-    height: 100%;
+}
+.diff-cell.empty {
+    background-color: transparent;
+}
+.diff-cell.gap {
+    grid-column: 1 / -1;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.02);
+    color: #858585;
+    font-weight: bold;
+    letter-spacing: 2px;
+    padding: 4px 0;
 }
 .line {
     display: flex;
+    width: 100%;
     white-space: pre-wrap;
     word-break: break-all;
     line-height: 1.5;
+    padding: 2px 0;
 }
 .line:hover {
     background-color: rgba(255, 255, 255, 0.05);
@@ -106,13 +217,16 @@
     flex-shrink: 0;
 }
 .txt {
-    display: inline-block;
+    flex-grow: 1;
 }
 </style>
-<div class="compare-container mode-compare">
-    <div class="pane pane-old"></div>
-    <div class="pane pane-new"></div>
+<div class="toolbar">
+    <label class="toggle-label">
+        <input type="checkbox" class="toggle-mode" />
+        Show Full File
+    </label>
 </div>
+<div class="compare-container mode-compare"></div>
 `
     });
 }
