@@ -34,10 +34,11 @@
             t._buildDisplayMap();
         },
         _isChange(oldEntry, newEntry) {
+            if (!oldEntry && !newEntry) return false;
             if (!oldEntry || !newEntry) return true;
             if (oldEntry.isFiller || newEntry.isFiller) return true;
             if (oldEntry.background || newEntry.background) return true;
-            if (oldEntry.line !== newEntry.line) return true;
+            if (oldEntry.color || newEntry.color) return true;
             return false;
         },
         _buildDisplayMap() {
