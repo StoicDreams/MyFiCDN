@@ -171,7 +171,7 @@ webui.define("webui-content", {
         if (!hasExplicitHeight) {
             const rect = t.getBoundingClientRect();
             t._prevInlineHeight = t.style.height || "";
-            t._fixedHeight = Math.round(rect.height);
+            t._fixedHeight = rect.height;
             if (t._fixedHeight > 0) {
                 t.style.height = t._fixedHeight + "px";
             }
@@ -203,9 +203,11 @@ webui.define("webui-content", {
 <slot></slot>
 <style type="text/css">
 :host {
+display:block;
 --scroll-color: color-mix(in srgb, var(--theme-color) 20%, transparent);
 --scroll-shadow: -4px 0 -4px rgba(255, 255, 255, 0.2) inset;
 overflow:auto;
+box-sizing:border-box;
 }
 :host(:not([theme])) {
 --theme-color: var(--color-background);
