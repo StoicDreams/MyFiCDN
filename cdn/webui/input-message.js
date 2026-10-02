@@ -67,6 +67,8 @@
                 const value = webui.sanitize(t._field.value);
                 if (value !== t._field.value) {
                     t._field.value = value;
+                    t._field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+                    t._field.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
                 }
                 t.autosize();
             }
@@ -116,8 +118,6 @@
             const t = this;
             if (t._field.value === value) return;
             t._field.value = value;
-            t._field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
-            t._field.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         },
         connected() {
             const t = this;
