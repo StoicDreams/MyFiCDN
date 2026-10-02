@@ -94,6 +94,7 @@
     box-sizing: border-box;
     border: var(--theme-border-width) solid var(--theme-color);
     background-color: var(--theme);
+    color: var(--theme-offset);
 }
 label {
     display: block;
@@ -110,7 +111,6 @@ label:empty {
     min-height: 3em;
 }
 .grow-wrap::after {
-    /* The invisible text forces the grid cell to grow */
     content: attr(data-replicated-value) " ";
     white-space: pre-wrap;
     visibility: hidden;
