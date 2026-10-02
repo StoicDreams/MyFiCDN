@@ -205,6 +205,7 @@ webui.define("webui-content", {
 :host {
 --scroll-color: color-mix(in srgb, var(--theme-color) 20%, transparent);
 --scroll-shadow: -4px 0 -4px rgba(255, 255, 255, 0.2) inset;
+overflow:auto;
 }
 :host(:not([theme])) {
 --theme-color: var(--color-background);
@@ -218,7 +219,6 @@ slot {
 display:block;
 min-width:100%;
 min-height:100%;
-overflow:auto;
 }
 ::-webkit-scrollbar,
 *::-webkit-scrollbar {
