@@ -7,17 +7,6 @@
  */
 "use strict"
 {
-    function autosizeTextArea(target) {
-        if (target.nodeName !== 'TEXTAREA') { return; }
-        requestAnimationFrame(() => {
-            if (target.clientWidth === 0) {
-                return;
-            }
-            target.style.height = `0px`;
-            let newHeight = target.scrollHeight;
-            target.style.height = `${(newHeight + 30)}px`;
-        });
-    }
     function handleKeyDown(ev) {
         if (ev.key !== 'Tab' || !ev.shiftKey) { return; }
         if (!ev.target || ev.target.nodeName !== 'TEXTAREA') { return; }
@@ -31,52 +20,23 @@
         cursorPos += tab.length;
         el.selectionStart = cursorPos;
         el.selectionEnd = cursorPos;
+        el.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     }
-    function UpdateAllDisplayedTextareaSizes() {
-        for (let i = talist.length - 1; i >= 0; i--) {
-            let t = talist[i];
-            if (!t.isConnected) {
-                talist.splice(i, 1);
-                continue;
-            }
-            if (t.offsetParent) {
-                t.autosize();
-            }
-        }
-    }
-    const talist = [];
-    window.addEventListener('resize', UpdateAllDisplayedTextareaSizes);
-
     webui.define('webui-input-message', {
-        preload: 'flex',
         constructor() {
             const t = this;
-            t.autosize = () => {
-                if (t._lav !== t.value) {
-                    t._lav = t.value;
-                }
-                autosizeTextArea(t._field);
-            };
-            talist.push(t);
             t._label = t.template.querySelector('label');
             t._field = t.template.querySelector('textarea');
-            function onKeyDown(ev) {
-                handleKeyDown(ev);
-            }
-            function onInput(ev) {
+            t._wrap = t.template.querySelector('.grow-wrap');
+            t._field.setAttribute('name', 'message');
+            t._field.addEventListener('keydown', handleKeyDown);
+            t._field.addEventListener('input', () => {
                 const value = webui.sanitize(t._field.value);
                 if (value !== t._field.value) {
                     t._field.value = value;
-                    t._field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
-                    t._field.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
                 }
-                t.autosize();
-            }
-            t._field.setAttribute('name', 'message');
-            t._field.addEventListener('keydown', onKeyDown);
-            t._field.addEventListener('keyup', onInput);
-            t._field.addEventListener('change', onInput);
-            t._field.addEventListener('input', onInput);
+                t._wrap.dataset.replicatedValue = t._field.value;
+            });
         },
         attr: ['title', 'name', 'autofocus', 'value', 'label', 'placeholder', 'tab', 'height', 'max-height'],
         attrChanged(property, value) {
@@ -101,7 +61,7 @@
                     t._field.setAttribute('autofocus', value);
                     break;
                 case 'value':
-                    t._field.value = value;
+                    t.setValue(value);
                     break;
                 case 'tab':
                     t._field.setAttribute('tab', value || '  ');
@@ -118,6 +78,7 @@
             const t = this;
             if (t._field.value === value) return;
             t._field.value = value;
+            t._wrap.dataset.replicatedValue = value;
         },
         connected() {
             const t = this;
@@ -128,46 +89,53 @@
         shadowTemplate: `
 <style type="text/css">
 :host {
-display:block;
-position:relative;
-min-height:3em;
-box-sizing:border-box;
-border:var(--theme-border-width) solid var(--theme-color);
-overflow:auto;
-}
-textarea {
-display:block;
-position:relative;
-width:100%;
-min-height:3em;
-box-sizing:border-box;
-padding:var(--padding);
-font:inherit;
-resize: none;
-outline: none;
-border:none;
-flex-grow:1;
-}
-webui-flex {
-border: 1px solid var(--theme);
-background-color: var(--theme);
-min-height:100%;
+    display: block;
+    position: relative;
+    box-sizing: border-box;
+    border: var(--theme-border-width) solid var(--theme-color);
+    background-color: var(--theme);
 }
 label {
-display:block;
-padding:var(--padding);
-margin:0;
-background-color:var(--theme-color);
-color:var(--theme-color-offset);
+    display: block;
+    padding: var(--padding);
+    margin: 0;
+    background-color: var(--theme-color);
+    color: var(--theme-color-offset);
 }
 label:empty {
-display:none;
+    display: none;
+}
+.grow-wrap {
+    display: grid;
+    min-height: 3em;
+}
+.grow-wrap::after {
+    /* The invisible text forces the grid cell to grow */
+    content: attr(data-replicated-value) " ";
+    white-space: pre-wrap;
+    visibility: hidden;
+    word-wrap: break-word;
+}
+textarea, .grow-wrap::after {
+    grid-area: 1 / 1 / 2 / 2;
+    padding: var(--padding);
+    font: inherit;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    border: none;
+}
+textarea {
+    resize: none;
+    outline: none;
+    background: transparent;
+    overflow: hidden;
 }
 </style>
-<webui-flex column gap="0" align="start">
 <label></label>
-<textarea spellcheck="true" autocomplete="off" autocorrect="off"></textarea>
-</webui-flex>
+<div class="grow-wrap">
+    <textarea spellcheck="true" autocomplete="off" autocorrect="off"></textarea>
+</div>
 `
     });
 }
