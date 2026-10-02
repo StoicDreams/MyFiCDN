@@ -93,8 +93,12 @@
     position: relative;
     box-sizing: border-box;
     border: var(--theme-border-width) solid var(--theme-color);
-    background-color: var(--theme);
-    color: var(--theme-offset);
+    background-color: #ecddcbff;
+    color: #black;
+}
+:host([theme]) {
+  background-color: var(--theme-color);
+  color: var(--theme-color-offset);
 }
 label {
     display: block;
