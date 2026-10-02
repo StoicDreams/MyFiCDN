@@ -9,11 +9,14 @@
 {
     function autosizeTextArea(target) {
         if (target.nodeName !== 'TEXTAREA') { return; }
-        setTimeout(() => {
+        requestAnimationFrame(() => {
+            if (target.clientWidth === 0) {
+                return;
+            }
             target.style.height = `0px`;
             let newHeight = target.scrollHeight;
             target.style.height = `${(newHeight + 30)}px`;
-        }, 1);
+        });
     }
     function handleKeyDown(ev) {
         if (ev.key !== 'Tab' || !ev.shiftKey) { return; }
@@ -30,13 +33,15 @@
         el.selectionEnd = cursorPos;
     }
     function UpdateAllDisplayedTextareaSizes() {
-        let index = 0;
-        while (index < talist.length) {
-            if (!talist[index].offsetParent) {
-                talist.shift();
+        for (let i = talist.length - 1; i >= 0; i--) {
+            let t = talist[i];
+            if (!t.isConnected) {
+                talist.splice(i, 1);
                 continue;
             }
-            talist[index++].autosize();
+            if (t.offsetParent) {
+                t.autosize();
+            }
         }
     }
     const talist = [];
