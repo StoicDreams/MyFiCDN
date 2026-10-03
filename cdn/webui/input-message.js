@@ -24,7 +24,9 @@
     }
     webui.define('webui-input-message', {
         constructor() {
-            const t = this;
+        const t = this;
+            t.addEventListener('click', () => t._field.focus());
+            t.addEventListener('focus', () => t._field.focus());
             t._label = t.template.querySelector('label');
             t._field = t.template.querySelector('textarea');
             t._wrap = t.template.querySelector('.grow-wrap');
@@ -95,10 +97,6 @@
     border: var(--theme-border-width) solid var(--theme-color);
     background-color: #ecddcbff;
     color: #black;
-}
-:host([theme]) {
-  background-color: var(--theme-color);
-  color: var(--theme-color-offset);
 }
 label {
     display: block;
