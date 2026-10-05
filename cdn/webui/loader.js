@@ -1915,7 +1915,7 @@ const webui = (() => {
      *
      * @param {string} selector - The CSS selector to match element.
      * @param {Node} rootNode - The root node to start the search from.
-     * @returns {array}
+     * @returns {Node}
      */
     querySelector(selector, rootNode = document) {
       return this.querySelectorAll(selector, rootNode)[0];
@@ -1944,6 +1944,13 @@ const webui = (() => {
           results.push(...nestedResults);
         }
       });
+      if (rootNode.shadowRoot) {
+        const nestedResults = webui.querySelectorAll(
+          selector,
+          rootNode.shadowRoot,
+        );
+        results.push(...nestedResults);
+      }
       return results;
     }
     /**
