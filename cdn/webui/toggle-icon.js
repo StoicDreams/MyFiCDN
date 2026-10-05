@@ -45,7 +45,7 @@
         },
         setValue(value) {
             const t = this;
-            t._enabled = !!value;
+            t._enabled = typeof value === 'string' ? value.toLowerCase() === 'true' : !!value;
             if (t._enabled) {
                 t.removeAttribute('enabled');
             } else {
