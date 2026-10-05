@@ -685,6 +685,11 @@ const webui = (() => {
                     }, 0);
                   });
                 });
+                ["input", "change"].forEach((evname) => {
+                  el.addEventListener(evname, (ev) => {
+                    t.dispatchEvent(new Event(evname, { bubbles: true, composed: true }));
+                  });
+                });
               });
             });
             shadow.appendChild(t.template);
