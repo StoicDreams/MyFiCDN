@@ -101,7 +101,6 @@ webui.define('webui-input-text', {
                 let value = webui.getDefined(v, '');
                 if (this._field.value === value) return;
                 this._field.value = value;
-                this.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
             }
         }
     },

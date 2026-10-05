@@ -24,7 +24,6 @@
     cursorPos += tab.length;
     el.selectionStart = cursorPos;
     el.selectionEnd = cursorPos;
-    el.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
   }
   webui.define("webui-input-message", {
     constructor() {

@@ -627,13 +627,11 @@
                     container.appendChild(label);
                     container.addEventListener('click', _ => {
                         t._inputFull.value = el._definition;
-                        t._inputFull.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
                     });
                     if (isFirst) {
                         isFirst = false;
                         setTimeout(() => {
                             t._inputFull.value = el._definition;
-                            t._inputFull.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
                         }, 100);
                     }
                 });

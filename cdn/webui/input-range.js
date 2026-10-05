@@ -88,8 +88,6 @@ webui.define('webui-input-range', {
         }
         t.renderValue();
         t.setAttribute('value', t._field.value);
-        t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
-        t.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
     },
     connected() {
         const t = this;

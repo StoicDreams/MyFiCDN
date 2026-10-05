@@ -57,7 +57,6 @@
             t._midIcon = t.template.querySelector('webui-icon.mid');
             t._endIcon = t.template.querySelector('webui-icon.end');
             t._select.addEventListener('change', _ => {
-                t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
                 if (!t._optionsSet) return;
                 t.applyDataChange();
             });
@@ -309,7 +308,6 @@
             t._select.value = value;
             o.selected = true;
             t.applyDataChange();
-            t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
         },
         shadowTemplate: `
 <label class="hide">

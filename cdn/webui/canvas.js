@@ -175,9 +175,6 @@
             if (t._scrollTop < 0) t._scrollTop = 0;
             if (t._scrollTop > maxScroll) t._scrollTop = maxScroll;
             t.updateCanvas();
-            if (t.dataset.trigger) {
-                t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
-            }
         },
         copyText() {
             const t = this;
