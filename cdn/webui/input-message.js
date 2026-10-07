@@ -117,6 +117,7 @@
     border: var(--theme-border-width) solid var(--theme-color);
     background-color: #ecddcbff;
     color: #black;
+    cursor: text;
 }
 label {
     display: block;
