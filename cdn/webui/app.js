@@ -214,12 +214,13 @@ height:var(--main-height);
 padding:var(--padding,1em);
 grid-row: 3;
 grid-column: 2;
-transition:opacity 0.4s ease-out,
-transform 0.4s ease-out;
+transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease;
+transform: scale(1);
+opacity: 1;
 }
 main.transition {
-transform:rotateY(90deg);
-opacity:0;
+transform: scale(0.97);
+opacity: 0;
 }
 ::-webkit-scrollbar {
 width: 1em;
