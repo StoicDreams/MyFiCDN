@@ -13,12 +13,12 @@ const webuiDialog = function (data) {
     const defaultDialogOptions = { content: "Missing Content", confirm: "Ok" };
     const defaultWaitOptions = { hideclose: true, ignoreBackdropClick: true, content: 'Loading, please wait!' };
     webui.dialog = webuiDialog;
-    webuiDialog.alert = webui.alert;
     webui.define("webui-dialogs", {
-        preload: 'icon',
+        preload: 'icon alert',
         linkCss: true,
         constructor() {
             const t = this;
+            webuiDialog.alert = webui.alert;
             t.dialog = t.template.querySelector('dialog');
             t.form = t.template.querySelector('form');
             t.header = t.template.querySelector('form>header>section');
@@ -120,7 +120,7 @@ const webuiDialog = function (data) {
                             if (canceled) reject('canceled');
                             t.dialog.close();
                             close = () => { };
-                            webuiDialog.webui.alert;
+                            webuiDialog.alert = webui.alert;
                         };
                         t.btnClose.addEventListener('click', () => close(true));
                         t.btnCancel.addEventListener('click', () => close(true));
