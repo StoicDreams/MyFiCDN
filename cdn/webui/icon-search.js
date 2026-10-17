@@ -303,39 +303,44 @@
             });
         },
         resetOptions() {
-            const t = this;
-            ['_backingToggle', '_sharpToggle', '_fillToggle', '_borderedToggle', '_banToggle', '_invertedToggle'].forEach(toggle => {
-                if (!t[toggle]) return;
-                t[toggle].value = false;
-            });
-            ['_theme', '_shape', '_stroke', '_shade'].forEach(dd => {
-                if (!t[dd]) return;
-                t[dd].value = '';
-            });
-            if (t._rotate) {
-                t._rotate.value = 0;
-            }
+          const t = this;
+          ['_backingToggle', '_sharpToggle', '_fillToggle', '_borderedToggle', '_banToggle', '_invertedToggle'].forEach(toggle => {
+              if (!t[toggle]) return;
+              t[toggle].value = false;
+              t._iconPreview.removeAttribute(toggle.replace('_', '').replace('Toggle', ''));
+          });
+          ['_theme', '_shape', '_stroke', '_shade'].forEach(dd => {
+              if (!t[dd]) return;
+              t[dd].value = '';
+              t._iconPreview.removeAttribute(dd.replace('_', ''));
+          });
+          if (t._rotate) {
+              t._rotate.value = 0;
+              t._iconPreview.removeAttribute('rotate');
+          }
         },
         setIconFromCode(pipedValue) {
-            const t = this;
-            t.resetOptions();
-            let pipedData = pipedValue.split('|');
-            let icon = pipedData.shift();
-            t.setIcon(icon);
-            pipedData.forEach(segment => {
-                if (segment.indexOf(':') !== -1) {
-                    let kv = segment.split(':');
-                    let dd = t[`_${kv[0]}`];
-                    if (dd) {
-                        dd.value = kv[1];
-                    }
-                } else {
-                    let toggle = t[`_${segment}Toggle`];
-                    if (toggle) {
-                        toggle.value = true;
-                    }
-                }
-            });
+          const t = this;
+          t.resetOptions();
+          let pipedData = (pipedValue || '').split('|');
+          let icon = pipedData.shift();
+          pipedData.forEach(segment => {
+              if (segment.indexOf(':') !== -1) {
+                  let kv = segment.split(':');
+                  let dd = t[`_${kv[0]}`];
+                  if (dd) {
+                      dd.value = kv[1];
+                  }
+                  t._iconPreview.setAttribute(kv[0], kv[1]);
+              } else {
+                  let toggle = t[`_${segment}Toggle`];
+                  if (toggle) {
+                      toggle.value = true;
+                  }
+                  t._iconPreview.setAttribute(segment, '');
+              }
+          });
+          t.setIcon(icon);
         },
         async setIcon(icon) {
             const t = this;
