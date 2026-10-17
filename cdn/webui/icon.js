@@ -313,7 +313,7 @@ display: inline-flex;
 position: relative;
 aspect-ratio:1;
 align-items: center;
-justify-items: center;
+justify-content: center;
 height: 1ch;
 width: auto;
 min-height: var(--ico-height);
