@@ -102,6 +102,17 @@ webui.define('webui-input-text', {
                 if (this._field.value === value) return;
                 this._field.value = value;
             }
+        },
+        'placeholder': {
+            get() { return webui._field.getAttribute('placeholder'); },
+            set(v) {
+                if (this._field.getAttribute('placeholder') === v) return;
+                if (v === undefined) {
+                    this._field.removeAttribute('placeholder');
+                    return;
+                }
+                this._field.setAttribute('placeholder', v);
+            }
         }
     },
     setValue(value) {
