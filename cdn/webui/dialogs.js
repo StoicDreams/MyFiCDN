@@ -13,6 +13,60 @@ const webuiDialog = function (data) {
     const defaultDialogOptions = { content: "Missing Content", confirm: "Ok" };
     const defaultWaitOptions = { hideclose: true, ignoreBackdropClick: true, content: 'Loading, please wait!' };
     webui.dialog = webuiDialog;
+    webui.dialog.confirm = function (message, onSuccess, onCancel) {
+        const dialogPromise = webuiDialog({
+            content: message,
+            confirm: "Confirm",
+            cancel: "Cancel",
+            onconfirm: onSuccess
+        });
+        if (onCancel) {
+            dialogPromise.catch((reason) => {
+                if (reason === 'canceled') {
+                    onCancel();
+                }
+            });
+        }
+        return dialogPromise;
+    };
+    webui.dialog.prompt = function (message, defaultValue = '', onSubmit, onCancel) {
+        const inputHtml = `
+            <label style="display:flex; flex-direction:column; gap:0.5em;">
+                ${message}
+                <input type="text" name="prompt_value" value="${defaultValue}" required autofocus />
+            </label>
+        `;
+        const dialogPromise = webuiDialog({
+            content: inputHtml,
+            confirm: "Submit",
+            cancel: "Cancel",
+            onconfirm: (formData) => {
+                if (onSubmit) {
+                    onSubmit(formData.get('prompt_value'));
+                }
+            }
+        });
+        if (onCancel) {
+            dialogPromise.catch((reason) => {
+                if (reason === 'canceled') onCancel();
+            });
+        }
+        return dialogPromise;
+    };
+    webui.dialog.wait = async function (taskPromise, message = 'Loading, please wait...') {
+        const dialogPromise = webuiDialog({
+            isLoading: true,
+            content: message
+        });
+        try {
+            const result = await taskPromise;
+            return result;
+        } finally {
+            if (dialogPromise.close) {
+                dialogPromise.close();
+            }
+        }
+    };
     webui.define("webui-dialogs", {
         preload: 'icon alert',
         linkCss: true,
