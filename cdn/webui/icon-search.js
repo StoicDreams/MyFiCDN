@@ -97,7 +97,7 @@
             t.appendChild(t._inputs);
             t._svgContainer = webui.create('div', { style: 'display:block;position:relative;aspect-ratio:1;padding:0;margin:auto;width:50%;max-width:300px;' });
             t._inputs.appendChild(t._svgContainer);
-            t._iconPreview = webui.create('webui-icon', { style: 'position:absolute;width:100%;top:0;left:0;' });
+            t._iconPreview = webui.create('webui-icon', { style: 'position:absolute;height:100%;top:0;left:0;' });
             t._svgContainer.appendChild(t._iconPreview);
             let icons = [];
             icons.push(t._iconPreview);
