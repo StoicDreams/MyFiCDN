@@ -93,9 +93,12 @@ function CreateVersionNotes {
         foreach ($commit in $response.commits) {
             $messageLines = $commit.commit.message -split "`n"
             foreach ($line in $messageLines) {
-                if ($line -match "^(feat|fix):") {
+                if ($line -match "^(feat|fix|feature|Feature|Fix):") {
                     $line = $line.Trim().
+                        Replace("Feature:", "**Feature:**").
+                        Replace("feature:", "**Feature:**").
                         Replace("feat:", "**Feature:**").
+                        Replace("Fix:", "**Fix:**").
                         Replace("fix:", "**Fix:**")
                     $copy = "$($copy)$line`n`n"
                 }
@@ -176,5 +179,58 @@ if ($response) {
     Write-Host "Failed to fetch tags or no tags available."
 }
 
-$apps | ConvertTo-Json | Out-File -FilePath $appsJsonPath -Encoding UTF8
+$allAvailableVersions = @()
+if ($apps.win) { $allAvailableVersions += $apps.win.version }
+if ($apps.mac) { $allAvailableVersions += $apps.mac.version }
+if ($apps.ubu) { $allAvailableVersions += $apps.ubu.version }
+$latestVersion = ($allAvailableVersions | Select-Object -Unique | Sort-Object { [version]$_ } | Select-Object -Last 1)
+if ($latestVersion) {
+    $updateJsonPath = "update.json"
+    $updateManifest = @{
+        version = $latestVersion
+        notes = "Update to version $latestVersion"
+        pub_date = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+        platforms = @{}
+    }
+    if ($apps.versions.$latestVersion -and (Test-Path $apps.versions.$latestVersion)) {
+        $updateManifest.notes = (Get-Content -Path $apps.versions.$latestVersion -Raw).Trim()
+    }
+    function Get-UpdateAsset {
+        param([string]$searchPath, [string]$sigFilter)
+        if (Test-Path $searchPath) {
+            $sigFile = Get-ChildItem -Path $searchPath -Recurse -File -Filter $sigFilter | Select-Object -First 1
+            if ($sigFile) {
+                $archiveFile = $sigFile.FullName.Substring(0, $sigFile.FullName.Length - 4)
+                if (Test-Path $archiveFile) {
+                    $basePath = (Get-Location).Path
+                    $relPath = $archiveFile.Replace("$basePath\", "").Replace("$basePath/", "").Replace("\", "/")
+                    return @{
+                        signature = (Get-Content -Path $sigFile.FullName -Raw).Trim()
+                        url = "$domain$relPath"
+                    }
+                }
+            }
+        }
+        return $null
+    }
+    $winAsset = Get-UpdateAsset -searchPath "win/$latestVersion" -sigFilter "*.zip.sig"
+    if ($winAsset) { $updateManifest.platforms["windows-x86_64"] = $winAsset }
+    $macAsset = Get-UpdateAsset -searchPath "mac/$latestVersion" -sigFilter "*.tar.gz.sig"
+    if ($macAsset) {
+        if ($macAsset.url -match "aarch64") {
+            $updateManifest.platforms["darwin-aarch64"] = $macAsset
+        } elseif ($macAsset.url -match "x64" -or $macAsset.url -match "x86_64") {
+            $updateManifest.platforms["darwin-x86_64"] = $macAsset
+        } else {
+            $updateManifest.platforms["darwin-aarch64"] = $macAsset
+            $updateManifest.platforms["darwin-x86_64"] = $macAsset
+        }
+    }
+    $ubuAsset = Get-UpdateAsset -searchPath "ubu/$latestVersion" -sigFilter "*.tar.gz.sig"
+    if ($ubuAsset) { $updateManifest.platforms["linux-x86_64"] = $ubuAsset }
+    $updateManifest | ConvertTo-Json -Depth 5 | Out-File -FilePath $updateJsonPath -Encoding UTF8
+    Write-Host "Created update.json for version $latestVersion"
+}
+
+$apps | ConvertTo-Json -Depth 5 | Out-File -FilePath $appsJsonPath -Encoding UTF8
 Set-Location $PSScriptRoot
