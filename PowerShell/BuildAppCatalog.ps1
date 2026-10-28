@@ -306,10 +306,10 @@ try {
 
         if ($releaseIndex[$version].ContainsKey('win')) {
             $asset = Get-PreferredSignedUpdateAsset -SignedAssets @($releaseIndex[$version]['win'].SignedAssets) -FilePatterns @(
-                '(?i)\.exe$',       # Tauri v2 NSIS: installer.exe + installer.exe.sig
-                '(?i)\.msi$',       # Tauri v2 MSI: installer.msi + installer.msi.sig
-                '(?i)\.nsis\.zip$',  # Tauri v1-compatible NSIS: *.nsis.zip + .sig
-                '(?i)\.msi\.zip$'    # Tauri v1-compatible MSI: *.msi.zip + .sig
+                '(?i)\.nsis\.zip$',  # Tauri v2 Updater Archive (NSIS)
+                '(?i)\.msi\.zip$',   # Tauri v2 Updater Archive (MSI)
+                '(?i)\.exe$',
+                '(?i)\.msi$'
             )
             if ($asset) {
                 $platforms['windows-x86_64'] = ConvertTo-UpdateAsset -SignedAsset $asset
@@ -348,8 +348,8 @@ try {
 
         if ($releaseIndex[$version].ContainsKey('ubu')) {
             $asset = Get-PreferredSignedUpdateAsset -SignedAssets @($releaseIndex[$version]['ubu'].SignedAssets) -FilePatterns @(
-                '(?i)\.AppImage$',             # Tauri v2: *.AppImage + *.AppImage.sig
-                '(?i)\.AppImage\.tar\.gz$'    # Tauri v1-compatible: *.AppImage.tar.gz + .sig
+                '(?i)\.AppImage\.tar\.gz$',    # Tauri v2 Updater Archive
+                '(?i)\.AppImage$'
             )
             if ($asset) {
                 $platforms['linux-x86_64'] = ConvertTo-UpdateAsset -SignedAsset $asset
@@ -369,7 +369,7 @@ try {
 
         $updateManifest = [ordered]@{
             version   = $version
-            notes     = (Get-Content -LiteralPath $apps.versions[$version] -Raw).Trim()
+            notes     = (Get-Content -LiteralPath $apps.versions[$version] -Raw).Trim().Replace("`r", "").Replace("`n", "\n")
             pub_date  = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
             platforms = $platforms
         }
