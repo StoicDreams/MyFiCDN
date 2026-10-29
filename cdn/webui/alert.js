@@ -133,6 +133,9 @@ display:flex;
 opacity:1;
 transform:scaleY(1);
 }
+:host([fixed]) #close {
+display:none;
+}
 @starting-style {
 :host([show]) {
 opacity:0;
