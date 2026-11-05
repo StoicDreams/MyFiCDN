@@ -14,3 +14,8 @@ apps
 
 # Ignore user files
 *.user.*
+
+# Ignore test tooling output
+node_modules
+test-results
+playwright-report

@@ -4,5 +4,11 @@
     "icon": "emoji-desktop_computer",
     "url": "/21f06e6b-6f26-477b-b0be-2b9c4a5eb72b",
     "children": null
+  },
+  {
+    "name": "Tests",
+    "icon": "emoji-balance_scale",
+    "url": "/ac284487-85db-41d0-b139-1f44f951dfef",
+    "children": null
   }
 ]
