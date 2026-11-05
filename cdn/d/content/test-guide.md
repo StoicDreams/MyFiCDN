@@ -1,5 +1,5 @@
 
-<webui-tabs pad="var(--padding)" vertical transition-timing="200">
+<webui-tabs pad="var(--padding)" vertical transition-timing="200" theme="default">
 <webui-button slot="tabs" align="left">Getting Started</webui-button>
 <webui-paper slot="content">
 
