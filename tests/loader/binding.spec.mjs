@@ -67,6 +67,20 @@ test('data-default sets missing data', async ({ page }) => {
     await mount(page, '<span data-default="bind-d:start"></span>');
     await expect.poll(() => page.evaluate(() => webui.getData('bind-d'))).toBe('start');
 });
+test('data-default with only a value sets the default for the bound key', async ({ page }) => {
+    await mount(page, '<input data-bind="bind-own" data-default="start"><span data-trigger="bind-trigger:value" data-default="other"></span>');
+    await expect.poll(() => page.evaluate(() => [webui.getData('bind-own'), webui.getData('bind-trigger')])).toEqual(['start', 'other']);
+});
+test('data-default with only a value leaves existing data alone', async ({ page }) => {
+    await page.evaluate(() => webui.setData('bind-kept', 'saved'));
+    await mount(page, '<input data-bind="bind-kept" data-default="start">');
+    await page.waitForTimeout(100);
+    expect(await page.evaluate(() => webui.getData('bind-kept'))).toBe('saved');
+});
+test('data-default turns a bound toggle on', async ({ page }) => {
+    const root = await mount(page, '<webui-toggle-icon data-bind="bind-toggle" data-default="true"></webui-toggle-icon>');
+    await expect.poll(() => root.locator('webui-toggle-icon').evaluate(el => el.value)).toBe(true);
+});
 test('data-hide follows a selector', async ({ page }) => {
     const root = await mount(page, '<span id="s" data-hide=".needed">x</span>');
     await expect(root.locator('#s')).toBeHidden();

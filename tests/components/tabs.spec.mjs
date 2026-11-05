@@ -101,3 +101,24 @@ test('pad and transition timing apply', async ({ page }) => {
     const el = await tabs(page, 'pad="4" transition-timing="200"');
     expect(await el.evaluate(c => [c.style.getPropertyValue('--theme-padding'), c._slotContent.style.transitionDuration])).toEqual(['4px', '200ms']);
 });
+test('the index attribute picks the starting tab, and later switches tabs', async ({ page }) => {
+    const el = await tabs(page, 'index="1" transition-timing="0"');
+    await expect(buttons(el).nth(1)).toHaveAttribute('theme', 'active');
+    expect(await el.evaluate(c => c._index)).toBe(1);
+    await el.evaluate(c => c.setAttribute('index', '2'));
+    await expect(buttons(el).nth(2)).toHaveAttribute('theme', 'active');
+});
+test('fields in the starting tab are enabled and fields in other tabs are disabled', async ({ page }) => {
+    const root = await mount(page, `<webui-tabs index="1"><webui-button slot="tabs">A</webui-button><div slot="content"><input name="a"></div><webui-button slot="tabs">B</webui-button><div slot="content"><input name="b"></div></webui-tabs>`);
+    await expect(root.locator('input[name="a"]')).toBeDisabled();
+    await expect(root.locator('input[name="b"]')).toBeEnabled();
+});
+test('a field disabled by its page stays disabled when its tab opens', async ({ page }) => {
+    const root = await mount(page, `<webui-tabs><webui-button slot="tabs">A</webui-button><div slot="content"><input name="keep" disabled><input name="free"></div><webui-button slot="tabs">B</webui-button><div slot="content">B</div></webui-tabs>`);
+    const el = root.locator('webui-tabs');
+    await el.evaluate(c => c.setTab(1));
+    await expect(root.locator('input[name="free"]')).toBeDisabled();
+    await el.evaluate(c => c.setTab(0));
+    await expect(root.locator('input[name="free"]')).toBeEnabled();
+    await expect(root.locator('input[name="keep"]')).toBeDisabled();
+});

@@ -7,6 +7,12 @@
  */
 "use strict"
 {
+    function enableTabFields(content) {
+        webui.querySelectorAll('[data-tab-disabled]:not(slot)', content).forEach(item => {
+            item.removeAttribute('disabled');
+            item.removeAttribute('data-tab-disabled');
+        });
+    }
     webui.define('webui-tabs', {
         constructor() {
             const t = this;
@@ -28,6 +34,17 @@
                 case 'transitionTiming':
                     {
                         t._slotContent.style.setProperty('transition-duration', webui.msIfNumber(value));
+                    }
+                    break;
+                case 'index':
+                    {
+                        // Before the first render this is the starting tab. After it, it switches tabs.
+                        const index = parseInt(value) || 0;
+                        if (t._initiated) {
+                            t.setTab(index);
+                        } else {
+                            t._index = index;
+                        }
                     }
                     break;
             }
@@ -127,17 +144,22 @@
                         t.scrollIntoView({ behavior: 'smooth' });
                     }
                     if (c.nodeName === 'WEBUI-CONTENT') { c.removeAttribute('nofix'); }
-                    webui.querySelectorAll('[name][disabled]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
+                    enableTabFields(c);
                     if (c.nodeName === 'WEBUI-CONTENT' && !c.contentAttached) {
                         webui.wait(_ => {
                             return c.contentAttached;
                         }).then(async _ => {
                             await webui.wait(10);
-                            webui.querySelectorAll('[name][disabled]:not(slot)', c).forEach(item => { item.removeAttribute('disabled'); });
+                            enableTabFields(c);
                         });
                     }
                 } else {
-                    webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => { item.setAttribute('disabled', true); });
+                    // Named fields in hidden tabs are disabled, so forms leave them out.
+                    // Marked, so fields disabled for other reasons are left disabled.
+                    webui.querySelectorAll('[name]:not([disabled]):not(slot)', c).forEach(item => {
+                        item.setAttribute('disabled', true);
+                        item.setAttribute('data-tab-disabled', '');
+                    });
                     if (c.nodeName === 'WEBUI-CONTENT') { c.setAttribute('nofix', true); }
                 }
             });

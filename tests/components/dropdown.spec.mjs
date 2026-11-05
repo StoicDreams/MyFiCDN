@@ -65,3 +65,10 @@ test('api loads options and ignores outdated responses', async ({ page }) => {
     const el = await dropdown(page, 'api="get|http://localhost:3199/dd-api"');
     await expect(el.locator('option')).toHaveText(['from-api']);
 });
+test('option text is shown as text, never as markup', async ({ page }) => {
+    const el = await dropdown(page, '');
+    await el.evaluate(d => d.setOptions([{ value: 'x', display: '<img src=q onerror="window.__xss=1">' }, { value: 'y', display: 'R&D <b>' }]));
+    await expect(el.locator('option')).toHaveText(['<img src=q onerror="window.__xss=1">', 'R&D <b>']);
+    await expect(el.locator('option img, option b')).toHaveCount(0);
+    expect(await page.evaluate(() => window.__xss)).toBeUndefined();
+});

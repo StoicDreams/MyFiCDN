@@ -272,7 +272,12 @@
                 let display = (t.dataset.display ? item[t.dataset.display] : item.display) || item.display || id;
                 let option = webui.create('option', { value: id });
                 option.dataset.data = JSON.stringify(item);
-                option.innerHTML = template ? webui.replaceAppData(template, item) : display;
+                // Option text often comes from data, such as file names, so it is never read as markup.
+                if (template) {
+                    option.innerHTML = webui.replaceAppData(template, item);
+                } else {
+                    option.textContent = display;
+                }
                 t._select.appendChild(option);
             });
             let dn = t.dataset.name;
