@@ -84,6 +84,13 @@
             const t = this;
             if (tabIndex === undefined || tabIndex === null) return;
             tabIndex = parseInt(tabIndex) || 0;
+            if (!t._initiated) {
+                // A tab named in the url is a direct link to it, so it wins over a saved or default tab.
+                const linkedTab = t.getTabIndexFromUrl();
+                if (linkedTab !== -1) {
+                    tabIndex = linkedTab;
+                }
+            }
             if (t._initiated && tabIndex === t._index) return;
             let index = 0;
             let foundIndex = false;
@@ -109,8 +116,12 @@
                     t._slotContent.style.translate = `-${offset}% 0`;
                     foundIndex = true;
                     if (c.previousElementSibling && c.previousElementSibling.hasAttribute && c.previousElementSibling.hasAttribute('hash')) {
-                        // Selecting the initial tab is not a navigation, so it should not add a history entry.
-                        webui.updateHash(c.previousElementSibling.getAttribute('hash'), !t._initiated);
+                        // Selecting the initial tab is not a navigation, so it adds no history entry or replaces a hash in the url.
+                        if (t._initiated) {
+                            webui.updateHash(c.previousElementSibling.getAttribute('hash'));
+                        } else if (!location.hash) {
+                            webui.updateHash(c.previousElementSibling.getAttribute('hash'), true);
+                        }
                     }
                     if (t._initiated && t.hasAttribute('vertical') && !t.hasAttribute('narrow')) {
                         t.scrollIntoView({ behavior: 'smooth' });
@@ -149,6 +160,14 @@
                 });
             }
             t._initiated = true;
+        },
+        getTabIndexFromUrl() {
+            const t = this;
+            const hash = location.hash.substring(1);
+            if (!hash) return -1;
+            return Array.from(t.children)
+                .filter(item => item.getAttribute('slot') === 'tabs')
+                .findIndex(item => item.getAttribute('hash') === hash);
         },
         render: function () {
             const t = this;

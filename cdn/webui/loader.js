@@ -225,14 +225,8 @@ const webui = (() => {
         });
         localStorage.clear();
     }
-    function getCache() {
-        return new Promise((resolve, reject) => {
-            if (localStorage.getItem(STORAGE_ACCEPTED_KEY)) {
-                resolve(localStorage);
-            } else {
-                resolve(sessionStorage);
-            }
-        });
+    function getActiveStorage() {
+        return acceptedStorage === ACCEPT_LOCAL_STORAGE ? localStorage : sessionStorage;
     }
     class MemStorage {
         STORAGE_ACCEPTED_KEY = STORAGE_ACCEPTED_KEY;
@@ -243,29 +237,21 @@ const webui = (() => {
         }
         clear() {
             Object.keys(memStorageCache).forEach((key) => {
-                this.removeItem(key);
+                delete memStorageCache[key];
             });
-            getCache().then((cache) => {
-                cache.clear();
-            });
+            getActiveStorage().clear();
         }
         removeItem(key) {
             delete memStorageCache[key];
-            getCache()
-                .then((cache) => {
-                    cache.removeItem(key);
-                })
-                .catch((_) => {});
+            getActiveStorage().removeItem(key);
         }
         setItem(key, value) {
             memStorageCache[key] = value;
-            getCache()
-                .then((cache) => {
-                    cache.setItem(key, value);
-                })
-                .catch((_) => {
-                    // Caching not accepted
-                });
+            try {
+                getActiveStorage().setItem(key, value);
+            } catch (_) {
+                // The value is still available from memory when browser storage is full or unavailable.
+            }
         }
         getItem(key) {
             return memStorageCache[key] ?? "";
@@ -628,6 +614,28 @@ const webui = (() => {
                 options.attr.push("visible");
             }
             let isInput = options.isInput || name.indexOf("input") !== -1;
+            if (isInput) {
+                // Form values otherwise only update on input and change events, which code setting a value does not fire.
+                const valueProp = options.props?.value;
+                if (valueProp?.set) {
+                    const set = valueProp.set;
+                    options.props.value = {
+                        ...valueProp,
+                        set(value) {
+                            set.call(this, value);
+                            this.internals_.setFormValue(this.value);
+                        },
+                    };
+                }
+                if (typeof options.setValue === "function") {
+                    const setValue = options.setValue;
+                    options.setValue = function (...args) {
+                        const result = setValue.apply(this, args);
+                        this.internals_.setFormValue(this.value);
+                        return result;
+                    };
+                }
+            }
             const optionKeys = Object.keys(options);
             class CustomElement extends HTMLElement {
                 static formAssociated = isInput;

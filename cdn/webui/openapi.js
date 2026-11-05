@@ -115,7 +115,7 @@
                         if (t.hash) { hash.push(t.hash); }
                         hash.push(method.toLowerCase());
                         hash.push(path.replace(/[\/\\]+/g, '-'));
-                        btn.setAttribute('hash', `${t.hash}${webui.toSnake(hash.join('-'), '-')}`);
+                        btn.setAttribute('hash', webui.toSnake(hash.join('-'), '-'));
                     }
                     tabs.appendChild(btn);
                     const content = webui.create('webui-content', { slot: 'content' });

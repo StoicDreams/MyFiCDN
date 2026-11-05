@@ -1,0 +1,159 @@
+import { test, expect, mount } from '../support/webui.mjs';
+
+// These run on the real site shell, since routing needs webui-app.
+test.use({ startUrl: '/about' });
+
+test('webui.navigateTo loads a page without a full reload', async ({ page }) => {
+    await page.evaluate(() => { window.__sameDocument = true; webui.navigateTo('/contact'); });
+    await expect(page).toHaveURL(/\/contact$/);
+    await expect(page.locator('webui-app')).toContainText('feedback form');
+    expect(await page.evaluate(() => window.__sameDocument)).toBe(true);
+});
+test('webui.navigateTo to the current url adds no history entry', async ({ page }) => {
+    const before = await page.evaluate(() => history.length);
+    await page.evaluate(() => webui.navigateTo('/about'));
+    expect(await page.evaluate(() => history.length)).toBe(before);
+});
+test('back and forward keep history intact', async ({ page }) => {
+    await page.evaluate(() => webui.navigateTo('/contact'));
+    await expect(page.locator('webui-app')).toContainText('feedback form');
+    await page.evaluate(() => webui.navigateTo('/privacy'));
+    await expect(page).toHaveURL(/\/privacy$/);
+    const length = await page.evaluate(() => history.length);
+    await page.goBack();
+    await expect(page).toHaveURL(/\/contact$/);
+    await expect(page.locator('webui-app')).toContainText('feedback form');
+    expect(await page.evaluate(() => history.length)).toBe(length);
+    await page.goForward();
+    await expect(page).toHaveURL(/\/privacy$/);
+});
+test('webui.updateHash keeps the query string and can replace history', async ({ page }) => {
+    await page.evaluate(() => history.replaceState(null, '', '/about?x=1'));
+    await page.evaluate(() => webui.updateHash('one'));
+    await expect(page).toHaveURL(/\/about\?x=1#one$/);
+    const length = await page.evaluate(() => history.length);
+    await page.evaluate(() => webui.updateHash('two', true));
+    await expect(page).toHaveURL(/#two$/);
+    expect(await page.evaluate(() => history.length)).toBe(length);
+});
+test('a slow page cannot replace a newer one', async ({ page }) => {
+    await page.route('**/d/privacy.md', async route => {
+        await new Promise(r => setTimeout(r, 900));
+        await route.fallback();
+    });
+    const loaded = await page.evaluate(async () => {
+        const app = webui._appSettings.app;
+        const original = app.setPageContent;
+        const urls = [];
+        app.setPageContent = function (content, data, url) {
+            if (content) urls.push(url);
+            return original.call(this, content, data, url);
+        };
+        webui.navigateTo('/privacy');
+        await webui.wait(30);
+        webui.navigateTo('/contact');
+        await webui.wait(1500);
+        return urls;
+    });
+    expect(loaded).toEqual(['/d/contact.md']);
+});
+test('a missing page shows the not found content', async ({ page }) => {
+    await page.evaluate(() => webui.navigateTo('/does-not-exist'));
+    await expect(page.locator('webui-page-not-found')).toContainText('custom 404 content');
+    await expect(page).toHaveTitle(/Page Not Found/);
+});
+test('internal links route without a reload', async ({ page }) => {
+    const root = await mount(page, '<a href="/contact" style="position:fixed;top:0;left:50%;z-index:9999">go</a>');
+    await page.evaluate(() => { window.__sameDocument = true; });
+    await root.locator('a').click();
+    await expect(page).toHaveURL(/\/contact$/);
+    expect(await page.evaluate(() => window.__sameDocument)).toBe(true);
+});
+test('links with a target, modifier keys, or another scheme are left to the browser', async ({ page }) => {
+    const root = await mount(page, '<a id="t" href="/contact" target="_blank"></a><a id="k" href="/contact"></a><a id="m" href="mailto:a@b.c"></a>');
+    const prevented = await root.evaluate(r => {
+        const results = [];
+        const record = ev => { results.push(ev.defaultPrevented); ev.preventDefault(); };
+        window.addEventListener('click', record);
+        r.querySelector('#t').click();
+        r.querySelector('#k').dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true, cancelable: true, ctrlKey: true }));
+        r.querySelector('#m').click();
+        window.removeEventListener('click', record);
+        return results;
+    });
+    expect(prevented).toEqual([false, false, false]);
+    await expect(page).toHaveURL(/\/about$/);
+});
+test('data-click clicks elements subscribed with :click', async ({ page }) => {
+    const root = await mount(page, '<a id="c" data-click="nav-fb">x</a><button id="s" data-subscribe="nav-fb:click">y</button>');
+    expect(await root.evaluate(async r => {
+        let clicks = 0;
+        await webui.wait(20);
+        r.querySelector('#s').addEventListener('click', () => clicks++);
+        r.querySelector('#c').click();
+        return clicks;
+    })).toBe(1);
+});
+test('data-toggleclass, data-setattr, data-toggleattr, and data-removeclass update elements', async ({ page }) => {
+    const root = await mount(page, `<i id="target" class="on"></i>
+<button id="a" data-toggleclass="#target|flip"></button>
+<button id="b" data-setattr="#target|data-x|1"></button>
+<button id="c" data-toggleattr="#target|flag"></button>
+<button id="d" data-removeclass="#target|on"></button>`);
+    const target = root.locator('#target');
+    const click = id => root.locator(id).evaluate(el => el.click());
+    await click('#a');
+    await expect(target).toHaveClass('on flip');
+    await click('#b');
+    await expect(target).toHaveAttribute('data-x', '1');
+    await click('#c');
+    await expect(target).toHaveAttribute('flag', 'true');
+    await click('#c');
+    await expect(target).not.toHaveAttribute('flag');
+    await click('#d');
+    await expect(target).toHaveClass('flip');
+});
+test('dynamic styles only refresh when a click changed something', async ({ page }) => {
+    const root = await mount(page, '<button id="a" data-toggleclass="x"></button><button id="b" data-setattr="data-y|1"></button><div data-removeclass=".none-here|open"><button id="c"></button></div>');
+    expect(await root.evaluate(r => {
+        let calls = 0;
+        const original = webui.applyDynamicStyles;
+        webui.applyDynamicStyles = () => { calls++; };
+        r.querySelector('#a').click();
+        r.querySelector('#b').click();
+        const afterChanges = calls;
+        r.querySelector('#c').click();
+        webui.applyDynamicStyles = original;
+        return [afterChanges, calls];
+    })).toEqual([2, 2]);
+});
+test('disabled elements stop click handling', async ({ page }) => {
+    const root = await mount(page, '<button disabled data-toggleclass="x" id="a"></button><div disabled="true" id="b" data-toggleclass="x"></div>');
+    await root.locator('#b').evaluate(el => el.click());
+    await expect(root.locator('#b')).not.toHaveClass('x');
+});
+test('tooltips show aria-labels and titles on hover', async ({ page }) => {
+    const root = await mount(page, '<button title="Helpful" style="position:fixed;top:300px;left:300px;z-index:9999">x</button>');
+    await root.locator('button').hover();
+    await expect(page.locator('body > .tooltip')).toHaveText('Helpful');
+    await expect(page.locator('body > .tooltip')).toHaveClass(/open/);
+    await expect(root.locator('button')).toHaveAttribute('aria-label', 'Helpful');
+});
+test('a tab named in the url opens on load', async ({ page }) => {
+    await page.goto('/#condition');
+    const tabs = page.locator('webui-tabs').first();
+    const button = tabs.locator(':scope > [hash="condition"]');
+    await expect(button).toHaveAttribute('theme', 'active');
+    await expect(page).toHaveURL(/#condition$/);
+    await expect(tabs.locator('webui-condition').first()).toBeAttached({ timeout: 10000 });
+});
+test('a tab named in the url wins over the saved tab', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('webui-tabs > [hash="welcome"]')).toHaveAttribute('theme', 'active');
+    await page.locator('webui-tabs > [hash="quote"]').evaluate(el => el.click());
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('session-data'))).toContain('home-tab-index');
+    await page.goto('/about');
+    await page.goto('/#markdown');
+    await expect(page.locator('webui-tabs > [hash="markdown"]')).toHaveAttribute('theme', 'active');
+    await expect(page).toHaveURL(/#markdown$/);
+});

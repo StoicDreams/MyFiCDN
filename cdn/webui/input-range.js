@@ -90,7 +90,10 @@ webui.define('webui-input-range', {
             t._field.value = value;
         }
         t.renderValue();
-        t.setAttribute('value', t._field.value);
+        // When the attribute is the source of this value, writing it back would change what the attribute asked for.
+        if (t.getAttribute('value') !== value) {
+            t.setAttribute('value', t._field.value);
+        }
     },
     reapplyValue() {
         const t = this;
@@ -98,7 +101,6 @@ webui.define('webui-input-range', {
         if (t._eventValue === undefined) return;
         t._field.value = t._eventValue;
         t.renderValue();
-        t.setAttribute('value', t._field.value);
     },
     connected() {
         const t = this;
