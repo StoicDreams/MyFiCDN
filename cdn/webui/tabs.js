@@ -35,13 +35,10 @@
         connected() {
             const t = this;
             t.render();
-            t._resizeHandler = () => t.checkResponsiveVertical();
-            window.addEventListener('resize', t._resizeHandler);
             t.checkResponsiveVertical();
         },
-        disconnected() {
-            const t = this;
-            window.removeEventListener('resize', t._resizeHandler);
+        onResize() {
+            this.checkResponsiveVertical();
         },
         setData: function (data, key) {
             const t = this;
@@ -112,9 +109,10 @@
                     t._slotContent.style.translate = `-${offset}% 0`;
                     foundIndex = true;
                     if (c.previousElementSibling && c.previousElementSibling.hasAttribute && c.previousElementSibling.hasAttribute('hash')) {
-                        webui.updateHash(c.previousElementSibling.getAttribute('hash'));
+                        // Selecting the initial tab is not a navigation, so it should not add a history entry.
+                        webui.updateHash(c.previousElementSibling.getAttribute('hash'), !t._initiated);
                     }
-                    if (t.hasAttribute('vertical') && !t.hasAttribute('narrow')) {
+                    if (t._initiated && t.hasAttribute('vertical') && !t.hasAttribute('narrow')) {
                         t.scrollIntoView({ behavior: 'smooth' });
                     }
                     if (c.nodeName === 'WEBUI-CONTENT') { c.removeAttribute('nofix'); }

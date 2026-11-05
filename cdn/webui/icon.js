@@ -30,7 +30,7 @@ Stroke line joins: miter|round|bevel
     M0 -70Q25 -45 25 -45Q45 -25 45 -25Q70 0 70 0Q50 20 50 20Q25 45 25 45Q0 70 0 70Q-35 35 -35 35Q-70 0 -70 0Q-45 -25 -45 -25Q-25 -45 -25 -45Q0 -70 0 -70z
     M0 -70Q25 -45 25 -45Q45 -25 45 -25Q70 0 70 0Q50 20 50 20Q25 45 25 45Q0 70 0 70Q-35 35 -35 35Q-70 0 -70 0Q-45 -25 -45 -25Q-25 -45 -25 -45Q0 -70 0 -70z`;
     const pathCount = 10;
-    const cache = {}, waiter = {};
+    const cache = {};
     const defUnused = 'M0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0z';
     const defShield = 'M-90 -25Q-90 -75 -90 -75Q-40 -75 0 -90Q50 -75 90 -75Q90 -30 90 -30Q90 -20 90 -20Q90 0 90 0Q90 25 60 50Q0 90 0 90Q-60 50 -60 50Q-90 25 -90 0Q-90 -15 -90 -15z';
     const defBadge = 'M-28 68Q0 115 28 68Q86 86 68 28Q115 0 68 -28Q86 -86 28 -68Q1 -115 -28 -68Q-86 -86 -68 -28Q-115 0 -68 28Q-86 86 -28 68Q-28 68 -28 68Q-28 68 -28 68Q-28 68 -28 68z';
@@ -46,50 +46,31 @@ Stroke line joins: miter|round|bevel
         missing[name] = true;
         console.warn('missing icon', name, ex || '');
     }
-    async function getIcon(name, handler) {
-        if (!name) {
-            return '';
-        }
-        let iconDef = cache[name];
-        if (iconDef) {
-            handler(iconDef);
-            return;
-        }
-        if (waiter[name]) {
-            waiter[name].push(handler);
-        } else {
-            waiter[name] = [];
-            try {
-                const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
-                iconDef = await webui.fetchWithCache(`${srcRoot}${name}.webui`);
-                if (!iconDef.startsWith("WEBUI-ICON-")) {
+    function loadIcon(name) {
+        if (!cache[name]) {
+            const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
+            cache[name] = webui.fetchWithCache(`${srcRoot}${name}.webui`)
+                .then(iconDef => {
+                    if (iconDef.startsWith("WEBUI-ICON-")) {
+                        return iconDef.replace(/\r/g, '');
+                    }
                     noteMissingIcon(name);
-                    cache[name] = notFoundDef;
-                    handler(notFoundDef);
-                } else {
-                    cache[name] = iconDef.replace(/\r/g, '');
-                    handler(cache[name]);
-                }
-            } catch (ex) {
-                noteMissingIcon(name, ex);
-                cache[name] = notFoundDef;
-                handler(notFoundDef);
-            }
-            setTimeout(() => {
-                waiter[name].forEach(h => h(cache[name]));
-                delete waiter[name];
-            }, 10);
+                    return notFoundDef;
+                })
+                .catch(ex => {
+                    noteMissingIcon(name, ex);
+                    return notFoundDef;
+                });
         }
+        return cache[name];
     }
     webui.define('webui-icon', {
-        preload: "emoji",
         constructor() {
             const t = this;
             t._svg = t.template.querySelector('svg.main');
             t._countSlot = t.template.querySelector('slot[name=count]');
             t._style = t.template.querySelector('defs style');
             t._backPath = t.template.querySelector('path.backing');
-            t._emoji = t.template.querySelector('webui-emoji');
             t._dynPaths = [];
             for (let instance = 1; instance <= pathCount; ++instance) {
                 t[`_i${instance}`] = t.template.querySelector(`path.i${instance}`);
@@ -113,7 +94,10 @@ Stroke line joins: miter|round|bevel
                 case 'rotate':
                     let number = parseFloat(value);
                     let style = number > 0 || number < 0 ? `rotate(${number}deg)` : '';
-                    t._emoji.style.transform = style;
+                    t._rotation = style;
+                    if (t._emoji) {
+                        t._emoji.style.transform = style;
+                    }
                     t._dynPaths.forEach(p => {
                         p.style.transform = style;
                     });
@@ -147,7 +131,8 @@ Stroke line joins: miter|round|bevel
                     break;
                 case 'stroke':
                     if (!value) {
-                        t.style.removeProperty('--ico-stroke-width');
+                        t._svg.style.removeProperty('--ico-stroke-width');
+                        break;
                     }
                     switch (value) {
                         case 'thin':
@@ -177,13 +162,17 @@ Stroke line joins: miter|round|bevel
                         t.setEmoji(icon);
                         return;
                     }
-                    t._emoji.removeAttribute('emoji');
-                    getIcon(icon, (iconDef) => {
-                        t.setIconDefinition(iconDef);
+                    t._iconRequest = icon;
+                    loadIcon(icon).then(iconDef => {
+                        // Icons load at different speeds, so only the latest request may apply.
+                        if (t._iconRequest === icon) {
+                            t.setIconDefinition(iconDef);
+                        }
                     });
                     break;
                 case 'shadow':
-                    t._svg.style.filter = `drop-shadow:${value}`;
+                    t._svg.style.filter = value ? `drop-shadow(${value})` : '';
+                    break;
                 case 'width':
                     t.style.width = webui.pxIfNumber(value);
                     break;
@@ -201,12 +190,19 @@ Stroke line joins: miter|round|bevel
         setEmoji(emoji) {
             const t = this;
             const emojiChar = emoji.replace('emoji-', '');
+            t._iconRequest = emoji;
             t._svg.classList.add('emoji');
+            if (!t._emoji) {
+                // Most icons never show an emoji, so this component and its data are only loaded when one does.
+                t._emoji = webui.create('webui-emoji');
+                t._emoji.style.transform = t._rotation || '';
+                t._svg.after(t._emoji);
+            }
             t._emoji.setAttribute('emoji', emojiChar);
         },
         setIconDefinition(iconDef) {
             const t = this;
-            t._emoji.removeAttribute('emoji');
+            t._emoji?.removeAttribute('emoji');
             if (!iconDef || typeof iconDef !== 'string') return;
             t._svg.classList.remove('emoji');
             t._definition = iconDef;
@@ -260,7 +256,7 @@ Stroke line joins: miter|round|bevel
                             break;
                     }
                 } else {
-                    path.style.stroke = stroke;
+                    path.style.strokeWidth = num;
                 }
             }
             while (segments.length > 1) {
@@ -293,7 +289,6 @@ Stroke line joins: miter|round|bevel
 <path class="i9" d=""></path>
 <path class="i10" d=""></path>
 </svg>
-<webui-emoji></webui-emoji>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200" class="overlay">
 <!--! Stoic Dreams - https://webui.stoicdreams.com License - https://webui.stoicdreams.com/license Copyright 2024 Stoic Dreams Inc. -->
 <path class="ban" d="M-60 60Q-50 50 -50 50Q-35 35 -35 35Q-20 20 -20 20Q-10 10 -10 10Q-5 5 -5 5Q5 -5 5 -5Q10 -10 10 -10Q20 -20 20 -20Q35 -35 35 -35Q50 -50 50 -50Q60 -60 60 -60z"></path>

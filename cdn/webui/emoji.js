@@ -10,14 +10,17 @@
     const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json' : 'https://cdn.myfi.ws/i/emojis.json';
     let emojiMap = {};
     let isLoaded = false;
-    setTimeout(async () => {
-        try {
-            emojiMap = await webui.fetchWithCache(emojiSource, true);
-        } catch (err) {
-            console.error("Failed to load emoji map:", err);
+    let loading = null;
+    // The map is large, so it is only downloaded once an emoji actually needs to display.
+    function loadEmojiMap() {
+        if (!loading) {
+            loading = webui.fetchWithCache(emojiSource, true)
+                .then(map => { emojiMap = map; })
+                .catch(err => { console.error("Failed to load emoji map:", err); })
+                .finally(() => { isLoaded = true; });
         }
-        isLoaded = true;
-    }, 10);
+        return loading;
+    }
     webui.define("webui-emoji", {
         content: true,
         watchVisibility: false,
@@ -48,7 +51,7 @@
             t.innerHTML = '';
             if (!t.emoji) return;
             if (!isLoaded) {
-                setTimeout(() => { t.render(); }, 100);
+                loadEmojiMap().then(() => t.render());
                 return;
             }
             if (!emojiMap[t.emoji]) {

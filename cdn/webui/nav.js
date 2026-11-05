@@ -10,7 +10,7 @@
     const show = {};
     const sessionKey = 'session-nav-show';
     webui.define('webui-nav', {
-        preload: 'fa paper nav-group nav-link',
+        preload: 'paper nav-group nav-link',
         attr: ['routes', 'nav-routes'],
         attrChanged(property, value) {
             const t = this;
@@ -25,14 +25,15 @@
         },
         connected() {
             const t = this;
-            t.userRole = 0;
+            t.userRole = webui.getData('session-user-role') || 0;
             t.addDataset('subscribe', 'session-user-role:setUserRole');
-            t._buildNav();
             let cachedShow = webui.getData(sessionKey);
-            if (!cachedShow) return;
-            Object.keys(cachedShow).forEach(key => {
-                show[key] = cachedShow[key];
-            });
+            if (cachedShow) {
+                Object.keys(cachedShow).forEach(key => {
+                    show[key] = cachedShow[key];
+                });
+            }
+            t._buildNav();
         },
         setUserRole(userRole) {
             const t = this;

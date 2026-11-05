@@ -20,7 +20,7 @@ webui.define("webui-cards", {
         const t = this;
         t.innerHTML = '';
         try {
-            let cards = JSON.parse(json);
+            let cards = typeof json === 'string' ? JSON.parse(json) : json;
             cards.forEach(cd => {
                 let card = webui.create('webui-card');
                 if (cd.theme) { card.setAttribute('theme', cd.theme); }

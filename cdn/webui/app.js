@@ -34,9 +34,7 @@ webui.define("webui-app", {
         });
         let temp = webui.create('div');
         temp.innerHTML = content;
-        while (temp.firstChild) {
-            this.appendChild(temp.firstChild);
-        }
+        this.append(...temp.childNodes);
     },
     attrChanged(property, value) {
         const t = this;

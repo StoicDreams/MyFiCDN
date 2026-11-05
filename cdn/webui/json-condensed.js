@@ -13,8 +13,10 @@
                 if (data.length <= maxLength) return data;
                 return `${data.substring(0, maxLength)}...`;
             case 'number':
+            case 'boolean':
                 return data;
             default:
+                if (data === null) return data;
                 if (data.forEach && typeof data.forEach === 'function') {
                     let ret = [];
                     data.forEach(item => {
@@ -35,7 +37,7 @@
             if (typeof json !== 'string') {
                 json = JSON.stringify(json);
             }
-            let data = JSON.parse(json, null, 2);
+            let data = JSON.parse(json);
             return condense(data, maxLength);
         } catch (ex) {
             console.error('Invalid data to condense', ex);
@@ -68,7 +70,7 @@
                 if (t.dataTrigger) {
                     webui.setData(t.dataTrigger, t.condensed);
                 }
-            },1);
+            });
         },
         shadowTemplate: `
 <slot name="template"></slot>

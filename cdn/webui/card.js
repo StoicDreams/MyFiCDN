@@ -13,7 +13,13 @@ webui.define("webui-card", {
     attr: ['name', 'theme', 'width', 'avatar', 'link', 'elevation'],
     attrChanged(property, value) {
         const t = this;
-        t.buildHeader();
+        // Attributes change in bursts while an element upgrades, so only build once per burst.
+        if (t._headerQueued) return;
+        t._headerQueued = true;
+        queueMicrotask(() => {
+            t._headerQueued = false;
+            t.buildHeader();
+        });
     },
     buildHeader() {
         const t = this;
@@ -56,14 +62,6 @@ webui.define("webui-card", {
     connected() {
         const t = this;
         t.classList.add('elevation-10');
-    },
-    disconnected() {
-        const t = this;
-        t.innerHTML = '';
-        if (t._header) {
-            t._header.remove();
-        }
-        t.remove();
     },
     shadowTemplate: `
 <slot name="header"></slot>

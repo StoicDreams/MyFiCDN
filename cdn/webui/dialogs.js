@@ -12,13 +12,20 @@ const webuiDialog = function (data) {
 {
     const defaultDialogOptions = { content: "Missing Content", confirm: "Ok" };
     const defaultWaitOptions = { hideclose: true, ignoreBackdropClick: true, content: 'Loading, please wait!' };
+    // The helpers close the dialog unless their callback explicitly returns false, including async callbacks.
+    function closeUnlessFalse(result) {
+        if (result && result.then) {
+            return result.then(closeUnlessFalse);
+        }
+        return result !== false;
+    }
     webui.dialog = webuiDialog;
     webui.dialog.confirm = function (message, onSuccess, onCancel) {
         const dialogPromise = webuiDialog({
             content: message,
             confirm: "Confirm",
             cancel: "Cancel",
-            onconfirm: onSuccess
+            onconfirm: onSuccess ? (...args) => closeUnlessFalse(onSuccess(...args)) : undefined
         });
         if (onCancel) {
             dialogPromise.catch((reason) => {
@@ -33,7 +40,7 @@ const webuiDialog = function (data) {
         const inputHtml = `
             <label style="display:flex; flex-direction:column; gap:0.5em;">
                 ${message}
-                <input type="text" name="prompt_value" value="${defaultValue}" required autofocus />
+                <input type="text" name="prompt_value" value="${webui.escapeHtml(`${defaultValue}`)}" required autofocus />
             </label>
         `;
         const dialogPromise = webuiDialog({
@@ -41,9 +48,7 @@ const webuiDialog = function (data) {
             confirm: "Submit",
             cancel: "Cancel",
             onconfirm: (formData) => {
-                if (onSubmit) {
-                    onSubmit(formData.get('prompt_value'));
-                }
+                return closeUnlessFalse(onSubmit ? onSubmit(formData.get('prompt_value')) : true);
             }
         });
         if (onCancel) {
@@ -87,12 +92,20 @@ const webuiDialog = function (data) {
                 t._onsubmit();
             });
             document.body.addEventListener('keyup', ev => {
-                if (ev.key === 'Escape') {
+                if (ev.key === 'Escape' && !t._ignoreBackdropClick) {
                     close(true);
                 }
             });
+            t.dialog.addEventListener('cancel', ev => {
+                if (t._ignoreBackdropClick) {
+                    ev.preventDefault();
+                }
+            });
+            t.btnClose.addEventListener('click', () => close(true));
             t.dialog.addEventListener('click', ev => {
                 if (t._ignoreBackdropClick) return;
+                // Backdrop clicks target the dialog itself. Keyboard activated buttons report 0,0 coordinates, which would otherwise look like one.
+                if (ev.target !== t.dialog) return;
                 const rect = t.dialog.getBoundingClientRect();
                 const isInDialog = (
                     rect.top <= ev.clientY &&
@@ -110,6 +123,7 @@ const webuiDialog = function (data) {
                         resetNodes();
                         t.content.alert = function (message, variant = 'danger') {
                             let alertNode = t.content.querySelector('webui-alert');
+                            if (!alertNode && !message) return;
                             if (!alertNode) {
                                 alertNode = document.createElement('webui-alert');
                                 alertNode.style.marginBottom = 'var(--padding)';
@@ -121,7 +135,7 @@ const webuiDialog = function (data) {
                             } else {
                                 alertNode.removeAttribute('show');
                             }
-                            alertNode.innerHTML = message;
+                            alertNode.innerHTML = message || '';
                         };
                         webuiDialog.alert = t.content.alert;
                         data = data || defaultDialogOptions;
@@ -176,7 +190,6 @@ const webuiDialog = function (data) {
                             close = () => { };
                             webuiDialog.alert = webui.alert;
                         };
-                        t.btnClose.addEventListener('click', () => close(true));
                         t.btnCancel.addEventListener('click', () => close(true));
                         t.btnConfirm.addEventListener('click', ev => {
                             ev.preventDefault();

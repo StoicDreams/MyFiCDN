@@ -18,8 +18,10 @@ webui.define('webui-input-text', {
         t.addEventListener('click', _ => {
             t._field.focus();
         });
+        // Passwords are never rendered, and altering one would silently change what the user chose.
+        const cleanValue = () => t._field.type === 'password' ? t._field.value : webui.sanitizeInput(t._field.value);
         t._field.addEventListener('input', _ => {
-            const value = webui.sanitize(t._field.value);
+            const value = cleanValue();
             if (value !== t._field.value) {
                 t._field.value = value;
             }
@@ -32,7 +34,7 @@ webui.define('webui-input-text', {
             }
         });
         t._field.addEventListener('change', _ => {
-            const value = webui.sanitize(t._field.value);
+            const value = cleanValue();
             if (value !== t._field.value) {
                 t._field.value = value;
             }
@@ -104,7 +106,7 @@ webui.define('webui-input-text', {
             }
         },
         'placeholder': {
-            get() { return webui._field.getAttribute('placeholder'); },
+            get() { return this._field.getAttribute('placeholder'); },
             set(v) {
                 if (this._field.getAttribute('placeholder') === v) return;
                 if (v === undefined) {

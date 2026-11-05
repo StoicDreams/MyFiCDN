@@ -62,12 +62,15 @@ webui.define('webui-input-range', {
                 break;
             case 'min':
                 t._field.setAttribute('min', value);
+                t.reapplyValue();
                 break;
             case 'max':
                 t._field.setAttribute('max', value);
+                t.reapplyValue();
                 break;
             case 'step':
                 t._field.setAttribute('step', value);
+                t.reapplyValue();
                 break;
         }
     },
@@ -86,6 +89,14 @@ webui.define('webui-input-range', {
         if (t._field.value !== value) {
             t._field.value = value;
         }
+        t.renderValue();
+        t.setAttribute('value', t._field.value);
+    },
+    reapplyValue() {
+        const t = this;
+        // A value applied before min, max, or step gets clamped by the field's defaults.
+        if (t._eventValue === undefined) return;
+        t._field.value = t._eventValue;
         t.renderValue();
         t.setAttribute('value', t._field.value);
     },

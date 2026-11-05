@@ -34,7 +34,7 @@
         return chtml;
     }
     function createError(message) {
-        return webui.create('webui-alert', { variant: 'danger', html: message, show: true });
+        return webui.create('webui-alert', { variant: 'danger', text: message, show: true });
     }
     webui.define("webui-report", {
         content: true,
@@ -203,7 +203,7 @@
             let ds = [];
             ds.push(`pag-${t._id}-index:setPage`);
             if (t.filters) {
-                ds.push(`${t.filters}:loadData`);
+                t.filters.split(';').forEach(filter => ds.push(`${filter}:loadData`));
             }
             if (t._preSubscribe) {
                 ds.push(t._preSubscribe);

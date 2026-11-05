@@ -27,10 +27,10 @@
 :host {
 padding:var(--padding);
 --line-size:calc(0.5 * var(--padding));
---line-color:var(--theme-color-offset, --color-title);
+--line-color:var(--theme-color-offset, var(--color-title));
 }
 :host([theme]) {
---line-color:var(--theme-color, --color-title);
+--line-color:var(--theme-color, var(--color-title));
 }
 div {
 display:block;

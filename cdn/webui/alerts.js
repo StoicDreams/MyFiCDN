@@ -90,14 +90,11 @@
                 webui.alert = async (message, variant) => {
                     const msg = message.nodeName ? message.innerText : message;
                     const hc = await webui.hashSHA256(`${variant}-${msg}`);
-                    let index = -1;
-                    alertList.forEach(al => {
-                        index++;
-                        if (!al.userclosed) return;
+                    for (let index = alertList.length - 1; index >= 0; --index) {
+                        if (!alertList[index].userclosed) continue;
+                        alertList[index].remove();
                         alertList.splice(index, 1);
-                        index--;
-                        al.remove();
-                    });
+                    }
                     let alert = alertList.filter(i => i._hashCode === hc)[0];
                     if (alert) {
                         alert.increment();
@@ -118,7 +115,7 @@
                         alert.innerHTML = message;
                     }
                     alert.setAttribute('variant', variant || 'danger');
-                    alert.display();
+                    alert.setAttribute('show', true);
                     alert.style.margin = '0 10px 10px 0'
                     alert.userclosed = false;
                     alertList.push(alert);
@@ -140,9 +137,10 @@
                 }
                 return true;
             });
+            t._isCheckingCounts = true;
             setTimeout(() => t.checkCounts(), 1000);
         },
-        attr: ['data-toggleclass', 'data-title'],
+        attr: ['data-toggleclass', 'data-title', 'data-popup'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
@@ -181,6 +179,10 @@
             if (newCount != t.count) {
                 t.setCount(newCount);
             }
+            if (!t.isConnected) {
+                t._isCheckingCounts = false;
+                return;
+            }
             setTimeout(() => t.checkCounts(), 1000);
         },
         triggerAlert(data, a) {
@@ -204,8 +206,7 @@
             t._lastTrigger = lastTriggered;
             let message = data.message;
             let variant = data.variant || data.theme || 'info';
-            t._lastTrigger =
-                data.message = '';
+            data.message = '';
             data.show = undefined;
             webui.setData(alertTrigger, data);
             webui.alert(message, variant);
@@ -220,6 +221,12 @@
                 alertTrigger = t.dataset.subscribe;
             };
             t.dataset.subscribe = `${alertTrigger}:triggerAlert`;
+        },
+        reconnected() {
+            const t = this;
+            if (t._isCheckingCounts) return;
+            t._isCheckingCounts = true;
+            t.checkCounts();
         },
         shadowTemplate: `
 <webui-icon icon="bell|fill|shade:tri|theme:info"></webui-icon>

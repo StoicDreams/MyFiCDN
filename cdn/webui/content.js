@@ -81,6 +81,7 @@ webui.define("webui-content", {
         let t = this;
         t.src = value;
         t._contentLoaded = false;
+        t._renderedSrc = undefined;
         t.fetchContent();
     },
     async loadSrc() {
@@ -92,6 +93,7 @@ webui.define("webui-content", {
             while (t._isLoading) {
                 await webui.wait(10);
             }
+            return;
         };
         t._isLoading = true;
         t._contentLoaded = t.src;
@@ -103,13 +105,17 @@ webui.define("webui-content", {
                 content = await fetch(t.src);
                 content = content.ok ? await content.text() : null;
             }
-            content = content ? content : `Failed to load content from ${t.src}`;
+            if (!content) {
+                t._contentLoaded = false;
+                content = `Failed to load content from ${t.src}`;
+            }
             if (content.startsWith('<!DOCTYPE')) {
-                content = `Source ${t.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by t component)`;
+                content = `Source ${t.src} did not return expected markdown/html snippet (Full HTML documents are not allowed by this component)`;
             }
             t._content = content;
             t._isLoading = false;
         } catch (ex) {
+            t._contentLoaded = false;
             t._content = `Source ${t.src} failed to load:${ex}`;
             t._isLoading = false;
         }
@@ -133,9 +139,13 @@ webui.define("webui-content", {
             await t.loadSrc();
             if (!t._content) return;
             if (t.hasAttribute('slot') || t.hasAttribute('nest')) {
+                // Rendering again on every reveal would discard the state of everything inside.
+                if (t._renderedSrc === t.src && t._contentLoaded) return;
+                t._renderedSrc = t.src;
                 t.innerHTML = webui.applyAppDataToContent(t._content);
                 t.contentAttached = true;
             } else {
+                if (!t.parentNode) return;
                 let temp = webui.create('div');
                 temp.innerHTML = webui.applyAppDataToContent(t._content);
                 let n = [];

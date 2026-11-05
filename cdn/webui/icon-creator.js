@@ -132,7 +132,7 @@
             t._svgContainer.appendChild(t._backingHTML);
             t._svgPreview = webui.createFromHTML(previewHTML, { style: 'aspect-ratio:1;position:relative;z-index:1;color:#333;stroke:blue;stroke-width:4;fill:#FFFF0022;' });
             t._previewPath = t._svgPreview.querySelector('path');
-            t._iconPreview = webui.create('webui-icon', { style: 'position:absolute;width:100%;top:0;left:0;opacity:0.5;' });
+            t._iconPreview = webui.create('webui-icon', { style: 'position:absolute;width:100%;height:100%;top:0;left:0;opacity:0.5;' });
             t._svgContainer.appendChild(t._iconPreview);
             t._svgContainer.appendChild(t._svgPreview);
             t._inputFull = webui.create('webui-input-message', { 'label': `Definition`, value: 'WEBUI-ICON-DEF\n', placeholder: "WEBUI-ICON-NAME" });
@@ -606,6 +606,14 @@
         connected() {
             this.setupComponent();
         },
+        async editIcon(el) {
+            const t = this;
+            await webui.wait(() => !!el._definition);
+            if (!el._definition) return;
+            t._inputFull.value = el._definition;
+            // Setting a value in code fires no event, and the input event is what redraws the editor.
+            t._inputFull.triggerChange(true);
+        },
         loadFromDefinition(iconDef) {
             const t = this;
             if (!iconDef) return;
@@ -626,13 +634,11 @@
                     let label = webui.create('label', { text: icon });
                     container.appendChild(label);
                     container.addEventListener('click', _ => {
-                        t._inputFull.value = el._definition;
+                        t.editIcon(el);
                     });
                     if (isFirst) {
                         isFirst = false;
-                        setTimeout(() => {
-                            t._inputFull.value = el._definition;
-                        }, 100);
+                        t.editIcon(el);
                     }
                 });
             } catch (ex) {

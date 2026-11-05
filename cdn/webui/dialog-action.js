@@ -127,6 +127,7 @@
                                     }
                                 })
                                 .catch(ex => {
+                                    alert.setValue(`${ex}`, 'danger');
                                     resolve(false);
                                 });
                         } else {

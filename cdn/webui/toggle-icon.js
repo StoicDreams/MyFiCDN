@@ -31,7 +31,13 @@
                     t._button.classList = t.classList;
                     break;
             }
-            t.updateElements();
+            // Attributes change in bursts while an element upgrades, so only update once per burst.
+            if (t._updateQueued) return;
+            t._updateQueued = true;
+            queueMicrotask(() => {
+                t._updateQueued = false;
+                t.updateElements();
+            });
         },
         connected() {
             const t = this;
@@ -80,9 +86,12 @@
                 let el = document.querySelector(t.dataset.enabled);
                 if (el) {
                     t._enabled = !!el.docked;
-                } else {
+                } else if ((t._recheck || 0) < 20 && !t._recheckTimer) {
                     t._recheck = (t._recheck || 0) + 1;
-                    setTimeout(() => t.updateElements(), t._recheck * 100);
+                    t._recheckTimer = setTimeout(() => {
+                        t._recheckTimer = 0;
+                        t.updateElements();
+                    }, t._recheck * 100);
                 }
             }
             t._label.innerHTML = webui.getDefined(t.label, '');

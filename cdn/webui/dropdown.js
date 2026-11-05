@@ -189,6 +189,7 @@
             webui.fetchApi(url, fetchData, method)
                 .then(async resp => {
                     let message = await resp.text();
+                    if (t._lid !== lid) return;
                     if (resp.status < 300) {
                         let json = await JSON.parse(message);
                         t.setOptions(json);
@@ -210,6 +211,9 @@
             let id = webui.uuid();
             t._forLabel.setAttribute('for', id);
             t._select.setAttribute('id', id);
+            if (t._pendingValue !== undefined) {
+                t.setValue(t._pendingValue);
+            }
         },
         applyDataChange() {
             const t = this;
@@ -246,7 +250,7 @@
                 return;
             }
             let template = t._optionTemplate;
-            let value = t.value;
+            let value = t._pendingValue !== undefined ? t._pendingValue : t.value;
             t._select.innerHTML = '';
             if (t._includeNew) {
                 let option = webui.create('option', { value: t.newid, html: t.newlabel });
@@ -294,9 +298,14 @@
         },
         setValue(value) {
             const t = this;
-            if (!t._isConnected || !t._optionsSet) return;
+            if (!t._isConnected || !t._optionsSet) {
+                // Attributes and data can arrive before options or connection, so apply this once ready.
+                t._pendingValue = value;
+                return;
+            }
+            t._pendingValue = undefined;
             value = `${value}`;
-            let o = t._select.querySelector(`option[value="${value.replace(/\\/g, '\\\\')}"]`);
+            let o = t._select.querySelector(`option[value="${CSS.escape(value)}"]`);
             if (!o) {
                 if (t.multiple) return;
                 o = t._select.querySelector('option');
@@ -328,7 +337,7 @@ position:relative;
 box-sizing:border-box;
 align-items: center;
 width:100%;
-width:-webui-fill-available;
+width:-webkit-fill-available;
 --theme-color:white;
 --theme-color-offset:black;
 background-color: color-mix(in srgb, var(--theme-color) 90%, black);

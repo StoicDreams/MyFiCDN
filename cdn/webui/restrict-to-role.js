@@ -47,7 +47,7 @@
                     t.showInvalid();
                 }
             } else {
-                if (userRole & role > 0) {
+                if ((userRole & role) !== 0) {
                     t.showValid();
                 } else {
                     t.showInvalid();

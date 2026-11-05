@@ -19,6 +19,7 @@
             for (const attr of t.attributes) {
                 if (['src'].indexOf(attr.name) !== -1) continue;
                 appConfig[attr.name] = attr.value;
+                appConfig[webui.toCamel(attr.name)] = attr.value;
                 webui.setData(attr.name, attr.value);
             }
             if (t.src) {

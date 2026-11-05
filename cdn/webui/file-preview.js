@@ -42,6 +42,8 @@
             } else if (file.content.startsWith('data:')) {
                 t._iframe.src = file.content;
             } else {
+                // srcdoc inherits this page's origin, so a selected file must not be able to run scripts here.
+                t._iframe.setAttribute('sandbox', '');
                 t._iframe.srcdoc = file.content;
             }
         },
@@ -50,6 +52,7 @@
             t._img.removeAttribute('src');
             t._iframe.removeAttribute('srcdoc');
             t._iframe.removeAttribute('src');
+            t._iframe.removeAttribute('sandbox');
         },
         shadowTemplate: `
 <iframe></iframe>

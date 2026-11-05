@@ -70,6 +70,7 @@
                         title,
                         content
                     );
+                    if (!content) return;
                     panelBottomButtons.map(cfg => {
                         if (excludes.indexOf(cfg.name) === -1) {
                             var btn = webui.create('webui-button', { theme: cfg.theme, name: cfg.name, html: cfg.display });

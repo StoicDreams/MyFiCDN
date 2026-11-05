@@ -30,38 +30,19 @@
             t._idselector = `#${t._id}`;
             t.headerSlot = t.template.querySelector('slot[name=header]');
             t.footerSlot = t.template.querySelector('slot[name=footer]');
-            let cache = t.innerHTML;
-            const startObserving = (domNode) => {
-                const observer = new MutationObserver(mutations => {
-                    mutations.forEach(function (_m) {
-                        if (cache !== t.innerHTML) {
-                            cache = t.innerHTML;
-                            t.buildFooterContent();
-                        }
-                    });
-                });
-                observer.observe(domNode, {
-                    childList: true,
-                    attributes: false,
-                    characterData: false,
-                    subtree: true,
-                });
-                return observer;
-            };
-            startObserving(t);
+            // Content changes can replace the footer. Rebuilding is a no-op when it is still in place.
+            const observer = new MutationObserver(() => t.buildFooterContent());
+            observer.observe(t, { childList: true, subtree: true });
         },
         connected() {
             const t = this;
             setTimeout(() => {
                 t.setAttribute('id', t._id);
             }, 100);
-            t._resizeHandler = () => t.checkResponsiveDocking();
-            window.addEventListener('resize', t._resizeHandler);
             t.checkResponsiveDocking();
         },
-        disconnected() {
-            const t = this;
-            window.removeEventListener('resize', t._resizeHandler);
+        onResize() {
+            this.checkResponsiveDocking();
         },
         attr: ['position', 'docked', 'data-dockable', 'data-moveable'],
         attrChanged(property, value) {
@@ -160,9 +141,6 @@ height: fit-content;
 :host(:not([docked])[slot="bottom"]:not(.open)) {
 transform: translate(0,105%);
 }
-:host[docked]{
-}
-:host([slot="left"]),
 :host([slot="left"]) {
 min-width: 15ch;
 }
@@ -217,7 +195,6 @@ min-height:2em;
 button {
 background:none;
 color:inherit;
-padding:--padding);
 border:none;
 cursor:pointer;
 }

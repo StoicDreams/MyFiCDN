@@ -153,9 +153,13 @@
             let bestMatch = null;
             let bestPattern = null;
             for (const pattern of patterns) {
-                pattern.regex.lastIndex = lastIndex;
-                let match = pattern.regex.exec(safeCode);
-                if (match && match.index === lastIndex) {
+                // Sticky matching only tries the current position instead of scanning the rest of the code for a match.
+                if (!pattern.sticky) {
+                    pattern.sticky = new RegExp(pattern.regex.source, pattern.regex.flags.replace('g', '') + 'y');
+                }
+                pattern.sticky.lastIndex = lastIndex;
+                let match = pattern.sticky.exec(safeCode);
+                if (match) {
                     if (!bestMatch || match[0].length > bestMatch[0].length) {
                         bestMatch = match;
                         bestPattern = pattern;

@@ -8,7 +8,7 @@
 "use strict"
 {
     webui.define("webui-file-select", {
-        preload: 'button fa',
+        preload: 'button',
         constructor() {
             const t = this;
             t.label = 'File Select';
@@ -22,9 +22,19 @@
                 let list = [];
                 if (files.length > 0) {
                     t.classList.add('selected');
+                    let remaining = files.length;
+                    const fileDone = () => {
+                        if (--remaining > 0) return;
+                        t.setValue(list.filter(Boolean));
+                        t.triggerChange();
+                    };
                     for (let index = 0; index < files.length; ++index) {
                         let file = files[index];
                         let reader = new FileReader();
+                        reader.onerror = () => {
+                            console.error('Failed to read file', file.name, reader.error);
+                            fileDone();
+                        };
                         reader.onload = function (ev) {
                             let item = {
                                 name: file.name,
@@ -34,12 +44,10 @@
                                 lastModifiedDate: file.lastModifiedDate,
                                 content: ev.target.result
                             }
-                            list.push(item);
-                            if (list.length === files.length) {
-                                t.setValue(list);
-                            }
+                            list[index] = item;
+                            fileDone();
                         }
-                        const ft = file.type.split('/')[0];
+                        let ft = file.type.split('/')[0];
                         switch (ft) {
                             case 'image':
                             case 'text':
@@ -70,6 +78,7 @@
                 t.classList.remove('selected');
                 t._input.value = null;
                 t.setValue([]);
+                t.triggerChange();
             });
         },
         setValue(value) {
@@ -100,7 +109,7 @@
                     t._input.setAttribute('accept', value);
                     break;
                 case 'multiple':
-                    if (value === false) {
+                    if (value === false || value === null) {
                         t._input.removeAttribute('multiple');
                     } else {
                         t._input.setAttribute('multiple', true);

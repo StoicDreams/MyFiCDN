@@ -86,8 +86,9 @@
             const t = this;
             if (!t.doc || !t.doc.paths) return;
             const serverOptions = [];
-            for (let index = 0; index < t.doc.servers.length; ++index) {
-                const url = t.doc.servers[index].url;
+            const servers = t.doc.servers || [];
+            for (let index = 0; index < servers.length; ++index) {
+                const url = servers[index].url;
                 serverOptions.push({ value: url, display: url });
             }
             {
@@ -111,7 +112,7 @@
                     const btn = webui.create('webui-button', { slot: 'tabs', text: label, align: 'left' });
                     if (typeof t.hash === 'string') {
                         let hash = [];
-                        if (t.hash) { hash.push(hash); }
+                        if (t.hash) { hash.push(t.hash); }
                         hash.push(method.toLowerCase());
                         hash.push(path.replace(/[\/\\]+/g, '-'));
                         btn.setAttribute('hash', `${t.hash}${webui.toSnake(hash.join('-'), '-')}`);

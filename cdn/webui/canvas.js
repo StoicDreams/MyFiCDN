@@ -39,9 +39,8 @@
         },
         setLines(lines) {
             const t = this;
-            t._lines = lines || [];
-            t._lines.push({});
-            t._textLines = lines.join('\n');
+            t._lines = [...(lines || []), {}];
+            t._textLines = (lines || []).map(l => l.line || '').join('\n');
             t.wrapAllLines();
             t._contentHeight = t._wrappedLines.length * t._lineHeight;
             t.updateCanvas();
@@ -90,19 +89,22 @@
                 let originalLine = lineObj.line;
                 let currentLine = '';
                 if (originalLine.length > 0) {
-                    for (let i = 0; i < originalLine.length; i++) {
-                        const testLine = currentLine + originalLine[i];
-                        const metrics = t._ctx.measureText(testLine);
-                        if (metrics.width > maxWidth && currentLine !== '') {
-                            t._wrappedLines.push({ text: currentLine, ...lineObj });
-                            currentLine = originalLine[i];
-                        } else {
-                            currentLine = testLine;
+                    let remaining = originalLine;
+                    while (t._ctx.measureText(remaining).width > maxWidth && remaining.length > 1) {
+                        // Binary search for the longest prefix that fits, measuring far fewer strings than per character.
+                        let low = 1, high = remaining.length - 1;
+                        while (low < high) {
+                            const mid = Math.ceil((low + high) / 2);
+                            if (t._ctx.measureText(remaining.substring(0, mid)).width > maxWidth) {
+                                high = mid - 1;
+                            } else {
+                                low = mid;
+                            }
                         }
+                        t._wrappedLines.push({ text: remaining.substring(0, low), ...lineObj });
+                        remaining = remaining.substring(low);
                     }
-                    if (currentLine) {
-                        t._wrappedLines.push({ text: currentLine, ...lineObj });
-                    }
+                    t._wrappedLines.push({ text: remaining, ...lineObj });
                 } else {
                     t._wrappedLines.push({ text: currentLine, ...lineObj });
                 }
@@ -117,13 +119,18 @@
             ctx.clearRect(0, 0, width, height);
             const startLine = Math.floor(t._scrollTop / t._lineHeight);
             const endLine = Math.min(startLine + t._visibleLines, t._wrappedLines.length);
-            ctx.font = getComputedStyle(t).font;
+            const computedStyle = getComputedStyle(t);
+            ctx.font = computedStyle.font;
             let digits = t._lines.length.toString().length;
             let padLeft = t.lineNumbers ? t._ctx.measureText(webui.repeat('0', digits)).width + 10 : 5;
+            const resolvedColors = {};
             function correctColor(color) {
                 if (!color) return color;
                 if (color.startsWith('--')) {
-                    return getComputedStyle(t).getPropertyValue(color);
+                    if (resolvedColors[color] === undefined) {
+                        resolvedColors[color] = computedStyle.getPropertyValue(color);
+                    }
+                    return resolvedColors[color];
                 }
                 return color;
             }
@@ -203,14 +210,22 @@
         },
         connected() {
             const t = this;
+            t.addEventListener('click', _ => {
+                t.checkDimensions();
+            });
+            t.startWatching();
+        },
+        reconnected() {
+            this.startWatching();
+        },
+        startWatching() {
+            const t = this;
+            if (t._resizeObserver) return;
             const resizeObserver = new ResizeObserver(() => {
                 t.checkDimensions();
             });
             resizeObserver.observe(t);
             t._resizeObserver = resizeObserver;
-            t.addEventListener('click', _ => {
-                t.checkDimensions();
-            });
             t._boundOnWheel = (e) => t.onWheel(e);
             t._canvas.addEventListener('wheel', t._boundOnWheel, { passive: false });
         },

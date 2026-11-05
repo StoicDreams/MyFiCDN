@@ -109,13 +109,14 @@
             if (t.src) {
                 if (t.dataset.trigger) {
                     t.processPath(`${apiRoot}${t.src}`, t.dataset.trigger);
-                    t.dataset.trigger = undefined;
+                    delete t.dataset.trigger;
                     t.src = undefined;
                 } else {
                     console.error('webui-data-loader failed: src must be used in conjunction with [data-trigger="variable-name"] to signify which data key to assign data to.');
                 }
             }
             Object.keys(t.dataset).forEach(key => {
+                if (['subscribe', 'trigger', 'bind', 'default', 'hide', 'state'].includes(key)) return;
                 let apiRoute = t.dataset[key];
                 if (!!apiRoot) {
                     let src = `${apiRoot}${apiRoute}`;

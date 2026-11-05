@@ -18,7 +18,7 @@
     let el = ev.target;
     let text = el.value;
     let postTab = text.slice(el.selectionEnd, text.length);
-    let cursorPos = el.selectionEnd;
+    let cursorPos = el.selectionStart;
     let tab = el.getAttribute("tab") || "\t";
     ev.target.value = text.slice(0, el.selectionStart) + tab + postTab;
     cursorPos += tab.length;
@@ -37,7 +37,7 @@
       t._field.addEventListener("keydown", handleKeyDown);
       t._field.addEventListener("input", () => {
         if (t.sanitize) {
-          const value = webui.sanitize(t._field.value);
+          const value = webui.sanitizeInput(t._field.value);
           if (value !== t._field.value) {
             t._field.value = value;
           }
@@ -116,7 +116,7 @@
     box-sizing: border-box;
     border: var(--theme-border-width) solid var(--theme-color);
     background-color: #ecddcbff;
-    color: #black;
+    color: black;
     cursor: text;
 }
 label {

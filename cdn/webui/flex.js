@@ -7,11 +7,6 @@
  */
 "use strict"
 webui.define('webui-flex', {
-    linkCss: true,
-    constructor() {
-        const t = this;
-        t._style = t.template.querySelector('style');
-    },
     attr: ['gap', 'grow', 'column', 'align', 'justify', 'wrap-at'],
     attrChanged(property, value) {
         const t = this;
@@ -30,7 +25,14 @@ webui.define('webui-flex', {
         else { t.style.gap = 'var(--flexgap,var(--padding,1em))'; }
     },
     connected() {
+        this.watchWrap();
+    },
+    reconnected() {
+        this.watchWrap();
+    },
+    watchWrap() {
         const t = this;
+        if (t._wrapObserver) return;
         const wrapAt = parseInt(t.getAttribute('wrap-at'));
         if (Number.isFinite(wrapAt)) {
             const observer = new ResizeObserver(entries => {

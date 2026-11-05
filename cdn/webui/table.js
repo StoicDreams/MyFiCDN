@@ -21,7 +21,6 @@
     }
     webui.define('webui-table', {
         _columns: [],
-        linkCss: true,
         columnFormats: {},
         constructor() {
             const t = this;
@@ -38,7 +37,7 @@
             const t = this;
             switch (property) {
                 case 'bordered':
-                    t._table.classList.add('bordered');
+                    t._table.classList.toggle('bordered', value !== null);
                     break;
                 case 'columnFormats':
                     t.columnFormats = {};
@@ -132,46 +131,47 @@
                 h.appendChild(th);
             });
             if (t._data && t._data.forEach) {
+                const columns = t._columns.map(col => {
+                    let cd = col.trim().split('|');
+                    let [cm, align] = getAlign(cd[0]);
+                    if (cd.length === 2) {
+                        cm = cd[1].trim();
+                    }
+                    const cc = webui.toCamel(cm);
+                    const pc = webui.toPascel(cm);
+                    return {
+                        cm, cc, pc, align,
+                        template: t._columnTemplates[cm] || t._columnTemplates[cc] || t._columnTemplates[pc],
+                        format: webui.getDefined(t.columnFormats[cm], t.columnFormats[cc], t.columnFormats[pc], undefined),
+                    };
+                });
+                // Rows are built off the page so a render is one DOM insert instead of one per cell.
+                const rows = document.createDocumentFragment();
                 t._data.forEach(row => {
                     if (!row._rowId) {
                         row._rowId = webui.toCamel(webui.uuid()).toLowerCase();
                         webui.setData(`page-tr-${row._rowId}`, row);
                     }
                     let tr = webui.create('tr');
-                    t._table.appendChild(tr);
-                    t._columns.forEach(col => {
-                        col = col.trim();
-                        let cd = col.split('|');
-                        let [cm, align] = getAlign(cd[0]);
-                        if (cd.length === 2) {
-                            cm = cd[1].trim();
-                        }
-                        let cc = webui.toCamel(cm);
-                        let pc = webui.toPascel(cm);
+                    rows.appendChild(tr);
+                    columns.forEach(({ cm, cc, pc, align, template, format }) => {
                         let td = webui.create('td', { class: align });
                         tr.appendChild(td);
                         let content = '';
-                        if (t._columnTemplates[cm]) {
-                            content = webui.replaceAppData(t._columnTemplates[cm], row);
-                        } else if (t._columnTemplates[cc]) {
-                            content = webui.replaceAppData(t._columnTemplates[cc], row);
-                        } else if (t._columnTemplates[pc]) {
-                            content = webui.replaceAppData(t._columnTemplates[pc], row);
+                        if (template) {
+                            content = webui.replaceAppData(template, row);
                         } else {
                             let data = webui.getDefined(row[cm], row[cc], row[pc], '');
                             content = webui.replaceAppData(`${data}`);
                         }
-                        let cf = webui.getDefined(t.columnFormats[cm], t.columnFormats[cc], t.columnFormats[pc], undefined);
-                        switch (cf) {
-                            case 'html':
-                                td.innerHTML = content;
-                                break;
-                            default:
-                                td.innerText = content;
-                                break;
+                        if (format === 'html') {
+                            td.innerHTML = content;
+                        } else {
+                            td.innerText = content;
                         }
                     });
                 });
+                t._table.appendChild(rows);
             }
         },
         connected() {
@@ -190,7 +190,7 @@
         shadowTemplate: `
 <slot name="column"></slot>
 <slot></slot>
-<style type="text/javascript">
+<style type="text/css">
 :host {
 display:block;
 width:100%;

@@ -177,10 +177,7 @@
             if (t.perPage === 1) {
                 current = t._data[t._index];
             } else {
-                current = [];
-                for (let index = t._index; index < t._data.length; ++index) {
-                    current.push(t._data[index]);
-                }
+                current = t._data.slice(t._index * t.perPage, t.page * t.perPage);
             }
             t._currentData = current;
             webui.setData(t.dataCurrent, current);
@@ -262,7 +259,6 @@
         setValue(value) {
             const t = this;
             value = value || 1;
-            if (value === undefined || value === undefined) return;
             if (typeof value === 'string') {
                 value = parseInt(value) || 1;
             }

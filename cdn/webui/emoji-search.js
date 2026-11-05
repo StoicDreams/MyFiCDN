@@ -47,7 +47,7 @@
                 }
             },
             'pageCount': {
-                get() { return t._pag.pageCount; }
+                get() { return this._pag.pageCount; }
             },
             'totalCount': {
                 get() { return this._pag.totalCount; },

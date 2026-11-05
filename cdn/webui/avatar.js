@@ -24,15 +24,16 @@ webui.define("webui-avatar", {
                     t._slot.innerHTML = value;
                     return;
                 }
-                if (value.indexOf('/') === -1) {
-                    t._slot.innerHTML = `<webui-icon icon="${value}""></webui-icon>`;
-                    return;
-                }
                 if (value.length < 3) {
-                    t._slot.innerHTML = value;
+                    t._slot.innerText = value;
                     return;
                 }
-                t._slot.innerHTML = `<img src="${value}" alt="avatar image" />`;
+                t._slot.innerHTML = '';
+                if (value.indexOf('/') === -1) {
+                    t._slot.appendChild(webui.create('webui-icon', { icon: value }));
+                    return;
+                }
+                t._slot.appendChild(webui.create('img', { src: value, alt: 'avatar image' }));
                 break;
         }
     },

@@ -34,7 +34,7 @@
         },
         props: {
             'value': {
-                get() { return t.dataset.value; },
+                get() { return this.dataset.value; },
                 set(v) { this.setValue(webui.getDefined(v, ''), 'value'); }
             }
         },
@@ -94,6 +94,11 @@
             let mustContain = t.dataset.contains;
             let notEqual = t.dataset.unequals;
             let ignoreCase = t.dataset.ignoreCase !== undefined;
+            if (ignoreCase) {
+                mustEqual = mustEqual?.toLowerCase();
+                mustContain = mustContain?.toLowerCase();
+                notEqual = notEqual?.toLowerCase();
+            }
             let mustMatch = t.dataset.match;
             let isGood = true;
             let isGeneralCheck = mustEqual === undefined && mustContain === undefined && notEqual === undefined && mustMatch === undefined;
@@ -109,12 +114,16 @@
                     return;
                 }
                 if (mustMatch !== undefined) {
-                    let matches = new RegExp(mustMatch, 'g');
-                    if (!matches) {
+                    try {
+                        if (!new RegExp(mustMatch, ignoreCase ? 'i' : '').test(vt)) {
+                            isGood = false;
+                        }
+                    } catch (ex) {
+                        console.error('Invalid data-match pattern', mustMatch, ex);
                         isGood = false;
                     }
                 }
-                else if (notEqual !== undefined) {
+                if (notEqual !== undefined) {
                     if (value === notEqual || vt === notEqual) {
                         isGood = false;
                     }
@@ -144,27 +153,30 @@
 
         showContent() {
             const t = this;
-            webui.removeChildren(t, ch => {
-                return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');
-            });
-            if (t._cacheContent) {
-                webui.transferChildren(webui.create('div', { html: webui.applyAppDataToContent(t._cacheContent, t._data) }), t);
-            }
+            t.showHtml(t._cacheContent);
         },
         showInvalid() {
             const t = this;
+            t.showHtml(t._cacheInvalid);
+        },
+        showHtml(template) {
+            const t = this;
+            const html = template ? webui.applyAppDataToContent(template, t._data) : '';
+            // Unchanged output keeps the existing nodes along with any state they hold.
+            if (html === t._shownHtml) return;
+            t._shownHtml = html;
             webui.removeChildren(t, ch => {
                 return !ch || !ch.hasAttribute || !ch.hasAttribute('slot');
             });
-            if (t._cacheInvalid) {
-                webui.transferChildren(webui.create('div', { html: webui.applyAppDataToContent(t._cacheInvalid, t._data) }), t);
+            if (html) {
+                webui.transferChildren(webui.create('div', { html }), t);
             }
         },
         shadowTemplate: `
 <slot></slot>
 <slot name="valid"></slot>
 <slot name="invalid"></slot>
-<style style="text/css">
+<style type="text/css">
 :host {
 display:inline;
 width:100%;

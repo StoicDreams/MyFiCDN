@@ -15,11 +15,11 @@ webui.define("webui-button", {
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
         t.addEventListener('click', _ => {
             if (t.getAttribute('type') === 'submit' || t.hasAttribute('submit')) {
-                t.internals_.form.requestSubmit();
+                t.internals_.form?.requestSubmit();
             }
             if (t.dataset.transfer) {
                 t.dataset.transfer.split('|').forEach(ft => {
-                    let fts = t.dataset.transfer.split(':');
+                    let fts = ft.split(':');
                     let data = webui.getData(fts[0]);
                     if (fts.length === 2) {
                         webui.setData(fts[1], data);
@@ -37,6 +37,7 @@ webui.define("webui-button", {
                 let ds = t.dataset.removeItem.split(':');
                 if (ds.length === 2) {
                     let data = webui.getData(ds[0]);
+                    if (data === undefined || data === null) return;
                     if (typeof data.splice === 'function') {
                         data.splice(ds[1], 1);
                     } else if (data[ds[1]] !== undefined) {
@@ -52,7 +53,7 @@ webui.define("webui-button", {
         const t = this;
         switch (property) {
             case 'label':
-                t.childNodes.forEach(node => {
+                Array.from(t.childNodes).forEach(node => {
                     if (node.nodeName === '#text' || (node.hasAttribute && !node.hasAttribute('slot'))) {
                         node.remove();
                     }

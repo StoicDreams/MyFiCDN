@@ -8,7 +8,6 @@
 "use strict"
 {
     webui.define('webui-grid', {
-        linkCss: true,
         constructor() {
             const t = this;
         },
@@ -22,7 +21,7 @@
                 case 'columns':
                     let num = parseInt(value);
                     if (num === t.columns || `${num}` === t.columns) {
-                        t.style.setProperty('--columns', `repeat(${num}, minmax(var(--min), var(--max))`);
+                        t.style.setProperty('--columns', `repeat(${num}, minmax(var(--min), var(--max)))`);
                     } else {
                         t.style.setProperty('--columns', t.columns);
                     }

@@ -9,7 +9,7 @@
 {
     const content = `
 <webui-input-message name="message" theme="primary" tab label="Enter your feedback here!" autofocus></webui-input-message>
-<webui-alert id="alert"></webuialert>
+<webui-alert id="alert"></webui-alert>
 `;
 
     webui.define('webui-feedback', {
@@ -39,7 +39,7 @@
                                 body = JSON.stringify(o);
                             }
                             else if (t.dataset.formName) {
-                                ct = 'multipart/form-data';
+                                ct = undefined;
                                 data.append(t.dataset.formName, body);
                                 body = data;
                             }
@@ -50,14 +50,13 @@
                                     mode: 'cors',
                                     cache: 'no-cache',
                                     body: body,
-                                    headers: {
-                                        'Content-Type': ct
-                                    }
+                                    // Without a type the browser sets multipart/form-data along with its boundary.
+                                    headers: ct ? { 'Content-Type': ct } : {}
                                 })
                                     .then(async result => {
                                         let body = await result.text();
                                         if (result.status >= 200 && result.status < 300) {
-                                            webuiAlert(body, 'success');
+                                            webui.alert(body, 'success');
                                             resolve(true);
                                         } else {
                                             alert.innerHTML = `${body}`;
