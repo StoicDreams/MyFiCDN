@@ -42,3 +42,23 @@ test('the toggle switches between changes and full view', async ({ page }) => {
     await toggle.evaluate(t => { t.checked = true; t.dispatchEvent(new Event('change')); });
     expect(await el.evaluate(c => c._viewMode)).toBe('full');
 });
+test('shows its lines without a set height', async ({ page }) => {
+    const root = await mount(page, '<div><webui-content-compare></webui-content-compare></div>');
+    const el = root.locator('webui-content-compare');
+    await el.evaluate((c, [a, b]) => c.setDiff(a, b), [lines('a', 'b', 'c'), lines('a', 'x', 'c')]);
+    await expect(el.locator('.diff-row')).toHaveCount(3);
+    // Each row is at least a line tall, so the scrolling area must fit all three.
+    await expect.poll(() => el.evaluate(c => c.shadowRoot.querySelector('.compare-container').clientHeight)).toBeGreaterThan(60);
+});
+test('scrolls within a set height', async ({ page }) => {
+    const root = await mount(page, '<webui-content-compare style="height:200px"></webui-content-compare>');
+    const el = root.locator('webui-content-compare');
+    const many = Array.from({ length: 100 }, (_, i) => `line ${i}`);
+    await el.evaluate((c, [a, b]) => c.setDiff(a, b), [lines(...many), lines(...many.map(l => `${l}!`))]);
+    await el.locator('.toggle-mode').check();
+    await expect.poll(() => el.evaluate(c => c.getBoundingClientRect().height)).toBe(200);
+    await expect.poll(() => el.evaluate(c => {
+        const box = c.shadowRoot.querySelector('.compare-container');
+        return box.scrollHeight > box.clientHeight;
+    })).toBe(true);
+});

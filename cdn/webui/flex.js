@@ -60,7 +60,7 @@ webui.define('webui-flex', {
 <slot></slot>
 <style type="text/css">
 :host {
-display: flex!important;
+display: flex;
 }
 :host([grow]) {
 flex-grow:1;

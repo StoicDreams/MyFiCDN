@@ -200,6 +200,7 @@
             t._copy.addEventListener('click', async ev => {
                 ev.stopPropagation();
                 ev.preventDefault();
+                // Copy the stored value, not the rendered text, which loses tabs and surrounding whitespace.
                 webui.copyToClipboard(t.value);
                 return false;
             });
@@ -250,7 +251,8 @@
         },
         props: {
             'value': {
-                get() { return webui.getDefined(this._code.innerText, ''); },
+                // Values set with setValue are kept exactly. Code written inside the tag reads back from its text.
+                get() { return this._value !== undefined ? this._value : webui.getDefined(this._code.textContent, ''); },
                 set(v) { this.setValue(v); }
             }
         },
@@ -262,6 +264,7 @@
             if (typeof value !== 'string') {
                 value = JSON.stringify(value, null, 2);
             }
+            t._value = value;
             value = webui.escapeCode(value);
             t._code.innerHTML = highlightCode(webui.trimLinePreTabs(value.trim()), t.lang || t.language || t.getAttribute('lang') || t.getAttribute('language'));
         },

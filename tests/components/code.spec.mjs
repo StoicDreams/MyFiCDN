@@ -43,6 +43,23 @@ test('the copy icon copies the code', async ({ page }) => {
     await root.locator('webui-code label webui-icon').click();
     await expect.poll(() => page.evaluate(() => window.__copied)).toBe('abc');
 });
+test('value and copy keep the exact text set with setValue', async ({ page }) => {
+    const root = await mount(page, '<webui-code lang="html"></webui-code>');
+    await page.evaluate(() => {
+        Object.defineProperty(navigator, 'clipboard', { value: { writeText: async v => { window.__copied = v; } }, configurable: true });
+    });
+    const code = root.locator('webui-code');
+    const text = '\t<a href="?a=1&b=2" title="x &amp; y">Tom & Jerry</a>\n\t\tend  \n';
+    await code.evaluate((el, v) => el.setValue(v), text);
+    await expect(code.locator('code')).toContainText('Tom & Jerry');
+    expect(await code.evaluate(el => el.value)).toBe(text);
+    await code.locator('label webui-icon').click();
+    await expect.poll(() => page.evaluate(() => window.__copied)).toBe(text);
+});
+test('code written in the tag reads back as text', async ({ page }) => {
+    const root = await mount(page, '<webui-code lang="html">&lt;b&gt;a &amp;amp; b&lt;/b&gt;</webui-code>');
+    expect(await root.locator('webui-code').evaluate(el => el.value)).toBe('<b>a &amp; b</b>');
+});
 test('nocopy hides the copy icon', async ({ page }) => {
     const root = await mount(page, '<webui-code nocopy>abc</webui-code>');
     await expect(root.locator('webui-code label webui-icon')).toBeHidden();

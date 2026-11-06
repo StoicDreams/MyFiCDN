@@ -288,8 +288,9 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
+    min-height: 0;
     background-color: #333;
-    contain: strict;
+    contain: content;
 }
 .diff-row {
     display: grid;

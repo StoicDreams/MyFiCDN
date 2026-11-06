@@ -24,3 +24,13 @@ test('classes still style the element from the page stylesheet', async ({ page }
     const root = await mount(page, '<webui-flex class="pa-3"></webui-flex>');
     expect(await root.locator('webui-flex').evaluate(el => getComputedStyle(el).paddingTop)).not.toBe('0px');
 });
+test('page styles and inline styles can hide it', async ({ page }) => {
+    const root = await mount(page, '<webui-flex class="hide">a</webui-flex><webui-flex class="shown">b</webui-flex>');
+    await expect(root.locator('webui-flex.hide')).toBeHidden();
+    const shown = root.locator('webui-flex.shown');
+    await expect(shown).toBeVisible();
+    await shown.evaluate(el => { el.style.display = 'none'; });
+    await expect(shown).toBeHidden();
+    await shown.evaluate(el => { el.style.display = ''; });
+    expect(await shown.evaluate(el => getComputedStyle(el).display)).toBe('flex');
+});
