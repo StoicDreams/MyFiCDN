@@ -115,3 +115,10 @@ test('emoji icons display, keep their rotation, and can switch back', async ({ p
     await expect(el.locator('svg.main')).not.toHaveClass(/emoji/);
     await expect(emoji).toHaveText('');
 });
+test('icons without a name are hidden from screen readers, and named icons are images', async ({ page }) => {
+    const root = await mount(page, '<webui-icon id="plain" icon="xmark"></webui-icon><webui-icon id="named" icon="xmark" title="Close"></webui-icon>');
+    await expect(root.locator('#plain')).toHaveAttribute('aria-hidden', 'true');
+    await expect(root.locator('#named')).toHaveAttribute('role', 'img');
+    await expect(root.locator('#named')).toHaveAttribute('aria-label', 'Close');
+    await expect(root.locator('#named')).not.toHaveAttribute('aria-hidden');
+});

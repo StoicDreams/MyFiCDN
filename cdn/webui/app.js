@@ -20,12 +20,33 @@ webui.define("webui-app", {
         t.topPanelSlot = t.template.querySelector('slot[name=top]');
         t.bottomPanelSlot = t.template.querySelector('slot[name=bottom]');
         t.main = t.template.querySelector('main');
+        // The page scrolls inside main, so keyboard users must be able to focus it to scroll pages that have
+        // nothing else to focus, such as terms and policies.
+        t.main.setAttribute('tabindex', '0');
         t.mainSlot = t.template.querySelector('main>slot');
         document.head.appendChild(t.dynstyles);
         if (!t.getAttribute('preload')) {
             t.setAttribute('preload', 'dialogs');
         }
         webui.applyDynamicStyles = () => { t.applyDynamicStyles(); };
+        // Sizes are read when the browser reports a change, right after its own layout, so reading them is free.
+        // Measuring at other times forces the browser to lay out the whole page early.
+        t._sizeObserver = new ResizeObserver(() => t.measure());
+        t._sizeObserver.observe(t.main);
+        t.template.querySelectorAll('slot[name]').forEach(slot => {
+            slot.addEventListener('slotchange', () => t.observeSlots());
+        });
+    },
+    connected() {
+        this.observeSlots();
+    },
+    /** Watch whatever is in the header, footer, and drawer slots, which can change as drawers are added. */
+    observeSlots() {
+        const t = this;
+        const watched = new Set(['header', 'footer', 'top', 'right', 'bottom', 'left'].map(name => t.getSlot(name)).filter(Boolean));
+        (t._watched || new Set()).forEach(el => { if (!watched.has(el)) t._sizeObserver.unobserve(el); });
+        watched.forEach(el => { if (!t._watched || !t._watched.has(el)) t._sizeObserver.observe(el); });
+        t._watched = watched;
     },
     attr: ['page-content', 'page-data', 'page-content-encrypt', 'page-data-encrypt', 'root-page', 'content-extension'],
     setPageContent(content) {
@@ -79,37 +100,54 @@ webui.define("webui-app", {
         t._currentWClass = w;
         document.body.classList.add(w);
     },
+    /** Update the window size classes and variables. Layout sizes follow on their own, from the size observer. */
     applyDynamicStyles() {
         const t = this;
-        this.setBodyClasses();
-        let h = t.getSlot('header') || { clientHeight: 0 };
-        let f = t.getSlot('footer') || { clientHeight: 0 };
-        let u = t.getSlot('top') || { clientHeight: 0 };
-        let r = t.getSlot('right') || { clientWidth: 0 };
-        let b = t.getSlot('bottom') || { clientHeight: 0 };
-        let l = t.getSlot('left') || { clientWidth: 0 };
-        let m = t.shadowRoot.querySelector('main');
-        let w = window;
-        let wb = document.body;
-        let ww = w.innerWidth || wb.clientWidth;
-        let wh = w.innerHeight || wb.clientHeight;
-        let mw = m.clientWidth;
-        let mh = wh - (h.clientHeight + f.clientHeight + u.clientHeight + b.clientHeight);
+        t.setBodyClasses();
         const rootStyle = document.documentElement.style;
-        setProperty('--window-width', `${ww}px`);
-        setProperty('--window-height', `${wh}px`);
-        setProperty('--main-width', `${mw}px`);
-        setProperty('--main-height', `${mh}px`);
-        setProperty('--header-height', `${h.clientHeight}px`);
-        setProperty('--footer-height', `${f.clientHeight}px`);
-        setProperty('--drawer-left-width', `${l.clientWidth}px`);
-        setProperty('--drawer-right-width', `${r.clientWidth}px`);
-        setProperty('--drawer-top-height', `${u.clientHeight}px`);
-        setProperty('--drawer-bottom-height', `${b.clientHeight}px`);
-        function setProperty(key, val) {
-            if (rootStyle.getPropertyValue(key) === val) return;
-            rootStyle.setProperty(key, val);
+        // Reading the window size does not need a layout.
+        const ww = window.innerWidth || document.body.clientWidth;
+        const wh = window.innerHeight || document.body.clientHeight;
+        if (rootStyle.getPropertyValue('--window-width') !== `${ww}px`) rootStyle.setProperty('--window-width', `${ww}px`);
+        if (rootStyle.getPropertyValue('--window-height') !== `${wh}px`) {
+            rootStyle.setProperty('--window-height', `${wh}px`);
+            // The main height depends on the window height, which the size observer does not see.
+            if (t._measured) t.measure();
         }
+    },
+    /**
+     * Set the layout size variables. Sizes are read straight away, while the observer knows layout is current,
+     * and written in the next frame. Writing them during the observer's callback would resize main again in the
+     * same frame, which browsers report as a ResizeObserver loop error.
+     */
+    measure() {
+        const t = this;
+        t._measured = true;
+        const height = name => t.getSlot(name)?.clientHeight || 0;
+        const width = name => t.getSlot(name)?.clientWidth || 0;
+        const wh = window.innerHeight || document.body.clientHeight;
+        const values = {
+            '--window-width': window.innerWidth || document.body.clientWidth,
+            '--window-height': wh,
+            '--main-width': t.main.clientWidth,
+            '--main-height': wh - (height('header') + height('footer') + height('top') + height('bottom')),
+            '--header-height': height('header'),
+            '--footer-height': height('footer'),
+            '--drawer-left-width': width('left'),
+            '--drawer-right-width': width('right'),
+            '--drawer-top-height': height('top'),
+            '--drawer-bottom-height': height('bottom'),
+        };
+        t._pendingSizes = values;
+        if (t._sizeFrame) return;
+        t._sizeFrame = requestAnimationFrame(() => {
+            t._sizeFrame = 0;
+            const rootStyle = document.documentElement.style;
+            for (const [key, px] of Object.entries(t._pendingSizes)) {
+                const value = `${px}px`;
+                if (rootStyle.getPropertyValue(key) !== value) rootStyle.setProperty(key, value);
+            }
+        });
     },
     shadowTemplate: `
 <slot name="header"></slot>
@@ -215,6 +253,10 @@ grid-column: 2;
 transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease;
 transform: scale(1);
 opacity: 1;
+}
+main:focus-visible {
+outline: 2px solid var(--color-focus, currentColor);
+outline-offset: -2px;
 }
 main.transition {
 transform: scale(0.97);

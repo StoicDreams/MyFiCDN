@@ -41,3 +41,7 @@ test('keeps its content when moved', async ({ page }) => {
     await expect(card.locator('p')).toHaveText('BODY');
     await expect(card.locator('header')).toHaveCount(1);
 });
+test('the icon link in the header has a name for screen readers', async ({ page }) => {
+    const root = await mount(page, '<webui-card name="JSON Formatter" link="/json-formatter"><p>Body</p></webui-card>');
+    await expect(root.locator('webui-card header a')).toHaveAttribute('aria-label', 'Open JSON Formatter');
+});

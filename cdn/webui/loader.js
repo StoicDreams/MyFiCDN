@@ -3209,6 +3209,8 @@ const webui = (() => {
     }
     let loadPageWaits = 0;
     let loadPageWaiting = false;
+    // The first page has no earlier page to fade out, so it shows as soon as it is ready.
+    let isFirstPageLoad = true;
     let loadPageToken = 0;
     let loadPageAbort = null;
     async function loadPage() {
@@ -3267,7 +3269,13 @@ const webui = (() => {
         let fetchData = fetchRemoteData(contentPage, signal);
         // A superseded load returns before awaiting this, so its rejection would otherwise go unhandled.
         fetchData.catch(() => {});
-        appSettings.app.main.classList.add("transition");
+        const firstLoad = isFirstPageLoad;
+        isFirstPageLoad = false;
+        // Prerendered pages already show their text, so the first load swaps it in place rather than fading it out.
+        const hasPrerendered = firstLoad && !!appSettings.app.querySelector("[data-prerendered]");
+        if (!hasPrerendered) {
+            appSettings.app.main.classList.add("transition");
+        }
         webui.setData("page-path", page);
         let timerStart = Date.now();
         let title = location.pathname;
@@ -3284,7 +3292,8 @@ const webui = (() => {
             }
             let body = await contentResult.text();
             let elapsed = Date.now() - timerStart;
-            if (elapsed < 300) {
+            // Give the old page time to fade out.
+            if (!firstLoad && elapsed < 300) {
                 await transitionDelay(300 - elapsed);
             }
             if (isStale()) return;
@@ -3315,7 +3324,7 @@ const webui = (() => {
         } catch (ex) {
             if (isStale()) return;
             let elapsed = Date.now() - timerStart;
-            if (elapsed < 300) {
+            if (!firstLoad && elapsed < 300) {
                 await transitionDelay(300 - elapsed);
             }
             if (isStale()) return;
@@ -3345,7 +3354,18 @@ const webui = (() => {
             console.error("Failed loading page data", ex);
         }
         let elapsed = Date.now() - timerStart;
-        if (elapsed < 300) {
+        if (firstLoad) {
+            // Show the page once its components are ready, so they do not pop in one at a time, but never wait
+            // longer than the fade would have.
+            // Only the page content counts: the header, drawers, and footer load on their own.
+            const content = [...appSettings.app.children].filter((el) => !el.slot);
+            const waiting = content.flatMap((el) => [el, ...el.querySelectorAll(":not(:defined)")]).filter((el) => el.matches(":not(:defined)"));
+            const pending = [...new Set(waiting.map((el) => el.localName))]
+                .filter((name) => name.includes("-"))
+                .map((name) => customElements.whenDefined(name));
+            await Promise.race([Promise.all(pending), transitionDelay(300)]);
+            await new Promise((resolve) => requestAnimationFrame(() => resolve()));
+        } else if (elapsed < 300) {
             await transitionDelay(300 - elapsed);
         } else {
             await transitionDelay(100);

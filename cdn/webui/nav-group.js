@@ -12,6 +12,7 @@ webui.define('webui-nav-group', {
         const t = this;
         t._anchor = webui.create('button');
         t._anchor.classList.add('navlink');
+        t._anchor.setAttribute('aria-expanded', 'false');
         t._display = webui.create('span');
         t._anchor.appendChild(t._display);
         t._caret = webui.create('webui-icon');
@@ -37,6 +38,8 @@ webui.define('webui-nav-group', {
         let t = this;
         t.open = value;
         t._caret.setAttribute('rotate', t.open ? '0' : '180');
+        // Screen readers announce whether the group is open, which the caret only shows visually.
+        t._anchor.setAttribute('aria-expanded', t.open ? 'true' : 'false');
         if (t.open) {
             t._anchor.classList.add('show');
         } else {

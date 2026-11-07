@@ -264,6 +264,10 @@
             let ico = t._iconPreview.cloneNode();
             ico.removeAttribute('style');
             ico.removeAttribute('has-shadow');
+            // Icons add these for screen readers themselves, so they do not belong in the code to copy.
+            ico.removeAttribute('aria-hidden');
+            if (ico.getAttribute('role') === 'img') ico.removeAttribute('role');
+            if (ico.getAttribute('aria-label') === ico.getAttribute('title')) ico.removeAttribute('aria-label');
             let code = ico.outerHTML;
             t._codeSample.value = code;
             let pipeData = [];

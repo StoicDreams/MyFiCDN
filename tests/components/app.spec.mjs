@@ -36,3 +36,19 @@ test('page title comes from page data', async ({ page }) => {
     await expect(page).toHaveTitle('Hello: There');
     await expect(page.locator('h1')).toHaveText('Hello');
 });
+test('layout size variables follow the header and the window', async ({ page }) => {
+    const variable = name => page.evaluate(n => document.documentElement.style.getPropertyValue(n), name);
+    const before = parseInt(await variable('--header-height'));
+    await page.evaluate(() => {
+        const block = document.createElement('div');
+        block.id = 'tall';
+        block.style.height = '120px';
+        document.querySelector('webui-app > header').appendChild(block);
+    });
+    await expect.poll(async () => parseInt(await variable('--header-height'))).toBeGreaterThanOrEqual(Math.max(before, 120));
+    await page.setViewportSize({ width: 900, height: 500 });
+    await expect.poll(() => variable('--window-height')).toBe('500px');
+    const header = parseInt(await variable('--header-height'));
+    const footer = parseInt(await variable('--footer-height'));
+    await expect.poll(async () => parseInt(await variable('--main-height'))).toBe(500 - header - footer);
+});

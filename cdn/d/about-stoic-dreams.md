@@ -7,9 +7,9 @@
     </template>
 </webui-data>
 
-#### About Stoic Dreams
+## About Stoic Dreams
 
-##### Empowering Developers to Build Better, Faster
+### Empowering Developers to Build Better, Faster
 
 <webui-page-segment elevation="10">
 
@@ -21,7 +21,7 @@ At Stoic Dreams, we're not just building software; we're building the future of 
 
 </webui-page-segment>
 
-#### About Web UI Framework
+## About Web UI Framework
 
 <webui-page-segment elevation="10">
 

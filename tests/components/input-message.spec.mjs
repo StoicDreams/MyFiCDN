@@ -50,3 +50,9 @@ test('fires one input event per change', async ({ page }) => {
     await el.locator('textarea').fill('x');
     expect(await page.evaluate(() => window.__inputs)).toBe(1);
 });
+test('shows a focus ring around the box while typing', async ({ page }) => {
+    const root = await mount(page, '<webui-input-message label="Note"></webui-input-message>');
+    const el = root.locator('webui-input-message');
+    await el.locator('textarea').focus();
+    expect(await el.evaluate(e => getComputedStyle(e).outlineWidth)).toBe('2px');
+});

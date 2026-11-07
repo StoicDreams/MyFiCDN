@@ -29,3 +29,9 @@ test('accepting session storage clears local storage', async ({ page }) => {
     await el.locator('webui-card').first().locator('webui-button').evaluate(b => b.click());
     await expect.poll(() => page.evaluate(() => localStorage.getItem('storage_accepted'))).toBeNull();
 });
+test('its headings do not skip levels', async ({ page }) => {
+    const el = await consent(page);
+    // Its option labels were h6 headings under its h2 title, which screen readers announce as missing levels.
+    await expect(el.locator('h3, h4, h5, h6')).toHaveCount(0);
+    await expect(el.locator('strong', { hasText: 'Use this option when:' })).toBeAttached();
+});

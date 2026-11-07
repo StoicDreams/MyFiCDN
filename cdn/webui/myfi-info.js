@@ -94,6 +94,17 @@
         },
         setupComponent() {
             const t = this;
+            // This opens the sign-in or account panel when clicked, so keyboard users need it to work as a button too.
+            if (!t.hasAttribute('role')) t.setAttribute('role', 'button');
+            if (!t.hasAttribute('tabindex')) t.setAttribute('tabindex', '0');
+            if (!t._keyboardReady) {
+                t._keyboardReady = true;
+                t.addEventListener('keydown', ev => {
+                    if (ev.key !== 'Enter' && ev.key !== ' ') return;
+                    ev.preventDefault();
+                    t.click();
+                });
+            }
             t.addDataset('subscribe', 'session-user-role:render');
             t.render();
         },
@@ -115,6 +126,8 @@
                     t.setAttribute('title', 'Sign-In through Stoic Dreams account');
                 }
             }
+            // The button's name follows its title, which changes when the visitor signs in or out.
+            t.setAttribute('aria-label', t.getAttribute('title'));
         },
         shadowTemplate: `
 <webui-icon icon="arrow-side-into-square|rotate:180" fill></webui-icon>

@@ -34,7 +34,9 @@ webui.define("webui-gallery", {
         t.flexImage.style.height = 'calc(0.8 * var(--main-height))';
 
         let img = webui.create('img');
-        img.setAttribute('data-subscribe', 'page-gallery-image:src');
+        // The image's name doubles as its description for screen readers.
+        img.setAttribute('alt', '');
+        img.setAttribute('data-subscribe', 'page-gallery-image:src|page-gallery-image-name:alt');
         t.flexImage.appendChild(img);
 
         t.flexName.setAttribute('justify', 'center');

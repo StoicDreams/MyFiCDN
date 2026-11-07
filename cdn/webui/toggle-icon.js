@@ -151,6 +151,10 @@ border-radius:1rem;
 line-height:1rem;
 }
 span:empty {display:none;}
+button:focus-visible {
+outline:2px solid var(--color-focus, currentColor);
+outline-offset:2px;
+}
 </style>
 `
     });

@@ -31,7 +31,7 @@
     With this storage option, you only need to consent and login once. Your login will persist even after closing and reopening this ${appType}.
 </webui-paper>
 
-###### Use this option when:
+**Use this option when:**
 
 <webui-paper class="pa-1">
 - You are on your personal device.
@@ -54,7 +54,7 @@ I confirm that I am using my personal device and that I understand the above sta
 With this storage option, browser data is only stored until you either close your tab or browser. Opening a new tab will start a new session.
 </webui-paper>
 
-###### With this default option:
+**With this default option:**
 
 <webui-paper class="pa-1">
 - Make sure you close the browser when you are done with the computer.

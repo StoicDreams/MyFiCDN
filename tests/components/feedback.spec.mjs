@@ -69,3 +69,17 @@ test('data-click links open it', async ({ page }) => {
     await root.locator('a').evaluate(a => a.click());
     await expect(dialog).toBeVisible();
 });
+test('works as a button from the keyboard', async ({ page }) => {
+    const root = await mount(page, '<webui-dialogs></webui-dialogs><webui-feedback title="Open it"></webui-feedback>');
+    const el = root.locator('webui-feedback');
+    await expect(el).toHaveAttribute('role', 'button');
+    await expect(el).toHaveAttribute('tabindex', '0');
+    await expect(el).toHaveAttribute('aria-label', /.+/);
+    await el.evaluate(c => { window.__clicks = 0; c.addEventListener('click', () => window.__clicks++, true); });
+    await el.focus();
+    await page.keyboard.press('Enter');
+    expect(await page.evaluate(() => window.__clicks)).toBe(1);
+    // Enter opens a dialog, which takes focus, so Space is sent to the control directly.
+    await el.evaluate(c => c.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true })));
+    expect(await page.evaluate(() => window.__clicks)).toBe(2);
+});

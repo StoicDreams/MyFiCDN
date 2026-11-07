@@ -25,9 +25,9 @@
     --color-secondary-offset: var(--color-white);
     --color-tertiary: #7d0b77FF;
     --color-tertiary-offset: var(--color-white);
-    --color-info: #2196f3FF;
+    --color-info: #0b78ceFF;
     --color-info-offset: var(--color-white);
-    --color-success: #1c970eFF;
+    --color-success: #19890dFF;
     --color-success-offset: var(--color-white);
     --color-warning: rgb(191, 84, 31);
     --color-warning-offset: var(--color-white);
@@ -740,6 +740,22 @@ button {
     align-items: center;
 }
 
+/* Keyboard users need to see where they are. :focus-visible shows the ring for keyboard focus, not mouse clicks. */
+:focus-visible {
+    outline: 2px solid var(--color-focus, currentColor);
+    outline-offset: 2px;
+}
+
+/* An empty heading, such as a page subtitle that was not set, is skipped by screen readers and takes no space. */
+h1:empty,
+h2:empty,
+h3:empty,
+h4:empty,
+h5:empty,
+h6:empty {
+    display: none;
+}
+
 input[type=text],
 input[type=password],
 textarea {
@@ -778,7 +794,7 @@ webui-code {
     --theme-offset: var(--color-info-offset);
 }
 
-webui-code[lang].hide-label>pre {
+webui-code:is([lang], [language]).hide-label>pre {
     margin-top: calc(2 * var(--padding));
 }
 
@@ -1701,6 +1717,12 @@ a[href]:not([disabled]):not(:disabled):not(.disabled) {
 :disabled,
 .btn:disabled {
     background-color: var(--color-shade);
+    color: var(--color-shade-offset);
+}
+
+/* Link colors (a:link) otherwise win over the disabled text color, which left light text on a light shade. */
+a.disabled:is(:link, :visited),
+a[disabled]:is(:link, :visited) {
     color: var(--color-shade-offset);
 }
 

@@ -54,3 +54,15 @@ test('without a shared drawer it uses a dialog and does not throw', async ({ pag
     await root.locator('webui-myfi-info').evaluate(c => c.click());
     await expect(root.locator('webui-dialogs dialog')).toBeVisible();
 });
+test('works as a button from the keyboard', async ({ page }) => {
+    const root = await mount(page, '<webui-dialogs></webui-dialogs><webui-myfi-info title="Open it"></webui-myfi-info>');
+    const el = root.locator('webui-myfi-info');
+    await expect(el).toHaveAttribute('role', 'button');
+    await expect(el).toHaveAttribute('tabindex', '0');
+    await expect(el).toHaveAttribute('aria-label', /.+/);
+    await el.evaluate(c => { window.__clicks = 0; c.addEventListener('click', () => window.__clicks++, true); });
+    await el.focus();
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Space');
+    expect(await page.evaluate(() => window.__clicks)).toBe(2);
+});

@@ -198,3 +198,9 @@ test('webui.sanitizeInput leaves plain text untouched', async ({ page }) => {
     expect(await call(page, 'sanitizeInput', 'Use <b>bold</b> & more')).toBe('Use <b>bold</b> & more');
     expect(await call(page, 'sanitizeInput', '<img src=x onerror=alert(1)>')).not.toContain('onerror');
 });
+test('webui.parseMarkdown writes code blocks with language, not the HTML lang attribute', async ({ page }) => {
+    await page.waitForFunction(() => webui.markdown && webui.markdown.constructor.name === 'MarkdownParser');
+    const html = await page.evaluate(() => webui.parseMarkdown('```js\nlet a = 1;\n```'));
+    expect(html).toContain('<webui-code language="js">');
+    expect(html).not.toContain(' lang=');
+});

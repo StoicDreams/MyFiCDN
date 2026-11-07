@@ -53,3 +53,7 @@ test('does not load the unused fa component', async ({ page }) => {
     await page.waitForTimeout(200);
     expect(await page.evaluate(() => customElements.get('webui-fa'))).toBeUndefined();
 });
+test('is a navigation landmark', async ({ page }) => {
+    const root = await mount(page, '<webui-nav></webui-nav>');
+    await expect(root.getByRole('navigation', { name: 'Site menu' })).toBeAttached();
+});

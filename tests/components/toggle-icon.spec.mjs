@@ -66,3 +66,13 @@ test('the enabled attribute matches the value', async ({ page }) => {
     await el.click();
     await expect(el).toHaveAttribute('enabled', { timeout: 500 });
 });
+test('shows a focus ring when reached by keyboard', async ({ page }) => {
+    const root = await mount(page, '<button id="before">Before</button><webui-toggle-icon title-on="On" title-off="Off" icon-on="bell" icon-off="xmark"></webui-toggle-icon>');
+    await root.locator('#before').focus();
+    await page.keyboard.press('Tab');
+    // The button animates all its styles, so the ring settles at its width after the transition.
+    await expect.poll(() => root.locator('webui-toggle-icon').evaluate(el => {
+        const style = getComputedStyle(el.shadowRoot.querySelector('button'));
+        return `${style.outlineStyle} ${style.outlineWidth}`;
+    })).toBe('solid 2px');
+});

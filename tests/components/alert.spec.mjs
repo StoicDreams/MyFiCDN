@@ -49,3 +49,7 @@ test('display, hide, and increment update the alert', async ({ page }) => {
     await alert.evaluate(el => el.hide());
     await expect(alert).not.toHaveAttribute('show');
 });
+test('the close button has a name for screen readers', async ({ page }) => {
+    const root = await mount(page, '<webui-alert show variant="info">Hello</webui-alert>');
+    await expect(root.locator('webui-alert').getByRole('button', { name: 'Close' })).toBeAttached();
+});

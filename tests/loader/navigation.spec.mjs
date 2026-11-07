@@ -157,3 +157,47 @@ test('a tab named in the url wins over the saved tab', async ({ page }) => {
     await expect(page.locator('webui-tabs > [hash="markdown"]')).toHaveAttribute('theme', 'active');
     await expect(page).toHaveURL(/#markdown$/);
 });
+
+// The first page has nothing to fade out, so it shows once its components are ready rather than after the fade.
+test.describe('first page load', () => {
+    test.use({ startUrl: '/__blank' });
+    /** Serve the page with the given content, and return how long after it arrived the page showed. */
+    async function shownAfter(page, markdown) {
+        await page.route('**/d/about.md', route => route.fulfill({ contentType: 'text/plain', body: markdown }));
+        await page.addInitScript(() => {
+            window.__shown = null;
+            const watch = () => {
+                const main = document.querySelector('webui-app')?.main;
+                if (!main) return requestAnimationFrame(watch);
+                new MutationObserver(() => {
+                    if (main.classList.contains('transition') || window.__shown) return;
+                    window.__shown = performance.now();
+                    window.__undefinedWhenShown = document.querySelectorAll('webui-app :not(:defined)').length;
+                }).observe(main, { attributes: true, attributeFilter: ['class'] });
+            };
+            watch();
+        });
+        await page.goto('/about');
+        await expect.poll(() => page.evaluate(() => window.__shown), { timeout: 5000 }).not.toBeNull();
+        return page.evaluate(() => window.__shown - performance.getEntriesByType('resource').find(e => /\/d\/about\.md/.test(e.name)).responseEnd);
+    }
+    test('shows a page without components straight away', async ({ page }) => {
+        // Navigations wait at least 400 ms for the fade.
+        expect(await shownAfter(page, '# Quick\n\nNothing to load here.')).toBeLessThan(150);
+    });
+    test('waits for the page components, but not forever', async ({ page }) => {
+        // A component that never loads still lets the page show, after at most the fade time.
+        await page.route('**/webui/never-loads.min.js', () => { });
+        const gap = await shownAfter(page, '# Slow\n\n<webui-never-loads></webui-never-loads>');
+        expect(gap).toBeGreaterThanOrEqual(290);
+        expect(gap).toBeLessThan(600);
+    });
+});
+test('navigating fades the old page out before showing the new one', async ({ page }) => {
+    const main = page.locator('webui-app main');
+    await expect(main).not.toHaveClass(/transition/);
+    const start = await page.evaluate(() => { webui.navigateTo('/contact'); return performance.now(); });
+    await expect(main).toHaveClass(/transition/);
+    await expect(main).not.toHaveClass(/transition/);
+    expect(await page.evaluate(s => performance.now() - s, start)).toBeGreaterThanOrEqual(300);
+});

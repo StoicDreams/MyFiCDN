@@ -25,6 +25,9 @@
         },
         connected() {
             const t = this;
+            // A navigation landmark lets screen reader users jump to the menu, or past it.
+            if (!t.hasAttribute('role')) t.setAttribute('role', 'navigation');
+            if (!t.hasAttribute('aria-label')) t.setAttribute('aria-label', 'Site menu');
             t.userRole = webui.getData('session-user-role') || 0;
             t.addDataset('subscribe', 'session-user-role:setUserRole');
             let cachedShow = webui.getData(sessionKey);

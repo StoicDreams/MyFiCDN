@@ -186,6 +186,15 @@ Stroke line joins: miter|round|bevel
             if (!t.shape) {
                 t._backPath.setAttribute('d', defSquare);
             }
+            // An icon with a title or label is an image with that name. Any other icon is decoration beside text,
+            // so screen readers skip it rather than reading out an emoji or an unnamed image.
+            const name = t.getAttribute('aria-label') || t.getAttribute('title');
+            if (name) {
+                if (!t.hasAttribute('role')) t.setAttribute('role', 'img');
+                if (!t.hasAttribute('aria-label')) t.setAttribute('aria-label', name);
+            } else if (!t.hasAttribute('aria-hidden')) {
+                t.setAttribute('aria-hidden', 'true');
+            }
         },
         setEmoji(emoji) {
             const t = this;

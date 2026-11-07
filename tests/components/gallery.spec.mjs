@@ -20,3 +20,11 @@ test('an empty or failed source shows nothing', async ({ page }) => {
     await page.waitForTimeout(150);
     await expect(root.locator('webui-cards')).toHaveCount(0);
 });
+test('the shown image is described by its name', async ({ page }) => {
+    await page.route('**/gallery-test.json', route => route.fulfill({
+        contentType: 'application/json',
+        body: JSON.stringify([{ name: 'Kitchen render', src: '/a.png' }, { name: 'Two', src: '/b.png' }]),
+    }));
+    const root = await mount(page, '<webui-gallery src="/gallery-test.json" card-width="100"></webui-gallery>');
+    await expect(root.locator('webui-flex img')).toHaveAttribute('alt', 'Kitchen render');
+});

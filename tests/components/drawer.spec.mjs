@@ -39,3 +39,8 @@ test('the open class slides an undocked drawer into view', async ({ page }) => {
     await drawer.evaluate(el => el.classList.add('open'));
     await expect(drawer).toBeInViewport();
 });
+test('is a labelled landmark, named Menu when it holds the site menu', async ({ page }) => {
+    const root = await mount(page, '<webui-drawer id="menu" slot="left" class="nav"><webui-nav></webui-nav></webui-drawer><webui-drawer id="panel" slot="right" class="shared"></webui-drawer>');
+    await expect(root.getByRole('complementary', { name: 'Menu' })).toBeAttached();
+    await expect(root.getByRole('complementary', { name: 'Side panel' })).toBeAttached();
+});

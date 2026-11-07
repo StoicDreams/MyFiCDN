@@ -109,7 +109,7 @@ webui.define("webui-alert", {
     shadowTemplate: `
 <webui-icon id="icon" icon="" bordered backing></webui-icon>
 <div><slot></slot></div>
-<button id="close"><webui-icon icon="xmark"></webui-icon></button>
+<button id="close" aria-label="Close" title="Close"><webui-icon icon="xmark"></webui-icon></button>
 <style type="text/css">
 :host {
 display:none;

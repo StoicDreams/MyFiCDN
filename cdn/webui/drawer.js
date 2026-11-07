@@ -36,6 +36,9 @@
         },
         connected() {
             const t = this;
+            // A landmark lets screen reader users find the drawer, and covers content such as a logo above the menu.
+            if (!t.hasAttribute('role')) t.setAttribute('role', 'complementary');
+            if (!t.hasAttribute('aria-label')) t.setAttribute('aria-label', t.querySelector('webui-nav') || t.classList.contains('nav') ? 'Menu' : 'Side panel');
             setTimeout(() => {
                 t.setAttribute('id', t._id);
             }, 100);

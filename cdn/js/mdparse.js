@@ -151,9 +151,11 @@ export class MarkdownParser {
             state.codeBlockTag = tag;
             return { type: "code_block_start", lang: lang ? lang.trim() : 'text', label };
         }, (html, token, parser) => {
+            // language, not lang: lang is the HTML attribute for a human language, so lang="js" told screen
+            // readers to read the code in an unknown language.
             return token.label
-                ? `${html}<webui-code lang="${parser.escapeQuote(token.lang)}" label="${parser.escapeQuote(token.label)}">\n`
-                : `${html}<webui-code lang="${parser.escapeQuote(token.lang)}">\n`;
+                ? `${html}<webui-code language="${parser.escapeQuote(token.lang)}" label="${parser.escapeQuote(token.label)}">\n`
+                : `${html}<webui-code language="${parser.escapeQuote(token.lang)}">\n`;
         });
         t.addRule('code_block_end', /^[\s]*```/, () => {
             webui.log.warn('Unexpected use of code_block_end');

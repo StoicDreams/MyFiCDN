@@ -110,6 +110,10 @@
     },
     shadowTemplate: `
 <style type="text/css">
+:host(:focus-within) {
+    outline: 2px solid var(--color-focus, var(--theme-color, currentColor));
+    outline-offset: 2px;
+}
 :host {
     display: block;
     position: relative;

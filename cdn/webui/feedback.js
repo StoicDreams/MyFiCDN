@@ -113,6 +113,18 @@
         },
         connected() {
             const t = this;
+            // These open a dialog or panel when clicked, so keyboard users need them to work as buttons too.
+            if (!t.hasAttribute('role')) t.setAttribute('role', 'button');
+            if (!t.hasAttribute('tabindex')) t.setAttribute('tabindex', '0');
+            if (!t.hasAttribute('aria-label')) t.setAttribute('aria-label', t.getAttribute('title') || 'Give feedback');
+            if (!t._keyboardReady) {
+                t._keyboardReady = true;
+                t.addEventListener('keydown', ev => {
+                    if (ev.key !== 'Enter' && ev.key !== ' ') return;
+                    ev.preventDefault();
+                    t.click();
+                });
+            }
             t.addDataset('subscribe', 'feedback:click');
         },
         shadowTemplate: `

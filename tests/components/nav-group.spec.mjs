@@ -32,3 +32,12 @@ test('changing the icon clears old flags', async ({ page }) => {
     await expect(icon).toHaveAttribute('icon', 'bell');
     await expect(icon).not.toHaveAttribute('fill');
 });
+test('tells screen readers whether the group is open', async ({ page }) => {
+    const root = await mount(page, '<webui-nav-group name="Tools"><a href="/a">A</a></webui-nav-group>');
+    const button = root.locator('webui-nav-group button.navlink');
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
+    await button.click();
+    await expect(button).toHaveAttribute('aria-expanded', 'true');
+    await button.click();
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
+});

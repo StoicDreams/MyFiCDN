@@ -49,6 +49,8 @@ webui.define("webui-card", {
         if (t.link) {
             let l = webui.create('a');
             l.setAttribute('href', t.link);
+            // The link only shows an icon, so screen readers need its name.
+            l.setAttribute('aria-label', `Open ${n.textContent.trim() || t.link}`);
             t._header.appendChild(l);
             let li = webui.create('webui-icon');
             l.appendChild(li);
