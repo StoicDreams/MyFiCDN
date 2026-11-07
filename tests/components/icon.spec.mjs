@@ -273,3 +273,27 @@ test('cloud and file shapes keep the shrunken icon clear of their outline', asyn
         expect(outside).toEqual([]);
     }
 });
+test('a shape before the icon name draws it in that shape, and clears with the next icon', async ({ page }) => {
+    const root = await mount(page, '<webui-icon icon="circle_check|bordered"></webui-icon>');
+    const el = root.locator('webui-icon');
+    await expect(el).toHaveAttribute('shape', 'circle');
+    await expect.poll(() => el.evaluate(c => c._iconRequest)).toBe('check');
+    await el.evaluate(c => c.setAttribute('icon', 'check_shield|bordered'));
+    await expect(el).toHaveAttribute('shape', 'shield');
+    await expect.poll(() => el.evaluate(c => c._iconRequest)).toBe('check');
+    await el.evaluate(c => c.setAttribute('icon', 'check|bordered'));
+    await expect(el).not.toHaveAttribute('shape');
+});
+test('the shape first wins when both readings fit, and other underscores are left alone', async ({ page }) => {
+    const root = await mount(page, '<webui-icon icon="shield_circle"></webui-icon>');
+    const el = root.locator('webui-icon');
+    await expect(el).toHaveAttribute('shape', 'shield');
+    await expect.poll(() => el.evaluate(c => c._iconRequest)).toBe('circle');
+    // An emoji name with a shape word at the end is still the emoji.
+    await el.evaluate(c => c.setAttribute('icon', 'emoji-red_circle'));
+    await expect.poll(() => el.evaluate(c => c._iconRequest)).toBe('emoji-red_circle');
+    await expect(el).not.toHaveAttribute('shape');
+    await el.evaluate(c => c.setAttribute('icon', 'circle_emoji-crossed_swords|inverted'));
+    await expect(el).toHaveAttribute('shape', 'circle');
+    await expect.poll(() => el.evaluate(c => c._iconRequest)).toBe('emoji-crossed_swords');
+});

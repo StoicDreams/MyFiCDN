@@ -16,7 +16,7 @@ npm run icons:check  # only check the designs
 - Strokes are 10 units wide with round ends and joins. Containers are 128 units wide with 12 unit corners, and circles have a radius of 70.
 - Make the outline one closed shape where possible, so it fills cleanly, and draw details inside it with `bi`.
 - Keep the directions sites rely on: `arrow` and `chevron` point right, and `caret` points up. Sites turn them with the `rotate` attribute.
-- Do not add an icon that is only a variation of another. `webui-icon` draws these itself: a slash (`eye|ban`), a container (`check|shape:circle|bordered`, or `code|shape:file|bordered` and `arrow|rotate:-90|shape:cloud|bordered`), a turn (`arrow|rotate:90`), and a mirror (`undo|flip`). The build rejects names that look like one, such as `eye-slash`, `circle-check`, `file-code`, `cloud-arrow-up`, `arrow-left`, or `ellipsis-vertical`. Variations it cannot draw, such as a plus beside a person in `user-plus`, are separate icons.
+- Do not add an icon that is only a variation of another. `webui-icon` draws these itself: a slash (`eye|ban`), a container (`circle_check|bordered`, or `file_code|bordered` and `cloud_arrow|rotate:-90|bordered`), a turn (`arrow|rotate:90`), and a mirror (`undo|flip`). The build rejects names that look like one, such as `eye-slash`, `circle-check`, `file-code`, `cloud-arrow-up`, `arrow-left`, or `ellipsis-vertical`. Variations it cannot draw, such as a plus beside a person in `user-plus`, are separate icons.
 
 ## Limits
 
@@ -29,4 +29,4 @@ npm run icons:check  # only check the designs
 
 `KEEP` in `icons.mjs` lists icons whose artwork is kept as drawn, such as brand logos. Edit those with the Icon Creator.
 
-The outlines for `shape:cloud` and `shape:file` are `cloudOutline` and `fileOutline` in `parts.mjs`. After changing one, run `node tools/icons/shapes.mjs` and copy its output into `defCloud` and `defFile` in `cdn/webui/icon.js`.
+The outlines for the cloud and file shapes, as in `cloud_arrow` and `file_code`, are `cloudOutline` and `fileOutline` in `parts.mjs`. After changing one, run `node tools/icons/shapes.mjs` and copy its output into `defCloud` and `defFile` in `cdn/webui/icon.js`.

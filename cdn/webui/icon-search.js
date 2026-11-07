@@ -9,6 +9,15 @@
 {
     const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json' : 'https://cdn.myfi.ws/i/emojis.json';
+    // The same reading as webui-icon: a shape before or after the icon name, as in circle_check or check_circle.
+    const shapeNames = new Set(['circle', 'square', 'shield', 'triangle', 'tri', 'octo', 'octogon', 'badge', 'cloud', 'file']);
+    function splitShape(name) {
+        const first = name.indexOf('_');
+        if (first > 0 && shapeNames.has(name.substring(0, first))) return [name.substring(first + 1), name.substring(0, first)];
+        const last = name.lastIndexOf('_');
+        if (last > 0 && !name.startsWith('emoji-') && shapeNames.has(name.substring(last + 1))) return [name.substring(0, last), name.substring(last + 1)];
+        return [name, ''];
+    }
     webui.define('webui-icon-search', {
         pipedValue: '',
         preload: "icon dropdown input-range input-text input-message pagination",
@@ -287,10 +296,17 @@
             ico.removeAttribute('aria-hidden');
             if (ico.getAttribute('role') === 'img') ico.removeAttribute('role');
             if (ico.getAttribute('aria-label') === ico.getAttribute('title')) ico.removeAttribute('aria-label');
-            let code = ico.outerHTML;
+            // The shape goes before the icon name, as in circle_check, rather than in its own attribute.
+            const shape = ico.getAttribute('shape') || '';
+            t._pipeShape = shape;
+            // The clone is a webui-icon, so setting its icon to circle_bell would add the shape attribute back.
+            const name = ico.getAttribute('icon') || '';
+            const shapedName = shape ? `${shape}_${name}` : name;
+            ico.removeAttribute('shape');
+            let code = ico.outerHTML.replace(`icon="${name}"`, `icon="${shapedName}"`);
             t._codeSample.value = code;
             let pipeData = [];
-            pipeData.push(ico.getAttribute('icon'));
+            pipeData.push(shapedName);
             ico.getAttributeNames().forEach(attr => {
                 switch (attr) {
                     case 'has-shadow':
@@ -316,6 +332,7 @@
         },
         appendPipe(name) {
             const t = this;
+            if (t._pipeShape) name = `${t._pipeShape}_${name}`;
             if (!t._pipedPostfix) return name;
             return `${name}|${t._pipedPostfix}`;
         },
@@ -346,7 +363,8 @@
           const t = this;
           t.resetOptions();
           let pipedData = (pipedValue || '').split('|');
-          let icon = pipedData.shift();
+          let [icon, shape] = splitShape(pipedData.shift() || '');
+          if (shape) pipedData.unshift(`shape:${shape}`);
           pipedData.forEach(segment => {
               if (segment.indexOf(':') !== -1) {
                   let kv = segment.split(':');

@@ -241,7 +241,7 @@
             t.checkCounts();
         },
         shadowTemplate: `
-<webui-icon icon="bell|fill|shade:tri|theme:info"></webui-icon>
+<webui-icon icon="circle_bell|fill|backing|bordered|shade:tri|theme:info"></webui-icon>
 <style type="text/css">
 :host {
 display:inline-flex;

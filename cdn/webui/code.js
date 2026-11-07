@@ -182,7 +182,7 @@
         return result;
     }
     const template = `
-<label class="d-flex align-center"><span></span><webui-icon icon="copy" shade="tri" shape="circle" fill title="Copy Code" style="height:1rem"></webui-icon></label>
+<label class="d-flex align-center"><span></span><webui-icon icon="circle_copy" shade="tri" fill title="Copy Code" style="height:1rem"></webui-icon></label>
 <pre>
 <code></code>
 </pre>`;

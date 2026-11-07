@@ -22,14 +22,14 @@ for (const [name] of ICONS) {
 
 // webui-icon draws slashes (ban), containers (shape with bordered or backing), turns (rotate), and mirrors (flip)
 // itself, so an icon that is only one of those applied to another icon should be a flag combination instead,
-// such as eye|ban, check|shape:circle|bordered, arrow|rotate:90, or undo|flip.
+// such as eye|ban, circle_check|bordered, arrow|rotate:90, or undo|flip.
 const SEPARATE_DESIGNS = ['align-left', 'align-right'];
 const names = new Set(ICONS.map(([name]) => name));
 for (const [name] of ICONS) {
     if (SEPARATE_DESIGNS.includes(name)) continue;
     const direction = name.match(/^(.+)-(left|up|down)$/);
     if (/-slash$/.test(name)) problems.push(`${name}: use the base icon with ban, such as eye|ban`);
-    else if (/^(circle|square|shield|triangle|cloud|file)-/.test(name)) problems.push(`${name}: use the base icon with shape and bordered, such as check|shape:circle|bordered or code|shape:file|bordered`);
+    else if (/^(circle|square|shield|triangle|cloud|file)-/.test(name)) problems.push(`${name}: use the base icon with shape and bordered, such as circle_check|bordered or file_code|bordered`);
     else if (/-(vertical|horizontal)$/.test(name) && names.has(name.replace(/-(vertical|horizontal)$/, ''))) problems.push(`${name}: use ${name.replace(/-(vertical|horizontal)$/, '')} with rotate`);
     else if (direction && (names.has(direction[1]) || names.has(`${direction[1]}-right`))) problems.push(`${name}: use ${direction[1]} with rotate or flip`);
 }

@@ -40,6 +40,21 @@ Stroke line joins: miter|round|bevel
     const defSquare = 'M0 -95Q80 -95 80 -95Q95 -95 95 -80Q95 0 95 0Q95 80 95 80Q95 95 80 95Q0 95 0 95Q-80 95 -80 95Q-95 95 -95 80Q-95 0 -95 0Q-95 -80 -95 -80Q-95 -95 -80 -95z';
     const defTriangle = 'M0 -90Q20 -55 20 -55Q40 -20 40 -20Q55 5 55 5Q90 65 90 65Q60 65 60 65Q0 65 0 65Q-55 65 -55 65Q-90 65 -90 65Q-55 5 -55 5Q-40 -20 -40 -20Q-20 -55 -20 -55z';
     const defTallTriangle = 'M0 -90Q25 -40 25 -40Q40 -10 40 -10Q55 20 55 20Q90 90 90 90Q60 90 60 90Q0 90 0 90Q-55 90 -55 90Q-90 90 -90 90Q-50 10 -50 10Q-30 -30 -30 -30Q-15 -60 -15 -60z';
+    // Shape names never contain an underscore, so circle_check is the check icon in a circle. check_circle also works,
+    // but the shape first is the standard, and wins when both readings fit, as in shield_circle.
+    const shapeNames = new Set(['circle', 'square', 'shield', 'triangle', 'tri', 'octo', 'octogon', 'badge', 'cloud', 'file']);
+    function splitShape(name) {
+        const first = name.indexOf('_');
+        if (first > 0 && shapeNames.has(name.substring(0, first))) {
+            return [name.substring(first + 1), name.substring(0, first)];
+        }
+        // Emoji names contain underscores, as in emoji-red_circle, so they only take a shape first.
+        const last = name.lastIndexOf('_');
+        if (last > 0 && !name.startsWith('emoji-') && shapeNames.has(name.substring(last + 1))) {
+            return [name.substring(0, last), name.substring(last + 1)];
+        }
+        return [name, ''];
+    }
     const defOcto = `M0 -90Q40 -90 40 -90Q90 -40 90 -40Q90 0 90 0Q90 40 90 40Q40 90 40 90Q0 90 0 90Q-40 90 -40 90Q-90 40 -90 40Q-90 0 -90 0Q-90 -40 -90 -40Q-40 -90 -40 -90z`;
     const missing = {};
     function noteMissingIcon(name, ex) {
@@ -146,7 +161,8 @@ Stroke line joins: miter|round|bevel
                 case 'icon':
                     if (!value) return;
                     let idata = value.split('|');
-                    let icon = idata.shift();
+                    let [icon, shape] = splitShape(idata.shift());
+                    if (shape) idata.unshift(`shape:${shape}`);
                     // Flags the last piped value added are removed when this one leaves them out, so icon="bell|fill"
                     // followed by icon="bell" is no longer filled. Attributes set directly on the element are kept.
                     const piped = new Set();

@@ -4,10 +4,10 @@
 
 <webui-side-by-side>
     ```html:Code Snippet
-        <webui-next-page name="Documentation" href="/docs" icon="arrow|backing|shape:circle"></webui-next-page>
+        <webui-next-page name="Documentation" href="/docs" icon="circle_arrow|backing"></webui-next-page>
     ```
     <webui-page-segment elevation="10">
-        <webui-next-page name="Documentation" href="/docs" icon="arrow|backing|shape:circle"></webui-next-page>
+        <webui-next-page name="Documentation" href="/docs" icon="circle_arrow|backing"></webui-next-page>
     </webui-page-segment>
 </webui-side-by-side>
 

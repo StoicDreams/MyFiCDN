@@ -1,5 +1,5 @@
 <webui-page-segment elevation="10">
-    The `<webui-icon>` component renders scalable vector icons and emojis. It supports custom styling attributes like `theme`, `shape`, `stroke`, `shade`, `rotate`, and `bordered`. Icons can be configured using a single piped string format (e.g., `icon="bell|fill|theme:info"`) for clean code reuse across components.
+    The `<webui-icon>` component renders scalable vector icons and emojis. It supports custom styling attributes like `theme`, `shape`, `stroke`, `shade`, `rotate`, and `bordered`. Icons can be configured using a single piped string format (e.g., `icon="circle_bell|fill|theme:info"`) for clean code reuse across components.
 </webui-page-segment>
 
 <webui-side-by-side>
@@ -12,14 +12,14 @@
             <webui-icon icon="bell|fill|shade:tri|theme:success" width="32"></webui-icon>
             
             <!-- Icon with Backing Shape -->
-            <webui-icon icon="star|fill|shape:circle|backing" theme="warning"></webui-icon>
+            <webui-icon icon="circle_star|fill|backing" theme="warning"></webui-icon>
         </webui-flex>
     ```
     <webui-page-segment elevation="10">
         <webui-flex gap="4" align="center" justify="center">
             <webui-icon icon="home" theme="primary"></webui-icon>
             <webui-icon icon="bell|fill|shade:tri|theme:success" width="32"></webui-icon>
-            <webui-icon icon="star|fill|shape:circle|backing" theme="warning"></webui-icon>
+            <webui-icon icon="circle_star|fill|backing" theme="warning"></webui-icon>
         </webui-flex>
     </webui-page-segment>
 </webui-side-by-side>
@@ -29,9 +29,9 @@
 Slashes, containers, directions, and fills are flags on any icon, so there is no separate icon for each variation. Add them as attributes, or after the icon name with `|`.
 
 - **`ban`:** crosses the icon out with a slash, leaving a gap in the background color, as in `eye|ban` or `circle|ban`.
-- **`shape` with `bordered`:** draws the icon inside a shape, as in `check|shape:circle|bordered`. Shapes are `circle`, `square` (the default), `shield`, `triangle`, `octo`, `badge`, `cloud`, and `file`. A file or cloud with an icon inside replaces icons like a code file or a cloud upload: `code|shape:file|bordered`, `arrow|rotate:-90|shape:cloud|bordered`.
-- **`backing`:** fills the shape lightly behind the icon, as in `exclamation|shape:circle|backing|bordered`.
-- **`inverted`:** fills the shape with the icon color and draws the icon in the background color, as in `heart|shape:circle|inverted`.
+- **A shape with `bordered`:** draws the icon inside a shape. Put the shape before the icon name with an underscore, as in `circle_check|bordered`. The shape can also go after the name, as in `check_circle|bordered`, but shape first is the standard. Shapes are `circle`, `square`, `shield`, `triangle`, `octo`, `badge`, `cloud`, and `file`, and emojis take a shape first only, as in `circle_emoji-rocket|inverted`. A file or cloud with an icon inside replaces icons like a code file or a cloud upload: `file_code|bordered`, `cloud_arrow|rotate:-90|bordered`. The `shape` attribute, as in `shape="circle"`, still works.
+- **`backing`:** fills the shape lightly behind the icon, as in `circle_exclamation|backing|bordered`.
+- **`inverted`:** fills the shape with the icon color and draws the icon in the background color, as in `circle_heart|inverted`.
 - **`rotate`:** turns the icon by degrees, as in `arrow|rotate:90` for a down arrow, or `chevron|rotate:180` for left.
 - **`flip`:** mirrors the icon, left to right by default, or `flip:y` top to bottom and `flip:both`. For example, `undo|flip` is redo.
 - **`fill`:** fills the icon's shapes, as in `heart|fill`.
@@ -43,16 +43,16 @@ Inside a shape the icon shrinks to fit, keeping its line weight. Set `--icon-gly
 
 <webui-flex gap="4" align="center" wrap>
     <webui-icon icon="eye|ban" width="40"></webui-icon>
-    <webui-icon icon="check|shape:circle|bordered" width="40"></webui-icon>
-    <webui-icon icon="exclamation|shape:triangle|bordered" width="40"></webui-icon>
-    <webui-icon icon="check|shape:shield|bordered" width="40"></webui-icon>
-    <webui-icon icon="exclamation|shape:circle|backing|bordered" width="40"></webui-icon>
-    <webui-icon icon="heart|shape:circle|inverted" width="40"></webui-icon>
+    <webui-icon icon="circle_check|bordered" width="40"></webui-icon>
+    <webui-icon icon="triangle_exclamation|bordered" width="40"></webui-icon>
+    <webui-icon icon="shield_check|bordered" width="40"></webui-icon>
+    <webui-icon icon="circle_exclamation|backing|bordered" width="40"></webui-icon>
+    <webui-icon icon="circle_heart|inverted" width="40"></webui-icon>
     <webui-icon icon="arrow|rotate:90" width="40"></webui-icon>
     <webui-icon icon="undo|flip" width="40"></webui-icon>
-    <webui-icon icon="code|shape:file|bordered" width="40"></webui-icon>
-    <webui-icon icon="diff|shape:file|bordered" width="40"></webui-icon>
-    <webui-icon icon="arrow|rotate:-90|shape:cloud|bordered" width="40"></webui-icon>
+    <webui-icon icon="file_code|bordered" width="40"></webui-icon>
+    <webui-icon icon="file_diff|bordered" width="40"></webui-icon>
+    <webui-icon icon="cloud_arrow|rotate:-90|bordered" width="40"></webui-icon>
     <webui-icon icon="ellipsis|rotate:90" width="40"></webui-icon>
 </webui-flex>
 

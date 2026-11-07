@@ -77,3 +77,11 @@ test('offers a page size, which changes how many icons show', async ({ page }) =
     await el.locator('webui-pagination select').selectOption('50');
     await expect.poll(() => el.evaluate(c => c._containers.length)).toBe(50);
 });
+test('the code puts the shape before the icon name, and reads it back', async ({ page }) => {
+    const el = await search(page);
+    await el.evaluate(c => c.setIconFromCode('bell_circle|fill'));
+    await expect.poll(() => el.evaluate(c => c.pipedValue)).toBe('circle_bell|fill');
+    expect(await el.evaluate(c => c._codeSample.value)).toContain('icon="circle_bell"');
+    expect(await el.evaluate(c => c._codeSample.value)).not.toContain('shape=');
+    await expect.poll(() => el.evaluate(c => c._containers[0].el.getAttribute('icon'))).toMatch(/^circle_[^|]+\|fill$/);
+});

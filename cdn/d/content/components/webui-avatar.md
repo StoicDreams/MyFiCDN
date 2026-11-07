@@ -5,13 +5,13 @@
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Icon rendering -->
-        <webui-avatar src="person|fill|shape:circle" theme="primary"></webui-avatar>
+        <webui-avatar src="circle_person|fill" theme="primary"></webui-avatar>
 
         <!-- Image URL rendering -->
         <webui-avatar src="[https://cdn.myfi.ws/img/eg/me_64.png](https://cdn.myfi.ws/img/eg/me_64.png)"></webui-avatar>
     ```
     <webui-page-segment elevation="10">
-        <webui-avatar src="person|fill|shape:circle" theme="primary"></webui-avatar>
+        <webui-avatar src="circle_person|fill" theme="primary"></webui-avatar>
         <webui-avatar src="https://cdn.myfi.ws/img/eg/me_64.png"></webui-avatar>
     </webui-page-segment>
 </webui-side-by-side>

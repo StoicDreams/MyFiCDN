@@ -13,7 +13,7 @@ webui.define("webui-next-page", {
         t._link = webui.create("webui-flex", { class: "next-page-link" });
         t._postContent = webui.create("webui-flex", { class: "next-page-post" });
         t.name = "Next Page";
-        t.icon = 'arrow|backing|shape:circle';
+        t.icon = 'circle_arrow|backing';
         t.family = 'regular';
         t.appendChild(t._preContent);
         t.appendChild(t._link);
@@ -27,7 +27,7 @@ webui.define("webui-next-page", {
         }
         t.name = value.name || undefined;
         t.href = value.href || '/';
-        t.icon = value.icon || 'arrow|backing|shape:circle';
+        t.icon = value.icon || 'circle_arrow|backing';
         t.render();
     },
     render() {
