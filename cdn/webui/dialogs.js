@@ -58,6 +58,29 @@ const webuiDialog = function (data) {
         }
         return dialogPromise;
     };
+    // Inputs inside components are in their shadow roots, so search those too, in document order.
+    const inputSelector = 'input, textarea, select, [contenteditable=""], [contenteditable="true"]';
+    const skippedInputTypes = ['hidden', 'button', 'submit', 'reset', 'image'];
+    function findInputs(root, found = []) {
+        for (const el of root.children) {
+            if (el.matches(inputSelector)) found.push(el);
+            if (el.shadowRoot) findInputs(el.shadowRoot, found);
+            findInputs(el, found);
+        }
+        return found;
+    }
+    function canFocus(el) {
+        if (el.disabled || el.readOnly) return false;
+        if (el.tagName === 'INPUT' && skippedInputTypes.includes((el.type || '').toLowerCase())) return false;
+        return el.getClientRects().length > 0;
+    }
+    function getDeepActiveElement() {
+        let active = document.activeElement;
+        while (active && active.shadowRoot && active.shadowRoot.activeElement) {
+            active = active.shadowRoot.activeElement;
+        }
+        return active;
+    }
     webui.dialog.wait = async function (taskPromise, message = 'Loading, please wait...') {
         const dialogPromise = webuiDialog({
             isLoading: true,
@@ -196,12 +219,33 @@ const webuiDialog = function (data) {
                             t._onsubmit();
                         });
                         t.dialog.showModal();
+                        focusFirstInput();
                     });
                     promise.close = () => {
                         close();
                     };
                     return promise;
                 };
+            }
+            // Components in the content load and render after the dialog opens, so keep looking for a
+            // short while. Stop if another dialog opens, this one closes, or the user moves focus.
+            function focusFirstInput() {
+                const token = t._focusToken = {};
+                const content = t.content;
+                const startedWith = getDeepActiveElement();
+                const started = Date.now();
+                const attempt = () => {
+                    if (t._focusToken !== token || !t.dialog.open) return;
+                    if (getDeepActiveElement() !== startedWith) return;
+                    const inputs = findInputs(content).filter(canFocus);
+                    const target = inputs.find(el => el.hasAttribute('autofocus')) || inputs[0];
+                    if (target) {
+                        target.focus();
+                        return;
+                    }
+                    if (Date.now() - started < 3000) setTimeout(attempt, 50);
+                };
+                attempt();
             }
             function setContent(el, content) {
                 content = content || ``;

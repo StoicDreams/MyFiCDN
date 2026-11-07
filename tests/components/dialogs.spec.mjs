@@ -138,3 +138,55 @@ test('dialog alerts show inside the content and clear on submit', async ({ page 
     await expect(alert).not.toHaveAttribute('show');
     await expect(alert).toHaveText('');
 });
+
+// The element with focus, looking through shadow roots.
+const focused = page => page.evaluate(() => {
+    let active = document.activeElement;
+    while (active && active.shadowRoot && active.shadowRoot.activeElement) active = active.shadowRoot.activeElement;
+    return active ? `${active.tagName.toLowerCase()}${active.name ? `[name=${active.name}]` : ''}` : null;
+});
+test.describe('focus on open', () => {
+    test('the first input in the content gets focus', async ({ page }) => {
+        await ready(page);
+        await open(page, { content: '<p>Text</p><input name="first" /><input name="second" />' });
+        await expect.poll(() => focused(page)).toBe('input[name=first]');
+    });
+    test('inputs inside components are found once they load', async ({ page }) => {
+        await ready(page);
+        await open(page, { content: '<webui-input-text label="Name"></webui-input-text>' });
+        await expect.poll(() => focused(page)).toMatch(/^input/);
+    });
+    test('textareas and dropdowns count as inputs', async ({ page }) => {
+        await ready(page);
+        await open(page, { content: '<textarea name="notes"></textarea>' });
+        await expect.poll(() => focused(page)).toBe('textarea[name=notes]');
+        await page.keyboard.press('Escape');
+        await open(page, { content: '<select name="pick"><option>a</option></select>' });
+        await expect.poll(() => focused(page)).toBe('select[name=pick]');
+    });
+    test('disabled, read only, hidden, and button inputs are skipped', async ({ page }) => {
+        await ready(page);
+        await open(page, { content: '<input name="off" disabled /><input name="ro" readonly /><input type="hidden" name="h" /><input type="button" name="b" value="b" /><input name="gone" style="display:none" /><input name="target" />' });
+        await expect.poll(() => focused(page)).toBe('input[name=target]');
+    });
+    test('an input marked autofocus is preferred', async ({ page }) => {
+        await ready(page);
+        await open(page, { content: '<input name="first" /><input name="wanted" autofocus />' });
+        await expect.poll(() => focused(page)).toBe('input[name=wanted]');
+    });
+    test('a dialog with no inputs leaves focus alone', async ({ page }) => {
+        const el = await ready(page);
+        await open(page, { content: '<p>Just text</p>', cancel: 'No' });
+        await page.waitForTimeout(200);
+        expect(await focused(page)).not.toMatch(/^(input|textarea|select)/);
+        await expect(el.locator('dialog')).toBeVisible();
+    });
+    test('an input that appears later is not focused after the user moves focus', async ({ page }) => {
+        const el = await ready(page);
+        await open(page, { content: '<div id="later"></div>', cancel: 'No' });
+        await el.locator('#dlg-cancel').focus();
+        await el.locator('form > section #later').evaluate(div => { div.innerHTML = '<input name="late" />'; });
+        await page.waitForTimeout(200);
+        expect(await focused(page)).toBe('button');
+    });
+});
