@@ -77,7 +77,7 @@ Stroke line joins: miter|round|bevel
                 t._dynPaths.push(t[`_i${instance}`]);
             }
         },
-        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'shape', 'rotate', 'count', 'stroke', 'shade'],
+        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'shape', 'rotate', 'flip', 'count', 'stroke', 'shade'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
@@ -92,15 +92,8 @@ Stroke line joins: miter|round|bevel
                 case 'inverted':
                     break;
                 case 'rotate':
-                    let number = parseFloat(value);
-                    let style = number > 0 || number < 0 ? `rotate(${number}deg)` : '';
-                    t._rotation = style;
-                    if (t._emoji) {
-                        t._emoji.style.transform = style;
-                    }
-                    t._dynPaths.forEach(p => {
-                        p.style.transform = style;
-                    });
+                case 'flip':
+                    t.applyTransform();
                     break;
                 case 'shape':
                     switch (value) {
@@ -150,14 +143,22 @@ Stroke line joins: miter|round|bevel
                     if (!value) return;
                     let idata = value.split('|');
                     let icon = idata.shift();
+                    // Flags the last piped value added are removed when this one leaves them out, so icon="bell|fill"
+                    // followed by icon="bell" is no longer filled. Attributes set directly on the element are kept.
+                    const piped = new Set();
                     idata.forEach(flag => {
                         let av = flag.split(':');
                         if (av[0].startsWith('-')) {
                             t.removeAttribute(av[0].substring(1));
                         } else {
+                            if (!t.hasAttribute(av[0]) || t._pipedFlags?.has(av[0])) piped.add(av[0]);
                             t.setAttribute(av[0], webui.getDefined(av[1], true));
                         }
                     });
+                    t._pipedFlags?.forEach(name => {
+                        if (!piped.has(name)) t.removeAttribute(name);
+                    });
+                    t._pipedFlags = piped;
                     if (icon.startsWith('emoji-')) {
                         t.setEmoji(icon);
                         return;
@@ -195,6 +196,47 @@ Stroke line joins: miter|round|bevel
             } else if (!t.hasAttribute('aria-hidden')) {
                 t.setAttribute('aria-hidden', 'true');
             }
+        },
+        /**
+         * Turn and mirror the icon, from the rotate attribute (degrees) and the flip attribute: x mirrors left to
+         * right, y top to bottom, and both does both. So one icon covers every direction, such as arrow|rotate:90
+         * for a down arrow, or undo|flip for redo.
+         */
+        applyTransform() {
+            const t = this;
+            const number = parseFloat(t.getAttribute('rotate'));
+            const flip = t.getAttribute('flip');
+            const parts = [];
+            if (number > 0 || number < 0) parts.push(`rotate(${number}deg)`);
+            switch (flip === null ? null : flip.toLowerCase()) {
+                case null:
+                case 'false':
+                case 'none':
+                    break;
+                case 'y':
+                case 'vertical':
+                    parts.push('scale(1, -1)');
+                    break;
+                case 'both':
+                case 'xy':
+                    parts.push('scale(-1, -1)');
+                    break;
+                default:
+                    parts.push('scale(-1, 1)');
+                    break;
+            }
+            const style = parts.join(' ');
+            t._rotation = style;
+            if (t._emoji) {
+                t._emoji.style.transform = style;
+            }
+            t._dynPaths.forEach(p => {
+                p.style.transform = style;
+            });
+        },
+        /** Show another icon, with the same piped format as the icon attribute. Use with data-subscribe="key:setIcon". */
+        setIcon(value) {
+            if (value) this.setAttribute('icon', value);
         },
         setEmoji(emoji) {
             const t = this;
@@ -242,36 +284,39 @@ Stroke line joins: miter|round|bevel
                 t.style.removeProperty('--theme-color-offset');
             }
         },
+        /**
+         * Draw one line of an icon definition. A line can start with a shade (bi, duo, tri, or trio) and a stroke
+         * width, in either order, such as "bi|20|M0 0Q...". Anything not given is reset, so an icon that morphs
+         * from another does not keep its shade or width.
+         */
         setPathRule(path, rule) {
-            if (!rule) {
-                path.setAttribute('d', defUnused);
-                return;
-            }
-            let segments = rule.split('|');
-            path.classList.remove('tri');
-            path.classList.remove('duo');
-            if (segments.length > 1) {
-                let seg = segments.shift();
-                let num = parseInt(seg);
-                if (isNaN(num)) {
-                    switch (seg) {
-                        case 'tri':
-                        case 'trio':
-                            path.classList.add('tri');
-                            break;
-                        case 'bi':
-                        case 'duo':
-                            path.classList.add('duo');
-                            break;
-                    }
-                } else {
-                    path.style.strokeWidth = num;
+            const segments = (rule || '').split('|');
+            const d = segments.pop();
+            let shade = '', width = '';
+            segments.forEach(seg => {
+                switch (seg.trim()) {
+                    case 'tri':
+                    case 'trio':
+                        shade = 'tri';
+                        break;
+                    case 'bi':
+                    case 'duo':
+                        shade = 'duo';
+                        break;
+                    default:
+                        if (!isNaN(parseInt(seg))) width = `${parseInt(seg)}`;
+                        break;
                 }
+            });
+            path.classList.toggle('tri', shade === 'tri');
+            path.classList.toggle('duo', shade === 'duo');
+            if (width) {
+                // Keep the width when the icon shrinks inside a shape, the same as the icon's own stroke.
+                path.style.strokeWidth = `calc(${width} / var(--ico-glyph-scale))`;
+            } else {
+                path.style.removeProperty('stroke-width');
             }
-            while (segments.length > 1) {
-                segments.shift();
-            }
-            path.setAttribute('d', segments[0]);
+            path.setAttribute('d', d || defUnused);
         },
         clearPaths() {
             const t = this;
@@ -287,6 +332,7 @@ Stroke line joins: miter|round|bevel
 <style></style>
 </defs>
 <path class="backing" d=""></path>
+<g class="glyph">
 <path class="i1" d=""></path>
 <path class="i2" d=""></path>
 <path class="i3" d=""></path>
@@ -297,14 +343,17 @@ Stroke line joins: miter|round|bevel
 <path class="i8" d=""></path>
 <path class="i9" d=""></path>
 <path class="i10" d=""></path>
+</g>
 </svg>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200" class="overlay">
 <!--! Stoic Dreams - https://webui.stoicdreams.com License - https://webui.stoicdreams.com/license Copyright 2024 Stoic Dreams Inc. -->
+<path class="ban-gap" d="M-60 60Q-50 50 -50 50Q-35 35 -35 35Q-20 20 -20 20Q-10 10 -10 10Q-5 5 -5 5Q5 -5 5 -5Q10 -10 10 -10Q20 -20 20 -20Q35 -35 35 -35Q50 -50 50 -50Q60 -60 60 -60z"></path>
 <path class="ban" d="M-60 60Q-50 50 -50 50Q-35 35 -35 35Q-20 20 -20 20Q-10 10 -10 10Q-5 5 -5 5Q5 -5 5 -5Q10 -10 10 -10Q20 -20 20 -20Q35 -35 35 -35Q50 -50 50 -50Q60 -60 60 -60z"></path>
 </svg>
 <slot name="count"></slot>
 <style type="text/css">
 :host {
+--ico-glyph-scale: 1;
 --ico-color-border: var(--icon-default-border-color, transparent);
 --ico-color-primary: var(--theme-color-offset, currentColor);
 --ico-color-offset: var(--theme-color);
@@ -331,11 +380,23 @@ fill: var(--ico-color-primary);
 vertical-align: middle;
 transition: all var(--ico-transition-duration) ease-in-out;
 }
+/* Inside a drawn shape the icon shrinks, so it sits within the shape the way circled and boxed icons do. */
+:host([backing]),
+:host([bordered]),
+:host([border]),
+:host([inverted]) {
+--ico-glyph-scale: var(--icon-glyph-scale, 0.62);
+}
+g.glyph {
+transform: scale(var(--ico-glyph-scale));
+transition: transform var(--ico-transition-duration) ease-in-out;
+}
 path {
 transition: all var(--ico-transition-duration) ease-in-out;
 fill:transparent;
 stroke:var(--ico-color-primary);
-stroke-width:var(--ico-stroke-width);
+/* Divided by the scale, so a shrunken icon keeps the same line weight. */
+stroke-width:calc(var(--ico-stroke-width) / var(--ico-glyph-scale));
 stroke-linecap:round;
 stroke-linejoin: round;
 opacity:1;
@@ -349,7 +410,7 @@ path.duo {
 stroke:var(--ico-color-secondary);
 }
 :host([fill]) path:not(.backing) {
---my-fill-color:var(--icon-color-primary);
+--my-fill-color:var(--ico-color-primary);
 fill:var(--my-fill-color);
 }
 :host([fill]) path,
@@ -396,7 +457,8 @@ fill:var(--ico-color-offset);
 :host([bordered]) path.backing {
 --ico-color-border:var(--ico-color-primary);
 }
-:host(:not([circle]):not([inverted]):not([square]) path.backing),
+/* The backing only shows when it is filled or bordered. */
+:host(:not([backing]):not([inverted]):not([border]):not([bordered])) path.backing,
 path[d=""] {
 display:none;
 }
@@ -421,7 +483,12 @@ path[d="M0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0
 stroke-width:0;
 }
 path.ban {
-stroke-width:calc(var(--ico-stroke-width) * 2);
+stroke-width:calc(var(--ico-stroke-width) * 1.5);
+}
+/* A gap in the background color either side of the slash, so it reads as crossing the icon out. */
+path.ban-gap {
+stroke:var(--ico-color-offset, transparent);
+stroke-width:calc(var(--ico-stroke-width) * 3.5);
 }
 webui-emoji {
 display:flex;
@@ -434,6 +501,7 @@ justify-content:center;
 align-items:center;
 }
 :host(:not([ban])) path.ban,
+:host(:not([ban])) path.ban-gap,
 svg.main:not(.emoji) webui-emoji,
 svg.main.emoji path:not(.backing) {
 display:none;

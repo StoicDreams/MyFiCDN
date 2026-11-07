@@ -1,4 +1,9 @@
 import { test, expect, mount } from '../support/webui.mjs';
+import { readFileSync } from 'node:fs';
+
+// The first icon listed, and the bell's first path, read from the files, so adding or redrawing icons does not break these tests.
+const firstIcon = `WEBUI-ICON-${JSON.parse(readFileSync(new URL('../../cdn/icons/all.json', import.meta.url), 'utf8'))[0].name.toUpperCase()}`;
+const bellPath = readFileSync(new URL('../../cdn/icons/bell.webui', import.meta.url), 'utf8').replace(/\r/g, '').split('\n')[1];
 
 const creator = async page => {
     await page.setViewportSize({ width: 1600, height: 1200 });
@@ -22,12 +27,12 @@ test('a resize while it is still loading is harmless', async ({ page }) => {
 });
 test('opens with the first icon drawn in the editor', async ({ page }) => {
     const el = await creator(page);
-    await expect.poll(() => el.evaluate(c => c._inputFull.value)).toContain('WEBUI-ICON-ARROW');
+    await expect.poll(() => el.evaluate(c => c._inputFull.value)).toContain(firstIcon);
     await expect.poll(() => el.evaluate(c => c._previewPath.getAttribute('d'))).toMatch(/^M/);
 });
 test('the reference icon fills the editor', async ({ page }) => {
     const el = await creator(page);
-    await expect.poll(() => el.evaluate(c => c._inputFull.value)).toContain('WEBUI-ICON-ARROW');
+    await expect.poll(() => el.evaluate(c => c._inputFull.value)).toContain(firstIcon);
     const [container, preview] = await el.evaluate(c => [c._svgContainer, c._iconPreview].map(n => n.getBoundingClientRect().height));
     expect(container).toBeGreaterThan(100);
     expect(preview).toBe(container);
@@ -36,13 +41,13 @@ test('clicking an icon in the list loads it for editing', async ({ page }) => {
     const el = await creator(page);
     await iconFromList(el, 'bell').first().evaluate(a => a.click());
     await expect.poll(() => el.evaluate(c => c._inputFull.value)).toContain('WEBUI-ICON-BELL');
-    await expect.poll(() => el.evaluate(c => c._previewPath.getAttribute('d'))).toMatch(/^M0 40/);
+    await expect.poll(() => el.evaluate(c => c._previewPath.getAttribute('d'))).toBe(bellPath);
     await expect.poll(() => el.evaluate(c => c._iconPreview._definition)).toContain('WEBUI-ICON-BELL');
 });
 test('selecting another path shows that line', async ({ page }) => {
     const el = await creator(page);
     await iconFromList(el, 'bell').first().evaluate(a => a.click());
-    await expect.poll(() => el.evaluate(c => c._inputPath.value)).toMatch(/^M0 40/);
+    await expect.poll(() => el.evaluate(c => c._inputPath.value)).toBe(bellPath);
     await el.evaluate(c => { c._selectPath.value = '2'; c._selectPath.triggerChange(); });
     await expect.poll(() => el.evaluate(c => `${c._modPath}`)).toBe('2');
 });

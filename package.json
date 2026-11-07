@@ -6,7 +6,9 @@
     "test": "playwright test --project=source",
     "test:ui": "playwright test --project=source --ui",
     "test:min": "playwright test --project=min",
-    "test:report": "playwright show-report"
+    "test:report": "playwright show-report",
+    "icons": "node tools/icons/build.mjs",
+    "icons:check": "node tools/icons/build.mjs --check"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1"

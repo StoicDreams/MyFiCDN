@@ -1,55 +1,415 @@
 [
     {
+        "name": "address-book",
+        "tags": "contacts people directory"
+    },
+    {
+        "name": "align-center",
+        "tags": "text paragraph"
+    },
+    {
+        "name": "align-justify",
+        "tags": "text paragraph"
+    },
+    {
+        "name": "align-left",
+        "tags": "text paragraph"
+    },
+    {
+        "name": "align-right",
+        "tags": "text paragraph"
+    },
+    {
+        "name": "anchor",
+        "tags": "ship marine harbor"
+    },
+    {
+        "name": "apple",
+        "tags": "food fruit health item"
+    },
+    {
         "name": "arrow",
-        "tags": "pointer direction right left down up diagonal"
+        "tags": "pointer direction right left down up diagonal next forward"
     },
     {
         "name": "arrow-corner-from-square",
-        "tags": "external link open"
+        "tags": "external link open new window"
     },
     {
         "name": "arrow-corner-into-square",
-        "tags": "internal close"
+        "tags": "internal close minimize collapse"
+    },
+    {
+        "name": "arrow-pointer",
+        "tags": "cursor mouse select click"
     },
     {
         "name": "arrow-side-from-square",
-        "tags": "external open"
+        "tags": "external open sign out log exit leave"
     },
     {
         "name": "arrow-side-into-square",
-        "tags": "internal close"
+        "tags": "internal close sign in log enter"
+    },
+    {
+        "name": "arrow-turn-down-left",
+        "tags": "return enter reply"
+    },
+    {
+        "name": "arrows-left-right",
+        "tags": "horizontal resize width swap"
+    },
+    {
+        "name": "arrows-move",
+        "tags": "move drag position pan"
+    },
+    {
+        "name": "asterisk",
+        "tags": "required star wildcard"
+    },
+    {
+        "name": "at",
+        "tags": "email mention address"
+    },
+    {
+        "name": "atom",
+        "tags": "science react physics"
+    },
+    {
+        "name": "axe",
+        "tags": "weapon chop wood tool"
+    },
+    {
+        "name": "backpack",
+        "tags": "inventory bag travel"
+    },
+    {
+        "name": "bag-shopping",
+        "tags": "shopping cart buy store"
+    },
+    {
+        "name": "barcode",
+        "tags": "scan product code"
+    },
+    {
+        "name": "bars-progress",
+        "tags": "progress loading status"
+    },
+    {
+        "name": "battery",
+        "tags": "power charge energy"
     },
     {
         "name": "bell",
-        "tags": "alert"
+        "tags": "alert notification alarm reminder"
+    },
+    {
+        "name": "bicycle",
+        "tags": "bike cycle ride"
+    },
+    {
+        "name": "bluesky",
+        "tags": "brand social butterfly"
+    },
+    {
+        "name": "bluetooth",
+        "tags": "wireless connect"
+    },
+    {
+        "name": "bold",
+        "tags": "text strong weight"
+    },
+    {
+        "name": "bolt",
+        "tags": "lightning power energy fast flash"
+    },
+    {
+        "name": "bomb",
+        "tags": "explosive attack danger"
+    },
+    {
+        "name": "bone",
+        "tags": "skeleton dog item"
     },
     {
         "name": "book",
-        "tags": "reading"
+        "tags": "reading read library manual documentation"
+    },
+    {
+        "name": "book-open",
+        "tags": "read reading documentation manual"
+    },
+    {
+        "name": "bookmark",
+        "tags": "save mark read later"
+    },
+    {
+        "name": "bow-arrow",
+        "tags": "archery weapon ranged"
+    },
+    {
+        "name": "box-archive",
+        "tags": "archive storage box"
+    },
+    {
+        "name": "brackets-curly",
+        "tags": "code json object braces"
+    },
+    {
+        "name": "brackets-square",
+        "tags": "array code list"
+    },
+    {
+        "name": "briefcase",
+        "tags": "work job business portfolio"
+    },
+    {
+        "name": "broadcast",
+        "tags": "live stream radio signal tower"
+    },
+    {
+        "name": "bug",
+        "tags": "error issue debug insect"
+    },
+    {
+        "name": "building",
+        "tags": "office company business city"
+    },
+    {
+        "name": "bullhorn",
+        "tags": "megaphone announce marketing"
+    },
+    {
+        "name": "bullseye",
+        "tags": "target goal aim focus"
+    },
+    {
+        "name": "bus",
+        "tags": "transit public transport"
+    },
+    {
+        "name": "calculator",
+        "tags": "math accounting numbers"
+    },
+    {
+        "name": "calendar",
+        "tags": "date schedule event"
+    },
+    {
+        "name": "calendar-check",
+        "tags": "date done event confirmed"
+    },
+    {
+        "name": "calendar-days",
+        "tags": "date month schedule"
+    },
+    {
+        "name": "calendar-plus",
+        "tags": "date add new event"
+    },
+    {
+        "name": "camera",
+        "tags": "photo picture"
+    },
+    {
+        "name": "campfire",
+        "tags": "camp rest save point fire"
+    },
+    {
+        "name": "car",
+        "tags": "vehicle drive automobile transport"
+    },
+    {
+        "name": "cards",
+        "tags": "playing card deck game"
     },
     {
         "name": "caret",
-        "tags": "left right up down prev next drop select"
+        "tags": "left right up down prev next drop select triangle direction expand collapse"
     },
     {
         "name": "caret-line",
-        "tags": "prev next"
+        "tags": "prev next triangle direction first top"
+    },
+    {
+        "name": "cart",
+        "tags": "shopping basket buy checkout"
+    },
+    {
+        "name": "castle",
+        "tags": "fortress kingdom base"
+    },
+    {
+        "name": "chart-area",
+        "tags": "graph statistics analytics"
+    },
+    {
+        "name": "chart-bar",
+        "tags": "graph statistics analytics"
+    },
+    {
+        "name": "chart-gantt",
+        "tags": "timeline schedule project plan"
+    },
+    {
+        "name": "chart-line",
+        "tags": "graph statistics trend analytics"
+    },
+    {
+        "name": "chart-pie",
+        "tags": "graph statistics share"
+    },
+    {
+        "name": "check",
+        "tags": "confirm done yes ok tick"
+    },
+    {
+        "name": "chess-pawn",
+        "tags": "game strategy board piece"
+    },
+    {
+        "name": "chevron",
+        "tags": "angle right next forward"
+    },
+    {
+        "name": "chevrons-right",
+        "tags": "double angle forward last"
     },
     {
         "name": "circle",
-        "tags": "round shapes"
+        "tags": "round shapes shape dot"
+    },
+    {
+        "name": "clipboard",
+        "tags": "paste board"
+    },
+    {
+        "name": "clipboard-check",
+        "tags": "task done list complete"
+    },
+    {
+        "name": "clipboard-list",
+        "tags": "tasks checklist todo"
+    },
+    {
+        "name": "clock",
+        "tags": "time hour schedule"
+    },
+    {
+        "name": "close",
+        "tags": "xmark cancel times"
+    },
+    {
+        "name": "cloud",
+        "tags": "weather storage upload"
+    },
+    {
+        "name": "cloud-arrow-down",
+        "tags": "download sync"
+    },
+    {
+        "name": "cloud-arrow-up",
+        "tags": "upload sync backup"
+    },
+    {
+        "name": "cloud-rain",
+        "tags": "weather rain storm"
+    },
+    {
+        "name": "code",
+        "tags": "developer programming brackets html"
+    },
+    {
+        "name": "code-branch",
+        "tags": "git branch version fork"
+    },
+    {
+        "name": "code-commit",
+        "tags": "git commit version"
+    },
+    {
+        "name": "code-fork",
+        "tags": "git branch repository copy"
+    },
+    {
+        "name": "code-merge",
+        "tags": "git merge pull request"
+    },
+    {
+        "name": "code-pull-request",
+        "tags": "git pr review merge"
+    },
+    {
+        "name": "coins",
+        "tags": "money cash currency savings"
+    },
+    {
+        "name": "command",
+        "tags": "mac key shortcut keyboard"
+    },
+    {
+        "name": "comment",
+        "tags": "message chat bubble speech"
+    },
+    {
+        "name": "comment-dots",
+        "tags": "chat typing message"
     },
     {
         "name": "compass",
-        "tags": "directions map point find"
+        "tags": "directions map point find direction navigate explore"
+    },
+    {
+        "name": "compress",
+        "tags": "minimize exit fullscreen shrink"
     },
     {
         "name": "copy",
-        "tags": "editor clone paper"
+        "tags": "editor clone paper duplicate"
+    },
+    {
+        "name": "credit-card",
+        "tags": "payment card bank"
+    },
+    {
+        "name": "crop",
+        "tags": "trim cut image"
+    },
+    {
+        "name": "crosshairs",
+        "tags": "target aim focus location"
+    },
+    {
+        "name": "crown",
+        "tags": "king premium vip royal"
+    },
+    {
+        "name": "cube",
+        "tags": "box package 3d product"
+    },
+    {
+        "name": "database",
+        "tags": "storage data server"
+    },
+    {
+        "name": "delete-left",
+        "tags": "backspace erase key remove"
+    },
+    {
+        "name": "desktop",
+        "tags": "monitor computer screen display"
     },
     {
         "name": "diamond",
-        "tags": "square shapes"
+        "tags": "square shapes shape rhombus"
+    },
+    {
+        "name": "dice",
+        "tags": "game random roll d6 board"
+    },
+    {
+        "name": "dice-d20",
+        "tags": "game rpg roll tabletop"
     },
     {
         "name": "discord",
@@ -57,134 +417,1110 @@
     },
     {
         "name": "dollar",
-        "tags": "cash money"
+        "tags": "cash money currency price payment cost"
+    },
+    {
+        "name": "door-open",
+        "tags": "exit enter room leave"
+    },
+    {
+        "name": "download",
+        "tags": "save get"
     },
     {
         "name": "drawer",
-        "tags": "side slide"
+        "tags": "side slide panel tray"
+    },
+    {
+        "name": "droplet",
+        "tags": "water liquid drop"
+    },
+    {
+        "name": "dumbbell",
+        "tags": "strength fitness gym stat"
+    },
+    {
+        "name": "edit",
+        "tags": "pencil write modify"
+    },
+    {
+        "name": "ellipsis",
+        "tags": "more options dots menu"
+    },
+    {
+        "name": "ellipsis-vertical",
+        "tags": "more options dots menu kebab"
+    },
+    {
+        "name": "envelope",
+        "tags": "mail email message letter"
+    },
+    {
+        "name": "envelope-open",
+        "tags": "mail read opened email"
     },
     {
         "name": "equals",
-        "tags": "math lines bars"
+        "tags": "math lines bars equal same"
+    },
+    {
+        "name": "eraser",
+        "tags": "erase remove clean"
     },
     {
         "name": "exclamation",
-        "tags": "alert warning danger"
+        "tags": "alert warning danger important attention"
+    },
+    {
+        "name": "expand",
+        "tags": "maximize fullscreen enlarge"
     },
     {
         "name": "eye",
-        "tags": "pupil look view see"
+        "tags": "pupil look view see visible show watch"
+    },
+    {
+        "name": "eye-dropper",
+        "tags": "color picker sample"
+    },
+    {
+        "name": "face-frown",
+        "tags": "sad emoji bad"
+    },
+    {
+        "name": "face-laugh",
+        "tags": "happy joy emoji lol"
+    },
+    {
+        "name": "face-meh",
+        "tags": "neutral emoji"
+    },
+    {
+        "name": "face-smile",
+        "tags": "happy emoji good"
+    },
+    {
+        "name": "face-surprise",
+        "tags": "wow shock emoji"
     },
     {
         "name": "facebook",
         "tags": "brands social"
     },
     {
+        "name": "fast-forward",
+        "tags": "media speed skip"
+    },
+    {
+        "name": "feather",
+        "tags": "light write quill speed"
+    },
+    {
         "name": "feedback",
-        "tags": "talk message chat"
+        "tags": "talk message chat comment review"
+    },
+    {
+        "name": "file",
+        "tags": "document page paper"
+    },
+    {
+        "name": "file-audio",
+        "tags": "sound music document"
+    },
+    {
+        "name": "file-chart",
+        "tags": "presentation slides powerpoint report"
+    },
+    {
+        "name": "file-check",
+        "tags": "approved document done"
+    },
+    {
+        "name": "file-code",
+        "tags": "source script document"
+    },
+    {
+        "name": "file-diff",
+        "tags": "compare changes patch"
+    },
+    {
+        "name": "file-export",
+        "tags": "export save out document"
+    },
+    {
+        "name": "file-image",
+        "tags": "picture photo document"
+    },
+    {
+        "name": "file-import",
+        "tags": "import open into document"
+    },
+    {
+        "name": "file-lines",
+        "tags": "document text page"
+    },
+    {
+        "name": "file-plus",
+        "tags": "new document add"
+    },
+    {
+        "name": "file-spreadsheet",
+        "tags": "excel sheet table document"
+    },
+    {
+        "name": "file-video",
+        "tags": "movie clip document"
+    },
+    {
+        "name": "file-zipper",
+        "tags": "archive zip compressed"
+    },
+    {
+        "name": "film",
+        "tags": "movie video cinema"
+    },
+    {
+        "name": "filter",
+        "tags": "funnel refine"
+    },
+    {
+        "name": "fingerprint",
+        "tags": "biometric identity security touch"
+    },
+    {
+        "name": "fire",
+        "tags": "flame hot burn popular"
+    },
+    {
+        "name": "flag",
+        "tags": "report mark goal"
+    },
+    {
+        "name": "flag-checkered",
+        "tags": "finish race goal complete"
+    },
+    {
+        "name": "folder",
+        "tags": "directory files"
+    },
+    {
+        "name": "folder-open",
+        "tags": "directory browse open"
+    },
+    {
+        "name": "folder-plus",
+        "tags": "new directory add"
+    },
+    {
+        "name": "folder-tree",
+        "tags": "directory structure explorer"
+    },
+    {
+        "name": "font",
+        "tags": "text type letter typography"
+    },
+    {
+        "name": "forward",
+        "tags": "next skip media track"
+    },
+    {
+        "name": "function",
+        "tags": "math formula code fx"
     },
     {
         "name": "gallery-thumbs",
-        "tags": "thumbnails images"
+        "tags": "thumbnails images photos carousel"
+    },
+    {
+        "name": "gamepad",
+        "tags": "game controller play"
+    },
+    {
+        "name": "gauge",
+        "tags": "dashboard speed meter performance"
     },
     {
         "name": "gear",
-        "tags": "cog"
+        "tags": "cog settings options configure"
+    },
+    {
+        "name": "gem",
+        "tags": "diamond jewel premium value"
+    },
+    {
+        "name": "ghost",
+        "tags": "spirit halloween enemy"
+    },
+    {
+        "name": "gift",
+        "tags": "present reward"
+    },
+    {
+        "name": "git",
+        "tags": "version control brand"
+    },
+    {
+        "name": "github",
+        "tags": "brand code git repository"
+    },
+    {
+        "name": "globe",
+        "tags": "world internet web language"
+    },
+    {
+        "name": "graduation-cap",
+        "tags": "education school learn degree"
+    },
+    {
+        "name": "grid",
+        "tags": "tiles apps dashboard"
     },
     {
         "name": "hamburger",
-        "tags": "menu bars"
+        "tags": "menu bars navigation"
     },
     {
-        "name": "hierarchy",
-        "tags": "graph data mapping"
+        "name": "hammer",
+        "tags": "build tool construct"
     },
     {
         "name": "handshake",
         "tags": "together partnership"
     },
     {
+        "name": "hard-drive",
+        "tags": "disk storage hdd"
+    },
+    {
+        "name": "hashtag",
+        "tags": "hash number tag pound"
+    },
+    {
+        "name": "heading",
+        "tags": "title header text h"
+    },
+    {
+        "name": "headphones",
+        "tags": "audio music listen headset"
+    },
+    {
+        "name": "heart",
+        "tags": "love like favorite"
+    },
+    {
+        "name": "heart-pulse",
+        "tags": "health heartbeat medical cardio"
+    },
+    {
+        "name": "heartbeat",
+        "tags": "pulse activity health monitor"
+    },
+    {
+        "name": "helmet",
+        "tags": "armor knight defense"
+    },
+    {
+        "name": "hierarchy",
+        "tags": "graph data mapping organization tree structure sitemap"
+    },
+    {
+        "name": "highlighter",
+        "tags": "marker emphasize text"
+    },
+    {
+        "name": "history",
+        "tags": "recent past clock rotate"
+    },
+    {
         "name": "home",
-        "tags": "house building"
+        "tags": "house building main start"
+    },
+    {
+        "name": "hospital",
+        "tags": "medical health care first aid"
+    },
+    {
+        "name": "hourglass",
+        "tags": "wait time loading sand"
+    },
+    {
+        "name": "house",
+        "tags": "home main start"
+    },
+    {
+        "name": "i-cursor",
+        "tags": "text cursor input caret"
     },
     {
         "name": "icons",
         "tags": "shapes group"
     },
     {
+        "name": "id-badge",
+        "tags": "employee name tag lanyard"
+    },
+    {
+        "name": "id-card",
+        "tags": "identity badge license profile"
+    },
+    {
+        "name": "image",
+        "tags": "picture photo"
+    },
+    {
+        "name": "images",
+        "tags": "pictures photos gallery album"
+    },
+    {
+        "name": "inbox",
+        "tags": "messages tray mail"
+    },
+    {
+        "name": "indent",
+        "tags": "text increase paragraph"
+    },
+    {
+        "name": "infinity",
+        "tags": "forever loop unlimited"
+    },
+    {
+        "name": "info",
+        "tags": "information about details"
+    },
+    {
         "name": "instagram",
         "tags": "brands social"
+    },
+    {
+        "name": "italic",
+        "tags": "text slant emphasis"
+    },
+    {
+        "name": "joystick",
+        "tags": "arcade game controller"
     },
     {
         "name": "jwt",
         "tags": "key code stars"
     },
     {
+        "name": "kanban",
+        "tags": "board columns tasks agile"
+    },
+    {
+        "name": "key",
+        "tags": "password access"
+    },
+    {
+        "name": "keyboard",
+        "tags": "type input keys"
+    },
+    {
+        "name": "landmark",
+        "tags": "bank government museum institution"
+    },
+    {
+        "name": "laptop",
+        "tags": "computer notebook"
+    },
+    {
+        "name": "layers",
+        "tags": "stack levels"
+    },
+    {
+        "name": "leaf",
+        "tags": "nature eco plant green"
+    },
+    {
+        "name": "level-up",
+        "tags": "upgrade rank promote experience"
+    },
+    {
+        "name": "lightbulb",
+        "tags": "idea tip hint"
+    },
+    {
+        "name": "link",
+        "tags": "chain url hyperlink"
+    },
+    {
+        "name": "linkedin",
+        "tags": "brand social professional"
+    },
+    {
+        "name": "list",
+        "tags": "items bullets lines"
+    },
+    {
+        "name": "list-check",
+        "tags": "checklist tasks todo"
+    },
+    {
+        "name": "list-ol",
+        "tags": "numbered ordered list"
+    },
+    {
+        "name": "list-tree",
+        "tags": "hierarchy outline nested"
+    },
+    {
+        "name": "location",
+        "tags": "map pin marker place"
+    },
+    {
+        "name": "location-arrow",
+        "tags": "navigation direction gps"
+    },
+    {
+        "name": "lock",
+        "tags": "secure password private"
+    },
+    {
+        "name": "magnifying-glass",
+        "tags": "search find"
+    },
+    {
+        "name": "mail",
+        "tags": "envelope email message letter"
+    },
+    {
+        "name": "map",
+        "tags": "directions travel location"
+    },
+    {
+        "name": "mastodon",
+        "tags": "brand social fediverse"
+    },
+    {
+        "name": "medal",
+        "tags": "award winner prize badge"
+    },
+    {
+        "name": "memory",
+        "tags": "ram hardware chip"
+    },
+    {
+        "name": "menu",
+        "tags": "hamburger navigation bars"
+    },
+    {
         "name": "messages",
-        "tags": "talk communication chat"
+        "tags": "talk communication chat conversation comments"
     },
     {
         "name": "messages-question",
-        "tags": "talk communication chat question"
+        "tags": "talk communication chat question help support faq"
+    },
+    {
+        "name": "microchip",
+        "tags": "cpu processor chip hardware"
+    },
+    {
+        "name": "microphone",
+        "tags": "mic audio record voice"
+    },
+    {
+        "name": "minus",
+        "tags": "subtract remove less"
+    },
+    {
+        "name": "mobile",
+        "tags": "phone smartphone cell device"
+    },
+    {
+        "name": "money-bill",
+        "tags": "cash payment dollar bill"
+    },
+    {
+        "name": "moon",
+        "tags": "night dark mode sleep"
+    },
+    {
+        "name": "mountain",
+        "tags": "landscape nature outdoors"
+    },
+    {
+        "name": "mouse",
+        "tags": "computer click pointer device"
+    },
+    {
+        "name": "mug-hot",
+        "tags": "coffee tea drink cafe"
     },
     {
         "name": "music",
-        "tags": "notes"
+        "tags": "notes song audio note sound"
+    },
+    {
+        "name": "newspaper",
+        "tags": "news article blog"
+    },
+    {
+        "name": "nodes",
+        "tags": "graph network connections diagram"
+    },
+    {
+        "name": "note-sticky",
+        "tags": "sticky note memo post"
+    },
+    {
+        "name": "outdent",
+        "tags": "text decrease paragraph"
+    },
+    {
+        "name": "package",
+        "tags": "box delivery shipping cube"
+    },
+    {
+        "name": "paintbrush",
+        "tags": "paint art brush design"
+    },
+    {
+        "name": "palette",
+        "tags": "colors art paint design"
+    },
+    {
+        "name": "paperclip",
+        "tags": "attachment attach"
+    },
+    {
+        "name": "paragraph",
+        "tags": "pilcrow text formatting"
+    },
+    {
+        "name": "paste",
+        "tags": "clipboard insert"
+    },
+    {
+        "name": "patreon",
+        "tags": "brand creator support"
+    },
+    {
+        "name": "pause",
+        "tags": "media hold"
+    },
+    {
+        "name": "paw",
+        "tags": "pet animal dog cat"
+    },
+    {
+        "name": "pen",
+        "tags": "edit write pencil"
     },
     {
         "name": "pencil",
-        "tags": "edits"
+        "tags": "edits edit write compose"
+    },
+    {
+        "name": "percent",
+        "tags": "discount sale ratio"
     },
     {
         "name": "person",
-        "tags": "accounts users"
+        "tags": "accounts users user account profile"
+    },
+    {
+        "name": "phone",
+        "tags": "mobile smartphone call device"
+    },
+    {
+        "name": "phone-handset",
+        "tags": "call telephone contact"
+    },
+    {
+        "name": "pinterest",
+        "tags": "brand social pins"
+    },
+    {
+        "name": "plane",
+        "tags": "flight travel airplane trip"
+    },
+    {
+        "name": "play",
+        "tags": "start media begin"
+    },
+    {
+        "name": "plug",
+        "tags": "power electric connect"
     },
     {
         "name": "plus",
-        "tags": "math add"
+        "tags": "math add new create"
+    },
+    {
+        "name": "podcast",
+        "tags": "audio show episode"
+    },
+    {
+        "name": "podium",
+        "tags": "ranking leaderboard winner competition"
+    },
+    {
+        "name": "potion",
+        "tags": "flask elixir magic health mana"
+    },
+    {
+        "name": "power",
+        "tags": "off on shutdown start"
+    },
+    {
+        "name": "presentation-screen",
+        "tags": "slides projector meeting"
+    },
+    {
+        "name": "print-screen",
+        "tags": "screenshot capture"
+    },
+    {
+        "name": "printer",
+        "tags": "print"
+    },
+    {
+        "name": "puzzle-piece",
+        "tags": "plugin extension addon game"
+    },
+    {
+        "name": "qrcode",
+        "tags": "qr scan code"
     },
     {
         "name": "question",
-        "tags": "faq"
+        "tags": "faq help unknown"
+    },
+    {
+        "name": "quote",
+        "tags": "quotation citation testimonial"
+    },
+    {
+        "name": "receipt",
+        "tags": "bill invoice purchase"
+    },
+    {
+        "name": "reddit",
+        "tags": "brand social forum"
     },
     {
         "name": "refresh",
-        "tags": "arrows circle"
+        "tags": "arrows circle reload sync update rotate"
+    },
+    {
+        "name": "regex",
+        "tags": "regular expression pattern search"
+    },
+    {
+        "name": "repeat",
+        "tags": "loop again cycle"
+    },
+    {
+        "name": "reply",
+        "tags": "answer respond back"
+    },
+    {
+        "name": "ring",
+        "tags": "jewelry accessory item"
+    },
+    {
+        "name": "robot",
+        "tags": "bot ai automation assistant"
+    },
+    {
+        "name": "rocket",
+        "tags": "launch startup space fast"
+    },
+    {
+        "name": "rss",
+        "tags": "feed subscribe blog"
+    },
+    {
+        "name": "ruler",
+        "tags": "measure length size"
+    },
+    {
+        "name": "save",
+        "tags": "floppy disk store"
+    },
+    {
+        "name": "scale-balanced",
+        "tags": "justice legal law compare fair"
+    },
+    {
+        "name": "scissors",
+        "tags": "cut clip"
+    },
+    {
+        "name": "scroll",
+        "tags": "quest parchment document lore"
+    },
+    {
+        "name": "search",
+        "tags": "find magnify look"
+    },
+    {
+        "name": "seedling",
+        "tags": "grow plant start sprout"
+    },
+    {
+        "name": "send",
+        "tags": "paper plane submit message"
+    },
+    {
+        "name": "server",
+        "tags": "hosting computer rack"
+    },
+    {
+        "name": "settings",
+        "tags": "gear options configure"
+    },
+    {
+        "name": "share",
+        "tags": "send network social"
+    },
+    {
+        "name": "share-from-square",
+        "tags": "share export forward"
+    },
+    {
+        "name": "shield",
+        "tags": "security protection safe"
+    },
+    {
+        "name": "shuffle",
+        "tags": "random mix"
+    },
+    {
+        "name": "sidebar",
+        "tags": "panel layout columns"
+    },
+    {
+        "name": "signal",
+        "tags": "bars strength network reception"
+    },
+    {
+        "name": "signature",
+        "tags": "sign contract agreement"
+    },
+    {
+        "name": "skull",
+        "tags": "death danger poison dead"
+    },
+    {
+        "name": "sliders",
+        "tags": "settings adjust controls filter"
+    },
+    {
+        "name": "snapchat",
+        "tags": "brand social ghost"
+    },
+    {
+        "name": "snowflake",
+        "tags": "winter cold snow freeze"
+    },
+    {
+        "name": "sort",
+        "tags": "order arrange up down"
+    },
+    {
+        "name": "sparkles",
+        "tags": "magic shine new ai"
+    },
+    {
+        "name": "spinner",
+        "tags": "loading wait busy progress"
+    },
+    {
+        "name": "spotify",
+        "tags": "brand music streaming"
     },
     {
         "name": "square",
-        "tags": "shapes"
+        "tags": "shapes shape box"
+    },
+    {
+        "name": "stack-overflow",
+        "tags": "questions answers developer brand"
     },
     {
         "name": "stacked-squares",
-        "tags": "shapes"
+        "tags": "shapes layers copies collection"
+    },
+    {
+        "name": "stamp",
+        "tags": "approve seal official"
     },
     {
         "name": "star",
-        "tags": "space shapes"
+        "tags": "space shapes favorite rating bookmark"
     },
     {
-        "name": "thumbs-up",
-        "tags": "positive success"
+        "name": "steam",
+        "tags": "brand game store"
     },
     {
-        "name": "toggle-on",
-        "tags": "switch"
+        "name": "stop",
+        "tags": "media end"
     },
     {
-        "name": "toggle-off",
-        "tags": "switch"
+        "name": "stopwatch",
+        "tags": "timer time clock"
+    },
+    {
+        "name": "store",
+        "tags": "shop market retail"
+    },
+    {
+        "name": "strikethrough",
+        "tags": "text delete cross out"
+    },
+    {
+        "name": "sun",
+        "tags": "light day weather bright"
+    },
+    {
+        "name": "sun-cloud",
+        "tags": "weather partly cloudy"
+    },
+    {
+        "name": "sword",
+        "tags": "weapon attack combat fight"
+    },
+    {
+        "name": "swords",
+        "tags": "battle combat crossed weapons"
+    },
+    {
+        "name": "table",
+        "tags": "grid spreadsheet data rows"
+    },
+    {
+        "name": "table-columns",
+        "tags": "layout columns split"
+    },
+    {
+        "name": "tablet",
+        "tags": "ipad device screen"
+    },
+    {
+        "name": "tag",
+        "tags": "label price category"
+    },
+    {
+        "name": "tags",
+        "tags": "labels categories"
+    },
+    {
+        "name": "telegram",
+        "tags": "brand chat message"
+    },
+    {
+        "name": "temperature",
+        "tags": "thermometer weather heat"
+    },
+    {
+        "name": "tent",
+        "tags": "camp outdoors shelter"
+    },
+    {
+        "name": "terminal",
+        "tags": "console command line shell"
     },
     {
         "name": "test",
-        "tags": "beaker tube science flask"
+        "tags": "beaker tube science flask lab experiment"
+    },
+    {
+        "name": "thumbs-up",
+        "tags": "positive success like approve good agree"
+    },
+    {
+        "name": "thumbtack",
+        "tags": "pin attach stick"
+    },
+    {
+        "name": "ticket",
+        "tags": "event admission pass coupon"
+    },
+    {
+        "name": "tiktok",
+        "tags": "brand video social"
+    },
+    {
+        "name": "toggle-off",
+        "tags": "switch disabled"
+    },
+    {
+        "name": "toggle-on",
+        "tags": "switch enabled"
+    },
+    {
+        "name": "toolbox",
+        "tags": "tools kit repair"
     },
     {
         "name": "traffic-cone",
-        "tags": "street warning"
+        "tags": "street warning construction under work caution"
+    },
+    {
+        "name": "trash",
+        "tags": "delete remove bin garbage"
+    },
+    {
+        "name": "trash-can",
+        "tags": "delete remove bin garbage"
+    },
+    {
+        "name": "treasure-chest",
+        "tags": "loot reward inventory chest"
+    },
+    {
+        "name": "tree",
+        "tags": "nature forest pine"
+    },
+    {
+        "name": "trending-up",
+        "tags": "growth increase chart rise"
+    },
+    {
+        "name": "triangle",
+        "tags": "shape"
+    },
+    {
+        "name": "trophy",
+        "tags": "award winner prize achievement"
+    },
+    {
+        "name": "truck",
+        "tags": "delivery shipping transport"
+    },
+    {
+        "name": "tv",
+        "tags": "television screen display"
+    },
+    {
+        "name": "twitch",
+        "tags": "brand streaming live"
+    },
+    {
+        "name": "umbrella",
+        "tags": "rain weather protection insurance"
+    },
+    {
+        "name": "underline",
+        "tags": "text"
+    },
+    {
+        "name": "undo",
+        "tags": "back revert rotate left"
+    },
+    {
+        "name": "unlock",
+        "tags": "open unsecure"
+    },
+    {
+        "name": "upload",
+        "tags": "send put"
+    },
+    {
+        "name": "user",
+        "tags": "person account profile"
+    },
+    {
+        "name": "user-check",
+        "tags": "verified person approved"
+    },
+    {
+        "name": "user-minus",
+        "tags": "remove person"
+    },
+    {
+        "name": "user-plus",
+        "tags": "add person invite new account"
+    },
+    {
+        "name": "user-xmark",
+        "tags": "remove person block"
+    },
+    {
+        "name": "users",
+        "tags": "people group team"
+    },
+    {
+        "name": "utensils",
+        "tags": "restaurant food dining eat"
+    },
+    {
+        "name": "video",
+        "tags": "movie film camera record"
+    },
+    {
+        "name": "virus",
+        "tags": "bug malware infection germ"
+    },
+    {
+        "name": "voicemail",
+        "tags": "message recording phone"
+    },
+    {
+        "name": "volume",
+        "tags": "sound audio speaker"
+    },
+    {
+        "name": "volume-low",
+        "tags": "sound quiet audio"
+    },
+    {
+        "name": "volume-xmark",
+        "tags": "mute silent sound off"
+    },
+    {
+        "name": "wallet",
+        "tags": "money payment cash"
+    },
+    {
+        "name": "wand",
+        "tags": "magic effect auto"
+    },
+    {
+        "name": "watch",
+        "tags": "smartwatch time wrist"
+    },
+    {
+        "name": "whatsapp",
+        "tags": "brand chat message phone"
+    },
+    {
+        "name": "wifi",
+        "tags": "wireless internet signal network"
+    },
+    {
+        "name": "wind",
+        "tags": "weather air breeze"
+    },
+    {
+        "name": "window",
+        "tags": "browser app screen"
+    },
+    {
+        "name": "wrench",
+        "tags": "settings tool fix repair"
+    },
+    {
+        "name": "x-twitter",
+        "tags": "brand social x twitter"
     },
     {
         "name": "xmark",
-        "tags": "close"
+        "tags": "close cancel delete remove times"
+    },
+    {
+        "name": "youtube",
+        "tags": "video brand social"
+    },
+    {
+        "name": "zoom-in",
+        "tags": "magnify enlarge"
+    },
+    {
+        "name": "zoom-out",
+        "tags": "shrink"
     }
 ]

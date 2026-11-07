@@ -11,7 +11,7 @@
     const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json' : 'https://cdn.myfi.ws/i/emojis.json';
     webui.define('webui-icon-search', {
         pipedValue: '',
-        preload: "icon dropdown input-range input-text input-message",
+        preload: "icon dropdown input-range input-text input-message pagination",
         _emojiEnabled: false,
         _filteredKeys: [],
         _viewEl: [],

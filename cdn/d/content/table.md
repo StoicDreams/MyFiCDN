@@ -5,7 +5,7 @@
 <webui-table theme="tertiary" columns="Id|_rowId;:Name|name;:Usage Percentage:|usage_percentage;Custom;:Action:" data-subscribe="page-mock-report-current.languages:setData" sortable="_rowId;name;usage_percentage" bordered class="my-3" current-sort="usage_percentage" current-sort-dir="desc" column-formats="action:html;custom:html">
     <template slot="column" name="action">
         <webui-condition data-subscribe="page-tr-{_ROWID}.custom">
-            <template><webui-button theme="danger" data-trigger="page-tr-{_ROWID}.custom" data-value="" start-icon="ban"></webui-button></template>
+            <template><webui-button theme="danger" data-trigger="page-tr-{_ROWID}.custom" data-value="" start-icon="circle|ban"></webui-button></template>
         </webui-condition>
         <webui-condition data-subscribe="page-tr-{_ROWID}.custom" data-unequals="music" data-ignore-case>
             <template><webui-button theme="warning" data-trigger="page-tr-{_ROWID}.custom" data-value="Music" start-icon="music"></webui-button></template>

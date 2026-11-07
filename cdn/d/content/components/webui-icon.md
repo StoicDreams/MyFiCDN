@@ -24,6 +24,64 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+### Variations
+
+Slashes, containers, directions, and fills are flags on any icon, so there is no separate icon for each variation. Add them as attributes, or after the icon name with `|`.
+
+- **`ban`:** crosses the icon out with a slash, leaving a gap in the background color, as in `eye|ban` or `circle|ban`.
+- **`shape` with `bordered`:** draws the icon inside a shape, as in `check|shape:circle|bordered`. Shapes are `circle`, `square` (the default), `shield`, `triangle`, `octo`, `badge`, and `cloud`.
+- **`backing`:** fills the shape lightly behind the icon, as in `exclamation|shape:circle|backing|bordered`.
+- **`inverted`:** fills the shape with the icon color and draws the icon in the background color, as in `heart|shape:circle|inverted`.
+- **`rotate`:** turns the icon by degrees, as in `arrow|rotate:90` for a down arrow, or `chevron|rotate:180` for left.
+- **`flip`:** mirrors the icon, left to right by default, or `flip:y` top to bottom and `flip:both`. For example, `undo|flip` is redo.
+- **`fill`:** fills the icon's shapes, as in `heart|fill`.
+- **`shade`:** draws details in lighter shades of the color, `duo` or `tri`, as in `bell|fill|shade:tri`.
+- **`stroke`:** sets the line weight, `thin`, `thick`, or a number, as in `star|stroke:thin`.
+- **`theme`:** colors the icon with a theme, as in `star|theme:warning`.
+
+Inside a shape the icon shrinks to fit, keeping its line weight. Set `--icon-glyph-scale` to change how much, such as `0.5`.
+
+<webui-flex gap="4" align="center" wrap>
+    <webui-icon icon="eye|ban" width="40"></webui-icon>
+    <webui-icon icon="check|shape:circle|bordered" width="40"></webui-icon>
+    <webui-icon icon="exclamation|shape:triangle|bordered" width="40"></webui-icon>
+    <webui-icon icon="check|shape:shield|bordered" width="40"></webui-icon>
+    <webui-icon icon="exclamation|shape:circle|backing|bordered" width="40"></webui-icon>
+    <webui-icon icon="heart|shape:circle|inverted" width="40"></webui-icon>
+    <webui-icon icon="arrow|rotate:90" width="40"></webui-icon>
+    <webui-icon icon="undo|flip" width="40"></webui-icon>
+</webui-flex>
+
+### Changing Icons
+
+Set a new `icon`, or call `setIcon`, and the icon morphs into it, because every icon is drawn the same way: up to 10 paths, each a start point and 11 curves. Paths an icon does not use shrink to its center.
+
+<webui-flex gap="4" align="center">
+    <webui-button theme="secondary" data-trigger="icon-demo" data-value="hamburger">Menu</webui-button>
+    <webui-button theme="secondary" data-trigger="icon-demo" data-value="xmark">Close</webui-button>
+    <webui-button theme="secondary" data-trigger="icon-demo" data-value="gear">Settings</webui-button>
+    <webui-button theme="secondary" data-trigger="icon-demo" data-value="heart">Heart</webui-button>
+    <webui-icon icon="hamburger" data-subscribe="icon-demo:setIcon" width="48"></webui-icon>
+</webui-flex>
+
+Browse every icon with `<webui-icon-search>`.
+
+### Icon Files
+
+Each icon is a `.webui` file in `https://cdn.myfi.ws/icons/`. The first line is `WEBUI-ICON-` and the icon's name. Each other line is one path, drawn in a 200 unit square from -100 to 100:
+
+```text:bell.webui
+WEBUI-ICON-BELL
+M-62 40Q-54 34 -50 23Q...z
+bi|M0 68Q-7 68 -13 64Q...z
+```
+
+- **Shade:** start a line with `bi` or `tri` to draw it in the second or third shade, which keeps details visible when the icon is filled.
+- **Stroke width:** start a line with a number, such as `20|`, to draw it thicker than the icon's stroke. A shade and a width can be combined, as in `bi|20|`.
+- **Curves:** every path is exactly a start point and 11 quadratic curves, ending with `z`. Browsers only animate between paths with the same commands, so a path with any other number of curves does not morph.
+
+The framework's icons are built from shapes by `tools/icons` in the MyFiCDN repository, with `npm run icons`. `<webui-icon-creator>` edits single icons point by point.
+
 ### Source Code
 
 <webui-code src="https://cdn.myfi.ws/webui/icon.js" language="javascript" label="icon.js"></webui-code>

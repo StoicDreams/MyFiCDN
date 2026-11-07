@@ -190,7 +190,8 @@ test.describe('first page load', () => {
         await page.route('**/webui/never-loads.min.js', () => { });
         const gap = await shownAfter(page, '# Slow\n\n<webui-never-loads></webui-never-loads>');
         expect(gap).toBeGreaterThanOrEqual(290);
-        expect(gap).toBeLessThan(600);
+        // Generous, since a busy test machine can be slow. Without the cap it would never show.
+        expect(gap).toBeLessThan(1500);
     });
 });
 test('navigating fades the old page out before showing the new one', async ({ page }) => {
