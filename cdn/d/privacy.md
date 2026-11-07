@@ -84,6 +84,18 @@ Some of our business partners may use cookies on our websites. However, we have 
 
 </webui-page-segment>
 
+## Advertising
+
+<webui-page-segment elevation="10">
+
+Some of our websites show ads to help keep them free. These ads are provided by third-party vendors, including Google.
+
+Third-party vendors, including Google, use cookies to show ads based on your earlier visits to our websites and to other websites. Google's advertising cookies let Google and its partners show you ads based on your visits to our websites and to other sites on the Internet.
+
+You can turn off personalized advertising from Google in [Google's Ads Settings](https://adssettings.google.com), and from many other ad vendors at [aboutads.info](https://www.aboutads.info/choices). Where the law requires it, such as in the European Economic Area and the United Kingdom, you are asked for consent before personalized ads are shown.
+
+</webui-page-segment>
+
 ## Sharing
 
 <webui-page-segment elevation="10">
