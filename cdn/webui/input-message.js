@@ -118,6 +118,7 @@
     background-color: #ecddcbff;
     color: black;
     cursor: text;
+    overflow: auto;
 }
 label {
     display: block;
