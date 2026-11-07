@@ -1,6 +1,7 @@
 /*!
  * Web UI Page Help - https://webui.stoicdreams.com/components#webui-page-help
- * A floating help bubble that can be dragged anywhere, and opens the page's help content in a dialog.
+ * A floating help bubble that opens the page's help in a panel. Both can be dragged anywhere, and the
+ * panel leaves the page usable, so it can stay open as a reference.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2025 Stoic Dreams - https://www.stoicdreams.com
  * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
@@ -12,6 +13,8 @@
     const dragThreshold = 4;
     const edgeGap = 16;
     const animationMs = 220;
+    const minPanelWidth = 240;
+    const minPanelHeight = 120;
     const prefersReducedMotion = () => !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     /** A footer bar along the bottom of the window, so the bubble can sit just above it. */
     function findFooter(host) {
@@ -23,14 +26,64 @@
         }
         return null;
     }
-    function readPosition(key) {
+    function readSaved(key, fields) {
         try {
             const value = JSON.parse(webui.storage.getItem(key) || 'null');
-            if (value && Number.isFinite(value.right) && Number.isFinite(value.bottom)) return value;
+            if (value && fields.every(field => Number.isFinite(value[field]))) return value;
         } catch (_) {
-            // A damaged value falls back to the default position.
+            // A damaged value falls back to the default.
         }
         return null;
+    }
+    const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
+    /** Shows an element in the top layer, which ignores transformed ancestors that would otherwise move it. */
+    function showOnTop(el) {
+        try {
+            if (el.showPopover && !el.matches(':popover-open')) el.showPopover();
+        } catch (_) {
+            // Without popover support it stays fixed to the window, which is right in most pages.
+        }
+        el.classList.add('shown');
+    }
+    function hideFromTop(el) {
+        try {
+            if (el.hidePopover && el.matches(':popover-open')) el.hidePopover();
+        } catch (_) {
+            // Already hidden.
+        }
+        el.classList.remove('shown');
+    }
+    /**
+     * Lets the pointer drag something by a handle. Positions are kept inside the window.
+     * onMove receives the new left and top, and onEnd runs once a drag that moved has finished.
+     */
+    function trackDrag(handle, { getRect, onMove, onEnd, skip }) {
+        let drag = null;
+        handle.addEventListener('pointerdown', ev => {
+            if (ev.button !== 0 || skip?.(ev)) return;
+            const rect = getRect();
+            drag = { x: ev.clientX, y: ev.clientY, left: rect.left, top: rect.top, width: rect.width, height: rect.height, moved: false, id: ev.pointerId };
+            handle.setPointerCapture?.(ev.pointerId);
+        });
+        handle.addEventListener('pointermove', ev => {
+            if (!drag || drag.id !== ev.pointerId) return;
+            const dx = ev.clientX - drag.x;
+            const dy = ev.clientY - drag.y;
+            if (!drag.moved && Math.hypot(dx, dy) < dragThreshold) return;
+            drag.moved = true;
+            const left = clamp(drag.left + dx, 0, Math.max(0, window.innerWidth - drag.width));
+            const top = clamp(drag.top + dy, 0, Math.max(0, window.innerHeight - drag.height));
+            onMove(left, top, drag);
+        });
+        const finish = ev => {
+            if (!drag || drag.id !== ev.pointerId) return;
+            const ended = drag;
+            drag = null;
+            handle.releasePointerCapture?.(ev.pointerId);
+            if (ended.moved) onEnd(ev.type === 'pointerup');
+        };
+        handle.addEventListener('pointerup', finish);
+        handle.addEventListener('pointercancel', finish);
     }
     webui.define("webui-page-help", {
         linkCss: false,
@@ -43,22 +96,37 @@
             t._bubble = t.template.querySelector('button.bubble');
             t._icon = t.template.querySelector('button.bubble webui-icon');
             t._label = t.template.querySelector('button.bubble .label');
-            t._dialog = t.template.querySelector('dialog');
-            t._heading = t.template.querySelector('dialog h2');
-            t._close = t.template.querySelector('dialog button.close');
+            t._panel = t.template.querySelector('.panel');
+            t._header = t.template.querySelector('.panel header');
+            t._heading = t.template.querySelector('.panel h2');
+            t._close = t.template.querySelector('.panel button.close');
             t._slot = t.template.querySelector('slot');
             // The footer can change height, such as when its content wraps.
             t._footerObserver = new ResizeObserver(() => t.placeAboveFooter());
             t._onResize = () => {
                 t.placeAboveFooter();
                 t.keepInView();
+                t.keepPanelInView();
             };
-            t._bubble.addEventListener('pointerdown', ev => t.startDrag(ev));
-            t._bubble.addEventListener('pointermove', ev => t.moveDrag(ev));
-            t._bubble.addEventListener('pointerup', ev => t.endDrag(ev));
-            t._bubble.addEventListener('pointercancel', ev => t.endDrag(ev));
+            trackDrag(t._bubble, {
+                getRect: () => t._float.getBoundingClientRect(),
+                onMove: (left, top, drag) => {
+                    t.classList.add('dragging');
+                    t.setPosition(window.innerWidth - left - drag.width, window.innerHeight - top - drag.height);
+                },
+                onEnd: wasPointerUp => {
+                    t.classList.remove('dragging');
+                    // A drag ends with a click on the bubble, which should not open it.
+                    t._suppressClick = wasPointerUp;
+                    const rect = t._float.getBoundingClientRect();
+                    webui.storage.setItem(t.getStorageKey(), JSON.stringify({
+                        right: Math.round(window.innerWidth - rect.right),
+                        bottom: Math.round(window.innerHeight - rect.bottom),
+                    }));
+                },
+            });
+            t._bubble.addEventListener('pointerup', () => t.classList.remove('dragging'));
             t._bubble.addEventListener('click', ev => {
-                // A drag ends with a click on the bubble, which should not open it.
                 if (t._suppressClick) {
                     t._suppressClick = false;
                     ev.preventDefault();
@@ -66,23 +134,44 @@
                 }
                 t.open();
             });
+            trackDrag(t._header, {
+                getRect: () => t._panel.getBoundingClientRect(),
+                skip: ev => !!ev.target.closest?.('button'),
+                onMove: (left, top) => {
+                    t.classList.add('moving');
+                    t.setPanelPlace(left, top);
+                },
+                onEnd: () => {
+                    t.classList.remove('moving');
+                    t.savePanel();
+                },
+            });
+            // The resize handle belongs to the panel itself, so a press on the panel rather than its content is a resize.
+            t._panel.addEventListener('pointerdown', ev => {
+                if (ev.target !== t._panel) return;
+                const rect = t._panel.getBoundingClientRect();
+                t._resizeFrom = { width: rect.width, height: rect.height };
+                window.addEventListener('pointerup', t._onResizeEnd, { once: true });
+            });
+            t._onResizeEnd = () => {
+                const from = t._resizeFrom;
+                t._resizeFrom = null;
+                if (!from) return;
+                const rect = t._panel.getBoundingClientRect();
+                if (Math.round(rect.width) !== Math.round(from.width) || Math.round(rect.height) !== Math.round(from.height)) {
+                    t._panel.style.width = `${Math.round(rect.width)}px`;
+                    t._panel.style.height = `${Math.round(rect.height)}px`;
+                    t.keepPanelInView();
+                    t.savePanel();
+                }
+            };
+            t._panel.addEventListener('keydown', ev => {
+                if (ev.key === 'Escape') {
+                    ev.stopPropagation();
+                    t.close();
+                }
+            });
             t._close.addEventListener('click', () => t.close());
-            t._dialog.addEventListener('cancel', ev => {
-                ev.preventDefault();
-                t.close();
-            });
-            t._dialog.addEventListener('click', ev => {
-                // Backdrop clicks target the dialog itself. Keyboard activated buttons report 0,0, which is not a backdrop click.
-                if (ev.target !== t._dialog || (ev.clientX === 0 && ev.clientY === 0)) return;
-                const rect = t._dialog.getBoundingClientRect();
-                const inside = rect.top <= ev.clientY && ev.clientY <= rect.bottom && rect.left <= ev.clientX && ev.clientX <= rect.right;
-                if (!inside) t.close();
-            });
-            t._dialog.addEventListener('close', () => {
-                t.classList.remove('open');
-                t._closing = false;
-                t._bubble.focus({ preventScroll: true });
-            });
             t._slot.addEventListener('slotchange', () => t.checkContent());
         },
         attr: ['label', 'heading', 'icon', 'storage-key', 'right', 'bottom'],
@@ -115,13 +204,7 @@
         connected() {
             const t = this;
             window.addEventListener('resize', t._onResize);
-            // The top layer ignores transformed ancestors, which would otherwise position the bubble
-            // relative to them instead of the window.
-            try {
-                if (t._float.showPopover && !t._float.matches(':popover-open')) t._float.showPopover();
-            } catch (_) {
-                // Without popover support the bubble is fixed to the window, which is right in most pages.
-            }
+            showOnTop(t._float);
             t.restorePosition();
             t.checkContent();
             // The app's footer can render after this, so look for it again shortly.
@@ -134,10 +217,17 @@
             (t._footerTimers || []).forEach(clearTimeout);
             t._footerObserver.disconnect();
             t._footer = null;
-            if (t._dialog.open) t._dialog.close();
+            hideFromTop(t._panel);
+            t.classList.remove('open');
         },
         getStorageKey() {
             return this.getAttribute('storage-key') || defaultStorageKey;
+        },
+        getPanelStorageKey() {
+            return `${this.getStorageKey()}-panel`;
+        },
+        isOpen() {
+            return this._panel.classList.contains('shown');
         },
         /** Hides the bubble when there is no help to show. */
         checkContent() {
@@ -159,12 +249,12 @@
         },
         restorePosition() {
             const t = this;
-            const saved = readPosition(t.getStorageKey());
+            const saved = readSaved(t.getStorageKey(), ['right', 'bottom']);
             if (!saved) return;
             t.setPosition(saved.right, saved.bottom);
             requestAnimationFrame(() => t.keepInView());
         },
-        /** Positions by distance from the right and bottom, so the bubble keeps its corner as the window resizes. */
+        /** Positions the bubble by distance from the right and bottom, so it keeps its corner as the window resizes. */
         setPosition(right, bottom) {
             const t = this;
             t._float.style.right = `${Math.round(right)}px`;
@@ -176,84 +266,108 @@
             if (!t._float.classList.contains('placed')) return;
             const rect = t._float.getBoundingClientRect();
             if (!rect.width) return;
-            const right = Math.min(Math.max(0, window.innerWidth - rect.right), window.innerWidth - rect.width);
-            const bottom = Math.min(Math.max(0, window.innerHeight - rect.bottom), window.innerHeight - rect.height);
+            const right = clamp(window.innerWidth - rect.right, 0, Math.max(0, window.innerWidth - rect.width));
+            const bottom = clamp(window.innerHeight - rect.bottom, 0, Math.max(0, window.innerHeight - rect.height));
             if (Math.round(right) !== Math.round(window.innerWidth - rect.right) || Math.round(bottom) !== Math.round(window.innerHeight - rect.bottom)) {
-                t.setPosition(Math.max(0, right), Math.max(0, bottom));
+                t.setPosition(right, bottom);
             }
         },
+        /** Forgets where the bubble and panel were moved, and the panel's size. */
         resetPosition() {
             const t = this;
             webui.storage.removeItem(t.getStorageKey());
+            webui.storage.removeItem(t.getPanelStorageKey());
             ['right', 'bottom'].forEach(side => t._float.style.removeProperty(side));
+            ['left', 'top', 'width', 'height'].forEach(prop => t._panel.style.removeProperty(prop));
             t._float.classList.remove('placed');
             t.placeAboveFooter();
+            if (t.isOpen()) t.placePanel();
         },
-        startDrag(ev) {
+        setPanelPlace(left, top) {
             const t = this;
-            if (ev.button !== 0) return;
-            const rect = t._float.getBoundingClientRect();
-            t._drag = { x: ev.clientX, y: ev.clientY, left: rect.left, top: rect.top, width: rect.width, height: rect.height, moved: false, id: ev.pointerId };
-            t._bubble.setPointerCapture?.(ev.pointerId);
+            t._panel.style.left = `${Math.round(left)}px`;
+            t._panel.style.top = `${Math.round(top)}px`;
         },
-        moveDrag(ev) {
+        /** Opens the panel where it was left, or else with its corner at the bubble's corner. */
+        placePanel() {
             const t = this;
-            const drag = t._drag;
-            if (!drag || drag.id !== ev.pointerId) return;
-            const dx = ev.clientX - drag.x;
-            const dy = ev.clientY - drag.y;
-            if (!drag.moved && Math.hypot(dx, dy) < dragThreshold) return;
-            drag.moved = true;
-            t.classList.add('dragging');
-            const left = Math.min(Math.max(0, drag.left + dx), window.innerWidth - drag.width);
-            const top = Math.min(Math.max(0, drag.top + dy), window.innerHeight - drag.height);
-            t.setPosition(window.innerWidth - left - drag.width, window.innerHeight - top - drag.height);
+            const saved = readSaved(t.getPanelStorageKey(), ['left', 'top']);
+            if (saved && Number.isFinite(saved.width) && Number.isFinite(saved.height)) {
+                t._panel.style.width = `${Math.max(minPanelWidth, saved.width)}px`;
+                t._panel.style.height = `${Math.max(minPanelHeight, saved.height)}px`;
+            }
+            const rect = t._panel.getBoundingClientRect();
+            if (saved) {
+                t.setPanelPlace(saved.left, saved.top);
+            } else {
+                const bubble = t._float.getBoundingClientRect();
+                t.setPanelPlace(bubble.right - rect.width, bubble.bottom - rect.height);
+            }
+            t.keepPanelInView();
         },
-        endDrag(ev) {
+        /** Keeps the panel inside the window, shrinking it when the window is smaller than the panel. */
+        keepPanelInView() {
             const t = this;
-            const drag = t._drag;
-            if (!drag || drag.id !== ev.pointerId) return;
-            t._drag = null;
-            t._bubble.releasePointerCapture?.(ev.pointerId);
-            t.classList.remove('dragging');
-            if (!drag.moved) return;
-            t._suppressClick = ev.type === 'pointerup';
-            const rect = t._float.getBoundingClientRect();
-            webui.storage.setItem(t.getStorageKey(), JSON.stringify({
-                right: Math.round(window.innerWidth - rect.right),
-                bottom: Math.round(window.innerHeight - rect.bottom),
-            }));
+            if (!t.isOpen()) return;
+            let rect = t._panel.getBoundingClientRect();
+            if (!rect.width) return;
+            if (rect.width > window.innerWidth) t._panel.style.width = `${Math.max(minPanelWidth, window.innerWidth)}px`;
+            if (rect.height > window.innerHeight) t._panel.style.height = `${Math.max(minPanelHeight, window.innerHeight)}px`;
+            rect = t._panel.getBoundingClientRect();
+            t.setPanelPlace(
+                clamp(rect.left, 0, Math.max(0, window.innerWidth - rect.width)),
+                clamp(rect.top, 0, Math.max(0, window.innerHeight - rect.height)));
         },
-        /** Grows the dialog out of the bubble, or shrinks it back into it. */
+        savePanel() {
+            const t = this;
+            const rect = t._panel.getBoundingClientRect();
+            const value = { left: Math.round(rect.left), top: Math.round(rect.top) };
+            // Only a size the user chose is kept, so content can still decide the size until then.
+            if (t._panel.style.width && t._panel.style.height) {
+                value.width = Math.round(rect.width);
+                value.height = Math.round(rect.height);
+            }
+            webui.storage.setItem(t.getPanelStorageKey(), JSON.stringify(value));
+        },
+        /** Grows the panel out of the bubble, or shrinks it back into it. */
         animateFromBubble(reverse) {
             const t = this;
-            if (prefersReducedMotion() || typeof t._dialog.animate !== 'function') return Promise.resolve();
+            if (prefersReducedMotion() || typeof t._panel.animate !== 'function') return Promise.resolve();
             const bubble = t._bubble.getBoundingClientRect();
-            const dialog = t._dialog.getBoundingClientRect();
-            if (!dialog.width || !dialog.height) return Promise.resolve();
-            const dx = (bubble.left + bubble.width / 2) - (dialog.left + dialog.width / 2);
-            const dy = (bubble.top + bubble.height / 2) - (dialog.top + dialog.height / 2);
-            const scale = Math.max(0.05, Math.min(bubble.width / dialog.width, bubble.height / dialog.height));
+            const panel = t._panel.getBoundingClientRect();
+            if (!panel.width || !panel.height) return Promise.resolve();
+            const dx = (bubble.left + bubble.width / 2) - (panel.left + panel.width / 2);
+            const dy = (bubble.top + bubble.height / 2) - (panel.top + panel.height / 2);
+            const scale = Math.max(0.05, Math.min(bubble.width / panel.width, bubble.height / panel.height));
             const small = { transform: `translate(${dx}px, ${dy}px) scale(${scale})`, opacity: 0 };
             const full = { transform: 'translate(0, 0) scale(1)', opacity: 1 };
-            const animation = t._dialog.animate(reverse ? [full, small] : [small, full], { duration: animationMs, easing: 'ease-out' });
+            const animation = t._panel.animate(reverse ? [full, small] : [small, full], { duration: animationMs, easing: 'ease-out' });
             return animation.finished.catch(() => { });
         },
         open() {
             const t = this;
-            if (t._dialog.open) return;
+            if (t.isOpen()) return;
             t._closing = false;
-            t._dialog.showModal();
+            showOnTop(t._panel);
+            t.placePanel();
             t.classList.add('open');
             t._close.focus({ preventScroll: true });
             t.animateFromBubble(false);
         },
         async close() {
             const t = this;
-            if (!t._dialog.open || t._closing) return;
+            if (!t.isOpen() || t._closing) return;
             t._closing = true;
+            // Only take focus back when it was in the panel, so closing never pulls focus from the page.
+            const hadFocus = t.shadowRoot?.activeElement && t._panel.contains(t.shadowRoot.activeElement);
             await t.animateFromBubble(true);
-            if (t._dialog.open) t._dialog.close();
+            hideFromTop(t._panel);
+            t.classList.remove('open');
+            t._closing = false;
+            if (hadFocus) t._bubble.focus({ preventScroll: true });
+        },
+        toggle() {
+            return this.isOpen() ? this.close() : this.open();
         },
         shadowTemplate: `
 <div class="float" popover="manual">
@@ -262,31 +376,34 @@
 <span class="label">Help</span>
 </button>
 </div>
-<dialog part="dialog" aria-label="Help">
-<header>
-<h2>Help</h2>
+<section class="panel" part="panel" popover="manual" role="dialog" aria-modal="false" aria-labelledby="page-help-heading">
+<header title="Drag to move">
+<h2 id="page-help-heading">Help</h2>
 <button type="button" class="close" aria-label="Close help"><webui-icon icon="xmark"></webui-icon></button>
 </header>
-<section class="body"><slot></slot></section>
-</dialog>
+<div class="body"><slot></slot></div>
+</section>
 <style type="text/css">
 :host {
 display: contents;
 --theme-color: var(--color-title, #1878af);
 --theme-color-offset: var(--color-title-offset, white);
 }
-.float {
+.float,
+.panel {
 position: fixed;
-z-index: 90;
 inset: auto;
+margin: 0;
+color: inherit;
+}
+.float {
+z-index: 90;
 right: var(--page-help-right, ${edgeGap}px);
 bottom: calc(var(--page-help-footer, 0px) + var(--page-help-bottom, ${edgeGap}px));
-margin: 0;
 padding: 0;
 border: none;
 overflow: visible;
 background: none;
-color: inherit;
 }
 .float:not(.has-content) {
 display: none;
@@ -325,25 +442,28 @@ transform: scale(1.05);
 opacity: 0;
 pointer-events: none;
 }
-dialog {
+.panel {
+z-index: 91;
+display: none;
+flex-direction: column;
+left: 0;
+top: 0;
 padding: 0;
 border: none;
 border-radius: var(--corners, 6px);
-width: var(--page-help-width, min(1000px, 94vw));
-max-width: 94vw;
-max-height: 85vh;
-flex-direction: column;
+width: var(--page-help-width, min(600px, calc(100vw - ${edgeGap * 2}px)));
+height: auto;
+max-height: calc(100vh - ${edgeGap * 2}px);
+min-width: ${minPanelWidth}px;
+min-height: ${minPanelHeight}px;
 background-color: var(--color-background, #fff);
 color: var(--color-background-offset, #000);
 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 overflow: hidden;
+resize: both;
 }
-dialog[open] {
+.panel.shown {
 display: flex;
-}
-dialog::backdrop {
-background-color: rgb(0 0 0 / 45%);
-backdrop-filter: var(--backdrop-blur, blur(4px));
 }
 header {
 display: flex;
@@ -352,6 +472,12 @@ gap: var(--padding, 0.5em);
 padding: var(--padding, 0.5em) calc(2 * var(--padding, 0.5em));
 background-color: var(--theme-color);
 color: var(--theme-color-offset);
+cursor: grab;
+touch-action: none;
+user-select: none;
+}
+:host(.moving) header {
+cursor: grabbing;
 }
 h2 {
 flex: 1;
@@ -369,6 +495,7 @@ border-radius: var(--corners, 4px);
 background-color: rgb(0 0 0 / 20%);
 }
 .body {
+flex: 1;
 overflow: auto;
 padding: calc(2 * var(--padding, 0.5em));
 min-height: 0;

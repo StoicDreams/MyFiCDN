@@ -11,17 +11,18 @@ const box = locator => locator.evaluate(el => {
     const r = el.getBoundingClientRect();
     return { left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width, height: r.height };
 });
-const dialog = help => help.locator('dialog');
-const isOpen = help => help.evaluate(el => el.shadowRoot.querySelector('dialog').open);
+const panel = help => help.locator('.panel');
+const isOpen = help => help.evaluate(el => el.isOpen());
 // The element with focus, looking through shadow roots.
 const focused = page => page.evaluate(() => {
     let active = document.activeElement;
     while (active && active.shadowRoot && active.shadowRoot.activeElement) active = active.shadowRoot.activeElement;
     return active ? `${active.tagName.toLowerCase()}.${active.className}` : null;
 });
-const drag = async (page, help, dx, dy) => {
-    const b = await box(help.locator('button.bubble'));
-    const x = b.left + b.width / 2, y = b.top + b.height / 2;
+// Drags from the middle of an element, or from a point given relative to its top left.
+const drag = async (page, help, dx, dy, target = help.locator('button.bubble'), at) => {
+    const b = await box(target);
+    const x = b.left + (at ? at.x : b.width / 2), y = b.top + (at ? at.y : b.height / 2);
     await page.mouse.move(x, y);
     await page.mouse.down();
     await page.mouse.move(x + dx / 2, y + dy / 2, { steps: 3 });
@@ -56,15 +57,15 @@ test('label, heading, and icon can be set', async ({ page }) => {
     await expect(help.locator('button.bubble')).toHaveText('Guide');
     await expect(help.locator('button.bubble webui-icon')).toHaveAttribute('icon', 'messages-question');
     await help.locator('button.bubble').click();
-    await expect(help.locator('dialog h2')).toHaveText('Guide');
+    await expect(help.locator('.panel h2')).toHaveText('Guide');
     await help.evaluate(el => el.setAttribute('heading', 'All About Guides'));
-    await expect(help.locator('dialog h2')).toHaveText('All About Guides');
+    await expect(help.locator('.panel h2')).toHaveText('All About Guides');
 });
-test('clicking the bubble opens the content in a dialog', async ({ page }) => {
+test('clicking the bubble opens the content in a panel', async ({ page }) => {
     const help = await ready(page);
     await help.locator('button.bubble').click();
-    await expect(dialog(help)).toBeVisible();
-    await expect(help.locator('dialog h2')).toHaveText('Page Help');
+    await expect(panel(help)).toBeVisible();
+    await expect(help.locator('.panel h2')).toHaveText('Page Help');
     await expect(help.locator('p.content')).toBeVisible();
     await expect(help.locator('button.bubble')).toHaveCSS('opacity', '0');
     // Content stays usable, since it is shown in place rather than copied.
@@ -72,22 +73,38 @@ test('clicking the bubble opens the content in a dialog', async ({ page }) => {
     await help.locator('button.inside').click();
     expect(await page.evaluate(() => window.__clicked)).toBe(1);
 });
-test('the close button, Escape, and a click outside close it, and focus returns to the bubble', async ({ page }) => {
+test('the page stays usable while the panel is open', async ({ page }) => {
+    const help = await ready(page, `<button id="page-button" style="position:fixed;left:20px;top:20px">Page</button><input id="page-input" style="position:fixed;left:20px;top:60px" />${HELP}`);
+    await page.evaluate(() => { window.__pageClicks = 0; document.getElementById('page-button').addEventListener('click', () => window.__pageClicks++); });
+    await help.locator('button.bubble').click();
+    await page.locator('#page-button').click({ timeout: 2000 });
+    expect(await page.evaluate(() => window.__pageClicks)).toBe(1);
+    await page.locator('#page-input').fill('typing while reading');
+    await expect(page.locator('#page-input')).toHaveValue('typing while reading');
+    // Neither clicking the page nor Escape from the page closes it.
+    await page.keyboard.press('Escape');
+    expect(await isOpen(help)).toBe(true);
+    await expect(panel(help)).toBeVisible();
+});
+test('the close button and Escape in the panel close it, and focus returns to the bubble', async ({ page }) => {
     const help = await ready(page);
     await help.locator('button.bubble').click();
-    await help.locator('dialog button.close').click();
+    await help.locator('.panel button.close').click();
     await expect.poll(() => isOpen(help)).toBe(false);
+    await expect(panel(help)).toBeHidden();
     await expect.poll(() => focused(page)).toBe('button.bubble');
     await page.keyboard.press('Enter');
     await expect.poll(() => isOpen(help)).toBe(true);
     await page.keyboard.press('Escape');
     await expect.poll(() => isOpen(help)).toBe(false);
-    await help.locator('button.bubble').click();
-    await page.mouse.click(5, 5);
+});
+test('closing from code leaves focus on the page', async ({ page }) => {
+    const help = await ready(page, `<input id="page-input" style="position:fixed;left:20px;top:60px" />${HELP}`);
+    await help.evaluate(el => el.open());
+    await page.locator('#page-input').focus();
+    await help.evaluate(el => el.close());
     await expect.poll(() => isOpen(help)).toBe(false);
-    await help.locator('button.bubble').click();
-    await help.locator('p.content').click();
-    expect(await isOpen(help)).toBe(true);
+    expect(await focused(page)).toBe('input.');
 });
 test('it grows out of the bubble and shrinks back into it', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' });
@@ -96,18 +113,90 @@ test('it grows out of the bubble and shrinks back into it', async ({ page }) => 
         window.__animations = [];
         const original = HTMLElement.prototype.animate;
         HTMLElement.prototype.animate = function (frames, options) {
-            if (this.tagName === 'DIALOG') window.__animations.push(frames.map(f => f.transform));
+            if (this.classList.contains('panel')) window.__animations.push(frames.map(f => f.transform));
             return original.call(this, frames, options);
         };
     });
     await help.locator('button.bubble').click();
     await expect.poll(() => page.evaluate(() => window.__animations.length)).toBe(1);
-    await help.locator('dialog button.close').click();
+    await help.locator('.panel button.close').click();
     await expect.poll(() => isOpen(help)).toBe(false);
     const [opening, closing] = await page.evaluate(() => window.__animations);
     expect(opening[0]).toMatch(/scale\(0\.\d+\)/);
     expect(opening[1]).toContain('scale(1)');
     expect(closing[1]).toMatch(/scale\(0\.\d+\)/);
+});
+test('the panel first opens at the bubble\'s corner', async ({ page }) => {
+    const help = await ready(page);
+    const bubble = await box(help.locator('.float'));
+    await help.locator('button.bubble').click();
+    const p = await box(panel(help));
+    expect(Math.abs(p.right - bubble.right)).toBeLessThanOrEqual(1);
+    expect(Math.abs(p.bottom - bubble.bottom)).toBeLessThanOrEqual(1);
+});
+test('the panel can be dragged by its header, and opens where it was left', async ({ page }) => {
+    const help = await ready(page);
+    await help.locator('button.bubble').click();
+    const before = await box(panel(help));
+    await drag(page, help, -200, -150, help.locator('.panel header'), { x: 20, y: 10 });
+    const after = await box(panel(help));
+    expect(Math.round(after.left - before.left)).toBe(-200);
+    expect(Math.round(after.top - before.top)).toBe(-150);
+    expect(await isOpen(help)).toBe(true);
+    const saved = JSON.parse(await page.evaluate(() => webui.storage.getItem('webui-page-help-position-panel')));
+    expect(saved).toEqual({ left: Math.round(after.left), top: Math.round(after.top) });
+    await help.locator('.panel button.close').click();
+    await expect.poll(() => isOpen(help)).toBe(false);
+    // The help on another page opens in the same place.
+    const next = await ready(page, '<webui-page-help><p>Next page</p></webui-page-help>');
+    await next.locator('button.bubble').click();
+    const reopened = await box(panel(next));
+    expect(Math.round(reopened.left)).toBe(Math.round(after.left));
+    expect(Math.round(reopened.top)).toBe(Math.round(after.top));
+});
+test('pressing the close button does not drag the panel', async ({ page }) => {
+    const help = await ready(page);
+    await help.locator('button.bubble').click();
+    const close = await box(help.locator('.panel button.close'));
+    await page.mouse.move(close.left + close.width / 2, close.top + close.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(close.left - 100, close.top - 100, { steps: 3 });
+    await page.mouse.up();
+    expect(await page.evaluate(() => webui.storage.getItem('webui-page-help-position-panel'))).toBe('');
+});
+test('the panel cannot be dragged out of the window, and stays in view when the window shrinks', async ({ page }) => {
+    const help = await ready(page);
+    await help.locator('button.bubble').click();
+    await drag(page, help, -3000, -3000, help.locator('.panel header'), { x: 20, y: 10 });
+    let p = await box(panel(help));
+    expect(Math.abs(Math.round(p.left))).toBe(0);
+    expect(Math.abs(Math.round(p.top))).toBe(0);
+    await drag(page, help, 3000, 3000, help.locator('.panel header'), { x: 20, y: 10 });
+    await page.setViewportSize({ width: 500, height: 350 });
+    await expect.poll(async () => (await box(panel(help))).right).toBeLessThanOrEqual(500);
+    p = await box(panel(help));
+    expect(p.bottom).toBeLessThanOrEqual(350);
+    expect(p.left).toBeGreaterThanOrEqual(0);
+    expect(p.top).toBeGreaterThanOrEqual(0);
+});
+test('the panel can be resized from its corner, and keeps that size', async ({ page }) => {
+    const help = await ready(page);
+    await help.locator('button.bubble').click();
+    await drag(page, help, -300, -300, help.locator('.panel header'), { x: 20, y: 10 });
+    const before = await box(panel(help));
+    await drag(page, help, 120, 90, panel(help), { x: before.width - 3, y: before.height - 3 });
+    const after = await box(panel(help));
+    expect(Math.round(after.width - before.width)).toBeGreaterThan(100);
+    expect(Math.round(after.height - before.height)).toBeGreaterThan(70);
+    const saved = JSON.parse(await page.evaluate(() => webui.storage.getItem('webui-page-help-position-panel')));
+    expect(saved.width).toBe(Math.round(after.width));
+    expect(saved.height).toBe(Math.round(after.height));
+    await help.locator('.panel button.close').click();
+    await expect.poll(() => isOpen(help)).toBe(false);
+    await help.locator('button.bubble').click();
+    const reopened = await box(panel(help));
+    expect(Math.round(reopened.width)).toBe(Math.round(after.width));
+    expect(Math.round(reopened.height)).toBe(Math.round(after.height));
 });
 test('dragging moves the bubble without opening it, and the position is remembered', async ({ page }) => {
     const help = await ready(page);
@@ -144,15 +233,23 @@ test('it cannot be dragged out of the window, and stays in view when the window 
     expect(b.bottom).toBeLessThanOrEqual(400);
     expect(b.left).toBeGreaterThanOrEqual(0);
 });
-test('a separate storage key keeps a separate position, and resetPosition returns it to the corner', async ({ page }) => {
+test('a separate storage key keeps a separate position, and resetPosition returns everything to the corner', async ({ page }) => {
     const help = await ready(page, '<webui-page-help storage-key="demo-help"><p>x</p></webui-page-help>');
     const start = await box(help.locator('.float'));
     await drag(page, help, -300, -200);
     expect(await page.evaluate(() => webui.storage.getItem('demo-help'))).toContain('right');
     expect(await page.evaluate(() => webui.storage.getItem('webui-page-help-position'))).toBe('');
+    await help.locator('button.bubble').click();
+    await drag(page, help, -100, -100, help.locator('.panel header'), { x: 20, y: 10 });
+    expect(await page.evaluate(() => webui.storage.getItem('demo-help-panel'))).toContain('left');
     await help.evaluate(el => el.resetPosition());
     await expect.poll(async () => Math.round((await box(help.locator('.float'))).left)).toBe(Math.round(start.left));
     expect(await page.evaluate(() => webui.storage.getItem('demo-help'))).toBe('');
+    expect(await page.evaluate(() => webui.storage.getItem('demo-help-panel'))).toBe('');
+    // The open panel moves back to the bubble's corner too.
+    const bubble = await box(help.locator('.float'));
+    const p = await box(panel(help));
+    expect(Math.abs(p.right - bubble.right)).toBeLessThanOrEqual(1);
 });
 test('a damaged saved position is ignored', async ({ page }) => {
     await page.evaluate(() => webui.storage.setItem('webui-page-help-position', '{not json'));
@@ -166,19 +263,21 @@ test('a transformed ancestor does not move the bubble off the window corner', as
     expect(1000 - b.right).toBeLessThan(40);
     expect(700 - b.bottom).toBeLessThan(40);
 });
-test('open and close can be called directly', async ({ page }) => {
+test('open, close, and toggle can be called directly', async ({ page }) => {
     const help = await ready(page);
     await help.evaluate(el => el.open());
     await expect.poll(() => isOpen(help)).toBe(true);
     await help.evaluate(el => el.close());
     await expect.poll(() => isOpen(help)).toBe(false);
+    await help.evaluate(el => el.toggle());
+    await expect.poll(() => isOpen(help)).toBe(true);
+    await help.evaluate(el => el.toggle());
+    await expect.poll(() => isOpen(help)).toBe(false);
 });
-test('leaving the page closes an open dialog', async ({ page }) => {
+test('leaving the page removes an open panel', async ({ page }) => {
     const help = await ready(page);
     await help.locator('button.bubble').click();
     await page.evaluate(() => document.getElementById('test-root').innerHTML = '');
     expect(await help.count()).toBe(0);
-    // A modal left open would make the rest of the page inert.
-    await page.evaluate(() => { const b = document.createElement('button'); b.id = 'after'; b.textContent = 'After'; document.body.appendChild(b); });
-    await page.locator('#after').click({ timeout: 2000 });
+    expect(await page.evaluate(() => document.querySelectorAll(':popover-open').length)).toBe(0);
 });
