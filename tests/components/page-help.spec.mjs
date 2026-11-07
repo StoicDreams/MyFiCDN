@@ -154,6 +154,35 @@ test('the panel can be dragged by its header, and opens where it was left', asyn
     expect(Math.round(reopened.left)).toBe(Math.round(after.left));
     expect(Math.round(reopened.top)).toBe(Math.round(after.top));
 });
+test('dragging the panel or bubble across the page does not select text', async ({ page }) => {
+    const words = Array.from({ length: 200 }, (_, i) => `word${i}`).join(' ');
+    const help = await ready(page, `<p id="page-text" style="position:fixed;left:0;top:0;width:900px">${words}</p>${HELP}`);
+    await page.evaluate(() => { document.documentElement.style.userSelect = 'text'; });
+    const selectionDuring = async (target, at) => {
+        const b = await box(target);
+        await page.mouse.move(b.left + at.x, b.top + at.y);
+        await page.mouse.down();
+        await page.mouse.move(60, 40, { steps: 6 });
+        await page.mouse.move(20, 20, { steps: 6 });
+        const during = await page.evaluate(() => ({
+            selected: window.getSelection().toString(),
+            blocked: getComputedStyle(document.documentElement).userSelect,
+            selectStartAllowed: document.dispatchEvent(new Event('selectstart', { cancelable: true })),
+        }));
+        await page.mouse.up();
+        return during;
+    };
+    await help.locator('button.bubble').click();
+    const panelDrag = await selectionDuring(help.locator('.panel header'), { x: 20, y: 10 });
+    expect(panelDrag).toEqual({ selected: '', blocked: 'none', selectStartAllowed: false });
+    await help.locator('.panel button.close').click();
+    await expect.poll(() => isOpen(help)).toBe(false);
+    const bubbleDrag = await selectionDuring(help.locator('button.bubble'), { x: 10, y: 10 });
+    expect(bubbleDrag).toEqual({ selected: '', blocked: 'none', selectStartAllowed: false });
+    // The page can select text again afterwards, with its own setting put back.
+    expect(await page.evaluate(() => document.documentElement.style.userSelect)).toBe('text');
+    expect(await page.evaluate(() => document.dispatchEvent(new Event('selectstart', { cancelable: true })))).toBe(true);
+});
 test('pressing the close button does not drag the panel', async ({ page }) => {
     const help = await ready(page);
     await help.locator('button.bubble').click();

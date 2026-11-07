@@ -36,6 +36,24 @@
         return null;
     }
     const clamp = (value, min, max) => Math.max(min, Math.min(value, max));
+    const preventSelection = ev => ev.preventDefault();
+    /**
+     * Stops a drag from selecting text on the page as the pointer passes over it. CSS on the handle alone is not
+     * enough, since WebKit only honors the prefixed property and the pointer leaves the handle while dragging.
+     */
+    function blockSelection() {
+        const root = document.documentElement.style;
+        const previous = [root.userSelect, root.webkitUserSelect];
+        root.userSelect = 'none';
+        root.webkitUserSelect = 'none';
+        document.addEventListener('selectstart', preventSelection, true);
+        window.getSelection?.()?.removeAllRanges();
+        return () => {
+            root.userSelect = previous[0];
+            root.webkitUserSelect = previous[1];
+            document.removeEventListener('selectstart', preventSelection, true);
+        };
+    }
     /** Shows an element in the top layer, which ignores transformed ancestors that would otherwise move it. */
     function showOnTop(el) {
         try {
@@ -62,7 +80,7 @@
         handle.addEventListener('pointerdown', ev => {
             if (ev.button !== 0 || skip?.(ev)) return;
             const rect = getRect();
-            drag = { x: ev.clientX, y: ev.clientY, left: rect.left, top: rect.top, width: rect.width, height: rect.height, moved: false, id: ev.pointerId };
+            drag = { x: ev.clientX, y: ev.clientY, left: rect.left, top: rect.top, width: rect.width, height: rect.height, moved: false, id: ev.pointerId, unblock: blockSelection() };
             handle.setPointerCapture?.(ev.pointerId);
         });
         handle.addEventListener('pointermove', ev => {
@@ -79,6 +97,7 @@
             if (!drag || drag.id !== ev.pointerId) return;
             const ended = drag;
             drag = null;
+            ended.unblock();
             handle.releasePointerCapture?.(ev.pointerId);
             if (ended.moved) onEnd(ev.type === 'pointerup');
         };
@@ -150,13 +169,17 @@
             t._panel.addEventListener('pointerdown', ev => {
                 if (ev.target !== t._panel) return;
                 const rect = t._panel.getBoundingClientRect();
-                t._resizeFrom = { width: rect.width, height: rect.height };
+                t._resizeFrom = { width: rect.width, height: rect.height, unblock: blockSelection() };
                 window.addEventListener('pointerup', t._onResizeEnd, { once: true });
+                window.addEventListener('pointercancel', t._onResizeEnd, { once: true });
             });
             t._onResizeEnd = () => {
                 const from = t._resizeFrom;
                 t._resizeFrom = null;
                 if (!from) return;
+                from.unblock();
+                window.removeEventListener('pointerup', t._onResizeEnd);
+                window.removeEventListener('pointercancel', t._onResizeEnd);
                 const rect = t._panel.getBoundingClientRect();
                 if (Math.round(rect.width) !== Math.round(from.width) || Math.round(rect.height) !== Math.round(from.height)) {
                     t._panel.style.width = `${Math.round(rect.width)}px`;
@@ -424,6 +447,7 @@ background-color: var(--theme-color);
 color: var(--theme-color-offset);
 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
 touch-action: none;
+-webkit-user-select: none;
 user-select: none;
 transition: opacity 150ms, transform 150ms;
 }
@@ -474,6 +498,7 @@ background-color: var(--theme-color);
 color: var(--theme-color-offset);
 cursor: grab;
 touch-action: none;
+-webkit-user-select: none;
 user-select: none;
 }
 :host(.moving) header {
