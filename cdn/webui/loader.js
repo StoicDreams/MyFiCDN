@@ -1005,8 +1005,8 @@ const webui = (() => {
          * @param {number} count - The total length of the output string.
          * @returns {string}
          */
-        displayLeadingZero(number, count = 1) {
-            let pad = 1 + count - `${number}`.length;
+        displayLeadingZero(number, count = 2) {
+            let pad = count - `${number}`.length;
             if (pad <= 0) return `${number}`;
             return `${"0".repeat(pad)}${number}`;
         }
@@ -2701,11 +2701,16 @@ const webui = (() => {
                     webui.setData(key, value);
                 }
             } else {
+                // A native button's value is empty unless set, which must not hide its data-value.
+                const elValue =
+                    el.localName === "button" && el.value === ""
+                        ? undefined
+                        : el.value;
                 let value = webui.getDefined(
                     typeof el.getValue === "function"
                         ? el.getValue()
                         : undefined,
-                    el.value,
+                    elValue,
                     el.dataset.value,
                 );
                 if (oldData !== value) {

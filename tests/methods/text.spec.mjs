@@ -30,8 +30,10 @@ test('webui.displayMinutes formats durations', async ({ page }) => {
     expect(await call(page, 'displayMinutes', 1500)).toBe('1 day 1 hr, 0 min');
 });
 test('webui.displayLeadingZero pads to the documented total length', async ({ page }) => {
-    test.fail(true, 'Known bug: the docs say count is the total length, but it adds one extra digit (5, 2 gives 005)');
     expect(await call(page, 'displayLeadingZero', 5, 2)).toBe('05');
+    expect(await call(page, 'displayLeadingZero', 5, 3)).toBe('005');
+    expect(await call(page, 'displayLeadingZero', 123, 2)).toBe('123');
+    expect(await call(page, 'displayLeadingZero', 5)).toBe('05');
 });
 test('webui.formatBytes picks a readable unit', async ({ page }) => {
     expect(await call(page, 'formatBytes', 0)).toBe('0 Bytes');

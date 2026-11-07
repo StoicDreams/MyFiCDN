@@ -17,6 +17,8 @@
         preload: "icon dropdown input-range input-text input-message",
         onResize(_) {
             const t = this;
+            // A resize can arrive before setupComponent has built the grid.
+            if (!t._inputs) return;
             let cols = t.clientWidth > 1200 ? '2fr 1fr' : '1fr';
             if (t._inputs.getAttribute('columns') !== cols) {
                 t._inputs.setAttribute('columns', cols);

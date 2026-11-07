@@ -70,11 +70,16 @@
                 return;
             }
             t.innerHTML = `<webui-alert theme="info" show>Loading</webui-alert>`;
+            const src = t.src;
             try {
-                let doc = await webui.fetchWithCache(t.src, true);
+                let doc = await webui.fetchWithCache(src, true);
+                if (t._loadedSrc !== src) return;
                 if (typeof doc === 'string') {
                     doc = JSON.parse(doc);
                 }
+                // The preloaded components may still be loading, and render calls their methods.
+                await customElements.whenDefined('webui-dropdown');
+                if (t._loadedSrc !== src) return;
                 t.doc = doc;
                 t.baseUrl = (doc.servers && doc.servers[0] && doc.servers[0].url) || '';
                 t.render();
@@ -85,6 +90,7 @@
         render() {
             const t = this;
             if (!t.doc || !t.doc.paths) return;
+            t.innerHTML = '';
             const serverOptions = [];
             const servers = t.doc.servers || [];
             for (let index = 0; index < servers.length; ++index) {
@@ -350,7 +356,6 @@
                     });
                 });
             });
-            t.innerHTML = '';
             t.appendChild(tabs);
         }
     });

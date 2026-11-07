@@ -60,7 +60,6 @@ test('a missing data-enabled target stops rechecking eventually', async ({ page 
     expect(await el.evaluate(c => { c._recheck = 20; c.updateElements(); return c._recheck; })).toBe(20);
 });
 test('the enabled attribute matches the value', async ({ page }) => {
-    test.fail(true, 'Known bug: setValue removes the enabled attribute when true and sets it when false');
     const root = await mount(page, '<webui-toggle-icon></webui-toggle-icon>');
     const el = root.locator('webui-toggle-icon');
     await el.click();

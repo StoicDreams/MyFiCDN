@@ -633,7 +633,7 @@ Resizing is debounced by 150ms. A resize just before `mount` can reach a compone
 
 ## Recording a bug without fixing it
 
-When you find a bug you aren't fixing yet, write the test for the correct behavior, then mark it as expected to fail. The first line of the test should explain the bug:
+When you find a bug you aren't fixing yet, write the test for the correct behavior, then mark it as expected to fail. The first line of the test should explain the bug. This example is a bug that has since been fixed:
 
 ```javascript:A known bug
 import { test, expect } from '../support/webui.mjs';

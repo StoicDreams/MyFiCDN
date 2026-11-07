@@ -65,7 +65,6 @@ test('nocopy hides the copy icon', async ({ page }) => {
     await expect(root.locator('webui-code label webui-icon')).toBeHidden();
 });
 test('nocopy without a label hides the label row', async ({ page }) => {
-    test.fail(true, 'Known bug: a bare nocopy attribute reads as an empty string, so applyLabelDisplay treats it as off');
     const root = await mount(page, '<webui-code nocopy>abc</webui-code>');
     await expect(root.locator('webui-code')).toHaveClass(/hide-label/, { timeout: 500 });
 });

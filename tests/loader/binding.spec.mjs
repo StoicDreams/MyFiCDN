@@ -45,7 +45,6 @@ test('data-trigger writes input values to data', async ({ page }) => {
     await expect.poll(() => page.evaluate(() => webui.getData('bind-h'))).toBe('hidden');
 });
 test('data-trigger works on clicked native buttons', async ({ page }) => {
-    test.fail(true, 'Known bug: a native button has an empty value, which wins over data-value. webui-button is not affected');
     const root = await mount(page, '<button data-trigger="bind-b" data-value="42">go</button>');
     await root.locator('button').click();
     await expect.poll(() => page.evaluate(() => webui.getData('bind-b'))).toBe('42');

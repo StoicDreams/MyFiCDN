@@ -7,8 +7,6 @@ const bellPath = readFileSync(new URL('../../cdn/icons/bell.webui', import.meta.
 
 const creator = async page => {
     await page.setViewportSize({ width: 1600, height: 1200 });
-    // Lets the resize finish first, to avoid the known bug tested below.
-    await page.waitForTimeout(250);
     const root = await mount(page, '<webui-icon-creator></webui-icon-creator>');
     const el = root.locator('webui-icon-creator');
     await expect(el.locator('a').first()).toBeVisible({ timeout: 10000 });
@@ -17,7 +15,6 @@ const creator = async page => {
 const iconFromList = (el, name) => el.locator('a').filter({ has: el.page().locator(`label:text-is("${name}")`) });
 
 test('a resize while it is still loading is harmless', async ({ page }) => {
-    test.fail(true, 'Known bug: onResize runs before setupComponent has created _inputs, throwing an uncaught error');
     await page.route('**/webui/dropdown.*', async route => {
         await new Promise(r => setTimeout(r, 500));
         await route.fallback();

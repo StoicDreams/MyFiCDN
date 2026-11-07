@@ -270,7 +270,8 @@
         },
         applyLabelDisplay() {
             const t = this;
-            if (t._label.innerHTML || !t.nocopy) {
+            const nocopy = t.hasAttribute('nocopy') && t.getAttribute('nocopy') !== 'undefined';
+            if (t._label.innerHTML || !nocopy) {
                 t.classList.remove('hide-label');
             } else {
                 t.classList.add('hide-label');
