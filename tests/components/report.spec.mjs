@@ -61,3 +61,22 @@ test('changing page requests that page', async ({ page }) => {
     await el.evaluate(c => c.setPage(3));
     await expect.poll(() => requests.at(-1).page).toBe(3);
 });
+test('choosing a page size requests the first page at that size', async ({ page }) => {
+    const { el, requests } = await report(page, '', { items: [{ Name: 'A' }], page: 1, total: 120 });
+    await expect(el.locator('td').first()).toHaveText('A');
+    await expect(el.locator('webui-pagination').first().locator('select')).toHaveValue('10');
+    await el.evaluate(c => c.setPage(3));
+    await expect.poll(() => requests.at(-1).page).toBe(3);
+    await el.locator('webui-pagination').first().locator('select').selectOption('50');
+    await expect.poll(() => requests.at(-1)).toMatchObject({ perPage: 50, page: 1 });
+});
+test('a filter input sends its starting value with the first request', async ({ page }) => {
+    const requests = [];
+    await page.route('**/report-api', route => {
+        requests.push(JSON.parse(route.request().postData()));
+        return route.fulfill({ contentType: 'application/json', body: JSON.stringify({ items: [{ Name: 'A' }], page: 1, total: 1 }) });
+    });
+    await mount(page, '<webui-input-range min="5" max="105" step="5" value="5" data-subscribe="report-start.recordCount:setValue" data-trigger="report-start.recordCount"></webui-input-range><webui-report api="http://localhost:3199/report-api" columns="Name" sort-column="Name" filters="report-start"></webui-report>');
+    await expect.poll(() => requests.length).toBeGreaterThan(0);
+    expect(requests[0]).toMatchObject({ recordCount: '5' });
+});

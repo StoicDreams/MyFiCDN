@@ -27,15 +27,15 @@ export const ICONS = [
     ['xmark', 'close cancel delete remove times', line(-50, -50, 50, 50), line(-50, 50, 50, -50)],
     ['check', 'confirm done yes ok tick', polyline([[-58, 4], [-20, 42], [58, -40]])],
     ['equals', 'equal same', line(-56, -22, 56, -22), line(-56, 22, 56, 22)],
-    ['exclamation', 'alert warning important attention', line(0, -66, 0, 24), dot(0, 58)],
-    ['question', 'help unknown faq', P(-40, -26).A(0, -26, 40, 180, 360).Q(40, -2, 14, 8).Q(0, 14, 0, 28).end(), dot(0, 60)],
-    ['info', 'information about details', line(0, -18, 0, 62), dot(0, -52)],
+    ['exclamation', 'alert warning important attention', line(0, -66, 0, 24), bi(dot(0, 58))],
+    ['question', 'help unknown faq', P(-40, -26).A(0, -26, 40, 180, 360).Q(40, -2, 14, 8).Q(0, 14, 0, 28).end(), bi(dot(0, 60))],
+    ['info', 'information about details', line(0, -18, 0, 62), bi(dot(0, -52))],
 
     // Arrows and chevrons. Turn them with the rotate and flip attributes for other directions.
     ['arrow', 'pointer direction right next forward', line(-62, 0, 60, 0), head(62, 0, 0, 44)],
     ['chevron', 'angle right next forward', polyline([[-22, -50], [28, 0], [-22, 50]])],
     ['caret', 'triangle direction up expand collapse', polygon([[0, -28], [56, 28], [-56, 28]], 10)],
-    ['caret-line', 'triangle direction first top', line(-56, -48, 56, -48), polygon([[0, -16], [56, 40], [-56, 40]], 10)],
+    ['caret-line', 'triangle direction first top', bi(line(-56, -48, 56, -48)), polygon([[0, -16], [56, 40], [-56, 40]], 10)],
     ['arrow-corner-from-square', 'external link open new window',
         polyline([[-8, -60], [-60, -60], [-60, 60], [60, 60], [60, 8]], 12), line(-6, 6, 62, -62), bi(polyline([[22, -62], [62, -62], [62, -22]]))],
     ['arrow-corner-into-square', 'internal minimize collapse',
@@ -44,8 +44,8 @@ export const ICONS = [
         polyline([[12, -62], [-62, -62], [-62, 62], [12, 62]], 12), line(-18, 0, 66, 0), bi(head(66, 0, 0, 34))],
     ['arrow-side-into-square', 'internal sign in log in enter',
         polyline([[12, -62], [-62, -62], [-62, 62], [12, 62]], 12), line(66, 0, -18, 0), bi(head(-18, 0, 180, 34))],
-    ['download', 'save get', line(0, -68, 0, 24), head(0, 24, 90, 40), trayLine()],
-    ['upload', 'send put', line(0, 22, 0, -66), head(0, -66, -90, 40), trayLine()],
+    ['download', 'save get', line(0, -68, 0, 24), head(0, 24, 90, 40), bi(trayLine())],
+    ['upload', 'send put', line(0, 22, 0, -66), head(0, -66, -90, 40), bi(trayLine())],
     ['refresh', 'reload sync update rotate', ...curvedArrow(0, 0, 58, 200, 330), ...curvedArrow(0, 0, 58, 20, 150)],
     ['undo', 'back revert rotate left', ...curvedArrow(0, 4, 56, 420, 200)],
     ['share', 'send network social', circle(46, -46, 18), circle(-46, 0, 18), circle(46, 46, 18), bi(line(-28, -8, 30, -38)), bi(line(-28, 8, 30, 38))],
@@ -63,8 +63,8 @@ export const ICONS = [
         line(-62, 0, 14, 0), line(42, 0, 62, 0), bi(circle(28, 0, 13)), line(-62, 44, -16, 44), line(12, 44, 62, 44), bi(circle(-2, 44, 13))],
     // Teeth are short lines with a wide stroke, so they keep rounded, even corners and fill with the body.
     ['gear', 'settings options configure cog', circle(0, 0, 46), ...[0, 45, 90, 135, 180, 225, 270, 315].map(deg => ['20', line(...at(0, 0, 52, deg), ...at(0, 0, 61, deg))]), bi(circle(0, 0, 18))],
-    ['search', 'find magnify look', lens(), lensHandle()],
-    ['magnifying-glass', 'search find', lens(), lensHandle()],
+    ['search', 'find magnify look', lens(), bi(lensHandle())],
+    ['magnifying-glass', 'search find', lens(), bi(lensHandle())],
     ['zoom-in', 'magnify enlarge', lens(), lensHandle(), bi(line(-14, -34, -14, 6)), bi(line(-34, -14, 6, -14))],
     ['zoom-out', 'shrink', lens(), lensHandle(), bi(line(-34, -14, 6, -14))],
     ['filter', 'funnel refine', polygon([[-66, -62, 8], [66, -62, 8], [14, 2, 0], [14, 50, 6], [-14, 64, 6], [-14, 2, 6]])],
@@ -79,8 +79,8 @@ export const ICONS = [
         bi(line(0, -32, 0, 28)), bi(polyline([[-47, 28], [-47, -2], [47, -2], [47, 28]], 8))],
 
     // People
-    ['person', 'user account profile', personHead(), shoulders()],
-    ['user', 'person account profile', personHead(), shoulders()],
+    ['person', 'user account profile', personHead(), bi(shoulders())],
+    ['user', 'person account profile', personHead(), bi(shoulders())],
     ['users', 'people group team', personHead(-22, -30, 22), shoulders(-22, 12, 48, 62), bi(arc(36, -30, 20, -110, 120)), bi(P(46, 14).Q(70, 22, 70, 62).end())],
 
     // Security
@@ -114,7 +114,7 @@ export const ICONS = [
     ['home', 'house main start', polygon([[-56, -6], [0, -64], [56, -6], [56, 62], [-56, 62]], 10), bi(polyline([[-16, 62], [-16, 20], [16, 20], [16, 62]], 6))],
     ['location', 'map pin marker place', P(0, 70).Q(-58, 12, -58, -16).A(0, -16, 58, 180, 360).Q(58, 12, 0, 70), bi(circle(0, -16, 20))],
     ['compass', 'direction navigate explore', ring(), bi(polygon([[34, -34], [10, 10], [-34, 34], [-10, -10]], 4))],
-    ['flag', 'report mark goal', line(-54, -66, -54, 68), polygon([[-54, -62, 0], [62, -62, 6], [36, -30, 6], [62, 2, 6], [-54, 2, 0]])],
+    ['flag', 'report mark goal', bi(line(-54, -66, -54, 68)), polygon([[-54, -62, 0], [62, -62, 6], [36, -30, 6], [62, 2, 6], [-54, 2, 0]])],
 
     // Files and editing
     ['file', 'document page paper', docShape(), bi(docFold())],
@@ -133,7 +133,7 @@ export const ICONS = [
     ['terminal', 'console command line shell', box(), bi(polyline([[-38, -20], [-14, 2], [-38, 24]])), bi(line(4, 28, 38, 28))],
     ['image', 'picture photo', rect(-68, -54, 68, 54, 12), bi(polyline([[-68, 40], [-20, -6], [14, 26], [32, 10], [68, 42]])), bi(circle(30, -22, 10))],
     ['camera', 'photo picture', rect(-68, -36, 68, 56, 10), polygon([[-32, -36], [-20, -56], [20, -56], [32, -36]], 4), bi(circle(0, 10, 26))],
-    ['video', 'movie film camera record', rect(-68, -44, 30, 44, 12), polygon([[30, -14], [68, -38], [68, 38], [30, 14]], 6)],
+    ['video', 'movie film camera record', rect(-68, -44, 30, 44, 12), bi(polygon([[30, -14], [68, -38], [68, 38], [30, 14]], 6))],
     ['music', 'song audio note sound', circle(-36, 44, 16), circle(36, 32, 16), line(-20, 44, -20, -42), line(52, 32, 52, -56), line(-20, -42, 52, -56), bi(line(-20, -18, 52, -32))],
     ['play', 'start media begin', play()],
     ['pause', 'media hold', rect(-46, -58, -14, 58, 8), rect(14, -58, 46, 58, 8)],
@@ -144,7 +144,7 @@ export const ICONS = [
     ['printer', 'print', polyline([[-40, -26], [-40, -66], [40, -66], [40, -26]], 8), polygon([[-68, -26], [68, -26], [68, 34], [-68, 34]], 10), bi(rect(-40, 12, 40, 66, 6))],
 
     // Commerce and data
-    ['dollar', 'money currency price payment cost', P(44, -38).Q(36, -56, 2, -56).Q(-44, -56, -44, -28).Q(-44, -2, 0, 0).Q(46, 2, 46, 30).Q(46, 58, -2, 58).Q(-36, 58, -46, 40).end(), line(0, -72, 0, -56), line(0, 58, 0, 72)],
+    ['dollar', 'money currency price payment cost', P(44, -38).Q(36, -56, 2, -56).Q(-44, -56, -44, -28).Q(-44, -2, 0, 0).Q(46, 2, 46, 30).Q(46, 58, -2, 58).Q(-36, 58, -46, 40).end(), bi(line(0, -72, 0, -56)), bi(line(0, 58, 0, 72))],
     ['cart', 'shopping basket buy checkout', polyline([[-72, -60], [-50, -60], [-30, 30], [52, 30], [66, -32], [-42, -32]], 6), bi(circle(-22, 56, 10)), bi(circle(44, 56, 10))],
     ['credit-card', 'payment card bank', rect(-70, -48, 70, 48, 10), bi(line(-70, -18, 70, -18)), bi(line(-46, 22, -10, 22))],
     ['tag', 'label price category', polygon([[-66, -66, 10], [-6, -66, 6], [66, 6, 10], [6, 66, 10], [-66, -6, 6]]), bi(circle(-34, -34, 9))],
@@ -168,7 +168,7 @@ export const ICONS = [
     ['trophy', 'award winner prize achievement', P(-42, -64).L(42, -64).L(42, -14).Q(42, 26, 0, 26).Q(-42, 26, -42, -14).close(), bi(polyline([[-42, -50], [-66, -50], [-66, -30], [-42, -8]], 8)), bi(polyline([[42, -50], [66, -50], [66, -30], [42, -8]], 8)), line(0, 26, 0, 50), line(-30, 64, 30, 64)],
     ['test', 'lab experiment flask science beaker', polygon([[-22, -60, 0], [22, -60, 0], [22, -18, 0], [64, 56, 12], [-64, 56, 12], [-22, -18, 0]]), line(-34, -62, 34, -62), bi(P(-46, 22).Q(-22, 8, 0, 22).Q(22, 36, 46, 22).end())],
     ['traffic-cone', 'construction under work caution', polygon([[-12, -68], [12, -68], [46, 50], [-46, 50]], 8), line(-70, 62, 70, 62), bi(line(-26, -18, 26, -18)), bi(line(-36, 16, 36, 16))],
-    ['thumbs-up', 'like approve good agree', rect(-70, -8, -46, 62, 6),
+    ['thumbs-up', 'like approve good agree', bi(rect(-70, -8, -46, 62, 6)),
         P(-40, -8).L(-14, -50).Q(-6, -70, 8, -62).Q(18, -56, 14, -36).L(8, -14).L(50, -14).Q(66, -14, 62, 2).L(52, 50).Q(48, 62, 36, 62).L(-40, 62).close()],
 ];
 

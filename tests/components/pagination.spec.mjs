@@ -99,3 +99,54 @@ test('accepts json text, and no data hides it', async ({ page }) => {
     await el.evaluate(c => c.setData(''));
     await expect.poll(() => el.evaluate(c => c.totalCount)).toBe(0);
 });
+test('every pagination offers page sizes, with its own per-page among them', async ({ page }) => {
+    const el = await pager(page, 'per-page="25"');
+    await el.evaluate((c, data) => c.setData(data), rows(60));
+    await expect(el.locator('label.per-page')).toBeVisible();
+    await expect(el.locator('select option')).toHaveText(['10', '20', '25', '50', '100']);
+    await expect(el.locator('select')).toHaveValue('25');
+    await el.locator('select').selectOption('10');
+    await expect(el).toHaveAttribute('page-count', '6');
+});
+test('one item at a time, or hide-per-page, has no page size selector', async ({ page }) => {
+    const one = await pager(page, 'per-page="1"');
+    await one.evaluate((c, data) => c.setData(data), rows(5));
+    await expect(one).toHaveAttribute('page-count', '5');
+    await expect(one.locator('label.per-page')).toBeHidden();
+    const hidden = await pager(page, 'hide-per-page');
+    await hidden.evaluate((c, data) => c.setData(data), rows(60));
+    await expect(hidden).toHaveAttribute('page-count', '3');
+    await expect(hidden.locator('label.per-page')).toBeHidden();
+});
+test('per-page-options replaces the offered sizes', async ({ page }) => {
+    const el = await pager(page, 'per-page-options="15,30"');
+    await el.evaluate((c, data) => c.setData(data), rows(60));
+    await expect(el.locator('select option')).toHaveText(['15', '30']);
+    // The default of 20 is not offered, so the first size is used.
+    await expect(el).toHaveAttribute('page-count', '4');
+});
+test('the chosen page size is shared by every pagination, saved, and fires per-page', async ({ page }) => {
+    const root = await mount(page, '<webui-pagination class="a"></webui-pagination><webui-pagination class="b"></webui-pagination><webui-pagination class="c" per-page="1"></webui-pagination>');
+    const [a, b, c] = ['a', 'b', 'c'].map(n => root.locator(`webui-pagination.${n}`));
+    for (const el of [a, b, c]) await el.evaluate((p, data) => p.setData(data), rows(120));
+    await b.evaluate(el => { window.perPageEvents = []; el.addEventListener('per-page', ev => window.perPageEvents.push(ev.detail)); });
+    await a.locator('select').selectOption('50');
+    await expect.poll(() => b.evaluate(el => el.perPage)).toBe(50);
+    await expect(b.locator('select')).toHaveValue('50');
+    expect(await page.evaluate(() => window.perPageEvents)).toEqual([50]);
+    // One item at a time keeps its own size.
+    expect(await c.evaluate(el => el.perPage)).toBe(1);
+    expect(await page.evaluate(() => webui.getData('session-pagination-per-page'))).toBe(50);
+    // A new pagination starts with the saved size.
+    const later = await mount(page, '<webui-pagination></webui-pagination>');
+    await expect.poll(() => later.locator('webui-pagination').evaluate(el => el.perPage)).toBe(50);
+});
+test('a larger page size moves a page past the end back to the last page', async ({ page }) => {
+    const el = await pager(page);
+    await el.evaluate((c, data) => c.setData(data), rows(60));
+    await el.locator('select').selectOption('10');
+    await el.evaluate(c => c.setValue(5));
+    await expect.poll(() => el.evaluate(c => c.page)).toBe(5);
+    await el.locator('select').selectOption('50');
+    await expect.poll(() => el.evaluate(c => c.page)).toBe(2);
+});

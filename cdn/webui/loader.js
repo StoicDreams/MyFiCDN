@@ -3004,6 +3004,8 @@ const webui = (() => {
             return null;
         }
     }
+    // Elements whose data-trigger fires on click, with data-value, rather than holding a value.
+    const clickTriggers = new Set(["A", "BUTTON", "WEBUI-BUTTON"]);
     /** The first key in an element's data-bind or data-trigger. */
     function getBoundKey(node) {
         const bound = node.getAttribute("data-bind") || node.getAttribute("data-trigger") || "";
@@ -3033,6 +3035,11 @@ const webui = (() => {
                 setDataToEl(node, dataKey);
             });
         }
+        // An input that writes to data starts that data at its own value, so a filter such as a range's
+        // value="5" is in place before anything reads it, not only after the first change.
+        // A checkbox or radio has a value whether or not it is checked, so it is skipped.
+        const holdsValue = !def && !clickTriggers.has(node.nodeName) && !/^(checkbox|radio)$/i.test(node.getAttribute("type") || "");
+        const startValue = holdsValue ? node.getAttribute("value") : null;
         let trig = node.getAttribute("data-trigger");
         if (trig) {
             trig.split("|").forEach((tk) => {
@@ -3040,12 +3047,14 @@ const webui = (() => {
                 if (!map.triggers[triggerKey])
                     map.triggers[triggerKey] = new Set();
                 map.triggers[triggerKey].add(node);
+                if (startValue) webui.setDefault(triggerKey, startValue);
             });
         }
         let bind = node.getAttribute("data-bind");
         if (bind) {
             bind.split("|").forEach((bk) => {
                 let bindKey = bk.split(":")[0].trim();
+                if (startValue) webui.setDefault(bindKey, startValue);
                 addSubscriber(bindKey, node);
                 setDataToEl(node, bindKey);
                 if (!map.triggers[bindKey]) map.triggers[bindKey] = new Set();

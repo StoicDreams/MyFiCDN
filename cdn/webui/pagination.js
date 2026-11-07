@@ -7,6 +7,13 @@
  */
 "use strict"
 {
+    // Every pagination offers a page size, and the choice is shared, so picking 50 per page applies to every list.
+    const perPageKey = 'session-pagination-per-page';
+    const perPageEvent = 'webui-pagination-per-page';
+    const defaultPerPageSizes = [10, 20, 50, 100];
+    function parseSizes(value) {
+        return `${value || ''}`.split(/[\s,|;]+/).map(v => parseInt(v)).filter(v => v > 0);
+    }
     webui.define('webui-pagination', {
         preload: "button",
         _page: 1,
@@ -25,6 +32,15 @@
             t._btnNext = t.template.querySelector('webui-button.next');
             t._btnLast = t.template.querySelector('webui-button.last');
             t._total = t.template.querySelector('.total > strong');
+            t._perPageSelect = t.template.querySelector('select');
+            t._perPageSelect.addEventListener('change', _ => {
+                const value = parseInt(t._perPageSelect.value);
+                if (!value) return;
+                webui.setData(perPageKey, value);
+                t.choosePerPage(value);
+                document.dispatchEvent(new CustomEvent(perPageEvent, { detail: value }));
+            });
+            t._onSharedPerPage = ev => t.applySharedPerPage(ev.detail);
             t._data = undefined;
             t._index = 0;
             t._input.value = 1;
@@ -80,6 +96,12 @@
                     if (!v || t._perPage === v) return;
                     t._perPage = v;
                     t.calcPageCount();
+                    t.renderPerPageOptions();
+                    // A larger page size can leave the current page past the end.
+                    if (t._pageCount > 0 && t._page > t._pageCount) {
+                        t.page = t._pageCount;
+                        return;
+                    }
                     t.process();
                 }
             },
@@ -103,7 +125,7 @@
             t._pageCount = Math.ceil(t._totalCount / t._perPage);
             t.setAttribute('page-count', t._pageCount);
         },
-        attr: ['data-current', 'data-subscribe', 'value', 'page', 'per-page', 'hide-prev-next-buttons', 'hide-pages', 'loop', 'max-pages'],
+        attr: ['data-current', 'data-subscribe', 'value', 'page', 'per-page', 'per-page-options', 'hide-per-page', 'hide-prev-next-buttons', 'hide-pages', 'loop', 'max-pages'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
@@ -112,6 +134,10 @@
                     if (`${num}` === value) {
                         t.perPage = num;
                     }
+                    t.updatePerPage();
+                    break;
+                case 'hidePerPage':
+                    t.updatePerPage();
                     break;
                 case 'page':
                 case 'value':
@@ -120,10 +146,73 @@
                 case 'maxPages':
                     t.maxPages = parseInt(value) || 0;
                     break;
+                case 'perPageOptions':
+                    t.updatePerPage();
+                    break;
             }
+        },
+        /**
+         * Work out the page sizes to offer: per-page-options when set, otherwise 10, 20, 50, and 100, plus the per-page
+         * the developer chose. A pagination of one item at a time, or with hide-per-page, has no selector.
+         */
+        updatePerPage() {
+            const t = this;
+            if (!t._perPageReady) return;
+            const own = parseInt(t.getAttribute('per-page')) || 0;
+            const enabled = !t.hasAttribute('hide-per-page') && own !== 1;
+            let sizes = parseSizes(t.getAttribute('per-page-options'));
+            if (!sizes.length) sizes = [...defaultPerPageSizes];
+            if (own > 0 && !sizes.includes(own)) sizes.push(own);
+            sizes.sort((a, b) => a - b);
+            t._perPageSizes = enabled ? sizes : [];
+            t.toggleAttribute('has-per-page', enabled);
+            t.renderPerPageOptions();
+            if (!enabled) return;
+            const saved = parseInt(webui.getData(perPageKey));
+            if (sizes.includes(saved)) {
+                t.choosePerPage(saved);
+            } else if (!sizes.includes(t.perPage)) {
+                t.choosePerPage(sizes[0]);
+            }
+        },
+        renderPerPageOptions() {
+            const t = this;
+            const select = t._perPageSelect;
+            if (!select) return;
+            const sizes = [...(t._perPageSizes || [])];
+            // A size set in code, such as a report's, still shows as the current choice.
+            if (sizes.length && !sizes.includes(t.perPage)) sizes.push(t.perPage);
+            sizes.sort((a, b) => a - b);
+            const key = sizes.join(',');
+            if (select._sizes !== key) {
+                select._sizes = key;
+                select.replaceChildren(...sizes.map(size => webui.create('option', { value: `${size}`, text: `${size}` })));
+            }
+            if (select.value !== `${t.perPage}`) select.value = `${t.perPage}`;
+        },
+        /** Change the page size as a person's choice, firing a per-page event so components that load each page, such as webui-report, reload. */
+        choosePerPage(value) {
+            const t = this;
+            if (!value || value === t.perPage) return;
+            t.perPage = value;
+            t.dispatchEvent(new CustomEvent('per-page', { detail: value, bubbles: true, composed: true }));
+        },
+        applySharedPerPage(value) {
+            const t = this;
+            if (!t._perPageSizes?.includes(value)) return;
+            t.choosePerPage(value);
+        },
+        disconnected() {
+            document.removeEventListener(perPageEvent, this._onSharedPerPage);
+        },
+        reconnected() {
+            document.addEventListener(perPageEvent, this._onSharedPerPage);
         },
         connected() {
             const t = this;
+            document.addEventListener(perPageEvent, t._onSharedPerPage);
+            t._perPageReady = true;
+            t.updatePerPage();
             let data = '';
             if (t._slot.assignedElements().length) {
                 let ch = [];
@@ -313,7 +402,7 @@
 <webui-button class="last" start-icon="caret-line|fill|rotate:90"></webui-button>
 </div>
 <div class="spacer-right"></div>
-<div class="total"><span>Total: </span><strong>0</strong></div>
+<div class="total"><label class="per-page">Per page <select aria-label="Items per page"></select></label><span>Total: </span><strong>0</strong></div>
 <pre><slot></slot></pre>
 <style type="text/css">
 :host {
@@ -347,6 +436,29 @@ justify-content: right;
 }
 div.total > span {
 padding: 0 0.5ch 0 0;
+}
+label.per-page {
+display:none;
+align-items:center;
+gap:0.5ch;
+margin-right:auto;
+}
+:host([has-per-page]) label.per-page {
+display:flex;
+}
+select {
+background-color:color-mix(in srgb, var(--theme-color) 80%, white);
+color:var(--theme-color-offset);
+border:none;
+border-radius:var(--corners);
+padding:calc(var(--padding) / 2) var(--padding);
+font:inherit;
+cursor:pointer;
+}
+select:focus-visible,
+input[type="number"]:focus-visible {
+outline:2px solid var(--theme-color-offset, currentColor);
+outline-offset:2px;
 }
 input[type="number"] {
 background-color:color-mix(in srgb, var(--theme-color) 80%, white);

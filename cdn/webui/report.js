@@ -54,6 +54,14 @@
             t._id = webui.uuid();
             t._tableActions = t.innerHTML;
             t._preSubscribe = t.getAttribute('data-subscribe');
+            // The report loads one page at a time, so a new page size from its pagination needs a new request.
+            t.addEventListener('per-page', ev => {
+                const size = parseInt(ev.detail);
+                if (!size || size === t.perPage) return;
+                t.perPage = size;
+                t.page = 1;
+                if (t._isRendered) t.loadData();
+            });
         },
         flags: ['bordered'],
         attr: ['height', 'max-height', 'label', 'api', 'per-page', 'columns', 'append-columns', 'sort-order', 'sort-column', 'theme', 'filters', 'sortable', 'required-filters', 'column-formats'],

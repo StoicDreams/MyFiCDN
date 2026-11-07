@@ -54,3 +54,26 @@ test('the emoji toggle searches emojis instead', async ({ page }) => {
     await el.evaluate(c => { c._emojisToggle.value = true; });
     await expect.poll(() => el.evaluate(c => c._filteredKeys[0]?.name || '')).toMatch(/^emoji-/);
 });
+test('the rotation buttons step by 15 degrees and loop', async ({ page }) => {
+    const el = await search(page);
+    const rotation = () => el.evaluate(c => [c._rotate.value, c._iconPreview.getAttribute('rotate')]);
+    const left = el.locator('webui-button[aria-label="Rotate left 15 degrees"]');
+    const right = el.locator('webui-button[aria-label="Rotate right 15 degrees"]');
+    await left.click();
+    await expect.poll(rotation).toEqual(['345', '345']);
+    await right.click();
+    await expect.poll(rotation).toEqual(['0', null]);
+    // From a value between steps, each button goes to the nearest step in its direction.
+    await el.evaluate(c => { c._rotate.value = 50; });
+    await right.click();
+    await expect.poll(rotation).toEqual(['60', '60']);
+    await el.evaluate(c => { c._rotate.value = 50; });
+    await left.click();
+    await expect.poll(rotation).toEqual(['45', '45']);
+});
+test('offers a page size, which changes how many icons show', async ({ page }) => {
+    const el = await search(page);
+    await expect.poll(() => el.evaluate(c => c._containers.length)).toBe(20);
+    await el.locator('webui-pagination select').selectOption('50');
+    await expect.poll(() => el.evaluate(c => c._containers.length)).toBe(50);
+});

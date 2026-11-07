@@ -312,7 +312,7 @@ Stroke line joins: miter|round|bevel
             path.classList.toggle('duo', shade === 'duo');
             if (width) {
                 // Keep the width when the icon shrinks inside a shape, the same as the icon's own stroke.
-                path.style.strokeWidth = `calc(${width} / var(--ico-glyph-scale))`;
+                path.style.strokeWidth = `calc(${width} * 1px / var(--ico-glyph-scale))`;
             } else {
                 path.style.removeProperty('stroke-width');
             }
@@ -396,7 +396,7 @@ transition: all var(--ico-transition-duration) ease-in-out;
 fill:transparent;
 stroke:var(--ico-color-primary);
 /* Divided by the scale, so a shrunken icon keeps the same line weight. */
-stroke-width:calc(var(--ico-stroke-width) / var(--ico-glyph-scale));
+stroke-width:calc(var(--ico-stroke-width) * 1px / var(--ico-glyph-scale));
 stroke-linecap:round;
 stroke-linejoin: round;
 opacity:1;
@@ -438,7 +438,7 @@ stroke-linecap:butt;
 stroke-linejoin: miter;
 }
 path.backing {
-stroke-width: var(--ico-stroke-width);
+stroke-width:calc(var(--ico-stroke-width) * 1px);
 }
 path.backing {
 stroke: var(--ico-color-border);
@@ -483,12 +483,12 @@ path[d="M0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0 0 0Q0 0
 stroke-width:0;
 }
 path.ban {
-stroke-width:calc(var(--ico-stroke-width) * 1.5);
+stroke-width:calc(var(--ico-stroke-width) * 1.5px);
 }
 /* A gap in the background color either side of the slash, so it reads as crossing the icon out. */
 path.ban-gap {
 stroke:var(--ico-color-offset, transparent);
-stroke-width:calc(var(--ico-stroke-width) * 3.5);
+stroke-width:calc(var(--ico-stroke-width) * 3.5px);
 }
 webui-emoji {
 display:flex;

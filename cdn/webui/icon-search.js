@@ -156,21 +156,38 @@
                 { value: 'duo', display: 'Duo' },
                 { value: 'tri', display: 'Trio' }
             ]));
-            t._rotate = webui.create('webui-input-range', { label: 'Rotation', min: 0, max: 355, step: 5 });
-            inputsColumn.appendChild(t._rotate);
+            t._rotate = webui.create('webui-input-range', { label: 'Rotation', min: 0, max: 355, step: 5, style: 'flex:1;' });
             {
                 function inputUpdated() {
-                    let value = t._rotate.value;
+                    let value = parseInt(t._rotate.value) || 0;
                     icons.forEach(icon => {
                         if (value > 0) {
                             icon.setAttribute('rotate', value);
                         } else {
                             icon.removeAttribute('rotate');
                         }
-                        t.buildIconCode();
                     });
+                    t.buildIconCode();
                 }
                 t._rotate.addEventListener('input', inputUpdated);
+                // Step to the next 15 degrees, looping, so left from 0 is 345 and right from 345 is 0.
+                const step = direction => {
+                    const value = parseInt(t._rotate.value) || 0;
+                    let next = direction < 0
+                        ? (value % 15 === 0 ? value - 15 : Math.floor(value / 15) * 15)
+                        : Math.floor(value / 15) * 15 + 15;
+                    next = ((next % 360) + 360) % 360;
+                    t._rotate.value = next;
+                    inputUpdated();
+                };
+                t.rotateStep = step;
+                const rotateLeft = webui.create('webui-button', { 'start-icon': 'undo', 'aria-label': 'Rotate left 15 degrees', title: 'Rotate left 15 degrees' });
+                const rotateRight = webui.create('webui-button', { 'start-icon': 'undo|flip', 'aria-label': 'Rotate right 15 degrees', title: 'Rotate right 15 degrees' });
+                rotateLeft.addEventListener('click', _ => step(-1));
+                rotateRight.addEventListener('click', _ => step(1));
+                const rotateRow = webui.create('webui-flex', { align: 'center', gap: 1 });
+                rotateRow.append(rotateLeft, t._rotate, rotateRight);
+                inputsColumn.appendChild(rotateRow);
             }
             setupToggleIcon('_emojisToggle', 'Emojis', null, true);
             setupToggleIcon('_backingToggle', 'Backing', 'backing');
