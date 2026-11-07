@@ -2,9 +2,8 @@
 // icons.mjs. Variations, such as a slash or a circle around an icon, come from webui-icon flags, not new icons.
 
 import { P, line, polyline, polygon, rect, circle, ellipse, dot, arc, move, rotate, scale, mirror } from './lib.mjs';
-import { at, head, bi, tri, ring, docShape, docFold, smooth, sparkle } from './parts.mjs';
+import { at, head, bi, tri, ring, smooth, sparkle } from './parts.mjs';
 
-const file = (...details) => [docShape(), bi(docFold()), ...details];
 const rotated = (deg, ...paths) => paths.map(p => (Array.isArray(p) ? [p[0], rotate(p[1], deg)] : rotate(p, deg)));
 // An upright sword, point at the top, centered on the origin.
 const sword = () => [polygon([[0, -72], [10, -58], [10, 30], [-10, 30], [-10, -58]]), bi(line(-30, 30, 30, 30)), bi(line(0, 30, 0, 58)), bi(dot(0, 66, 3))];
@@ -16,15 +15,6 @@ const tagShape = () => polygon([[-66, -66, 10], [-6, -66, 6], [66, 6, 10], [6, 6
 
 export const SETS = [
     // Office tools
-    ['file-spreadsheet', 'excel sheet table document', ...file(bi(rect(-28, -6, 28, 46, 4)), bi(line(-28, 20, 28, 20)), bi(line(0, -6, 0, 46)))],
-    ['file-chart', 'presentation slides powerpoint report', ...file(bi(line(-22, 44, -22, 22)), bi(line(0, 44, 0, 2)), bi(line(22, 44, 22, 14)))],
-    ['file-zipper', 'archive zip compressed', ...file(bi(dot(-10, -52)), bi(dot(-10, -30)), bi(dot(-10, -8)), bi(rect(-22, 12, 2, 40, 4)))],
-    ['file-image', 'picture photo document', ...file(bi(polyline([[-34, 46], [-10, 16], [6, 32], [16, 22], [34, 44]])), bi(dot(14, -2, 3)))],
-    ['file-audio', 'sound music document', ...file(bi(circle(-12, 38, 10)), bi(line(-2, 38, -2, -2)), bi(line(-2, -2, 20, 6)))],
-    ['file-video', 'movie clip document', ...file(bi(polygon([[-14, 2], [20, 22], [-14, 42]], 4)))],
-    ['file-import', 'import open into document', docShape(), bi(docFold()), bi(line(-74, 18, -12, 18)), bi(head(-10, 18, 0, 22))],
-    ['file-export', 'export save out document', docShape(), bi(docFold()), bi(line(6, 18, 70, 18)), bi(head(72, 18, 0, 22))],
-    ['file-diff', 'compare changes patch', ...file(bi(line(0, -24, 0, 12)), bi(line(-18, -6, 18, -6)), bi(line(-18, 40, 18, 40)))],
     ['presentation-screen', 'slides projector meeting', rect(-68, -62, 68, 28, 8), polyline([[-32, 68], [0, 30], [32, 68]]), bi(polyline([[-42, 8], [-16, -18], [6, 0], [40, -34]]))],
     ['signature', 'sign contract agreement', smooth([[-66, 26], [-46, -40], [-26, 30], [-6, -24], [12, 26], [34, -6], [64, 10]], false), bi(line(-62, 54, 62, 54))],
     ['stamp', 'approve seal official', circle(0, -46, 22), line(-12, -26, -12, 22), line(12, -26, 12, 22), rect(-62, 22, 62, 46, 6), bi(line(-48, 64, 48, 64))],
@@ -126,4 +116,8 @@ export const SETS = [
     ['apple', 'food fruit health item', smooth([[0, -30], [44, -48], [64, 0], [36, 64], [0, 50], [-36, 64], [-64, 0], [-44, -48]]), line(0, -30, 6, -64), bi(P(6, -48).Q(22, -70, 40, -60).Q(28, -40, 6, -48))],
     ['podium', 'ranking leaderboard winner competition', polygon([[-66, 62], [-66, 0], [-22, 0], [-22, -34], [22, -34], [22, -14], [66, -14], [66, 62]]), bi(sparkle(0, -58, 14))],
     ['level-up', 'upgrade rank promote experience', line(0, 44, 0, -50), head(0, -52, -90, 36), bi(line(-50, 64, 50, 64))],
+    // Icons for the inside of shape:file, which replaces separate file icons, as in diff|shape:file|bordered.
+    ['diff', 'compare changes patch plus minus', line(0, -66, 0, -6), line(-30, -36, 30, -36), bi(line(-30, 44, 30, 44))],
+    ['zipper', 'archive zip compressed', line(0, -70, 0, -4), ...[-62, -38, -14].map(y => bi(line(-26, y, 0, y))), ...[-50, -26].map(y => bi(line(0, y, 26, y))), rect(-28, 8, 28, 68, 10), bi(line(0, 24, 0, 48))],
+    ['rain', 'weather drops storm shower', ...[[-40, -60], [6, -60], [52, -60], [-17, 12], [29, 12]].map(([x, y]) => line(x, y, x - 16, y + 46))],
 ];

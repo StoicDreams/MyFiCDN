@@ -301,19 +301,7 @@
     },
     {
         "name": "cloud",
-        "tags": "weather storage upload"
-    },
-    {
-        "name": "cloud-arrow-down",
-        "tags": "download sync"
-    },
-    {
-        "name": "cloud-arrow-up",
-        "tags": "upload sync backup"
-    },
-    {
-        "name": "cloud-rain",
-        "tags": "weather rain storm"
+        "tags": "weather storage upload sync backup"
     },
     {
         "name": "code",
@@ -412,6 +400,10 @@
         "tags": "game rpg roll tabletop"
     },
     {
+        "name": "diff",
+        "tags": "compare changes patch plus minus"
+    },
+    {
         "name": "discord",
         "tags": "brands social"
     },
@@ -445,11 +437,7 @@
     },
     {
         "name": "ellipsis",
-        "tags": "more options dots menu"
-    },
-    {
-        "name": "ellipsis-vertical",
-        "tags": "more options dots menu kebab"
+        "tags": "more options dots menu kebab vertical horizontal"
     },
     {
         "name": "envelope",
@@ -522,58 +510,6 @@
     {
         "name": "file",
         "tags": "document page paper"
-    },
-    {
-        "name": "file-audio",
-        "tags": "sound music document"
-    },
-    {
-        "name": "file-chart",
-        "tags": "presentation slides powerpoint report"
-    },
-    {
-        "name": "file-check",
-        "tags": "approved document done"
-    },
-    {
-        "name": "file-code",
-        "tags": "source script document"
-    },
-    {
-        "name": "file-diff",
-        "tags": "compare changes patch"
-    },
-    {
-        "name": "file-export",
-        "tags": "export save out document"
-    },
-    {
-        "name": "file-image",
-        "tags": "picture photo document"
-    },
-    {
-        "name": "file-import",
-        "tags": "import open into document"
-    },
-    {
-        "name": "file-lines",
-        "tags": "document text page"
-    },
-    {
-        "name": "file-plus",
-        "tags": "new document add"
-    },
-    {
-        "name": "file-spreadsheet",
-        "tags": "excel sheet table document"
-    },
-    {
-        "name": "file-video",
-        "tags": "movie clip document"
-    },
-    {
-        "name": "file-zipper",
-        "tags": "archive zip compressed"
     },
     {
         "name": "film",
@@ -1092,6 +1028,10 @@
         "tags": "quotation citation testimonial"
     },
     {
+        "name": "rain",
+        "tags": "weather drops storm shower"
+    },
+    {
         "name": "receipt",
         "tags": "bill invoice purchase"
     },
@@ -1289,7 +1229,7 @@
     },
     {
         "name": "table",
-        "tags": "grid spreadsheet data rows"
+        "tags": "grid spreadsheet data rows excel"
     },
     {
         "name": "table-columns",
@@ -1514,6 +1454,10 @@
     {
         "name": "youtube",
         "tags": "video brand social"
+    },
+    {
+        "name": "zipper",
+        "tags": "archive zip compressed"
     },
     {
         "name": "zoom-in",

@@ -56,7 +56,7 @@ test('pipe delimited flags are removed when the next icon value leaves them out'
     // A theme set directly on the element is kept, even after a piped value changed it.
     await expect(el).toHaveAttribute('theme', 'warning');
 });
-for (const shape of ['octo', 'octogon', 'tri', 'triangle', 'badge', 'circle', 'cloud', 'shield', 'other']) {
+for (const shape of ['octo', 'octogon', 'tri', 'triangle', 'badge', 'circle', 'cloud', 'file', 'shield', 'other']) {
     test(`shape ${shape} draws a backing`, async ({ page }) => {
         const root = await mount(page, `<webui-icon shape="${shape}"></webui-icon>`);
         await expect(root.locator('webui-icon path.backing')).toHaveAttribute('d', /^M/);
@@ -253,4 +253,23 @@ test('ban draws a slash with a gap in the background color', async ({ page }) =>
     expect(gap.display).not.toBe('none');
     expect(gap.stroke).toBe('rgb(1, 2, 3)');
     expect(gap.width).toBeGreaterThan(slash.width);
+});
+test('cloud and file shapes keep the shrunken icon clear of their outline', async ({ page }) => {
+    const root = await mount(page, '<webui-icon icon="table|shape:file|bordered" width="200"></webui-icon><webui-icon icon="table|shape:cloud|bordered" width="200"></webui-icon>');
+    for (const el of await root.locator('webui-icon').all()) {
+        await expect.poll(() => el.evaluate(c => c.shadowRoot.querySelector('g.glyph path').getAttribute('d'))).toMatch(/^M-?\d/);
+        // Every point of the icon, at its scale inside the shape, is inside the outline with room for both strokes.
+        const outside = await el.evaluate(c => {
+            const back = c.shadowRoot.querySelector('path.backing');
+            const svg = back.ownerSVGElement;
+            const scale = parseFloat(getComputedStyle(c).getPropertyValue('--ico-glyph-scale'));
+            const pts = [...c.shadowRoot.querySelectorAll('g.glyph path')].flatMap(p => (p.getAttribute('d').match(/-?\d+ -?\d+/g) || []).map(s => s.split(' ').map(Number)));
+            const point = svg.createSVGPoint();
+            return pts.filter(([x, y]) => {
+                point.x = x * scale; point.y = y * scale;
+                return !back.isPointInFill(point);
+            });
+        });
+        expect(outside).toEqual([]);
+    }
 });

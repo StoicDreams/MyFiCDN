@@ -81,3 +81,42 @@ export function smooth(points, closed = true) {
 /** A four pointed sparkle centered on (cx, cy). */
 export const sparkle = (cx, cy, r, inner = r * 0.28) =>
     polygon(Array.from({ length: 8 }, (_, i) => at(cx, cy, i % 2 ? inner : r, -90 + 45 * i)));
+
+// The outlines webui-icon draws for shape:cloud and shape:file. The icon sits at 0.62 scale inside a shape, within
+// about ±47, so both leave that square clear. tools/icons/shapes.mjs prints them for icon.js.
+const meet = ([x1, y1, r1], [x2, y2, r2], outer) => {
+    // Where two circles cross, on the side away from the point outer.
+    const dx = x2 - x1, dy = y2 - y1, d = Math.hypot(dx, dy);
+    const a = (r1 * r1 - r2 * r2 + d * d) / (2 * d), h = Math.sqrt(r1 * r1 - a * a);
+    const mx = x1 + (a * dx) / d, my = y1 + (a * dy) / d;
+    const options = [[mx - (h * dy) / d, my + (h * dx) / d], [mx + (h * dy) / d, my - (h * dx) / d]];
+    return options.sort((p, q) => Math.hypot(q[0] - outer[0], q[1] - outer[1]) - Math.hypot(p[0] - outer[0], p[1] - outer[1]))[0];
+};
+const angle = ([cx, cy], [x, y]) => (Math.atan2(y - cy, x - cx) * 180) / Math.PI;
+/** A cloud with a flat base: a small lobe on each side of a large one. */
+export function cloudOutline() {
+    const left = [-56, 36, 38], top = [2, -14, 62], right = [56, 34, 40];
+    const lt = meet(left, top, [0, 40]), tr = meet(top, right, [0, 40]);
+    const norm = (a, from) => { while (a < from) a += 360; return a; };
+    const l1 = norm(angle(left, lt), 90);
+    const t0 = angle(top, lt), t1 = norm(angle(top, tr), norm(t0, 0));
+    const r0 = angle(right, tr), r1 = norm(90, norm(r0, 0));
+    const path = P(left[0], left[1] + left[2])
+        .A(...left, 90, l1, 65)
+        .A(...top, norm(t0, 0), t1, 65)
+        .A(...right, norm(r0, 0), r1, 65)
+        .close();
+    // Each arc starts with a line to its first point, which is only a rounding error long where the lobes meet.
+    let prev = [path.segs[0] ? left[0] : 0, left[1] + left[2]];
+    path.segs = path.segs.filter(seg => {
+        const keep = Math.hypot(seg[2] - prev[0], seg[3] - prev[1]) > 0.5;
+        if (keep) prev = [seg[2], seg[3]];
+        return keep;
+    });
+    return path;
+}
+/** A page with its top right corner folded over. The fold is traced first, so it draws as a line. */
+export function fileOutline() {
+    return P(40, -92).L(40, -62).L(70, -62).L(40, -92).L(-58, -92).Q(-70, -92, -70, -80).L(-70, 80).Q(-70, 92, -58, 92)
+        .L(58, 92).Q(70, 92, 70, 80).L(70, -62).close();
+}

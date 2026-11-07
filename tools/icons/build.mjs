@@ -29,7 +29,8 @@ for (const [name] of ICONS) {
     if (SEPARATE_DESIGNS.includes(name)) continue;
     const direction = name.match(/^(.+)-(left|up|down)$/);
     if (/-slash$/.test(name)) problems.push(`${name}: use the base icon with ban, such as eye|ban`);
-    else if (/^(circle|square|shield|triangle)-/.test(name)) problems.push(`${name}: use the base icon with shape and bordered, such as check|shape:circle|bordered`);
+    else if (/^(circle|square|shield|triangle|cloud|file)-/.test(name)) problems.push(`${name}: use the base icon with shape and bordered, such as check|shape:circle|bordered or code|shape:file|bordered`);
+    else if (/-(vertical|horizontal)$/.test(name) && names.has(name.replace(/-(vertical|horizontal)$/, ''))) problems.push(`${name}: use ${name.replace(/-(vertical|horizontal)$/, '')} with rotate`);
     else if (direction && (names.has(direction[1]) || names.has(`${direction[1]}-right`))) problems.push(`${name}: use ${direction[1]} with rotate or flip`);
 }
 const written = {};

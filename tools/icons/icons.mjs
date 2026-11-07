@@ -11,7 +11,7 @@
 import { P, line, polyline, polygon, rect, circle, ellipse, dot, arc, move, rotate, scale, mirror } from './lib.mjs';
 import {
     at, head, curvedArrow, bi, tri, box, ring, lens, lensHandle, personHead, shoulders, bubble, docShape, docFold,
-    shieldShape, trayLine, play, eyeShape, speaker, crescent, ray, tilted,
+    shieldShape, trayLine, play, eyeShape, speaker, crescent, ray, tilted, cloudOutline,
 } from './parts.mjs';
 
 export const ICONS = [
@@ -57,8 +57,7 @@ export const ICONS = [
     ['hamburger', 'menu navigation bars', line(-60, -44, 60, -44), line(-60, 0, 60, 0), line(-60, 44, 60, 44)],
     ['list', 'items bullets lines', bi(dot(-54, -44, 4)), bi(dot(-54, 0, 4)), bi(dot(-54, 44, 4)), line(-24, -44, 62, -44), line(-24, 0, 62, 0), line(-24, 44, 62, 44)],
     ['grid', 'tiles apps dashboard', rect(-64, -64, -10, -10, 10), rect(10, -64, 64, -10, 10), rect(-64, 10, -10, 64, 10), rect(10, 10, 64, 64, 10)],
-    ['ellipsis', 'more options dots menu', circle(-48, 0, 6), circle(0, 0, 6), circle(48, 0, 6)],
-    ['ellipsis-vertical', 'more options dots menu kebab', circle(0, -48, 6), circle(0, 0, 6), circle(0, 48, 6)],
+    ['ellipsis', 'more options dots menu kebab vertical horizontal', circle(-48, 0, 6), circle(0, 0, 6), circle(48, 0, 6)],
     ['sliders', 'settings adjust controls filter', line(-62, -44, -32, -44), line(-4, -44, 62, -44), bi(circle(-18, -44, 13)),
         line(-62, 0, 14, 0), line(42, 0, 62, 0), bi(circle(28, 0, 13)), line(-62, 44, -16, 44), line(12, 44, 62, 44), bi(circle(-2, 44, 13))],
     // Teeth are short lines with a wide stroke, so they keep rounded, even corners and fill with the body.
@@ -118,7 +117,6 @@ export const ICONS = [
 
     // Files and editing
     ['file', 'document page paper', docShape(), bi(docFold())],
-    ['file-lines', 'document text page', docShape(), bi(docFold()), bi(line(-24, 6, 26, 6)), bi(line(-24, 30, 26, 30))],
     ['folder', 'directory files', polygon([[-68, -48, 10], [-18, -48, 10], [-4, -32, 0], [68, -32, 10], [68, 56, 10], [-68, 56, 10]])],
     ['copy', 'duplicate clone', rect(-28, -28, 66, 66, 12), bi(polyline([[-46, 30], [-66, 30], [-66, -66], [30, -66], [30, -46]], 12))],
     ['clipboard', 'paste board', rect(-54, -54, 54, 68, 12), bi(rect(-24, -70, 24, -40, 8))],
@@ -161,7 +159,7 @@ export const ICONS = [
     // Nature and weather
     ['sun', 'light day weather bright', circle(0, 0, 26), ...[0, 45, 90, 135, 180, 225, 270, 315].map(deg => bi(ray(deg)))],
     ['moon', 'night dark mode sleep', crescent()],
-    ['cloud', 'weather storage upload', P(-40, 50).A(-40, 22, 28, 90, 270, 90).A(4, -10, 40, 200, 340, 90).A(42, 20, 30, 300, 450, 90).close()],
+    ['cloud', 'weather storage upload sync backup', move(scale(cloudOutline(), 0.76), 0, 1)],
     ['heart', 'love like favorite', P(0, 62).Q(-74, 8, -68, -28).Q(-62, -66, -26, -62).Q(-8, -60, 0, -42).Q(8, -60, 26, -62).Q(62, -66, 68, -28).Q(74, 8, 0, 62)],
     ['star', 'favorite rating bookmark', polygon(Array.from({ length: 10 }, (_, i) => at(0, 6, i % 2 ? 32 : 76, -90 + 36 * i)))],
     ['bookmark', 'save mark read later', polygon([[-44, -68, 10], [44, -68, 10], [44, 66, 2], [0, 30, 2], [-44, 66, 2]])],

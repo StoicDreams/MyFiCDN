@@ -67,9 +67,6 @@ export const MORE = [
     ['bluetooth', 'wireless connect', polyline([[-34, -32], [32, 28], [0, 58], [0, -58], [32, -28], [-34, 32]])],
 
     // Files and documents
-    ['file-plus', 'new document add', docShape(), bi(docFold()), ...markPlus(2, 22, 20)],
-    ['file-code', 'source script document', docShape(), bi(docFold()), bi(polyline([[-14, 4], [-30, 20], [-14, 36]])), bi(polyline([[14, 4], [30, 20], [14, 36]]))],
-    ['file-check', 'approved document done', docShape(), bi(docFold()), bi(polyline([[-24, 22], [-6, 38], [26, 6]]))],
     ['folder-open', 'directory browse open', bi(polyline([[-68, 52], [-68, -48], [-18, -48], [-4, -32], [52, -32], [52, -12]], 8)), polygon([[-68, 52], [-44, -12], [72, -12], [48, 52]], 8)],
     ['folder-plus', 'new directory add', folderShape(), ...markPlus(0, 12, 20)],
     ['box-archive', 'archive storage box', rect(-70, -62, 70, -30, 8), polyline([[-60, -30], [-60, 60], [60, 60], [60, -30]], 10), bi(line(-18, -6, 18, -6))],
@@ -99,7 +96,7 @@ export const MORE = [
     ['align-right', 'text paragraph', ...textLines([[-62, 62], [-26, 62], [-62, 62], [-26, 62]])],
     ['align-justify', 'text paragraph', ...textLines([[-62, 62], [-62, 62], [-62, 62], [-62, 62]])],
     ['list-check', 'checklist tasks todo', bi(polyline([[-66, -46], [-56, -36], [-38, -54]])), bi(polyline([[-66, 0], [-56, 10], [-38, -8]])), bi(polyline([[-66, 46], [-56, 56], [-38, 38]])), line(-16, -44, 64, -44), line(-16, 2, 64, 2), line(-16, 48, 64, 48)],
-    ['table', 'grid spreadsheet data rows', rect(-68, -56, 68, 56, 10), bi(line(-68, -18, 68, -18)), bi(line(-68, 18, 68, 18)), bi(line(-22, -18, -22, 56)), bi(line(22, -18, 22, 56))],
+    ['table', 'grid spreadsheet excel data rows', rect(-68, -56, 68, 56, 10), bi(line(-68, -18, 68, -18)), bi(line(-68, 18, 68, 18)), bi(line(-22, -18, -22, 56)), bi(line(22, -18, 22, 56))],
     ['table-columns', 'layout columns split', rect(-68, -56, 68, 56, 10), bi(line(0, -56, 0, 56))],
     ['wand', 'magic effect auto', line(-62, 62, 22, -22), bi(sparkle(42, -42, 26)), tri(sparkle(-26, -46, 14))],
     ['sparkles', 'magic shine new ai', sparkle(-14, 10, 56), bi(sparkle(44, -44, 22)), tri(sparkle(44, 48, 14))],
@@ -160,9 +157,6 @@ export const MORE = [
     ['address-book', 'contacts people directory', rect(-52, -68, 62, 68, 10), bi(circle(6, -14, 16)), bi(P(-20, 34).Q(-14, 8, 6, 8).Q(26, 8, 32, 34).end()), line(-66, -36, -52, -36), line(-66, 0, -52, 0), line(-66, 36, -52, 36)],
 
     // Nature and weather
-    ['cloud-rain', 'weather rain storm', smallCloud(), bi(line(-30, 54, -36, 70)), bi(line(0, 54, -6, 70)), bi(line(30, 54, 24, 70))],
-    ['cloud-arrow-up', 'upload sync backup', cloudShape(-6), bi(line(0, 34, 0, -14)), bi(head(0, -16, -90, 22))],
-    ['cloud-arrow-down', 'download sync', cloudShape(-6), bi(line(0, -16, 0, 32)), bi(head(0, 34, 90, 22))],
     ['snowflake', 'winter cold snow freeze', ...[0, 60, 120].map(deg => rotate(line(0, -68, 0, 68), deg)), ...[0, 60, 120, 180, 240, 300].map(deg => bi(rotate(polyline([[-16, -64], [0, -48], [16, -64]]), deg)))],
     ['umbrella', 'rain weather protection insurance', P(-70, 0).A(0, 0, 70, 180, 360).close(), bi(line(0, 0, 0, 52)), bi(arc(-14, 52, 14, 0, 180))],
     ['wind', 'weather air breeze', P(-66, -22).L(28, -22).A(28, -42, 20, 90, -150).end(), P(-66, 4).L(44, 4).A(44, 24, 20, -90, 150).end(), bi(line(-66, 30, 4, 30))],

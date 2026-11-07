@@ -89,6 +89,8 @@
                 { value: 'badge', display: 'Badge' },
                 { value: 'circle', display: 'Circle' },
                 { value: 'cloud', display: 'Cloud' },
+                { value: 'file', display: 'File' },
+                { value: 'shield', display: 'Shield' },
                 { value: 'triangle', display: 'Triangle' },
                 { value: 'octo', display: 'Octogon' },
             ]);

@@ -29,7 +29,7 @@
 Slashes, containers, directions, and fills are flags on any icon, so there is no separate icon for each variation. Add them as attributes, or after the icon name with `|`.
 
 - **`ban`:** crosses the icon out with a slash, leaving a gap in the background color, as in `eye|ban` or `circle|ban`.
-- **`shape` with `bordered`:** draws the icon inside a shape, as in `check|shape:circle|bordered`. Shapes are `circle`, `square` (the default), `shield`, `triangle`, `octo`, `badge`, and `cloud`.
+- **`shape` with `bordered`:** draws the icon inside a shape, as in `check|shape:circle|bordered`. Shapes are `circle`, `square` (the default), `shield`, `triangle`, `octo`, `badge`, `cloud`, and `file`. A file or cloud with an icon inside replaces icons like a code file or a cloud upload: `code|shape:file|bordered`, `arrow|rotate:-90|shape:cloud|bordered`.
 - **`backing`:** fills the shape lightly behind the icon, as in `exclamation|shape:circle|backing|bordered`.
 - **`inverted`:** fills the shape with the icon color and draws the icon in the background color, as in `heart|shape:circle|inverted`.
 - **`rotate`:** turns the icon by degrees, as in `arrow|rotate:90` for a down arrow, or `chevron|rotate:180` for left.
@@ -50,6 +50,10 @@ Inside a shape the icon shrinks to fit, keeping its line weight. Set `--icon-gly
     <webui-icon icon="heart|shape:circle|inverted" width="40"></webui-icon>
     <webui-icon icon="arrow|rotate:90" width="40"></webui-icon>
     <webui-icon icon="undo|flip" width="40"></webui-icon>
+    <webui-icon icon="code|shape:file|bordered" width="40"></webui-icon>
+    <webui-icon icon="diff|shape:file|bordered" width="40"></webui-icon>
+    <webui-icon icon="arrow|rotate:-90|shape:cloud|bordered" width="40"></webui-icon>
+    <webui-icon icon="ellipsis|rotate:90" width="40"></webui-icon>
 </webui-flex>
 
 ### Changing Icons
