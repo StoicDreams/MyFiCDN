@@ -42,7 +42,9 @@
                                 size: file.size,
                                 lastModified: file.lastModified,
                                 lastModifiedDate: file.lastModifiedDate,
-                                content: ev.target.result
+                                content: ev.target.result,
+                                // Lets previews play large files without decoding content. Saved as JSON, it becomes {}.
+                                file
                             }
                             list[index] = item;
                             fileDone();
