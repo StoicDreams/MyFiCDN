@@ -381,7 +381,8 @@
         /** Keeps the panel inside the window, shrinking it when the window is smaller than the panel. */
         keepPanelInView() {
             const t = this;
-            if (!t.isOpen()) return;
+            // While the panel animates, its measured box is shrunk and moved toward the bubble, so check once it ends.
+            if (!t.isOpen() || t._animating) return;
             if (t._panel.classList.contains('anchored')) {
                 // The space above the corner changes with the window.
                 const bottom = parseFloat(t._panel.style.bottom) || 0;
@@ -422,7 +423,8 @@
             const small = { transform: `translate(${dx}px, ${dy}px) scale(${scale})`, opacity: 0 };
             const full = { transform: 'translate(0, 0) scale(1)', opacity: 1 };
             const animation = t._panel.animate(reverse ? [full, small] : [small, full], { duration: animationMs, easing: 'ease-out' });
-            return animation.finished.catch(() => { });
+            t._animating = true;
+            return animation.finished.catch(() => { }).then(() => { t._animating = false; });
         },
         open() {
             const t = this;
@@ -432,7 +434,8 @@
             t.placePanel();
             t.classList.add('open');
             t._close.focus({ preventScroll: true });
-            t.animateFromBubble(false);
+            // Content can render during the animation, which keeps the panel in view only once it ends.
+            t.animateFromBubble(false).then(() => t.keepPanelInView());
         },
         async close() {
             const t = this;

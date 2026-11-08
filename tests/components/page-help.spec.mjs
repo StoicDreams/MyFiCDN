@@ -242,6 +242,41 @@ test('content that renders after opening grows the panel upward from the bubble,
     // The content scrolls inside the panel instead.
     expect(await help.locator('.panel .body').evaluate(el => el.scrollHeight > el.clientHeight)).toBe(true);
 });
+test('content that renders while the panel animates open still leaves it in view at the bubble', async ({ page }) => {
+    // Apps play the opening animation, and their help content often renders during it.
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    const help = await ready(page, '<webui-page-help heading="Page Help"><div class="late">Loading</div></webui-page-help>');
+    const bubble = await box(help.locator('.float'));
+    await help.locator('button.bubble').click();
+    await page.waitForTimeout(50);
+    await help.locator('.late').evaluate(el => { el.style.height = '2000px'; el.style.width = '900px'; });
+    // Once the animation ends, the panel is whole and inside the window.
+    await expect.poll(async () => (await panel(help).evaluate(el => el.getAnimations().length))).toBe(0);
+    const p = await box(panel(help));
+    expect(p.height).toBeGreaterThan(400);
+    expect(Math.abs(p.right - bubble.right)).toBeLessThanOrEqual(1);
+    expect(Math.abs(p.bottom - bubble.bottom)).toBeLessThanOrEqual(1);
+    expect(p.top).toBeGreaterThanOrEqual(0);
+    expect(p.left).toBeGreaterThanOrEqual(0);
+});
+test('a panel opened where it was left stays in view when content renders while it animates open', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    // Where a small panel was left, near the bottom right of the window.
+    await page.addInitScript(() => sessionStorage.setItem('webui-page-help-position-panel', JSON.stringify({ left: 780, top: 640 })));
+    const help = await ready(page, '<webui-page-help heading="Page Help"><div class="late">Loading</div></webui-page-help>');
+    await help.evaluate(() => webui.storage.setItem('webui-page-help-position-panel', JSON.stringify({ left: 780, top: 640 })));
+    await help.locator('button.bubble').click();
+    await page.waitForTimeout(50);
+    await help.locator('.late').evaluate(el => { el.style.height = '2000px'; el.style.width = '900px'; });
+    await expect.poll(async () => (await panel(help).evaluate(el => el.getAnimations().length))).toBe(0);
+    await page.waitForTimeout(100);
+    const p = await box(panel(help));
+    expect(p.height).toBeGreaterThan(400);
+    expect(p.right).toBeLessThanOrEqual(1000);
+    expect(p.bottom).toBeLessThanOrEqual(700);
+    expect(p.top).toBeGreaterThanOrEqual(0);
+    expect(p.left).toBeGreaterThanOrEqual(0);
+});
 test('the panel can be resized from its top left corner and its edges, but not past the window', async ({ page }) => {
     const help = await ready(page);
     await help.locator('button.bubble').click();
