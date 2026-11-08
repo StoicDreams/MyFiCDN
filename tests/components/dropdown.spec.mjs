@@ -72,3 +72,7 @@ test('option text is shown as text, never as markup', async ({ page }) => {
     await expect(el.locator('option img, option b')).toHaveCount(0);
     expect(await page.evaluate(() => window.__xss)).toBeUndefined();
 });
+test('without a label, its title names the select', async ({ page }) => {
+    await mount(page, '<webui-dropdown title="Project" options="a|b"></webui-dropdown>');
+    await expect(page.getByRole('combobox', { name: 'Project' })).toHaveCount(1);
+});

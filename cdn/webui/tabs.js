@@ -114,10 +114,13 @@
             Array.from(t.querySelectorAll('[slot="tabs"]')).filter(item => item.parentNode === t).forEach(tab => {
                 if (tabIndex === index++) {
                     tab.setAttribute('theme', 'active');
+                    // Screen readers hear which tab is showing.
+                    tab.setAttribute('aria-current', 'true');
                     t._index = index - 1;
                     foundIndex = true;
                 } else {
                     tab.removeAttribute('theme');
+                    tab.removeAttribute('aria-current');
                 }
             });
             if (tabIndex > 0 && !foundIndex) {
@@ -128,6 +131,8 @@
             index = 0;
             foundIndex = false;
             Array.from(t.querySelectorAll('[slot="content"]')).filter(item => item.parentNode === t).forEach(c => {
+                // Other tabs are only moved out of view, so inert keeps keyboard focus and screen readers out of them.
+                c.inert = tabIndex !== index;
                 if (tabIndex === index++) {
                     let offset = tabIndex * 100;
                     t._slotContent.style.translate = `-${offset}% 0`;

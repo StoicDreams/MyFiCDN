@@ -206,3 +206,21 @@ test('webui.parseMarkdown writes code blocks with language, not the HTML lang at
     expect(html).toContain('<webui-code language="js">');
     expect(html).not.toContain(' lang=');
 });
+test('webui.parseMarkdown puts nested lists inside their item, as HTML requires', async ({ page }) => {
+    await page.waitForFunction(() => webui.markdown && webui.markdown.constructor.name === 'MarkdownParser');
+    const html = await page.evaluate(() => webui.parseMarkdown('- One\n  - One A\n  - One B\n- Two\n\n1. First\n2. Second\n\nAfter'));
+    const structure = await page.evaluate(html => {
+        const div = document.createElement('div');
+        div.innerHTML = html;
+        const walk = el => [...el.children].filter(c => /^(UL|OL|LI)$/.test(c.tagName)).map(c => c.tagName === 'LI'
+            ? { li: c.firstChild?.textContent.trim(), lists: walk(c) }
+            : { [c.tagName.toLowerCase()]: walk(c) });
+        return { lists: walk(div), after: div.lastElementChild?.textContent };
+    }, html);
+    expect(structure.lists).toEqual([
+        { ul: [{ li: 'One', lists: [{ ul: [{ li: 'One A', lists: [] }, { li: 'One B', lists: [] }] }] }, { li: 'Two', lists: [] }] },
+        { ol: [{ li: 'First', lists: [] }, { li: 'Second', lists: [] }] },
+    ]);
+    expect(structure.after).toBe('After');
+    expect(html).not.toMatch(/<ul>\s*<ul>|<\/li>\s*<ul>/);
+});

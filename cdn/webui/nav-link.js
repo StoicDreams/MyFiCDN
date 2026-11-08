@@ -24,9 +24,12 @@ webui.define('webui-nav-link', {
         if (value === t.url) {
             t.classList.add('theme-active');
             t._anchor.setAttribute('disabled', true);
+            // Screen readers hear which link is the page being shown.
+            t._anchor.setAttribute('aria-current', 'page');
         } else {
             t.classList.remove('theme-active');
             t._anchor.removeAttribute('disabled');
+            t._anchor.removeAttribute('aria-current');
         }
     },
     attrChanged(property, value) {
@@ -67,6 +70,11 @@ webui.define('webui-nav-link', {
             t.innerHTML = '';
         }
         t.appendChild(t._anchor);
+        // A link that only shows an icon is named from the element's title or aria-label.
+        const label = t.getAttribute('title') || t.getAttribute('aria-label');
+        if (label && !t._anchor.textContent.trim()) {
+            t._anchor.setAttribute('aria-label', label);
+        }
         t.addDataset('subscribe', 'page-path:setter');
     }
 });

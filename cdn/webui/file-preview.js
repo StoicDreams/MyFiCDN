@@ -136,7 +136,7 @@
     webui.define('webui-file-preview', {
         preload: 'pagination',
         attr: ['height', 'max-height', 'src'],
-        flags: ['details'],
+        flags: ['details', 'nodownload', 'noframes'],
         constructor() {
             const t = this;
             t._files = [];
@@ -223,9 +223,18 @@
                     break;
                 }
                 case 'pdf':
+                    // Pages whose security policy blocks frames show the file's details instead.
+                    if (t.hasAttribute('noframes')) {
+                        t.showFallback(info, 'This file cannot be previewed here.');
+                        break;
+                    }
                     t.showView(webui.create('iframe', { class: 'frame', title: name, src: info.url }));
                     break;
                 case 'html':
+                    if (t.hasAttribute('noframes')) {
+                        t.showFallback(info, 'This file cannot be previewed here.');
+                        break;
+                    }
                     getText().then(text => {
                         if (t._rid !== rid) return;
                         // srcdoc inherits this page's origin, so a selected file must not be able to run scripts here.
@@ -325,7 +334,7 @@
             if (info.size) facts.push(webui.formatBytes(info.size));
             card.appendChild(webui.create('span', { text: facts.join(' - ') }));
             card.appendChild(webui.create('span', { text: message }));
-            if (info.url) {
+            if (info.url && !t.hasAttribute('nodownload')) {
                 card.appendChild(webui.create('a', { href: info.url, download: info.name, text: 'Download' }));
             }
             t.showView(card);
@@ -334,7 +343,7 @@
             const t = this;
             const parts = [webui.create('strong', { text: info.name })];
             if (info.size) parts.push(webui.create('span', { text: webui.formatBytes(info.size) }));
-            if (info.url) parts.push(webui.create('a', { href: info.url, download: info.name, text: 'Download' }));
+            if (info.url && !t.hasAttribute('nodownload')) parts.push(webui.create('a', { href: info.url, download: info.name, text: 'Download' }));
             t._details.replaceChildren(...parts);
         },
         clearView() {
@@ -399,9 +408,13 @@ margin:0 auto;
 height:100%;
 object-fit:contain;
 }
-video.media,
-:host(:not([height])) img.media {
+video.media {
 width:100%;
+height:auto;
+}
+/* Images keep their own size, so a small icon is not blown up, and only shrink to fit. */
+:host(:not([height])) img.media {
+width:auto;
 height:auto;
 }
 :host([height]) video.media {

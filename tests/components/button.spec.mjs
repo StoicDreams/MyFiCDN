@@ -52,3 +52,35 @@ test('a form reset leaves data-value buttons working', async ({ page }) => {
     await root.locator('webui-button').click();
     await expect.poll(() => page.evaluate(() => webui.getData('btn-r'))).toBe('9');
 });
+test('it is a button that keyboard users can reach and press', async ({ page }) => {
+    const root = await mount(page, '<input id="before"><webui-button label="Go"></webui-button>');
+    const button = root.locator('webui-button');
+    await expect(button).toHaveAttribute('role', 'button');
+    await expect(button).toHaveAttribute('tabindex', '0');
+    await button.evaluate(el => { window.__clicks = 0; el.addEventListener('click', () => window.__clicks++); });
+    await root.locator('#before').focus();
+    await page.keyboard.press('Tab');
+    await expect(button).toBeFocused();
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Space');
+    expect(await page.evaluate(() => window.__clicks)).toBe(2);
+    await expect(page.getByRole('button', { name: 'Go' })).toHaveCount(1);
+});
+test('a disabled button is announced as disabled and cannot be pressed from the keyboard', async ({ page }) => {
+    const root = await mount(page, '<webui-button label="Go" disabled></webui-button>');
+    const button = root.locator('webui-button');
+    await expect(button).toHaveAttribute('aria-disabled', 'true');
+    await expect(button).toHaveAttribute('tabindex', '-1');
+    await button.evaluate(el => { window.__clicks = 0; el.addEventListener('click', () => window.__clicks++); el.focus(); });
+    await page.keyboard.press('Enter');
+    expect(await page.evaluate(() => window.__clicks)).toBe(0);
+    await button.evaluate(el => el.removeAttribute('disabled'));
+    await expect(button).not.toHaveAttribute('aria-disabled');
+    await expect(button).toHaveAttribute('tabindex', '0');
+});
+test('a button with an href is a link, and a role or tabindex set on it is kept', async ({ page }) => {
+    const root = await mount(page, '<webui-button id="a" href="/x" label="A"></webui-button><webui-button id="b" role="tab" tabindex="-1" label="B"></webui-button>');
+    await expect(root.locator('#a')).toHaveAttribute('role', 'link');
+    await expect(root.locator('#b')).toHaveAttribute('role', 'tab');
+    await expect(root.locator('#b')).toHaveAttribute('tabindex', '-1');
+});

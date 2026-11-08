@@ -391,15 +391,15 @@
         shadowTemplate: `
 <div class="spacer-left"></div>
 <div class="prev">
-<webui-button class="first" start-icon="caret-line|rotate:270|fill"></webui-button>
-<webui-button class="prev" start-icon="caret|rotate:270|fill"></webui-button>
+<webui-button class="first" start-icon="caret-line|rotate:270|fill" aria-label="First page"></webui-button>
+<webui-button class="prev" start-icon="caret|rotate:270|fill" aria-label="Previous page"></webui-button>
 </div>
 <div class="pages">
-<input type="number" value="1" min="1" />
+<input type="number" value="1" min="1" aria-label="Page number" />
 </div>
 <div class="next">
-<webui-button class="next" start-icon="caret|rotate:90|fill"></webui-button>
-<webui-button class="last" start-icon="caret-line|fill|rotate:90"></webui-button>
+<webui-button class="next" start-icon="caret|rotate:90|fill" aria-label="Next page"></webui-button>
+<webui-button class="last" start-icon="caret-line|fill|rotate:90" aria-label="Last page"></webui-button>
 </div>
 <div class="spacer-right"></div>
 <div class="total"><label class="per-page">Per page <select aria-label="Items per page"></select></label><span>Total: </span><strong>0</strong></div>

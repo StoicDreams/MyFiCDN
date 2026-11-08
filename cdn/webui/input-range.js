@@ -6,6 +6,14 @@
  * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
  */
 "use strict"
+{
+    // The field's name for screen readers: its label, or without one the host's aria-label, title, or placeholder.
+    function nameField(t, field) {
+        const label = (t._label.textContent || '').trim();
+        const fallback = label ? '' : (t.getAttribute('aria-label') || t.getAttribute('title') || field.getAttribute('placeholder') || '').trim();
+        if (fallback) field.setAttribute('aria-label', fallback);
+        else field.removeAttribute('aria-label');
+    }
 webui.define('webui-input-range', {
     isInput: true,
     constructor() {
@@ -13,6 +21,9 @@ webui.define('webui-input-range', {
         t._field = t.template.querySelector('input');
         t._valueDisplay = t.template.querySelector('span');
         t._label = t.template.querySelector('label');
+        // The label names the field, and clicking it focuses the field.
+        t._field.id = t._id;
+        t._label.htmlFor = t._id;
         t.addEventListener('focus', ev => {
             t._field.focus();
         });
@@ -41,10 +52,15 @@ webui.define('webui-input-range', {
                 if (value) {
                     t.removeAttribute('id');
                     t._field.setAttribute('id', value);
+                    t._label.htmlFor = value;
                 }
                 break;
             case 'label':
                 t._label.innerHTML = value;
+                nameField(t, t._field);
+                break;
+            case 'title':
+                nameField(t, t._field);
                 break;
             case 'name':
                 t._field.setAttribute('name', value);
@@ -104,6 +120,7 @@ webui.define('webui-input-range', {
     },
     connected() {
         const t = this;
+        nameField(t, t._field);
         t.renderValue();
     },
     renderValue() {
@@ -183,3 +200,4 @@ gap:0.1em;
 </style>
 `
 });
+}

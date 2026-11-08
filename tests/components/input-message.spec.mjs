@@ -56,3 +56,7 @@ test('shows a focus ring around the box while typing', async ({ page }) => {
     await el.locator('textarea').focus();
     expect(await el.evaluate(e => getComputedStyle(e).outlineWidth)).toBe('2px');
 });
+test('without a label, its title names the field', async ({ page }) => {
+    await mount(page, '<webui-input-message title="Script"></webui-input-message>');
+    await expect(page.getByRole('textbox', { name: 'Script' })).toHaveCount(1);
+});

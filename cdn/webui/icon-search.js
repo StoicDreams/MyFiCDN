@@ -209,12 +209,12 @@
             setupToggleIcon('_invertedToggle', 'Inverted', 'inverted');
             t.appendChild(t._inputSearch);
             t.appendChild(t._pag);
-            t._codeSample = webui.create('webui-code', { 'lang': 'html', 'label': `Icon Code` });
+            t._codeSample = webui.create('webui-code', { 'language': 'html', 'label': `Icon Code` });
             inputsColumn.appendChild(t._codeSample);
             inputsColumn.appendChild(webui.create('p', { html: `Icon components also accept pipe delimited configurations, useful when passing icon data to parent components that pass icon values to child webui-icon components.` }));
-            t._codeSamplePiped = webui.create('webui-code', { 'lang': 'html', 'label': `Icon Code Piped` });
+            t._codeSamplePiped = webui.create('webui-code', { 'language': 'html', 'label': `Icon Code Piped` });
             inputsColumn.appendChild(t._codeSamplePiped);
-            t._codePipedAttr = webui.create('webui-code', { 'lang': 'html', 'label': `Icon Code Piped` });
+            t._codePipedAttr = webui.create('webui-code', { 'language': 'html', 'label': `Icon Code Piped` });
             inputsColumn.appendChild(t._codePipedAttr);
             t._bottomGrid = webui.create('webui-grid', { gap: '1', theme: 'white', width: '100', height: '100' });
             t.appendChild(t._bottomGrid);

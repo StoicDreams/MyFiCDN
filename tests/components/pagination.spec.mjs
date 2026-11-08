@@ -150,3 +150,9 @@ test('a larger page size moves a page past the end back to the last page', async
     await el.locator('select').selectOption('50');
     await expect.poll(() => el.evaluate(c => c.page)).toBe(2);
 });
+test('the arrow buttons are named for screen readers', async ({ page }) => {
+    await mount(page, '<webui-pagination></webui-pagination>');
+    for (const name of ['First page', 'Previous page', 'Next page', 'Last page']) {
+        await expect(page.getByRole('button', { name, includeHidden: true })).toHaveCount(1);
+    }
+});

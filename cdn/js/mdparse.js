@@ -55,20 +55,24 @@ export class MarkdownParser {
     }
     initDefaultRules() {
         const t = this;
+        // Each item stays open until the next item at its level, so a nested list goes inside it, as HTML requires.
         const makeListRenderer = (listTag) => (html, token, parser, stack) => {
-            const last = stack[stack.length - 1];
-            if (!last || token.indent < last.indent || last.tag !== listTag) {
-                html = parser.closeListsAbove(html, stack, token.indent);
+            html = parser.closeListsAbove(html, stack, token.indent);
+            let top = stack[stack.length - 1];
+            if (top && top.indent === token.indent && top.tag !== listTag) {
+                html = parser.closeListsAbove(html, stack, token.indent - 1);
+                top = stack[stack.length - 1];
             }
-            const top = stack[stack.length - 1];
-            if (!top || top.tag !== listTag || top.indent < token.indent) {
+            if (!top || top.indent < token.indent) {
                 html += `<${listTag}>`;
                 stack.push({ tag: listTag, indent: token.indent });
+            } else {
+                html += `</li>\n`;
             }
             if (token.check) {
-                return html + `<li class="${parser.escapeQuote(token.check)}">${parser.renderInline(token.content)}</li>\n`;
+                return html + `<li class="${parser.escapeQuote(token.check)}">${parser.renderInline(token.content)}`;
             }
-            return html + `<li>${parser.renderInline(token.content)}</li>\n`;
+            return html + `<li>${parser.renderInline(token.content)}`;
         };
         t.addRule('setext_heading', (line, state) => {
             return /^[\s]*(=+|-+)[\s]*$/.test(line) && state.tokens.length > 0 && state.tokens[state.tokens.length - 1].type === 'paragraph';
@@ -375,7 +379,7 @@ export class MarkdownParser {
     }
     closeListsAbove(html, stack, level) {
         while (stack.length && stack[stack.length - 1].indent > level) {
-            html += `</${stack.pop().tag}>\n`;
+            html += `</li>\n</${stack.pop().tag}>\n`;
         }
         return html;
     }

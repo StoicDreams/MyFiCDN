@@ -3848,7 +3848,7 @@ code .keyword {
 }
 
 code .link {
-    color: #0096db;
+    color: #3cb4f0;
 }
 
 code .literal {
@@ -3856,15 +3856,15 @@ code .literal {
 }
 
 code .section {
-    color: #f57226;
+    color: #f7894a;
 }
 
 code .selector-tag {
-    color: #c766cf;
+    color: #d690dc;
 }
 
 code .addition {
-    color: rgb(142, 127, 211);
+    color: rgb(170, 158, 228);
 }
 
 code .attribute {
@@ -3876,11 +3876,11 @@ code .built_in {
 }
 
 code .bullet {
-    color: rgb(138, 138, 180);
+    color: rgb(168, 168, 208);
 }
 
 code .name {
-    color: rgb(97, 99, 241);
+    color: rgb(150, 152, 252);
 }
 
 code .string {
@@ -3892,11 +3892,11 @@ code .symbol {
 }
 
 code .template-tag {
-    color: rgb(177, 127, 70);
+    color: rgb(208, 158, 98);
 }
 
 code .template-variable {
-    color: rgb(236, 82, 154);
+    color: rgb(244, 128, 184);
 }
 
 code .title {
@@ -3912,11 +3912,11 @@ code .variable {
 }
 
 code .comment {
-    color: #919191;
+    color: #a8a8a8;
 }
 
 code .deletion {
-    color: #cc2424;
+    color: #f88a8a;
 }
 
 code .meta {
@@ -3924,7 +3924,7 @@ code .meta {
 }
 
 code .quote {
-    color: #1a9ca3;
+    color: #33bfc7;
     display: inline;
     margin: 0;
     padding: 0;

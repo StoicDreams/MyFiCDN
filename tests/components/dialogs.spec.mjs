@@ -190,3 +190,10 @@ test.describe('focus on open', () => {
         expect(await focused(page)).toBe('button');
     });
 });
+test('the close button has a name', async ({ page }) => {
+    await ready(page);
+    await open(page, { title: 'T', content: 'C' });
+    await expect(page.locator('dialog[open]').getByRole('button', { name: 'Close' })).toHaveCount(1);
+    // Screen readers announce the title when the dialog opens.
+    await expect(page.getByRole('dialog', { name: 'T' })).toHaveCount(1);
+});

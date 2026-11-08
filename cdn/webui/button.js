@@ -13,6 +13,23 @@ webui.define("webui-button", {
         t._label = t.template.querySelector('slot:not([name])');
         t._startIcon = t.template.querySelector('slot[name="start-icon"]');
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
+        // Keyboard users press it with Enter or Space, as they would a native button.
+        t.addEventListener('keydown', ev => {
+            if (t.hasAttribute('disabled') || ev.target !== t) return;
+            if (ev.key === 'Enter') {
+                ev.preventDefault();
+                t.click();
+            } else if (ev.key === ' ' && t.getAttribute('role') !== 'link') {
+                // Space presses on release, and must not scroll the page.
+                ev.preventDefault();
+                t._spacePressed = true;
+            }
+        });
+        t.addEventListener('keyup', ev => {
+            if (ev.key !== ' ' || !t._spacePressed) return;
+            t._spacePressed = false;
+            if (!t.hasAttribute('disabled')) t.click();
+        });
         t.addEventListener('click', _ => {
             if (t.getAttribute('type') === 'submit' || t.hasAttribute('submit')) {
                 t.internals_.form?.requestSubmit();
@@ -48,10 +65,14 @@ webui.define("webui-button", {
             }
         });
     },
-    attr: ['label', 'align', 'href', 'start-icon', 'end-icon', 'start-icon-class', 'end-icon-class', 'elevation', 'submit'],
+    attr: ['label', 'align', 'href', 'start-icon', 'end-icon', 'start-icon-class', 'end-icon-class', 'elevation', 'submit', 'disabled'],
     attrChanged(property, value) {
         const t = this;
         switch (property) {
+            case 'disabled':
+            case 'href':
+                t.updateRole();
+                break;
             case 'label':
                 Array.from(t.childNodes).forEach(node => {
                     if (node.nodeName === '#text' || (node.hasAttribute && !node.hasAttribute('slot'))) {
@@ -95,6 +116,23 @@ webui.define("webui-button", {
         if (t.dataset.trigger && t.dataset.value === undefined) {
             t.dataset.value = 1;
         }
+        t.updateRole();
+    },
+    /** Screen readers hear a button, or a link when it has an href, and keyboard users can reach it unless it is disabled. */
+    updateRole() {
+        const t = this;
+        if (!t.isConnected) return;
+        // A tabindex set on the element is kept. Checked before this sets one, since attributes can change before connected runs.
+        if (t._ownTabindex === undefined) t._ownTabindex = t.hasAttribute('tabindex');
+        // A role set by the page or another component is kept.
+        if (!t.hasAttribute('role') || t.getAttribute('role') === t._autoRole) {
+            t._autoRole = t.hasAttribute('href') ? 'link' : 'button';
+            t.setAttribute('role', t._autoRole);
+        }
+        const disabled = t.hasAttribute('disabled');
+        if (disabled) t.setAttribute('aria-disabled', 'true');
+        else t.removeAttribute('aria-disabled');
+        if (!t._ownTabindex) t.setAttribute('tabindex', disabled ? '-1' : '0');
     },
     shadowTemplate: `
 <slot name="start-icon"></slot>
@@ -139,6 +177,10 @@ box-shadow:inset -1px -1px var(--box-shadow-blur) rgba(255,255,255,0.5), inset 1
 }
 :host(:not([disabled])) {
 cursor:pointer;
+}
+:host(:focus-visible) {
+outline:2px solid var(--color-focus, currentColor);
+outline-offset:2px;
 }
 </style>
 `

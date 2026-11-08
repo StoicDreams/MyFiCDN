@@ -7,6 +7,13 @@
  */
 "use strict";
 {
+  // The field's name for screen readers: its label, or without one the host's aria-label, title, or placeholder.
+  function nameField(t, field) {
+    const label = (t._label.textContent || "").trim();
+    const fallback = label ? "" : (t.getAttribute("aria-label") || t.getAttribute("title") || field.getAttribute("placeholder") || "").trim();
+    if (fallback) field.setAttribute("aria-label", fallback);
+    else field.removeAttribute("aria-label");
+  }
   function handleKeyDown(ev) {
     if (ev.key !== "Tab" || !ev.shiftKey) {
       return;
@@ -68,9 +75,14 @@
           break;
         case "placeholder":
           t._field.setAttribute("placeholder", value);
+          nameField(t, t._field);
           break;
         case "label":
           t._label.innerHTML = value;
+          nameField(t, t._field);
+          break;
+        case "title":
+          nameField(t, t._field);
           break;
         case "name":
           t._field.setAttribute("name", value);
@@ -107,6 +119,7 @@
       let id = webui.uuid();
       t._label.setAttribute("for", id);
       t._field.setAttribute("id", id);
+      nameField(t, t._field);
     },
     shadowTemplate: `
 <style type="text/css">

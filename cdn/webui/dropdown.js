@@ -7,6 +7,13 @@
  */
 "use strict"
 {
+    // The select's name for screen readers: its label, or without one the host's aria-label or title.
+    function nameField(t, field) {
+        const label = (t._label.textContent || '').trim();
+        const fallback = label ? '' : (t.getAttribute('aria-label') || t.getAttribute('title') || '').trim();
+        if (fallback) field.setAttribute('aria-label', fallback);
+        else field.removeAttribute('aria-label');
+    }
     function extractOptions(options) {
         if (options === undefined || options === null || options === '') {
             return [];
@@ -94,6 +101,7 @@
                     } else {
                         t._forLabel.classList.add('hide');
                     }
+                    nameField(t, t._select);
                     break;
                 case 'startIcon':
                 case 'icon':
@@ -211,6 +219,7 @@
             let id = webui.uuid();
             t._forLabel.setAttribute('for', id);
             t._select.setAttribute('id', id);
+            nameField(t, t._select);
             if (t._pendingValue !== undefined) {
                 t.setValue(t._pendingValue);
             }

@@ -47,3 +47,7 @@ test('a value set from code is what the form submits', async ({ page }) => {
     await root.locator('webui-input-range').evaluate(c => { c.value = '12'; });
     expect(await root.locator('form').evaluate(f => new FormData(f).get('s'))).toBe('12');
 });
+test('the label names the slider', async ({ page }) => {
+    await mount(page, '<webui-input-range label="Rotation" max="10"></webui-input-range>');
+    await expect(page.getByRole('slider', { name: 'Rotation' })).toHaveCount(1);
+});

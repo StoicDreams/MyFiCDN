@@ -269,11 +269,11 @@ const webuiDialog = function (data) {
             }
         },
         shadowTemplate: `
-<dialog data-stopclick>
+<dialog data-stopclick aria-labelledby="dlg-title">
 <form method="dialog">
 <header>
-<section></section>
-<button id="dlg-close" value="cancel" type="button" formmethod="dialog"><webui-icon icon="xmark"></webui-icon></button>
+<section id="dlg-title"></section>
+<button id="dlg-close" value="cancel" type="button" formmethod="dialog" aria-label="Close"><webui-icon icon="xmark"></webui-icon></button>
 </header>
 <section></section>
 <footer>

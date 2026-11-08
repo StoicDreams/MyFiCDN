@@ -29,3 +29,11 @@ test('inner html becomes the link content', async ({ page }) => {
     const root = await mount(page, '<webui-nav-link url="/x"><b>Bold</b></webui-nav-link>');
     await expect(root.locator('webui-nav-link a b')).toHaveText('Bold');
 });
+test('an icon only link is named from its title, and the current page is marked', async ({ page }) => {
+    const root = await mount(page, '<webui-nav-link id="docs" icon="star" url="/docs" title="Docs Manager"></webui-nav-link>');
+    await expect(page.getByRole('link', { name: 'Docs Manager' })).toHaveCount(1);
+    await root.locator('#docs').evaluate(el => el.setPagePath('/docs'));
+    await expect(root.locator('#docs a')).toHaveAttribute('aria-current', 'page');
+    await root.locator('#docs').evaluate(el => el.setPagePath('/other'));
+    await expect(root.locator('#docs a')).not.toHaveAttribute('aria-current');
+});

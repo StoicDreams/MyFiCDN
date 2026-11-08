@@ -24,6 +24,15 @@ test('images use an image element', async ({ page }) => {
     await expect.poll(() => el.locator('img').evaluate(img => img.naturalWidth)).toBe(1);
     await expect(el).toHaveAttribute('kind', 'image');
 });
+test('small images keep their own size, and large ones shrink to fit', async ({ page }) => {
+    const el = await preview(page, '<div style="width:300px"><webui-file-preview></webui-file-preview></div>');
+    await el.evaluate((c, png) => c.setFile([{ name: 'dot.png', type: 'image/png', content: `data:image/png;base64,${png}` }]), PNG);
+    await expect.poll(() => el.locator('img').evaluate(img => img.getBoundingClientRect().width)).toBe(1);
+    // An svg 1000 wide, which must shrink to the 300 available.
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="100"><rect width="1000" height="100"/></svg>';
+    await el.evaluate((c, svg) => c.setFile([{ name: 'wide.svg', type: 'image/svg+xml', content: svg }]), svg);
+    await expect.poll(() => el.locator('img').evaluate(img => Math.round(img.getBoundingClientRect().width))).toBe(300);
+});
 test('a file with no type is previewed by its extension', async ({ page }) => {
     const el = await preview(page);
     await el.evaluate((c, png) => c.setFile([{ name: 'dot.PNG', type: '', content: `data:application/octet-stream;base64,${png}` }]), PNG);
@@ -128,6 +137,22 @@ test('the details flag shows the name, size, and a download link', async ({ page
     await expect(el.locator('.details')).toContainText('a.txt');
     await expect(el.locator('.details')).toContainText('5 Bytes');
     await expect(el.locator('.details a')).toHaveAttribute('download', 'a.txt');
+});
+test('nodownload leaves out the download links', async ({ page }) => {
+    const el = await preview(page, '<webui-file-preview details nodownload></webui-file-preview>');
+    await el.evaluate(c => c.setFile([{ name: 'a.bin', content: 'x' }]));
+    await expect(el.locator('.fallback')).toContainText('a.bin');
+    await expect(el.locator('.details')).toContainText('a.bin');
+    await expect(el.locator('a')).toHaveCount(0);
+});
+test('noframes shows pdf and html files as details, not in a frame', async ({ page }) => {
+    const el = await preview(page, '<webui-file-preview noframes></webui-file-preview>');
+    for (const file of [{ name: 'a.pdf', type: 'application/pdf', content: '%PDF-1.4' }, { name: 'a.html', type: 'text/html', content: '<b>x</b>' }]) {
+        await el.evaluate((c, file) => c.setFile([file]), file);
+        await expect(el.locator('iframe')).toHaveCount(0);
+        await expect(el.locator('.fallback')).toContainText(file.name);
+        await expect(el.locator('.fallback')).toContainText('cannot be previewed here');
+    }
 });
 test('clear removes the preview and frees its object url, and empty input clears', async ({ page }) => {
     const el = await preview(page);

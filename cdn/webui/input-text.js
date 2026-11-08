@@ -6,12 +6,23 @@
  * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
  */
 "use strict"
+{
+    // The field's name for screen readers: its label, or without one the host's aria-label, title, or placeholder.
+    function nameField(t, field) {
+        const label = (t._label.textContent || '').trim();
+        const fallback = label ? '' : (t.getAttribute('aria-label') || t.getAttribute('title') || field.getAttribute('placeholder') || '').trim();
+        if (fallback) field.setAttribute('aria-label', fallback);
+        else field.removeAttribute('aria-label');
+    }
 webui.define('webui-input-text', {
     constructor() {
         const t = this;
         t._field = t.template.querySelector('input');
         t._field.setAttribute('name', 'text');
         t._label = t.template.querySelector('label');
+        // The label names the field, and clicking it focuses the field.
+        t._field.id = t._id;
+        t._label.htmlFor = t._id;
         t.addEventListener('focus', _ => {
             t._field.focus();
         });
@@ -62,10 +73,15 @@ webui.define('webui-input-text', {
                 if (value) {
                     t.removeAttribute('id');
                     t._field.setAttribute('id', value);
+                    t._label.htmlFor = value;
                 }
                 break;
             case 'label':
                 t._label.innerHTML = value;
+                nameField(t, t._field);
+                break;
+            case 'title':
+                nameField(t, t._field);
                 break;
             case 'name':
                 t._field.setAttribute('name', value);
@@ -75,6 +91,7 @@ webui.define('webui-input-text', {
                 break;
             case 'placeholder':
                 t._field.setAttribute('placeholder', value);
+                nameField(t, t._field);
                 break;
             case 'type':
                 t._field.setAttribute('type', value);
@@ -125,6 +142,7 @@ webui.define('webui-input-text', {
         if (!t.getAttribute('type')) {
             t._field.setAttribute('type', 'text');
         }
+        nameField(t, t._field);
     },
     formDisabledCallback(isDisabled) {
         this._field.disabled = isDisabled;
@@ -190,3 +208,4 @@ gap:0.1em;
 </style>
 `
 });
+}

@@ -138,6 +138,8 @@ test('tooltips show aria-labels and titles on hover', async ({ page }) => {
     await expect(page.locator('body > .tooltip')).toHaveText('Helpful');
     await expect(page.locator('body > .tooltip')).toHaveClass(/open/);
     await expect(root.locator('button')).toHaveAttribute('aria-label', 'Helpful');
+    // The button already has the label, so screen readers do not also hear the tooltip.
+    await expect(page.locator('body > .tooltip')).toHaveAttribute('aria-hidden', 'true');
 });
 test('a tab named in the url opens on load', async ({ page }) => {
     await page.goto('/#condition');

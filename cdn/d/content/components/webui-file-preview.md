@@ -39,6 +39,8 @@ Support for some formats depends on the browser. Safari shows TIFF and HEIC imag
 - **`max-height`:** limits the height without fixing it.
 - **`src`:** previews a url. Text files at another site need that site to allow the request (CORS).
 - **`details`:** shows the file's name, size, and a download link above the preview.
+- **`nodownload`:** leaves out the download links, such as in an app where the file is already on the user's computer.
+- **`noframes`:** shows PDF and HTML files as a card with the file's details, rather than in a frame, for pages whose security policy blocks frames.
 
 ### Several Files
 

@@ -70,3 +70,10 @@ test('Ctrl+Enter submits the form', async ({ page }) => {
     await root.locator('input').press('Control+Enter');
     expect(await page.evaluate(() => window.__submits)).toBe(1);
 });
+test('the label names the field, and without one its title does', async ({ page }) => {
+    const root = await mount(page, '<webui-input-text label="Project Name"></webui-input-text><webui-input-text title="Value of api_url"></webui-input-text>');
+    await expect(page.getByRole('textbox', { name: 'Project Name' })).toHaveCount(1);
+    await expect(page.getByRole('textbox', { name: 'Value of api_url' })).toHaveCount(1);
+    await root.getByText('Project Name').click();
+    await expect(page.getByRole('textbox', { name: 'Project Name' })).toBeFocused();
+});

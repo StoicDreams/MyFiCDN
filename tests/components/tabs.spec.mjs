@@ -122,3 +122,13 @@ test('a field disabled by its page stays disabled when its tab opens', async ({ 
     await expect(root.locator('input[name="free"]')).toBeEnabled();
     await expect(root.locator('input[name="keep"]')).toBeDisabled();
 });
+test('the shown tab is marked current, and other tabs are out of reach', async ({ page }) => {
+    const el = await tabs(page, 'transition-timing="0"');
+    await expect(buttons(el).first()).toHaveAttribute('aria-current', 'true');
+    const panels = el.locator(':scope > [slot="content"]');
+    await expect.poll(() => panels.evaluateAll(list => list.map(p => p.inert))).toEqual([false, true, true]);
+    await buttons(el).nth(2).click();
+    await expect(buttons(el).nth(2)).toHaveAttribute('aria-current', 'true');
+    await expect(buttons(el).first()).not.toHaveAttribute('aria-current');
+    await expect.poll(() => panels.evaluateAll(list => list.map(p => p.inert))).toEqual([true, true, false]);
+});
