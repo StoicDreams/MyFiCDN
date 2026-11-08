@@ -90,6 +90,8 @@ if ($null -ne $version) {
     ApplyVersionUpdates .\cdn\webui poweredby.js 'setAttribute\("version", "([0-9\.]+)"\)' "setAttribute(""version"", ""$version"")"
     ApplyVersionUpdates .\cdn\webui version '.*' "$version"
     ApplyVersionUpdates .\ README.md '\[Version: ([0-9\.]+)\]' "[Version: $version]"
+    ApplyVersionUpdates .\cdn service-worker.js "const currentVersion = '([0-9\.]+)'" "const currentVersion = '$version'"
+    ApplyVersionUpdates .\cdn service-worker.min.js 'currentVersion="([0-9\.]+)"' "currentVersion=""$version"""
 }
 else {
     Write-Host Current version was not found -ForegroundColor Red
