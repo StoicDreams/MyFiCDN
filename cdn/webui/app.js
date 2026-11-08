@@ -165,7 +165,7 @@ webui.define("webui-app", {
 background-color: var(--color-background, white);
 color: var(--color-background-offset, black);
 display: grid;
-grid-template-columns: min-content auto min-content;
+grid-template-columns: min-content minmax(0, 1fr) min-content;
 grid-template-rows: min-content min-content auto min-content min-content;
 position: fixed;
 left: 0;

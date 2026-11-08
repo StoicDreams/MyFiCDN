@@ -173,7 +173,6 @@ webui-data-loader {
 
 webui-app {
     animation: animation-fadein 400ms ease-out;
-    min-width: 380px;
 }
 
 .content>p,

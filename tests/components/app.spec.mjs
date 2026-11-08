@@ -61,3 +61,21 @@ test('layout size variables follow the header and the window', async ({ page }) 
     const footer = parseInt(await variable('--footer-height'));
     await expect.poll(async () => parseInt(await variable('--main-height'))).toBe(500 - header - footer);
 });
+for (const width of [360, 375]) {
+    test(`main stays inside a ${width}px phone window when page content is wide`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 700 });
+        await page.evaluate(() => webui._appSettings.app.setPageContent('<p id="narrow">Short text</p><div id="wide" style="width:600px">Wide content</div>'));
+        await expect(page.locator('webui-app > #wide')).toBeAttached();
+        await expect.poll(() => page.evaluate(() => {
+            const main = document.querySelector('webui-app').shadowRoot.querySelector('main');
+            return Math.round(main.getBoundingClientRect().right);
+        })).toBeLessThanOrEqual(width);
+        // Text that can wrap fits the window; only content that cannot shrink scrolls inside main.
+        const right = await page.evaluate(() => ({
+            app: document.querySelector('webui-app').getBoundingClientRect().right,
+            narrow: document.getElementById('narrow').getBoundingClientRect().right,
+        }));
+        expect(right.app).toBeLessThanOrEqual(width);
+        expect(right.narrow).toBeLessThanOrEqual(width);
+    });
+}
