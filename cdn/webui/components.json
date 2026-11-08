@@ -37,6 +37,7 @@
   "webui-line",
   "webui-link",
   "webui-loading-bar",
+  "webui-media",
   "webui-myfi-dev-settings",
   "webui-myfi-info",
   "webui-myfi-storage-consent",
@@ -52,6 +53,7 @@
   "webui-page-segment",
   "webui-pagination",
   "webui-paper",
+  "webui-pinned-side",
   "webui-poweredby",
   "webui-quote",
   "webui-report",
@@ -66,5 +68,6 @@
   "webui-table",
   "webui-tabs",
   "webui-toggle-icon",
-  "webui-under-construction"
+  "webui-under-construction",
+  "webui-youtube"
 ]
