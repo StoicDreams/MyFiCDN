@@ -6,8 +6,25 @@ on:
       - main
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install UI Test Tools
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      # A deploy reaches every site at once, so test the minified files that sites load.
+      - name: Run UI Tests
+        run: npm run test:min
   deploy:
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: run deployment
         env:

@@ -95,4 +95,5 @@ if ($null -ne $version) {
 }
 else {
     Write-Host Current version was not found -ForegroundColor Red
+    exit 1
 }

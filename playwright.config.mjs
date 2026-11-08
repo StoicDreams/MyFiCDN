@@ -11,6 +11,8 @@ export default defineConfig({
     testMatch: '**/*.spec.mjs',
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
+    // CI gates the deploy, and a few timing checks can miss on a busy runner, so retry a failure once there.
+    retries: process.env.CI ? 1 : 0,
     reporter: [['list'], ['html', { open: 'never' }]],
     use: {
         baseURL: 'http://localhost:3199',
