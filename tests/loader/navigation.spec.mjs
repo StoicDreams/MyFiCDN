@@ -141,6 +141,16 @@ test('tooltips show aria-labels and titles on hover', async ({ page }) => {
     // The button already has the label, so screen readers do not also hear the tooltip.
     await expect(page.locator('body > .tooltip')).toHaveAttribute('aria-hidden', 'true');
 });
+test('a tooltip never blocks clicks, and closes when its element is hidden under a still pointer', async ({ page }) => {
+    const root = await mount(page, '<button id="hide" title="Hides itself" style="position:fixed;top:300px;left:300px;z-index:9999">x</button><button id="below" style="position:fixed;top:250px;left:250px;width:200px;height:60px">Below</button>');
+    await root.locator('#hide').hover();
+    const tooltip = page.locator('body > .tooltip');
+    await expect(tooltip).toHaveClass(/open/);
+    expect(await tooltip.evaluate(el => getComputedStyle(el).pointerEvents)).toBe('none');
+    // Hiding it without moving the mouse, as a closing panel does to its close button.
+    await root.locator('#hide').evaluate(el => { el.style.display = 'none'; });
+    await expect(tooltip).toHaveClass(/closed/);
+});
 test('a tab named in the url opens on load', async ({ page }) => {
     await page.goto('/#condition');
     const tabs = page.locator('webui-tabs').first();

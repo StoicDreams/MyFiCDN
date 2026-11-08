@@ -3657,6 +3657,8 @@ body>div.tooltip {
     overflow: hidden;
     text-overflow: ellipsis;
     box-sizing: border-box;
+    /* It only describes what is under the pointer, so it must never take a click meant for the page. */
+    pointer-events: none;
 }
 
 body>div.tooltip.open {

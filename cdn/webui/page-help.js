@@ -165,29 +165,12 @@
                     t.savePanel();
                 },
             });
-            // The resize handle belongs to the panel itself, so a press on the panel rather than its content is a resize.
-            t._panel.addEventListener('pointerdown', ev => {
-                if (ev.target !== t._panel) return;
-                const rect = t._panel.getBoundingClientRect();
-                t._resizeFrom = { width: rect.width, height: rect.height, unblock: blockSelection() };
-                window.addEventListener('pointerup', t._onResizeEnd, { once: true });
-                window.addEventListener('pointercancel', t._onResizeEnd, { once: true });
+            t._panel.querySelectorAll('.resize').forEach(handle => t.trackResize(handle, handle.dataset.edge));
+            // Content can finish rendering after the panel opens, and a panel that grows must stay in view.
+            t._panelObserver = new ResizeObserver(() => {
+                if (!t._resizing && t.isOpen()) t.keepPanelInView();
             });
-            t._onResizeEnd = () => {
-                const from = t._resizeFrom;
-                t._resizeFrom = null;
-                if (!from) return;
-                from.unblock();
-                window.removeEventListener('pointerup', t._onResizeEnd);
-                window.removeEventListener('pointercancel', t._onResizeEnd);
-                const rect = t._panel.getBoundingClientRect();
-                if (Math.round(rect.width) !== Math.round(from.width) || Math.round(rect.height) !== Math.round(from.height)) {
-                    t._panel.style.width = `${Math.round(rect.width)}px`;
-                    t._panel.style.height = `${Math.round(rect.height)}px`;
-                    t.keepPanelInView();
-                    t.savePanel();
-                }
-            };
+            t._panelObserver.observe(t._panel);
             t._panel.addEventListener('keydown', ev => {
                 if (ev.key === 'Escape') {
                     ev.stopPropagation();
@@ -301,15 +284,83 @@
             webui.storage.removeItem(t.getStorageKey());
             webui.storage.removeItem(t.getPanelStorageKey());
             ['right', 'bottom'].forEach(side => t._float.style.removeProperty(side));
-            ['left', 'top', 'width', 'height'].forEach(prop => t._panel.style.removeProperty(prop));
+            ['left', 'top', 'right', 'bottom', 'width', 'height', 'max-height'].forEach(prop => t._panel.style.removeProperty(prop));
+            t._panel.classList.remove('anchored');
             t._float.classList.remove('placed');
             t.placeAboveFooter();
             if (t.isOpen()) t.placePanel();
         },
         setPanelPlace(left, top) {
             const t = this;
+            t._panel.classList.remove('anchored');
+            ['right', 'bottom', 'max-height'].forEach(prop => t._panel.style.removeProperty(prop));
             t._panel.style.left = `${Math.round(left)}px`;
             t._panel.style.top = `${Math.round(top)}px`;
+        },
+        /**
+         * Places the panel by its bottom right corner, so content that renders after it opens grows it up and to
+         * the left, never out of the window.
+         */
+        anchorPanel(right, bottom) {
+            const t = this;
+            right = Math.max(0, Math.round(right));
+            bottom = Math.max(0, Math.round(bottom));
+            t._panel.classList.add('anchored');
+            t._panel.style.left = 'auto';
+            t._panel.style.top = 'auto';
+            t._panel.style.right = `${right}px`;
+            t._panel.style.bottom = `${bottom}px`;
+            t._panel.style.maxHeight = `${Math.max(minPanelHeight, window.innerHeight - bottom - edgeGap)}px`;
+        },
+        /** Lets a handle on an edge or corner resize the panel, keeping the opposite edges where they are. */
+        trackResize(handle, edge) {
+            const t = this;
+            let from = null;
+            handle.addEventListener('pointerdown', ev => {
+                if (ev.button !== 0) return;
+                ev.preventDefault();
+                ev.stopPropagation();
+                const rect = t._panel.getBoundingClientRect();
+                // The size is set from here on, so the panel no longer follows its content or its bottom corner.
+                t.setPanelPlace(rect.left, rect.top);
+                t._panel.style.width = `${Math.round(rect.width)}px`;
+                t._panel.style.height = `${Math.round(rect.height)}px`;
+                from = { x: ev.clientX, y: ev.clientY, rect, id: ev.pointerId, moved: false, unblock: blockSelection() };
+                t._resizing = true;
+                t.classList.add('resizing');
+                handle.setPointerCapture?.(ev.pointerId);
+            });
+            handle.addEventListener('pointermove', ev => {
+                if (!from || ev.pointerId !== from.id) return;
+                const dx = ev.clientX - from.x;
+                const dy = ev.clientY - from.y;
+                if (!dx && !dy) return;
+                from.moved = true;
+                const r = from.rect;
+                let { left, top, right, bottom } = r;
+                if (edge.includes('w')) left = clamp(r.left + dx, 0, r.right - minPanelWidth);
+                if (edge.includes('e')) right = clamp(r.right + dx, r.left + minPanelWidth, window.innerWidth);
+                if (edge.includes('n')) top = clamp(r.top + dy, 0, r.bottom - minPanelHeight);
+                if (edge.includes('s')) bottom = clamp(r.bottom + dy, r.top + minPanelHeight, window.innerHeight);
+                t.setPanelPlace(left, top);
+                t._panel.style.width = `${Math.round(right - left)}px`;
+                t._panel.style.height = `${Math.round(bottom - top)}px`;
+            });
+            const finish = ev => {
+                if (!from || ev.pointerId !== from.id) return;
+                const ended = from;
+                from = null;
+                t._resizing = false;
+                t.classList.remove('resizing');
+                ended.unblock();
+                handle.releasePointerCapture?.(ev.pointerId);
+                if (ended.moved) {
+                    t.keepPanelInView();
+                    t.savePanel();
+                }
+            };
+            handle.addEventListener('pointerup', finish);
+            handle.addEventListener('pointercancel', finish);
         },
         /** Opens the panel where it was left, or else with its corner at the bubble's corner. */
         placePanel() {
@@ -319,12 +370,11 @@
                 t._panel.style.width = `${Math.max(minPanelWidth, saved.width)}px`;
                 t._panel.style.height = `${Math.max(minPanelHeight, saved.height)}px`;
             }
-            const rect = t._panel.getBoundingClientRect();
             if (saved) {
                 t.setPanelPlace(saved.left, saved.top);
             } else {
                 const bubble = t._float.getBoundingClientRect();
-                t.setPanelPlace(bubble.right - rect.width, bubble.bottom - rect.height);
+                t.anchorPanel(window.innerWidth - bubble.right, window.innerHeight - bubble.bottom);
             }
             t.keepPanelInView();
         },
@@ -332,11 +382,18 @@
         keepPanelInView() {
             const t = this;
             if (!t.isOpen()) return;
+            if (t._panel.classList.contains('anchored')) {
+                // The space above the corner changes with the window.
+                const bottom = parseFloat(t._panel.style.bottom) || 0;
+                t._panel.style.maxHeight = `${Math.max(minPanelHeight, window.innerHeight - bottom - edgeGap)}px`;
+            }
             let rect = t._panel.getBoundingClientRect();
             if (!rect.width) return;
             if (rect.width > window.innerWidth) t._panel.style.width = `${Math.max(minPanelWidth, window.innerWidth)}px`;
             if (rect.height > window.innerHeight) t._panel.style.height = `${Math.max(minPanelHeight, window.innerHeight)}px`;
             rect = t._panel.getBoundingClientRect();
+            // A panel held by its bottom corner keeps it while it fits in the window.
+            if (t._panel.classList.contains('anchored') && rect.left >= 0 && rect.top >= 0 && rect.right <= window.innerWidth && rect.bottom <= window.innerHeight) return;
             t.setPanelPlace(
                 clamp(rect.left, 0, Math.max(0, window.innerWidth - rect.width)),
                 clamp(rect.top, 0, Math.max(0, window.innerHeight - rect.height)));
@@ -405,6 +462,14 @@
 <button type="button" class="close" aria-label="Close help"><webui-icon icon="xmark"></webui-icon></button>
 </header>
 <div class="body"><slot></slot></div>
+<div class="resize" data-edge="n" aria-hidden="true"></div>
+<div class="resize" data-edge="s" aria-hidden="true"></div>
+<div class="resize" data-edge="e" aria-hidden="true"></div>
+<div class="resize" data-edge="w" aria-hidden="true"></div>
+<div class="resize" data-edge="nw" aria-hidden="true"></div>
+<div class="resize" data-edge="ne" aria-hidden="true"></div>
+<div class="resize" data-edge="sw" aria-hidden="true"></div>
+<div class="resize" data-edge="se" title="Drag to resize" aria-hidden="true"></div>
 </section>
 <style type="text/css">
 :host {
@@ -484,7 +549,6 @@ background-color: var(--color-background, #fff);
 color: var(--color-background-offset, #000);
 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 overflow: hidden;
-resize: both;
 }
 .panel.shown {
 display: flex;
@@ -524,6 +588,32 @@ flex: 1;
 overflow: auto;
 padding: calc(2 * var(--padding, 0.5em));
 min-height: 0;
+}
+.resize {
+position: absolute;
+z-index: 1;
+touch-action: none;
+}
+.resize[data-edge="n"], .resize[data-edge="s"] { left: 12px; right: 12px; height: 6px; cursor: ns-resize; }
+.resize[data-edge="e"], .resize[data-edge="w"] { top: 12px; bottom: 12px; width: 6px; cursor: ew-resize; }
+.resize[data-edge="n"] { top: 0; }
+.resize[data-edge="s"] { bottom: 0; }
+.resize[data-edge="e"] { right: 0; }
+.resize[data-edge="w"] { left: 0; }
+.resize[data-edge="nw"], .resize[data-edge="ne"], .resize[data-edge="sw"], .resize[data-edge="se"] { width: 14px; height: 14px; }
+.resize[data-edge="nw"] { left: 0; top: 0; cursor: nwse-resize; }
+.resize[data-edge="ne"] { right: 0; top: 0; cursor: nesw-resize; }
+.resize[data-edge="sw"] { left: 0; bottom: 0; cursor: nesw-resize; }
+.resize[data-edge="se"] {
+right: 0;
+bottom: 0;
+cursor: nwse-resize;
+/* A grip, so the panel looks resizable. */
+background: linear-gradient(135deg, transparent 0 55%, currentColor 55% 62%, transparent 62% 72%, currentColor 72% 79%, transparent 79%);
+opacity: 0.6;
+}
+:host(.resizing) .resize[data-edge="se"] {
+opacity: 1;
 }
 @media (prefers-reduced-motion: reduce) {
 .bubble {

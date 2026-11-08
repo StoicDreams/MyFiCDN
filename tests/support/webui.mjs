@@ -17,8 +17,9 @@ const BLANK_PAGE = `<!DOCTYPE html><html lang="en"><head><base href="/"><meta ch
 function resolveFile(pathname, useMinified) {
     const file = normalize(join(CDN_ROOT, decodeURIComponent(pathname)));
     if (!file.startsWith(CDN_ROOT + sep)) return null;
-    if (!useMinified && file.endsWith('.min.js')) {
-        const source = file.replace(/\.min\.js$/, '.js');
+    // The source project tests the files as written, stylesheets included.
+    if (!useMinified && /\.min\.(js|css)$/.test(file)) {
+        const source = file.replace(/\.min\.(js|css)$/, '.$1');
         if (existsSync(source)) return source;
     }
     return existsSync(file) && statSync(file).isFile() ? file : null;

@@ -1,7 +1,7 @@
 <webui-page-segment elevation="10">
     The `<webui-page-help>` component keeps a page's help out of the way until it is wanted. It shows a small **Help** bubble floating at the bottom right of the window, just above the app's footer. Clicking the bubble grows it into a panel showing the component's content. The close button, or Escape while using the panel, shrinks it back.
 
-    The panel does not block the page, so it can stay open as a reference while the page is used. Drag the bubble, or the panel by its header, to move either one out of the way, and drag the panel's bottom right corner to resize it. Where they were left, and the panel's size, are remembered with the user's other site data, and both are kept inside the window when it is resized. Without any content the bubble is not shown.
+    The panel does not block the page, so it can stay open as a reference while the page is used. Drag the bubble, or the panel by its header, to move either one out of the way, and drag any edge or corner of the panel to resize it. The panel first opens with its bottom right corner at the bubble, and grows upward as its content loads. Where they were left, and the panel's size, are remembered with the user's other site data, and both are kept inside the window when it is resized. Without any content the bubble is not shown.
 </webui-page-segment>
 
 <webui-side-by-side>

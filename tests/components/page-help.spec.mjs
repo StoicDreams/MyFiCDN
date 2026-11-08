@@ -227,6 +227,43 @@ test('the panel can be resized from its corner, and keeps that size', async ({ p
     expect(Math.round(reopened.width)).toBe(Math.round(after.width));
     expect(Math.round(reopened.height)).toBe(Math.round(after.height));
 });
+test('content that renders after opening grows the panel upward from the bubble, inside the window', async ({ page }) => {
+    const help = await ready(page, '<webui-page-help heading="Page Help"><div class="late">Loading</div></webui-page-help>');
+    const bubble = await box(help.locator('.float'));
+    await help.locator('button.bubble').click();
+    // Help content often loads after the panel opens, such as markdown from a file.
+    await help.locator('.late').evaluate(el => { el.style.height = '2000px'; el.style.width = '900px'; });
+    await expect.poll(async () => (await box(panel(help))).height).toBeGreaterThan(400);
+    const p = await box(panel(help));
+    expect(Math.abs(p.right - bubble.right)).toBeLessThanOrEqual(1);
+    expect(Math.abs(p.bottom - bubble.bottom)).toBeLessThanOrEqual(1);
+    expect(p.top).toBeGreaterThanOrEqual(0);
+    expect(p.left).toBeGreaterThanOrEqual(0);
+    // The content scrolls inside the panel instead.
+    expect(await help.locator('.panel .body').evaluate(el => el.scrollHeight > el.clientHeight)).toBe(true);
+});
+test('the panel can be resized from its top left corner and its edges, but not past the window', async ({ page }) => {
+    const help = await ready(page);
+    await help.locator('button.bubble').click();
+    const before = await box(panel(help));
+    await drag(page, help, -250, -200, help.locator('.resize[data-edge="nw"]'));
+    let after = await box(panel(help));
+    expect(Math.round(after.width - before.width)).toBe(250);
+    expect(Math.round(after.height - before.height)).toBe(200);
+    // The opposite corner stays put.
+    expect(Math.round(after.right)).toBe(Math.round(before.right));
+    expect(Math.round(after.bottom)).toBe(Math.round(before.bottom));
+    const saved = JSON.parse(await page.evaluate(() => webui.storage.getItem('webui-page-help-position-panel')));
+    expect(saved).toEqual({ left: Math.round(after.left), top: Math.round(after.top), width: Math.round(after.width), height: Math.round(after.height) });
+    await drag(page, help, -5000, 0, help.locator('.resize[data-edge="w"]'));
+    after = await box(panel(help));
+    expect(Math.round(after.left)).toBe(0);
+    await drag(page, help, 0, -5000, help.locator('.resize[data-edge="n"]'));
+    expect(Math.round((await box(panel(help))).top)).toBe(0);
+    // It cannot shrink below its smallest size.
+    await drag(page, help, 0, 5000, help.locator('.resize[data-edge="n"]'));
+    expect(Math.round((await box(panel(help))).height)).toBe(120);
+});
 test('dragging moves the bubble without opening it, and the position is remembered', async ({ page }) => {
     const help = await ready(page);
     // Measured on its wrapper, since the bubble grows a little while hovered.
