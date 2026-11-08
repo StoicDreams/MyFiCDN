@@ -1012,6 +1012,45 @@ li.unchecked::before {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='4' ry='4' fill='none' stroke='%23999' stroke-width='2'/></svg>");
 }
 
+/* Markdown task lists draw the box with ::before. The checkbox stays for screen readers. */
+li.checked>input.task,
+li.unchecked>input.task {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+mark {
+    background-color: var(--color-warning, #ffd54f);
+    color: var(--color-warning-offset, #101010);
+    padding: 0 0.2ch;
+    border-radius: 0.2em;
+}
+
+dl {
+    margin: var(--padding) 0;
+}
+
+dt {
+    font-weight: bold;
+}
+
+dd {
+    margin: 0 0 calc(0.5 * var(--padding)) calc(4 * var(--padding));
+}
+
+.footnotes {
+    font-size: 0.9em;
+}
+
+.footnote-ref a {
+    text-decoration: none;
+    padding: 0 0.2ch;
+}
+
 li>svg:first-child,
 li>img:first-child,
 li>i:first-child {

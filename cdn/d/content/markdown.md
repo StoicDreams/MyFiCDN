@@ -15,6 +15,7 @@ This Markdown cheat sheet provides a quick overview of all the syntax elements s
 #### H4
 ##### H5
 ###### H6
+### Heading with an id {#my-id}
 ```
 </webui-page-segment>
 <webui-page-segment elevation="10">
@@ -24,6 +25,7 @@ This Markdown cheat sheet provides a quick overview of all the syntax elements s
 #### H4
 ##### H5
 ###### H6
+### Heading with an id {#my-id}
 </webui-page-segment>
 </webui-side-by-side>
 
@@ -42,6 +44,25 @@ This Markdown cheat sheet provides a quick overview of all the syntax elements s
 *Italic* or _Italic_
 **Bold** or __Bold__
 ***Bold and Italic***
+</webui-page-segment>
+</webui-side-by-side>
+
+## More Formatting
+
+<webui-side-by-side>
+<webui-page-segment elevation="10">
+```markdown:Example Code
+~~Strikethrough~~
+==Highlight==
+x^2^ for superscript
+H~2~O for subscript
+```
+</webui-page-segment>
+<webui-page-segment elevation="10">
+~~Strikethrough~~
+==Highlight==
+x^2^ for superscript
+H~2~O for subscript
 </webui-page-segment>
 </webui-side-by-side>
 
@@ -177,6 +198,52 @@ After blockquote
 </webui-page-segment>
 </webui-side-by-side>
 
+### Starting Number
+
+<webui-side-by-side>
+<webui-page-segment elevation="10">
+```markdown:Example Code
+3. Lists start at their first number
+4. Items can also use 1) instead of 1.
+
++ Bullets can use -, *, or +
+
++ Blank lines between items keep one list
+  Indented text continues the item above it
+```
+</webui-page-segment>
+<webui-page-segment elevation="10">
+3. Lists start at their first number
+4. Items can also use 1) instead of 1.
+
++ Bullets can use -, *, or +
+
++ Blank lines between items keep one list
+  Indented text continues the item above it
+</webui-page-segment>
+</webui-side-by-side>
+
+## Definitions
+
+<webui-side-by-side>
+<webui-page-segment elevation="10">
+```markdown:Example Code
+Term
+: The definition of the term
+: A second definition
+Another Term
+: Its definition
+```
+</webui-page-segment>
+<webui-page-segment elevation="10">
+Term
+: The definition of the term
+: A second definition
+Another Term
+: Its definition
+</webui-page-segment>
+</webui-side-by-side>
+
 ## Code
 
 ### Inline
@@ -217,12 +284,16 @@ function test() {
 </webui-page-segment>
 </webui-side-by-side>
 
+Code blocks can also start and end with `~~~`, which lets them show ``` inside.
+
 ## Horizontal Rule
 
 <webui-side-by-side>
 <webui-page-segment elevation="10">
 ```markdown:Example Code
 ---
+***
+- - -
 ---success
 ---danger
 ---warning
@@ -230,6 +301,8 @@ function test() {
 </webui-page-segment>
 <webui-page-segment elevation="10">
 ---
+***
+- - -
 ---success
 ---danger
 ---warning
@@ -243,11 +316,23 @@ function test() {
 ```markdown:Example Code
 [Text](https://cdn.myfi.ws)
 [Text with title](https://cdn.myfi.ws "Title")
+<https://cdn.myfi.ws> and <support@stoicdreams.com>
+Bare links such as https://cdn.myfi.ws work too.
+[Reference link][cdn], [another][], or just [cdn]
+
+[cdn]: https://cdn.myfi.ws "Web UI CDN"
+[another]: https://webui.stoicdreams.com
 ```
 </webui-page-segment>
 <webui-page-segment elevation="10">
 [Text](https://cdn.myfi.ws)
 [Text with title](https://cdn.myfi.ws "Title")
+<https://cdn.myfi.ws> and <support@stoicdreams.com>
+Bare links such as https://cdn.myfi.ws work too.
+[Reference link][cdn], [another][], or just [cdn]
+
+[cdn]: https://cdn.myfi.ws "Web UI CDN"
+[another]: https://webui.stoicdreams.com
 </webui-page-segment>
 </webui-side-by-side>
 
@@ -305,12 +390,35 @@ Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10
 - [x] Task 1
 - [ ] Task 2
 - [ ] Task 3
+1. [x] Numbered tasks work too
 ```
 </webui-page-segment>
 <webui-page-segment elevation="10">
 - [x] Task 1
 - [ ] Task 2
 - [ ] Task 3
+1. [x] Numbered tasks work too
+</webui-page-segment>
+</webui-side-by-side>
+
+## Footnotes
+
+<webui-side-by-side>
+<webui-page-segment elevation="10">
+```markdown:Example Code
+A claim that needs a source.[^source]
+Another note.[^2]
+
+[^source]: Footnotes are numbered in the order they are used, and listed at the end of the page.
+[^2]: Select ↩ to return to the text.
+```
+</webui-page-segment>
+<webui-page-segment elevation="10">
+A claim that needs a source.[^source]
+Another note.[^2]
+
+[^source]: Footnotes are numbered in the order they are used, and listed at the end of the page.
+[^2]: Select ↩ to return to the text.
 </webui-page-segment>
 </webui-side-by-side>
 
@@ -320,10 +428,12 @@ Cell 6   | Cell 7   | Cell 8 | Cell 9   | Cell 10
 <webui-page-segment elevation="10">
 ```markdown:Example Code
 \*literal asterisks\*
+\| \~ \= \^ \< \> \: and other markdown characters
 ```
 </webui-page-segment>
 <webui-page-segment elevation="10">
 \*literal asterisks\*
+\| \~ \= \^ \< \> \: and other markdown characters
 </webui-page-segment>
 </webui-side-by-side>
 
