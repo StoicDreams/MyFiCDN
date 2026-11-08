@@ -51,6 +51,8 @@ webui.define("webui-app", {
     attr: ['page-content', 'page-data', 'page-content-encrypt', 'page-data-encrypt', 'root-page', 'content-extension'],
     setPageContent(content) {
         this.mainSlot.assignedElements().forEach(node => {
+            // A page footer that has not loaded yet is still in the main slot, and moves itself to the footer once it loads.
+            if (node.localName === 'webui-page-footer') return;
             node.remove();
         });
         let temp = webui.create('div');

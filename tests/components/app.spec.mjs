@@ -31,6 +31,15 @@ test('setPageContent replaces only the page content', async ({ page }) => {
     await page.evaluate(() => webui._appSettings.app.setPageContent('<p id="three">3</p>'));
     await expect(page.locator('webui-app > #one')).toHaveCount(0);
 });
+test('the footer still shows when the page loads before the footer component', async ({ page }) => {
+    await page.route('**/webui/page-footer.*', async route => {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        await route.fallback();
+    });
+    await page.goto('/about');
+    await expect(page.locator('webui-app > webui-page-segment').first()).toBeVisible();
+    await expect(page.locator('webui-app > footer[slot="footer"] webui-poweredby')).toBeAttached({ timeout: 10000 });
+});
 test('page title comes from page data', async ({ page }) => {
     await page.evaluate(() => { webui.setData('page-title', 'Hello'); webui.setData('page-subtitle', 'There'); });
     await expect(page).toHaveTitle('Hello: There');
