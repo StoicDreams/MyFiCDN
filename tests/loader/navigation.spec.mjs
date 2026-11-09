@@ -173,10 +173,19 @@ test('a tab named in the url wins over the saved tab', async ({ page }) => {
 // The first page has nothing to fade out, so it shows once its components are ready rather than after the fade.
 test.describe('first page load', () => {
     test.use({ startUrl: '/__blank' });
-    /** Serve the page with the given content, and return how long after it arrived the page showed. */
-    async function shownAfter(page, markdown) {
+    /**
+     * Serve the page with the given content, and return how long after it arrived the page showed.
+     * With holdFade, timers of 250 ms or more never run, so the page can only show if it does not wait for the fade.
+     */
+    async function shownAfter(page, markdown, { holdFade = false } = {}) {
         await page.route('**/d/about.md', route => route.fulfill({ contentType: 'text/plain', body: markdown }));
-        await page.addInitScript(() => {
+        await page.addInitScript(holdFade => {
+            if (holdFade) {
+                const setTimeoutReal = window.setTimeout;
+                window.setTimeout = function (callback, ms, ...args) {
+                    return ms >= 250 ? setTimeoutReal(() => { }, 0) : setTimeoutReal(callback, ms, ...args);
+                };
+            }
             window.__shown = null;
             const watch = () => {
                 const main = document.querySelector('webui-app')?.main;
@@ -188,14 +197,15 @@ test.describe('first page load', () => {
                 }).observe(main, { attributes: true, attributeFilter: ['class'] });
             };
             watch();
-        });
+        }, holdFade);
         await page.goto('/about');
         await expect.poll(() => page.evaluate(() => window.__shown), { timeout: 5000 }).not.toBeNull();
         return page.evaluate(() => window.__shown - performance.getEntriesByType('resource').find(e => /\/d\/about\.md/.test(e.name)).responseEnd);
     }
     test('shows a page without components straight away', async ({ page }) => {
-        // Navigations wait at least 400 ms for the fade.
-        expect(await shownAfter(page, '# Quick\n\nNothing to load here.')).toBeLessThan(150);
+        // Later navigations wait 300 ms for the fade. The first page shows without that timer, so it shows even when
+        // long timers never run. Timing it instead failed on busy machines, where a frame alone can take over 150 ms.
+        await shownAfter(page, '# Quick\n\nNothing to load here.', { holdFade: true });
     });
     test('waits for the page components, but not forever', async ({ page }) => {
         // A component that never loads still lets the page show, after at most the fade time.

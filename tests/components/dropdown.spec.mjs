@@ -178,6 +178,29 @@ test.describe('html-options', () => {
         await expect(el.locator('[role="option"] s')).toHaveCount(0);
         await expect(el.locator('[role="option"] em')).toHaveText('Two');
     });
+    test('the picked option lays out as it does in the list, so content pinned right stays right', async ({ page }) => {
+        const options = JSON.stringify([{ id: 'a', html: '<span>Alpha</span><span class="end" style="margin-left:auto">9</span>' }]);
+        const root = await mount(page, `<div style="width:300px"><webui-dropdown html-options label="Pinned" options='${options}'></webui-dropdown></div>`);
+        const el = root.locator('webui-dropdown');
+        await expect(el.locator('button .end')).toHaveText('9');
+        await el.locator('button').click();
+        await expect(el.locator('[role="listbox"].open')).toBeVisible();
+        const right = locator => locator.evaluate(node => node.getBoundingClientRect().right);
+        const button = await right(el.locator('button'));
+        const picked = await right(el.locator('button .end'));
+        const listed = await right(el.locator('[role="option"] .end'));
+        // Both sit at the right edge, give or take the padding of the picker and the list.
+        expect(button - picked).toBeLessThan(20);
+        expect(Math.abs(picked - listed)).toBeLessThan(20);
+    });
+    test('a multiple choice keeps each pick only as wide as its content', async ({ page }) => {
+        const options = JSON.stringify([{ id: 'a', html: '<b>A</b>' }, { id: 'b', html: '<b>B</b>' }]);
+        const root = await mount(page, `<div style="width:300px"><webui-dropdown html-options multiple label="Tags" options='${options}'></webui-dropdown></div>`);
+        const el = root.locator('webui-dropdown');
+        await el.evaluate(d => d.setValue('a'));
+        await expect(el.locator('button .pick')).toHaveCount(1);
+        expect(await el.locator('button .pick').evaluate(node => node.getBoundingClientRect().width)).toBeLessThan(60);
+    });
     test('adding the flag later switches an existing dropdown to the picker', async ({ page }) => {
         const el = await dropdown(page, `options='[{"id":"x","html":"<b>X</b>"}]'`);
         await expect(el.locator('option')).toHaveText('X');

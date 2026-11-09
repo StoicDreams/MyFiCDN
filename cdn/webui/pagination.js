@@ -447,14 +447,24 @@ margin-right:2ch;
 :host([has-per-page]) label.per-page {
 display:flex;
 }
+/* The native look ignores the background on some systems, such as WebKitGTK, leaving light text on a light box. */
 select {
+appearance:none;
 background-color:color-mix(in srgb, var(--theme-color) 80%, white);
+background-image:linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+background-position:right calc(var(--padding) + 5px) center, right var(--padding) center;
+background-size:5px 5px;
+background-repeat:no-repeat;
 color:var(--theme-color-offset);
 border:none;
 border-radius:var(--corners);
-padding:calc(var(--padding) / 2) var(--padding);
+padding:calc(var(--padding) / 2) calc(var(--padding) * 2 + 10px) calc(var(--padding) / 2) var(--padding);
 font:inherit;
 cursor:pointer;
+}
+select option {
+background-color:var(--theme-color);
+color:var(--theme-color-offset);
 }
 select:focus-visible,
 input[type="number"]:focus-visible {

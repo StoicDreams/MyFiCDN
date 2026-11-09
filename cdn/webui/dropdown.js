@@ -652,6 +652,7 @@ outline-offset:2px;
 }
 .picked {
 display:flex;
+flex-grow:1;
 flex-wrap:wrap;
 align-items:center;
 gap:var(--padding, 0.5em);
@@ -661,6 +662,11 @@ min-width:0;
 display:inline-flex;
 align-items:center;
 gap:0.4em;
+}
+/* A single choice fills the picker, so its html lays out as it does in the list, such as a count pinned to the right. */
+:host(:not([multiple])) .pick {
+flex-grow:1;
+min-width:0;
 }
 [role="listbox"] {
 display:none;
