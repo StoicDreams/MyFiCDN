@@ -26,20 +26,26 @@ test('setValue handles quotes and unknown values', async ({ page }) => {
     await el.evaluate(d => d.setValue('nope'));
     await expect(el.locator('select')).toHaveValue('we"ird');
 });
+// Plain options open the same list as html options, so tests pick from it.
+const choose = async (el, name) => {
+    await el.locator('button').click();
+    await el.getByRole('option', { name, exact: true }).click();
+};
+
 test('data-name stores the whole selected item', async ({ page }) => {
     const el = await dropdown(page, `data-name="dd-item" options='[{"id":1,"display":"One"},{"id":2,"display":"Two"}]'`);
-    await el.locator('select').selectOption('2');
+    await choose(el, 'Two');
     await expect.poll(() => page.evaluate(() => webui.getData('dd-item'))).toEqual({ id: 2, display: 'Two' });
 });
 test('multiple stores an array', async ({ page }) => {
     const el = await dropdown(page, `multiple data-name="dd-many" options="a,b"`);
-    await el.locator('select').evaluate(s => { s.multiple = true; });
-    await el.locator('select').selectOption(['a', 'b']);
+    await choose(el, 'a');
+    await el.getByRole('option', { name: 'b', exact: true }).click();
     await expect.poll(() => page.evaluate(() => webui.getData('dd-many').length)).toBe(2);
 });
 test('value and display read the selection', async ({ page }) => {
     const el = await dropdown(page, 'options="One|1,Two|2"');
-    await el.locator('select').selectOption('2');
+    await choose(el, 'Two');
     expect(await el.evaluate(d => [d.value, d.display])).toEqual(['2', 'Two']);
 });
 test('label and icons display', async ({ page }) => {
@@ -93,14 +99,11 @@ test.describe('html-options', () => {
     const html = `[{"id":"r","html":"<webui-icon icon=\\"circle\\"></webui-icon> <b>Red</b>"},{"id":"g","html":"<i>Green</i>"},{"id":"b","display":"Blue & <co>"}]`;
     const htmlDropdown = (page, attributes = '') => dropdown(page, `html-options label="Color" data-name="dd-color" options='${html}' ${attributes}`);
 
-    test('shows a picker instead of the select, keeping simple dropdowns native', async ({ page }) => {
+    test('shows a picker instead of the select', async ({ page }) => {
         const el = await htmlDropdown(page);
         await expect(el.locator('select')).toBeHidden();
         await expect(page.getByRole('combobox', { name: 'Color' })).toBeVisible();
         await expect(el.locator('button .picked b')).toHaveText('Red');
-        const plain = await dropdown(page, 'options="a,b"');
-        await expect(plain.locator('select')).toBeVisible();
-        await expect(plain.locator('button')).toBeHidden();
     });
     test('renders each item html, and escapes plain display text', async ({ page }) => {
         const el = await htmlDropdown(page);
@@ -207,5 +210,56 @@ test.describe('html-options', () => {
         await el.evaluate(d => d.setAttribute('html-options', ''));
         await expect(el.locator('button .picked b')).toHaveText('X');
         await expect(el.locator('label')).toHaveAttribute('for', /-picker$/);
+    });
+});
+
+test.describe('plain options', () => {
+    test('open the same styled list as html options, showing option text', async ({ page }) => {
+        const root = await mount(page, `<webui-dropdown label="Plain" options='[{"id":"a","display":"A"},{"id":"b","html":"<b>Bee</b>"}]'></webui-dropdown>
+<webui-dropdown html-options label="Fancy" options="A|a"></webui-dropdown>`);
+        const plain = root.locator('webui-dropdown').first();
+        const fancy = root.locator('webui-dropdown').last();
+        await expect(plain.locator('select')).toBeHidden();
+        await expect(page.getByRole('combobox', { name: 'Plain' })).toHaveText('A');
+        // Both lists and options share one look: colors, font, and spacing.
+        const look = async el => {
+            await el.locator('button').click();
+            const result = await el.locator('[role="option"]').first().evaluate(node => {
+                const item = getComputedStyle(node);
+                const list = getComputedStyle(node.parentElement);
+                return [list.backgroundColor, list.color, item.fontSize, item.fontFamily, item.padding, node.getBoundingClientRect().height];
+            });
+            await page.keyboard.press('Escape');
+            return result;
+        };
+        const plainLook = await look(plain);
+        expect(plainLook[5]).toBeGreaterThan(0);
+        expect(plainLook).toEqual(await look(fancy));
+        await plain.locator('button').click();
+        await expect(plain.getByRole('option')).toHaveText(['A', 'Bee']);
+        await expect(plain.locator('[role="option"] b')).toHaveCount(0);
+    });
+    test('a pick from the list fires change and input on the dropdown', async ({ page }) => {
+        const el = await dropdown(page, 'options="a,b"');
+        await el.evaluate(d => {
+            window.__events = [];
+            d.addEventListener('change', _ => window.__events.push(`change:${d.value}`));
+            d.addEventListener('input', _ => window.__events.push('input'));
+        });
+        await choose(el, 'b');
+        await expect.poll(() => page.evaluate(() => window.__events)).toEqual(['input', 'change:b']);
+    });
+});
+test.describe('on touch screens', () => {
+    test.use({ hasTouch: true, isMobile: true });
+    test('plain options keep the native select, while html options use the list', async ({ page }) => {
+        expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+        const plain = await dropdown(page, 'options="a,b"');
+        await expect(plain.locator('select')).toBeVisible();
+        await expect(plain.locator('button')).toBeHidden();
+        await plain.locator('select').selectOption('b');
+        expect(await plain.evaluate(d => d.value)).toBe('b');
+        const root = await mount(page, `<webui-dropdown html-options options="a,b"></webui-dropdown>`);
+        await expect(root.locator('webui-dropdown button')).toBeVisible();
     });
 });

@@ -31,6 +31,8 @@
         textReader.innerHTML = '';
         return text;
     }
+    // Touch screens keep the native picker for plain options, which suits them better than a list.
+    const touchPicker = window.matchMedia ? window.matchMedia('(pointer: coarse)') : null;
     function extractOptions(options) {
         if (options === undefined || options === null || options === '') {
             return [];
@@ -85,6 +87,7 @@
                 t.applyDataChange();
                 t.renderPicked();
             });
+            t._field = t._select.parentElement;
             t._picker = t.template.querySelector('button');
             t._picked = t._picker.querySelector('.picked');
             t._list = t.template.querySelector('[role="listbox"]');
@@ -113,6 +116,7 @@
                     t.placeList();
                 });
             };
+            t.updateMode();
         },
         flags: ['multiple', 'html-options'],
         attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'api'],
@@ -169,8 +173,7 @@
                     t.renderPicked();
                     break;
                 case 'htmlOptions':
-                    if (!value) t.closeList();
-                    t.linkLabel();
+                    t.updateMode();
                     if (t._lastOptions !== undefined) {
                         t._oJson = undefined;
                         t.setOptions(t._lastOptions);
@@ -294,10 +297,20 @@
         disconnected() {
             this.closeList();
         },
+        // Options open in the styled list, so plain and html options look the same. Touch screens keep the native picker for plain options.
+        updateMode() {
+            const t = this;
+            const useList = !!t.htmlOptions || !(touchPicker && touchPicker.matches);
+            if (t._useList === useList) return;
+            t._useList = useList;
+            t._field.classList.toggle('list', useList);
+            if (!useList) t.closeList();
+            t.linkLabel();
+        },
         // The label points at whichever control is shown.
         linkLabel() {
             const t = this;
-            const target = t.htmlOptions ? t._picker : t._select;
+            const target = t._useList ? t._picker : t._select;
             if (target.id) t._forLabel.setAttribute('for', target.id);
         },
         applyDataChange() {
@@ -336,14 +349,17 @@
                 return;
             }
             let template = t._optionTemplate;
+            const useList = t._useList;
             const useHtml = !!t.htmlOptions;
             const htmlKey = t.dataset.html || 'html';
             let value = t._pendingValue !== undefined ? t._pendingValue : t.value;
             // Built off the page, then inserted once.
             const selectItems = document.createDocumentFragment();
             const listItems = document.createDocumentFragment();
-            const addListItem = (id, html) => {
-                if (!useHtml) return;
+            // Plain options show the option's text, so both kinds of list look the same.
+            const addListItem = (id, html, option) => {
+                if (!useList) return;
+                if (!useHtml) html = webui.escapeHtml(option.textContent);
                 const item = document.createElement('div');
                 item.setAttribute('role', 'option');
                 item.setAttribute('aria-selected', 'false');
@@ -356,7 +372,7 @@
                 let option = webui.create('option', { value: t.newid, html: t.newlabel });
                 option.dataset.data = '{}';
                 selectItems.appendChild(option);
-                addListItem(`${t.newid}`, t.newlabel);
+                addListItem(`${t.newid}`, t.newlabel, option);
             }
             data.forEach(item => {
                 if (typeof item === 'string') {
@@ -388,7 +404,7 @@
                     option.textContent = htmlToText(html);
                 }
                 selectItems.appendChild(option);
-                addListItem(`${id}`, html);
+                addListItem(`${id}`, html, option);
             });
             t._select.replaceChildren(selectItems);
             t._list.replaceChildren(listItems);
@@ -410,7 +426,7 @@
         // Shows the selected options' html in the picker and marks them in the list.
         renderPicked() {
             const t = this;
-            if (!t.htmlOptions) return;
+            if (!t._useList) return;
             const chosen = [];
             t._list.querySelectorAll('[role="option"]').forEach((item, index) => {
                 const option = t._select.options[index];
@@ -427,7 +443,7 @@
         },
         openList() {
             const t = this;
-            if (!t.htmlOptions || t.isOpen()) return;
+            if (!t._useList || t.isOpen()) return;
             const items = t._list.querySelectorAll('[role="option"]');
             if (!items.length) return;
             t._list.classList.add('open');
@@ -490,8 +506,9 @@
                 option.selected = true;
             }
             t._value = t._select.value;
-            t.applyDataChange();
-            t.renderPicked();
+            // The select's own events save the data and reach the host, so listeners hear a pick from the list too.
+            t._select.dispatchEvent(new Event('input', { bubbles: true }));
+            t._select.dispatchEvent(new Event('change', { bubbles: true }));
         },
         onPickerKey(ev) {
             const t = this;
@@ -643,8 +660,8 @@ background-color:var(--theme-color);
 color:var(--theme-color-offset);
 border-radius:var(--corners);
 }
-:host([html-options]) select {display:none;}
-:host([html-options]) button {display:flex;}
+.list > select {display:none;}
+.list > button {display:flex;}
 button:focus-visible,
 select:focus-visible {
 outline:2px solid currentColor;

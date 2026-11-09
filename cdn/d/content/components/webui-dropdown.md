@@ -19,7 +19,9 @@
 
 ### HTML options
 
-By default the dropdown is a native `<select>`, so option text is plain text. Add the `html-options` flag to show options as HTML instead, such as an icon or color swatch beside each name. The dropdown then opens its own list, with the same keyboard support as a select: arrow keys, Home, End, Enter or Space to pick, Escape to close, and typing a letter to jump to an option.
+Options open in the dropdown's own list, so every dropdown looks the same in every browser. The list has the same keyboard support as a select: arrow keys, Home, End, Enter or Space to pick, Escape to close, and typing a letter to jump to an option. A hidden `<select>` underneath holds the value and fires `input` and `change`. On touch screens, plain dropdowns use the device's native picker instead.
+
+By default option text is plain text. Add the `html-options` flag to show options as HTML instead, such as an icon or color swatch beside each name. It uses the list on touch screens too.
 
 Each option's HTML comes from its `html` field (or the field named by `data-html`), then from a `slot="template"` with `{FIELD}` or `{TEMPLATE_FIELD}` placeholders (use the second form in page markdown, where `{NAME}` style placeholders are filled from app data first), then from its display text. Values put into a template are escaped, but an `html` field is used as it is, so only fill it from content you trust, never from user text. `value`, `display`, `data-name`, and `multiple` work the same in both modes.
 
