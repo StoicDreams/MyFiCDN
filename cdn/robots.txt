@@ -4,4 +4,4 @@ Allow: /nogooglebot/
 User-agent: *
 Allow: /
 
-Sitemap: https://www.myfi.ws/sitemap.xml
+Sitemap: https://cdn.myfi.ws/sitemap.xml

@@ -1,94 +1,49 @@
-Clear-Host;
+<#
+.SYNOPSIS
+Lists the shared images in cdn/img and cdn/v in cdn/imagedata.json.
 
-$files = [System.Collections.ArrayList]@();
-$skipped = [System.Collections.ArrayList]@();
+.DESCRIPTION
+Each entry has the file name, its path from the site root (such as /img/eg/me_128.webp), its type, and the date it was created.
+Files that are not images, such as Paint.NET .pdn sources, are skipped.
 
-$root = Get-Location;
-Write-Host "Building image data: $root
+.PARAMETER OutFile
+Where to write the list. Defaults to cdn/imagedata.json.
+#>
+[CmdletBinding()]
+param(
+    [string]$OutFile
+)
+$ErrorActionPreference = 'Stop'
 
-";
-
-if (!(Test-Path "./webapp/root_files/img")) {
-    throw "This script needs to be run from the solution root folder.";
+$cdnRoot = (Resolve-Path (Join-Path $PSScriptRoot '../cdn')).Path
+if (-not $OutFile) {
+    $OutFile = Join-Path $cdnRoot 'imagedata.json'
 }
 
-Set-Location "./webapp/root_files";
-$path_prefix = Get-Location;
+$fileTypes = @('jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'avif', 'ico')
+$skipped = [System.Collections.Generic.SortedSet[string]]::new()
 
-$file_types = @("jpg", "png", "svg", "gif", "jpeg", "ico");
-
-Get-ChildItem "./img" -Recurse | ForEach-Object {
-    $item_type = $_.GetType().Name.Trim();
-    if ($item_type -eq "DirectoryInfo") {
-        return;
-    }
-    $path = $_.FullName.Replace($path_prefix, "").Replace("\", "/");
-    $name = $path.Split("/")[-1];
-    $file_type = $name.Split(".")[-1].ToLower();
-    $date = $_.CreationTime;
-    if (!$file_types.Contains($file_type)) {
-        if ($skipped.contains($file_type)) {
-            return;
+$files = foreach ($folder in @('img', 'v')) {
+    Get-ChildItem -LiteralPath (Join-Path $cdnRoot $folder) -Recurse -File |
+    Sort-Object FullName |
+    ForEach-Object {
+        $type = $_.Extension.TrimStart('.').ToLower()
+        if ($fileTypes -notcontains $type) {
+            [void]$skipped.Add($type)
+            return
         }
-        $skipped.Add($file_type);
-        Write-Host "
-Skipping unsupported file type $file_type ($item_type)
-";
-        return;
-    }
-    $item = @{name = $name; path = $path; type = $file_type; date = $date };
-    $files.Add($item) | Out-Null
-} | Out-Null
-
-Get-ChildItem "./v" -Recurse | ForEach-Object {
-    $item_type = $_.GetType().Name.Trim();
-    if ($item_type -eq "DirectoryInfo") {
-        return;
-    }
-    $path = $_.FullName.Replace($path_prefix, "").Replace("\", "/");
-    $name = $path.Split("/")[-1];
-    $file_type = $name.Split(".")[-1].ToLower();
-    $date = $_.CreationTime;
-    if (!$file_types.Contains($file_type)) {
-        if ($skipped.contains($file_type)) {
-            return;
+        [ordered]@{
+            file_name = $_.Name
+            file_path = $_.FullName.Substring($cdnRoot.Length).Replace('\', '/')
+            file_type = $type
+            updated   = $_.CreationTime.ToString('yyyy-MM-dd')
         }
-        $skipped.Add($file_type);
-        Write-Host "
-Skipping unsupported file type $file_type ($item_type)
-";
-        return;
-    }
-    $item = @{name = $name; path = $path; type = $file_type; date = $date };
-    $files.Add($item) | Out-Null
-} | Out-Null
-
-function BuildImageData {
-    begin {
-        '['
-    }
-
-    process {
-        '  {'
-        "    ""file_name"":""$($_.name)"",
-",
-        "   ""file_path"":""$($_.path)"",
-",
-        "   ""file_type"":""$($_.type)"",
-",
-        "   ""updated"":""{0:yyyy-MM-dd}""" -f $_.date
-        '  },'
-    }
-
-    end {
-        "]"
     }
 }
 
-$json = $files | BuildImageData | Out-String
+ConvertTo-Json -InputObject @($files) -Depth 2 | Set-Content -LiteralPath $OutFile -Encoding utf8NoBOM
 
-$json = $json.Substring(0, $json.LastIndexOf(',')) + $json.Substring($json.LastIndexOf(',') + 1);
-
-$json | Out-File imagedata.json -Encoding ascii
-
-Set-Location $root;
+Write-Host "Wrote $(@($files).Count) images to $OutFile"
+if ($skipped.Count -gt 0) {
+    Write-Host "Skipped file types: $($skipped -join ', ')" -ForegroundColor Yellow
+}

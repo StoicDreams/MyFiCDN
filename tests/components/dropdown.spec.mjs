@@ -76,3 +76,113 @@ test('without a label, its title names the select', async ({ page }) => {
     await mount(page, '<webui-dropdown title="Project" options="a|b"></webui-dropdown>');
     await expect(page.getByRole('combobox', { name: 'Project' })).toHaveCount(1);
 });
+test('a template never reads option data as markup', async ({ page }) => {
+    const root = await mount(page, `<webui-dropdown><template slot="template"><b>{NAME}</b></template></webui-dropdown>`);
+    const el = root.locator('webui-dropdown');
+    await el.evaluate(d => d.setOptions([{ id: 1, name: '<img src=q onerror="window.__xss=1">' }]));
+    await expect(el.locator('option')).toHaveText('<img src=q onerror="window.__xss=1">');
+    await expect(el.locator('option img, option b')).toHaveCount(0);
+    expect(await page.evaluate(() => window.__xss)).toBeUndefined();
+});
+test('the multiple flag lets the select pick several options', async ({ page }) => {
+    const el = await dropdown(page, 'multiple options="a,b"');
+    await expect.poll(() => el.locator('select').evaluate(s => s.multiple)).toBe(true);
+});
+
+test.describe('html-options', () => {
+    const html = `[{"id":"r","html":"<webui-icon icon=\\"circle\\"></webui-icon> <b>Red</b>"},{"id":"g","html":"<i>Green</i>"},{"id":"b","display":"Blue & <co>"}]`;
+    const htmlDropdown = (page, attributes = '') => dropdown(page, `html-options label="Color" data-name="dd-color" options='${html}' ${attributes}`);
+
+    test('shows a picker instead of the select, keeping simple dropdowns native', async ({ page }) => {
+        const el = await htmlDropdown(page);
+        await expect(el.locator('select')).toBeHidden();
+        await expect(page.getByRole('combobox', { name: 'Color' })).toBeVisible();
+        await expect(el.locator('button .picked b')).toHaveText('Red');
+        const plain = await dropdown(page, 'options="a,b"');
+        await expect(plain.locator('select')).toBeVisible();
+        await expect(plain.locator('button')).toBeHidden();
+    });
+    test('renders each item html, and escapes plain display text', async ({ page }) => {
+        const el = await htmlDropdown(page);
+        await el.locator('button').click();
+        const options = page.getByRole('option');
+        await expect(options).toHaveCount(3);
+        await expect(el.locator('[role="option"] webui-icon')).toHaveCount(1);
+        await expect(el.locator('[role="option"] i')).toHaveText('Green');
+        await expect(options.nth(2)).toHaveText('Blue & <co>');
+        await expect(el.locator('[role="option"] co')).toHaveCount(0);
+        await expect(el.locator('option')).toHaveText(['Red', 'Green', 'Blue & <co>']);
+    });
+    test('clicking an option selects it, stores its data, and closes the list', async ({ page }) => {
+        const el = await htmlDropdown(page);
+        await el.locator('button').click();
+        await expect(el.locator('button')).toHaveAttribute('aria-expanded', 'true');
+        await page.getByRole('option', { name: 'Green' }).click();
+        await expect(el.locator('[role="listbox"]')).toBeHidden();
+        await expect(el.locator('button')).toHaveAttribute('aria-expanded', 'false');
+        await expect(el.locator('button .picked i')).toHaveText('Green');
+        expect(await el.evaluate(d => [d.value, d.display])).toEqual(['g', 'Green']);
+        await expect.poll(() => page.evaluate(() => webui.getData('dd-color').id)).toBe('g');
+    });
+    test('the keyboard opens, moves through, and picks options', async ({ page }) => {
+        const el = await htmlDropdown(page);
+        await el.locator('button').focus();
+        await page.keyboard.press('ArrowDown');
+        await expect(el.locator('[role="listbox"]')).toBeVisible();
+        await expect(el.locator('[role="option"].active')).toHaveText('Red');
+        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('ArrowDown');
+        await expect(el.locator('button')).toHaveAttribute('aria-activedescendant', 'option-2');
+        await page.keyboard.press('Enter');
+        await expect(el.locator('[role="listbox"]')).toBeHidden();
+        await expect.poll(() => el.evaluate(d => d.value)).toBe('b');
+        await page.keyboard.press('g');
+        await expect.poll(() => el.evaluate(d => d.value)).toBe('g');
+        await page.keyboard.press('Space');
+        await page.keyboard.press('Escape');
+        await expect(el.locator('[role="listbox"]')).toBeHidden();
+        await expect(el.locator('button')).toBeFocused();
+        expect(await el.evaluate(d => d.value)).toBe('g');
+    });
+    test('clicking outside closes the list without a change', async ({ page }) => {
+        const el = await htmlDropdown(page);
+        await el.locator('button').click();
+        await expect(el.locator('[role="listbox"]')).toBeVisible();
+        await page.mouse.click(5, 300);
+        await expect(el.locator('[role="listbox"]')).toBeHidden();
+        expect(await el.evaluate(d => d.value)).toBe('r');
+    });
+    test('setValue and the value attribute update the picker', async ({ page }) => {
+        const el = await htmlDropdown(page, 'value="g"');
+        await expect(el.locator('button .picked i')).toHaveText('Green');
+        await el.evaluate(d => d.setValue('r'));
+        await expect(el.locator('button .picked b')).toHaveText('Red');
+        await expect(el.locator('[role="option"][aria-selected="true"]')).toHaveText('Red');
+    });
+    test('multiple toggles options and keeps the list open', async ({ page }) => {
+        const el = await htmlDropdown(page, 'multiple');
+        await el.locator('button').click();
+        await page.getByRole('option', { name: 'Green' }).click();
+        await expect(el.locator('[role="listbox"]')).toHaveAttribute('aria-multiselectable', 'true');
+        await expect(el.locator('[role="listbox"]')).toBeVisible();
+        await expect(el.locator('button .pick')).toHaveCount(2);
+        await page.getByRole('option', { name: 'Red' }).click();
+        await expect(el.locator('button .pick')).toHaveCount(1);
+        await expect.poll(() => page.evaluate(() => webui.getData('dd-color').map(i => i.id))).toEqual(['g']);
+    });
+    test('a template with data-html reads option html from other fields', async ({ page }) => {
+        const root = await mount(page, `<webui-dropdown html-options data-html="markup"><template slot="template"><u>{NAME}</u></template></webui-dropdown>`);
+        const el = root.locator('webui-dropdown');
+        await el.evaluate(d => d.setOptions([{ id: 1, name: 'A<s>' }, { id: 2, markup: '<em>Two</em>' }]));
+        await expect(el.locator('[role="option"] u')).toHaveText('A<s>');
+        await expect(el.locator('[role="option"] s')).toHaveCount(0);
+        await expect(el.locator('[role="option"] em')).toHaveText('Two');
+    });
+    test('adding the flag later switches an existing dropdown to the picker', async ({ page }) => {
+        const el = await dropdown(page, `options='[{"id":"x","html":"<b>X</b>"}]'`);
+        await expect(el.locator('option')).toHaveText('X');
+        await el.evaluate(d => d.setAttribute('html-options', ''));
+        await expect(el.locator('button .picked b')).toHaveText('X');
+        await expect(el.locator('label')).toHaveAttribute('for', /-picker$/);
+    });
+});

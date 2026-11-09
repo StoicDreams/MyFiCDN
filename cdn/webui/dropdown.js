@@ -14,6 +14,23 @@
         if (fallback) field.setAttribute('aria-label', fallback);
         else field.removeAttribute('aria-label');
     }
+    // Template values come from data, so they are escaped before the template is read as markup.
+    function escapeItem(item) {
+        const escaped = {};
+        Object.keys(item).forEach(key => {
+            const val = item[key];
+            escaped[key] = val === undefined || val === null ? '' : typeof val === 'object' ? val : webui.escapeHtml(`${val}`);
+        });
+        return escaped;
+    }
+    // Reads markup without running it, to get the text the native option shows.
+    const textReader = document.createElement('template');
+    function htmlToText(html) {
+        textReader.innerHTML = html;
+        const text = textReader.content.textContent.replace(/\s+/g, ' ').trim();
+        textReader.innerHTML = '';
+        return text;
+    }
     function extractOptions(options) {
         if (options === undefined || options === null || options === '') {
             return [];
@@ -66,9 +83,38 @@
             t._select.addEventListener('change', _ => {
                 if (!t._optionsSet) return;
                 t.applyDataChange();
+                t.renderPicked();
             });
+            t._picker = t.template.querySelector('button');
+            t._picked = t._picker.querySelector('.picked');
+            t._list = t.template.querySelector('[role="listbox"]');
+            t._picker.addEventListener('click', _ => {
+                if (t.isOpen()) t.closeList();
+                else t.openList();
+            });
+            t._picker.addEventListener('keydown', ev => t.onPickerKey(ev));
+            // Keep focus on the picker while an option is clicked.
+            t._list.addEventListener('pointerdown', ev => ev.preventDefault());
+            t._list.addEventListener('click', ev => {
+                const item = ev.target.closest('[role="option"]');
+                if (item) t.pick(item);
+            });
+            t._list.addEventListener('pointermove', ev => {
+                const item = ev.target.closest('[role="option"]');
+                if (item && item !== t._active) t.setActive(item, false);
+            });
+            t._onOutside = ev => {
+                if (!ev.composedPath().includes(t)) t.closeList();
+            };
+            t._onScroll = _ => {
+                if (t._scrollFrame) return;
+                t._scrollFrame = requestAnimationFrame(() => {
+                    t._scrollFrame = 0;
+                    t.placeList();
+                });
+            };
         },
-        flags: ['multiple'],
+        flags: ['multiple', 'html-options'],
         attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'api'],
         attrChanged(property, value) {
             const t = this;
@@ -102,6 +148,7 @@
                         t._forLabel.classList.add('hide');
                     }
                     nameField(t, t._select);
+                    nameField(t, t._picker);
                     break;
                 case 'startIcon':
                 case 'icon':
@@ -116,7 +163,23 @@
                 case 'value':
                     t.setValue(value);
                     break;
+                case 'multiple':
+                    t._select.multiple = !!value;
+                    t._list.setAttribute('aria-multiselectable', value ? 'true' : 'false');
+                    t.renderPicked();
+                    break;
+                case 'htmlOptions':
+                    if (!value) t.closeList();
+                    t.linkLabel();
+                    if (t._lastOptions !== undefined) {
+                        t._oJson = undefined;
+                        t.setOptions(t._lastOptions);
+                    }
+                    break;
             }
+        },
+        onResize() {
+            if (this.isOpen()) this.placeList();
         },
         async getApiData(lid) {
             const t = this;
@@ -217,12 +280,25 @@
         connected() {
             const t = this;
             let id = webui.uuid();
-            t._forLabel.setAttribute('for', id);
             t._select.setAttribute('id', id);
+            t._picker.setAttribute('id', `${id}-picker`);
+            t._list.setAttribute('id', `${id}-list`);
+            t._picker.setAttribute('aria-controls', `${id}-list`);
+            t.linkLabel();
             nameField(t, t._select);
+            nameField(t, t._picker);
             if (t._pendingValue !== undefined) {
                 t.setValue(t._pendingValue);
             }
+        },
+        disconnected() {
+            this.closeList();
+        },
+        // The label points at whichever control is shown.
+        linkLabel() {
+            const t = this;
+            const target = t.htmlOptions ? t._picker : t._select;
+            if (target.id) t._forLabel.setAttribute('for', target.id);
         },
         applyDataChange() {
             const t = this;
@@ -249,6 +325,7 @@
         },
         setOptions(options) {
             const t = this;
+            t._lastOptions = options;
             options = extractOptions(options);
             let oJson = JSON.stringify(options);
             if (oJson === t._oJson) return;
@@ -259,12 +336,27 @@
                 return;
             }
             let template = t._optionTemplate;
+            const useHtml = !!t.htmlOptions;
+            const htmlKey = t.dataset.html || 'html';
             let value = t._pendingValue !== undefined ? t._pendingValue : t.value;
-            t._select.innerHTML = '';
+            // Built off the page, then inserted once.
+            const selectItems = document.createDocumentFragment();
+            const listItems = document.createDocumentFragment();
+            const addListItem = (id, html) => {
+                if (!useHtml) return;
+                const item = document.createElement('div');
+                item.setAttribute('role', 'option');
+                item.setAttribute('aria-selected', 'false');
+                item.id = `option-${listItems.childNodes.length}`;
+                item.dataset.value = id;
+                item.innerHTML = html;
+                listItems.appendChild(item);
+            };
             if (t._includeNew) {
                 let option = webui.create('option', { value: t.newid, html: t.newlabel });
                 option.dataset.data = '{}';
-                t._select.appendChild(option);
+                selectItems.appendChild(option);
+                addListItem(`${t.newid}`, t.newlabel);
             }
             data.forEach(item => {
                 if (typeof item === 'string') {
@@ -281,14 +373,26 @@
                 let display = (t.dataset.display ? item[t.dataset.display] : item.display) || item.display || id;
                 let option = webui.create('option', { value: id });
                 option.dataset.data = JSON.stringify(item);
-                // Option text often comes from data, such as file names, so it is never read as markup.
-                if (template) {
-                    option.innerHTML = webui.replaceAppData(template, item);
-                } else {
-                    option.textContent = display;
+                // Option text often comes from data, such as file names, so data is never read as markup.
+                // Only the template's own markup and an item's html field, which the page supplies, are.
+                let html = undefined;
+                if (typeof item[htmlKey] === 'string') {
+                    html = item[htmlKey];
+                } else if (template) {
+                    html = webui.replaceAppData(template, escapeItem(item));
                 }
-                t._select.appendChild(option);
+                if (html === undefined) {
+                    option.textContent = display;
+                    html = webui.escapeHtml(`${display}`);
+                } else {
+                    option.textContent = htmlToText(html);
+                }
+                selectItems.appendChild(option);
+                addListItem(`${id}`, html);
             });
+            t._select.replaceChildren(selectItems);
+            t._list.replaceChildren(listItems);
+            t._active = undefined;
             let dn = t.dataset.name;
             if (dn) {
                 let check = webui.getData(dn);
@@ -298,6 +402,149 @@
             }
             t._optionsSet = true;
             t.setValue(value);
+            t.renderPicked();
+        },
+        isOpen() {
+            return this._list.classList.contains('open');
+        },
+        // Shows the selected options' html in the picker and marks them in the list.
+        renderPicked() {
+            const t = this;
+            if (!t.htmlOptions) return;
+            const chosen = [];
+            t._list.querySelectorAll('[role="option"]').forEach((item, index) => {
+                const option = t._select.options[index];
+                const isSelected = !!option && option.selected;
+                const state = isSelected ? 'true' : 'false';
+                if (item.getAttribute('aria-selected') !== state) item.setAttribute('aria-selected', state);
+                if (isSelected) chosen.push(item.innerHTML);
+            });
+            const html = chosen.map(h => `<span class="pick">${h}</span>`).join('');
+            if (t._pickedHtml !== html) {
+                t._pickedHtml = html;
+                t._picked.innerHTML = html;
+            }
+        },
+        openList() {
+            const t = this;
+            if (!t.htmlOptions || t.isOpen()) return;
+            const items = t._list.querySelectorAll('[role="option"]');
+            if (!items.length) return;
+            t._list.classList.add('open');
+            if (t._list.showPopover) t._list.showPopover();
+            t._picker.setAttribute('aria-expanded', 'true');
+            t.placeList();
+            const selected = t._list.querySelector('[aria-selected="true"]') || items[0];
+            t.setActive(selected, true);
+            document.addEventListener('pointerdown', t._onOutside, true);
+            document.addEventListener('scroll', t._onScroll, true);
+        },
+        closeList() {
+            const t = this;
+            if (!t.isOpen()) return;
+            t._list.classList.remove('open');
+            if (t._list.hidePopover && t._list.matches(':popover-open')) t._list.hidePopover();
+            t._picker.setAttribute('aria-expanded', 'false');
+            t._picker.removeAttribute('aria-activedescendant');
+            t._active?.classList.remove('active');
+            t._active = undefined;
+            document.removeEventListener('pointerdown', t._onOutside, true);
+            document.removeEventListener('scroll', t._onScroll, true);
+        },
+        // Places the open list under the picker, or above it when there is more room there.
+        placeList() {
+            const t = this;
+            if (!t.isOpen()) return;
+            const rect = t._picker.getBoundingClientRect();
+            const style = t._list.style;
+            const below = window.innerHeight - rect.bottom;
+            const above = rect.top;
+            const height = t._list.scrollHeight;
+            const showAbove = height > below && above > below;
+            const room = Math.max(showAbove ? above : below, 0) - 8;
+            style.left = `${Math.max(rect.left, 0)}px`;
+            style.minWidth = `${rect.width}px`;
+            style.maxHeight = `${Math.min(room, 320)}px`;
+            style.top = showAbove ? `${Math.max(rect.top - Math.min(height, room), 0)}px` : `${rect.bottom}px`;
+        },
+        setActive(item, scroll) {
+            const t = this;
+            if (!item) return;
+            t._active?.classList.remove('active');
+            t._active = item;
+            item.classList.add('active');
+            t._picker.setAttribute('aria-activedescendant', item.id);
+            if (scroll) item.scrollIntoView({ block: 'nearest' });
+        },
+        // Selects a list item, as choosing it in the native select would.
+        pick(item) {
+            const t = this;
+            const index = [...t._list.children].indexOf(item);
+            const option = t._select.options[index];
+            if (!option) return;
+            if (t.multiple) {
+                option.selected = !option.selected;
+            } else {
+                t.closeList();
+                if (option.selected) return;
+                option.selected = true;
+            }
+            t._value = t._select.value;
+            t.applyDataChange();
+            t.renderPicked();
+        },
+        onPickerKey(ev) {
+            const t = this;
+            const items = [...t._list.querySelectorAll('[role="option"]')];
+            if (!items.length) return;
+            const open = t.isOpen();
+            const index = t._active ? items.indexOf(t._active) : -1;
+            const move = to => {
+                ev.preventDefault();
+                if (!open) t.openList();
+                t.setActive(items[Math.min(Math.max(to, 0), items.length - 1)], true);
+            };
+            switch (ev.key) {
+                case 'ArrowDown':
+                case 'ArrowUp':
+                    ev.preventDefault();
+                    if (!open) t.openList();
+                    else if (!ev.altKey) move(index + (ev.key === 'ArrowDown' ? 1 : -1));
+                    return;
+                case 'Home':
+                    if (open) move(0);
+                    return;
+                case 'End':
+                    if (open) move(items.length - 1);
+                    return;
+                case 'Enter':
+                case ' ':
+                    ev.preventDefault();
+                    if (!open) t.openList();
+                    else if (t._active) t.pick(t._active);
+                    return;
+                case 'Escape':
+                    if (open) { ev.preventDefault(); t.closeList(); }
+                    return;
+                case 'Tab':
+                    t.closeList();
+                    return;
+            }
+            // Typing a letter jumps to the next option that starts with it.
+            if (ev.key.length === 1 && !ev.ctrlKey && !ev.metaKey && !ev.altKey) {
+                const key = ev.key.toLowerCase();
+                const count = items.length;
+                const from = open ? index : items.findIndex(i => i.getAttribute('aria-selected') === 'true');
+                for (let step = 1; step <= count; ++step) {
+                    const item = items[(from + step + count) % count];
+                    if (item.textContent.trim().toLowerCase().startsWith(key)) {
+                        ev.preventDefault();
+                        if (open) move(items.indexOf(item));
+                        else if (!t.multiple) t.pick(item);
+                        return;
+                    }
+                }
+            }
         },
         props: {
             'value': {
@@ -331,6 +578,7 @@
             t._select.value = value;
             o.selected = true;
             t.applyDataChange();
+            t.renderPicked();
         },
         shadowTemplate: `
 <label class="hide">
@@ -340,6 +588,8 @@
 </label>
 <div>
 <select><slot></slot></select>
+<button type="button" role="combobox" aria-haspopup="listbox" aria-expanded="false"><span class="picked"></span></button>
+<div role="listbox" popover="manual"></div>
 <webui-icon class="end"></webui-icon>
 </div>
 <slot name="template"></slot>
@@ -376,6 +626,74 @@ border-radius:var(--corners);
 max-width:100%;
 appearance: none;
 -webkit-appearance: none;
+}
+button {
+display:none;
+flex-grow:1;
+align-items:center;
+gap:var(--padding, 0.5em);
+min-width:0;
+min-height:2em;
+padding: var(--padding, 2px 5px);
+font:inherit;
+text-align:start;
+cursor:pointer;
+border:none;
+background-color:var(--theme-color);
+color:var(--theme-color-offset);
+border-radius:var(--corners);
+}
+:host([html-options]) select {display:none;}
+:host([html-options]) button {display:flex;}
+button:focus-visible,
+select:focus-visible {
+outline:2px solid currentColor;
+outline-offset:2px;
+}
+.picked {
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+gap:var(--padding, 0.5em);
+min-width:0;
+}
+.pick {
+display:inline-flex;
+align-items:center;
+gap:0.4em;
+}
+[role="listbox"] {
+display:none;
+position:fixed;
+inset:auto;
+margin:0;
+padding:2px 0;
+box-sizing:border-box;
+overflow:auto;
+overscroll-behavior:contain;
+border:1px solid color-mix(in srgb, var(--theme-color-offset) 25%, transparent);
+border-radius:var(--corners);
+box-shadow:0 4px 16px rgb(0 0 0 / 0.25);
+background-color:var(--theme-color);
+color:var(--theme-color-offset);
+z-index:1000;
+}
+[role="listbox"].open {display:block;}
+[role="option"] {
+display:flex;
+align-items:center;
+gap:0.4em;
+padding:var(--padding, 4px 8px);
+cursor:pointer;
+}
+[role="option"][aria-selected="true"] {
+font-weight:bold;
+background-color:color-mix(in srgb, var(--theme-color-offset) 10%, var(--theme-color));
+}
+[role="option"].active {
+outline:2px solid currentColor;
+outline-offset:-2px;
+background-color:color-mix(in srgb, var(--theme-color-offset) 18%, var(--theme-color));
 }
 label.hide {display:none;}
 label {
