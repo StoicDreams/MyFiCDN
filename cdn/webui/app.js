@@ -36,6 +36,10 @@ webui.define("webui-app", {
         t.template.querySelectorAll('slot[name]').forEach(slot => {
             slot.addEventListener('slotchange', () => t.observeSlots());
         });
+        // An empty content footer would still add its margin and padding below every page, so it only shows with content.
+        const showContentFooter = () => t.contentFooterSlot.toggleAttribute('empty', t.contentFooterSlot.assignedNodes().length === 0);
+        t.contentFooterSlot.addEventListener('slotchange', showContentFooter);
+        showContentFooter();
     },
     connected() {
         this.observeSlots();
@@ -243,6 +247,9 @@ display:grid;
 gap:var(--padding);
 margin-top:calc(5*var(--padding));
 padding:var(--padding);
+}
+slot[name="content-footer"][empty] {
+display:none;
 }
 main {
 display:block;

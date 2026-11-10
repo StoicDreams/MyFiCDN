@@ -79,3 +79,17 @@ for (const width of [360, 375]) {
         expect(right.narrow).toBeLessThanOrEqual(width);
     });
 }
+test('the content footer takes no space without content, and shows when it has some', async ({ page }) => {
+    const slot = () => page.evaluate(() => {
+        const slot = document.querySelector('webui-app').shadowRoot.querySelector('slot[name="content-footer"]');
+        return { empty: slot.hasAttribute('empty'), display: getComputedStyle(slot).display, assigned: slot.assignedNodes().length };
+    });
+    const before = await slot();
+    if (before.assigned) {
+        expect(before).toMatchObject({ empty: false, display: 'grid' });
+        await page.evaluate(() => document.querySelectorAll('webui-app > [slot="content-footer"]').forEach(el => el.remove()));
+    }
+    await expect.poll(slot).toMatchObject({ empty: true, display: 'none' });
+    await page.evaluate(() => document.querySelector('webui-app').append(Object.assign(document.createElement('footer'), { slot: 'content-footer', textContent: 'Links' })));
+    await expect.poll(slot).toMatchObject({ empty: false, display: 'grid' });
+});
