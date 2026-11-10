@@ -52,6 +52,16 @@ test('the bubble sits just above a footer along the bottom of the window', async
     await expect.poll(async () => (await box(help.locator('button.bubble'))).bottom).toBeLessThanOrEqual(640);
     expect((await box(help.locator('button.bubble'))).bottom).toBeGreaterThan(600);
 });
+test('the bubble sits above a docked drawer\'s buttons, and drops back when the drawer closes', async ({ page }) => {
+    const drawer = '<webui-drawer slot="right" class="shared" data-dockable docked="true" style="position:fixed;right:0;top:0;height:100%;width:300px">Panel</webui-drawer>';
+    const help = await ready(page, `${drawer}${HELP}`);
+    const bubbleBottom = async () => (await box(help.locator('button.bubble'))).bottom;
+    const footerTop = await page.locator('webui-drawer > [slot="footer"]').evaluate(el => el.getBoundingClientRect().top);
+    expect(footerTop).toBeLessThan(680);
+    await expect.poll(bubbleBottom).toBeLessThanOrEqual(footerTop);
+    await page.locator('webui-drawer .drawer-close').dispatchEvent('click');
+    await expect.poll(bubbleBottom).toBeGreaterThan(footerTop);
+});
 test('label, heading, and icon can be set', async ({ page }) => {
     const help = await ready(page, '<webui-page-help label="Guide" icon="messages-question"><p>x</p></webui-page-help>');
     await expect(help.locator('button.bubble')).toHaveText('Guide');

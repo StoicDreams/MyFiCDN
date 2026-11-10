@@ -16,12 +16,12 @@
     const minPanelWidth = 240;
     const minPanelHeight = 120;
     const prefersReducedMotion = () => !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    /** A footer bar along the bottom of the window, so the bubble can sit just above it. */
+    /** A footer bar along the bottom of the window, such as a docked drawer's buttons, so the bubble can sit just above it. */
     function findFooter(host) {
         const elements = document.elementsFromPoint(window.innerWidth - edgeGap * 2, window.innerHeight - 1);
         for (const el of elements) {
             if (el === host) continue;
-            const footer = el.closest?.('footer');
+            const footer = el.closest?.('footer, webui-drawer > [slot="footer"]');
             if (footer) return footer;
         }
         return null;
@@ -127,6 +127,10 @@
                 t.keepInView();
                 t.keepPanelInView();
             };
+            // Docking, moving, or closing a drawer changes what is in the corner without resizing the window.
+            t._onDrawerMoved = ev => {
+                if (ev.target?.localName === 'webui-drawer') t.placeAboveFooter();
+            };
             trackDrag(t._bubble, {
                 getRect: () => t._float.getBoundingClientRect(),
                 onMove: (left, top, drag) => {
@@ -210,6 +214,7 @@
         connected() {
             const t = this;
             window.addEventListener('resize', t._onResize);
+            document.addEventListener('transitionend', t._onDrawerMoved);
             showOnTop(t._float);
             t.restorePosition();
             t.checkContent();
@@ -220,6 +225,7 @@
         disconnected() {
             const t = this;
             window.removeEventListener('resize', t._onResize);
+            document.removeEventListener('transitionend', t._onDrawerMoved);
             (t._footerTimers || []).forEach(clearTimeout);
             t._footerObserver.disconnect();
             t._footer = null;
