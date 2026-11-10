@@ -8,20 +8,22 @@
 "use strict"
 {
     const dockableTemplate = `
-<webui-toggle-icon class="pa-0" data-toggleattr="[ID]|docked" data-enabled="[ID]" icon-on="arrow-side-from-square|rotate:180" icon-off="drawer|rotate:90" title-on="Hide Navigation" flags-on="" flags-off="fill" title-off="Dock Navigation"></webui-toggle-icon>`;
+<webui-toggle-icon class="pa-0" data-toggleattr="[ID]|docked" data-enabled="[ID]" icon-on="arrow-side-from-square|rotate:180" icon-off="drawer|rotate:90" title-on="Hide [NAME]" flags-on="" flags-off="fill" title-off="Dock [NAME]"></webui-toggle-icon>`;
     const moveableTemplate = `
-<button data-setattr="[ID]|slot|left" aria-label="Set navigation to left" class="toggle-pos-left">
+<button data-setattr="[ID]|slot|left" aria-label="Set [name] to left" class="toggle-pos-left">
 <webui-icon icon="drawer|rotate:90"></webui-icon>
 </button>
-<button data-setattr="[ID]|slot|right" aria-label="Set navigation to right" class="toggle-pos-right">
+<button data-setattr="[ID]|slot|right" aria-label="Set [name] to right" class="toggle-pos-right">
 <webui-icon icon="drawer|rotate:-90"></webui-icon>
 </button>
-<button data-setattr="[ID]|slot|top" aria-label="Set navigation to top" class="toggle-pos-top">
+<button data-setattr="[ID]|slot|top" aria-label="Set [name] to top" class="toggle-pos-top">
 <webui-icon icon="drawer|rotate:180"></webui-icon>
 </button>
-<button data-setattr="[ID]|slot|bottom" aria-label="Set navigation to bottom" class="toggle-pos-bottom">
+<button data-setattr="[ID]|slot|bottom" aria-label="Set [name] to bottom" class="toggle-pos-bottom">
 <webui-icon icon="drawer"></webui-icon>
 </button>`;
+    // The site menu is called navigation, and any other drawer a panel, in its labels and tooltips.
+    const isNavigation = el => !!el.querySelector('webui-nav') || el.classList.contains('nav');
     webui.define("webui-drawer", {
         preload: 'icon flex toggle-icon',
         linkCss: false,
@@ -38,7 +40,9 @@
             const t = this;
             // A landmark lets screen reader users find the drawer, and covers content such as a logo above the menu.
             if (!t.hasAttribute('role')) t.setAttribute('role', 'complementary');
-            if (!t.hasAttribute('aria-label')) t.setAttribute('aria-label', t.querySelector('webui-nav') || t.classList.contains('nav') ? 'Menu' : 'Side panel');
+            if (!t.hasAttribute('aria-label')) t.setAttribute('aria-label', isNavigation(t) ? 'Menu' : 'Side panel');
+            // The class or menu can arrive after the footer was built.
+            t.buildFooterContent();
             setTimeout(() => {
                 t.setAttribute('id', t._id);
             }, 100);
@@ -70,8 +74,10 @@
             const t = this;
             let fb = t.querySelectorAll('[slot="footer"]');
             let content = '';
-            if (this.dataMoveable) { content += moveableTemplate.split('[ID]').join(this._idselector); }
-            if (this.dataDockable && !this._forceUndocked) { content += dockableTemplate.split('[ID]').join(this._idselector); }
+            if (this.dataMoveable) { content += moveableTemplate; }
+            if (this.dataDockable && !this._forceUndocked) { content += dockableTemplate; }
+            const name = isNavigation(t) ? 'Navigation' : 'Panel';
+            content = content.split('[ID]').join(this._idselector).split('[NAME]').join(name).split('[name]').join(name.toLowerCase());
             if (fb.length === 1 && content === t._footerContent) return;
             t._footerContent = content;
             fb.forEach(el => el.remove());

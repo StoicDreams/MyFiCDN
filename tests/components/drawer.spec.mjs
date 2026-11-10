@@ -44,3 +44,15 @@ test('is a labelled landmark, named Menu when it holds the site menu', async ({ 
     await expect(root.getByRole('complementary', { name: 'Menu' })).toBeAttached();
     await expect(root.getByRole('complementary', { name: 'Side panel' })).toBeAttached();
 });
+test('dock and move controls name the menu navigation, and any other drawer a panel', async ({ page }) => {
+    const root = await mount(page, '<webui-drawer slot="left" class="nav" data-dockable data-moveable docked="true"><webui-nav></webui-nav></webui-drawer><webui-drawer slot="right" class="shared" data-dockable data-moveable docked="true"></webui-drawer>');
+    // The drawer replaces any id with its own, so these are found by class.
+    const menu = root.locator('webui-drawer.nav > [slot="footer"]');
+    const panel = root.locator('webui-drawer.shared > [slot="footer"]');
+    await expect(menu.locator('webui-toggle-icon')).toHaveAttribute('title-on', 'Hide Navigation');
+    await expect(menu.locator('webui-toggle-icon')).toHaveAttribute('title-off', 'Dock Navigation');
+    await expect(menu.locator('.toggle-pos-right')).toHaveAttribute('aria-label', 'Set navigation to right');
+    await expect(panel.locator('webui-toggle-icon')).toHaveAttribute('title-on', 'Hide Panel');
+    await expect(panel.locator('webui-toggle-icon')).toHaveAttribute('title-off', 'Dock Panel');
+    await expect(panel.locator('.toggle-pos-left')).toHaveAttribute('aria-label', 'Set panel to left');
+});
