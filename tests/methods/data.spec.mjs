@@ -215,3 +215,30 @@ test('webui.loadRoles applies the API response', async ({ page }) => {
         return [webui.getData('session-user-role'), webui.getData('session-autosignout')];
     })).toEqual([5, 45]);
 });
+test('webui.loadRoles first exchanges a sign-in code from the address', async ({ page }) => {
+    const calls = [];
+    await page.route('https://api.myfi.ws/user/signin/code', route => {
+        calls.push(['code', route.request().postDataJSON()]);
+        return route.fulfill({
+            status: 200,
+            body: 'Signin Successful',
+            headers: { 'access-control-allow-origin': 'http://localhost:3199', 'access-control-allow-credentials': 'true' },
+        });
+    });
+    await page.route('https://api.myfi.ws/user/roles', route => {
+        calls.push(['roles']);
+        return route.fulfill({
+            status: 200,
+            body: '1',
+            headers: { 'access-control-allow-origin': 'http://localhost:3199', 'access-control-allow-credentials': 'true' },
+        });
+    });
+    const rolesLoaded = page.waitForResponse('https://api.myfi.ws/user/roles');
+    await page.goto('/__blank?signin=1#myfi-signin=abc%20123');
+    await rolesLoaded;
+    expect(calls).toEqual([['code', { code: 'abc 123' }], ['roles']]);
+    expect(await page.evaluate(() => [location.hash, location.search, webui.getData('session-user-role')])).toEqual(['', '?signin=1', 1]);
+    // The code is used once. Later role refreshes go straight to the roles API.
+    await page.evaluate(() => webui.loadRoles());
+    expect(calls.map(call => call[0])).toEqual(['code', 'roles', 'roles']);
+});

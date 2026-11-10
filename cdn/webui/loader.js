@@ -71,6 +71,16 @@ const webui = (() => {
         document.title = webui.replaceAppData(title);
     }
     let lastActive = Date.now();
+    // Signing in on www.stoicdreams.com sends the visitor back with #myfi-signin={code}.
+    // loadRoles exchanges the code for this site's own session cookie, since browsers no longer share
+    // the API's cookie between sites. The code is taken off the address at once, so it isn't bookmarked or shared.
+    let pendingSigninCode = (() => {
+        const prefix = "#myfi-signin=";
+        if (!location.hash.startsWith(prefix)) return null;
+        const code = decodeURIComponent(location.hash.substring(prefix.length));
+        history.replaceState(history.state, "", location.pathname + location.search);
+        return code || null;
+    })();
     {
         const minTimeout = 1000 * 60 * 5;
         function checkForRoleRefresh() {
@@ -2404,6 +2414,15 @@ const webui = (() => {
         async loadRoles() {
             const t = this;
             if (t.appConfig && t.appConfig.rolesApi) {
+                if (pendingSigninCode) {
+                    const code = pendingSigninCode;
+                    pendingSigninCode = null;
+                    let signin = await t.fetchApi("user/signin/code", { code: code });
+                    if (signin.status !== 200) {
+                        let message = await signin.text();
+                        t.alert(t.escapeHtml(message || "Sign-in failed. Please sign in again."), "warning");
+                    }
+                }
                 let resp = await t.fetchApi(t.appConfig.rolesApi, null, "get");
                 if (resp.status === 200) {
                     let cookieAge =
