@@ -151,6 +151,26 @@ test('a tooltip never blocks clicks, and closes when its element is hidden under
     await root.locator('#hide').evaluate(el => { el.style.display = 'none'; });
     await expect(tooltip).toHaveClass(/closed/);
 });
+test('a tooltip shows above an open dropdown list', async ({ page }) => {
+    const options = JSON.stringify(['One', 'Two', 'Three', 'Four'].map(name => ({ value: name, html: `<span title="About ${name}">${name}</span>` })));
+    const root = await mount(page, `<webui-dropdown html-options options='${options}' style="position:fixed;top:100px;left:100px;width:200px"></webui-dropdown>`);
+    const dropdown = root.locator('webui-dropdown');
+    await dropdown.locator('button').click();
+    await dropdown.getByRole('option', { name: 'Three' }).locator('span').hover();
+    const tooltip = page.locator('body > .tooltip');
+    await expect(tooltip).toHaveText('About Three');
+    await expect(tooltip).toHaveClass(/open/);
+    // The list is in the top layer, so the tooltip is only seen if it is above it there.
+    const onTop = await tooltip.evaluate(el => {
+        const box = el.getBoundingClientRect();
+        el.style.pointerEvents = 'auto';
+        const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+        el.style.pointerEvents = '';
+        return hit === el;
+    });
+    expect(onTop).toBe(true);
+    await expect(dropdown.getByRole('listbox')).toBeVisible();
+});
 test('a tab named in the url opens on load', async ({ page }) => {
     await page.goto('/#condition');
     const tabs = page.locator('webui-tabs').first();
