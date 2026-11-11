@@ -176,6 +176,7 @@
                 return;
             }
             t._index = tabIndex;
+            t.collapseHiddenTabs();
             if (t.dataset.subscribe) {
                 t.dataset.subscribe.split('|').forEach(ds => {
                     let dss = ds.split(':');
@@ -187,6 +188,23 @@
                 });
             }
             t._initiated = true;
+        },
+        /**
+         * Tabs sit side by side, so the tallest would set the height of all of them and leave space below a shorter one.
+         * Hidden tabs collapse once the slide to the shown tab has finished, so the slide still shows both.
+         */
+        collapseHiddenTabs() {
+            const t = this;
+            const contents = Array.from(t.querySelectorAll('[slot="content"]')).filter(item => item.parentNode === t);
+            contents[t._index]?.removeAttribute('tab-hidden');
+            clearTimeout(t._collapseTimer);
+            const collapse = () => contents.forEach((c, index) => c.toggleAttribute('tab-hidden', index !== t._index));
+            const slide = t._initiated ? (parseFloat(getComputedStyle(t._slotContent).transitionDuration) || 0) * 1000 : 0;
+            if (slide > 0) {
+                t._collapseTimer = setTimeout(collapse, slide);
+            } else {
+                collapse();
+            }
         },
         getTabIndexFromUrl() {
             const t = this;
@@ -280,6 +298,11 @@ min-height:100%;
 }
 ::slotted([slot="content"]) {
 min-height:100%;
+}
+::slotted([slot="content"][tab-hidden]) {
+height:0;
+min-height:0;
+overflow:hidden;
 }
 section {
 display:block;

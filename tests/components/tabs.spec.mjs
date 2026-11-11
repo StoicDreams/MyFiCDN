@@ -132,3 +132,19 @@ test('the shown tab is marked current, and other tabs are out of reach', async (
     await expect(buttons(el).first()).not.toHaveAttribute('aria-current');
     await expect.poll(() => panels.evaluateAll(list => list.map(p => p.inert))).toEqual([true, true, false]);
 });
+test('a short tab is not as tall as a longer hidden tab, and a shown tab gets its full height', async ({ page }) => {
+    const el = (await mount(page, `<webui-tabs transition-timing="200">
+<webui-button slot="tabs">Short</webui-button><div slot="content"><div style="height:100px">A</div></div>
+<webui-button slot="tabs">Tall</webui-button><div slot="content"><div style="height:900px">B</div></div></webui-tabs>`)).locator('webui-tabs');
+    const height = () => el.evaluate(t => Math.round(t.getBoundingClientRect().height));
+    const contentHeights = () => el.evaluate(t => [...t.querySelectorAll('[slot="content"]')].map(c => Math.round(c.getBoundingClientRect().height)));
+    await expect.poll(height).toBeLessThan(300);
+    await buttons(el).nth(1).click();
+    // The tab being shown has its full height at once, and the one sliding away keeps its height until it is gone.
+    expect(await contentHeights()).toEqual([900, 900]);
+    await expect.poll(height).toBeGreaterThan(900);
+    await expect.poll(contentHeights).toEqual([0, 900]);
+    await buttons(el).first().click();
+    await expect.poll(height).toBeLessThan(300);
+    await expect.poll(contentHeights).toEqual([100, 0]);
+});
