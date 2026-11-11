@@ -12,6 +12,8 @@ const RX_AUTOLINK = /(?<![\w"'=\/])(https?:\/\/[^\s<]*[^\s<.,;:!?'")\]])/g;
 const RX_AUTOLINK_ANGLE = /<(https?:\/\/[^\s<>]+)>/g;
 const RX_AUTOLINK_EMAIL = /<([^\s<>@]+@[^\s<>@]+\.[^\s<>@]+)>/g;
 const RX_CODE_SPAN = /(`+)(.+?)\1/g;
+// The framework's theme colors (--color-{name} in webui.css), which `name:code` can use.
+const CODE_THEMES = new Set(['primary', 'secondary', 'tertiary', 'info', 'success', 'warning', 'danger', 'title', 'active', 'action', 'button', 'shade', 'site', 'background', 'footer', 'black', 'white']);
 const RX_HTML_TAG = /<[a-zA-Z\/!][^>]*>/g;
 // Not right after or before a letter or digit, so times such as 10:30:00 are left alone.
 const RX_EMOJI = /(?<![\w\/]):([a-zA-Z0-9_+-]+):(?!\w)/g;
@@ -623,11 +625,10 @@ export class MarkdownParser {
             if (code.startsWith(' ') && code.endsWith(' ') && code.trim().length > 0) {
                 code = code.substring(1, code.length - 1);
             }
-            const match = code.match(/^(([a-z]+):)?(.*)/);
-            const theme = match && match[2] ? match[2] : null;
-            const refined = match ? match[3] : code;
-            return hold('C', theme
-                ? `<code theme="${t.escapeQuote(theme)}">${t.escapeCode(refined)}</code>`
+            // `danger:code` is themed code. Only theme names count, so code such as `problem:checkouttimeouts` stays whole.
+            const match = code.match(/^([a-z]+):(.+)$/s);
+            return hold('C', match && CODE_THEMES.has(match[1])
+                ? `<code theme="${t.escapeQuote(match[1])}">${t.escapeCode(match[2])}</code>`
                 : `<code>${t.escapeCode(code)}</code>`);
         });
         text = text.replace(RX_ESCAPE, (_, char) => hold('S', t.escapeHtml(char)));

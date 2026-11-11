@@ -47,6 +47,19 @@ webui.define('webui-nav-group', {
         }
         t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
     },
+    /** Opens the group when the page being shown is one of its links, so visitors can see where they are. It never closes it. */
+    openForPage(value) {
+        const t = this;
+        const path = !value || value === '/root' ? '/' : value;
+        if (t.open) return;
+        const links = t.querySelectorAll('webui-nav-link');
+        for (const link of links) {
+            if (link.getAttribute('url') === path) {
+                t.setShow(true);
+                return;
+            }
+        }
+    },
     flags: ['show'],
     attr: ['icon', 'name'],
     attrChanged(property, value) {
@@ -87,5 +100,6 @@ webui.define('webui-nav-group', {
         } else {
             t.appendChild(t._anchor);
         }
+        t.addDataset('subscribe', 'page-path:openForPage');
     }
 });

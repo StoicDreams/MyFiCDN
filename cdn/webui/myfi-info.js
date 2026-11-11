@@ -54,6 +54,7 @@
         constructor() {
             const t = this;
             t._icon = t.template.querySelector('webui-icon');
+            t._label = t.template.querySelector('.label');
             t._slotContent = t.template.querySelector('slot[name="panel-content"]');
             t.addEventListener('click', async ev => {
                 ev.stopPropagation();
@@ -88,7 +89,14 @@
                 }
             });
         },
-        attr: ['exclude'],
+        attr: ['exclude', 'sign-in-label'],
+        attrChanged(property, value) {
+            const t = this;
+            if (property === 'signInLabel') {
+                // Shown beside the icon while signed out, so visitors can see how to sign in.
+                t._label.innerText = value || '';
+            }
+        },
         connected() {
             this.setupComponent();
         },
@@ -113,6 +121,7 @@
             if (t._lastRender == webui.isSignedIn) return;
             let isSignedIn = webui.isSignedIn;
             t._lastRender = isSignedIn;
+            t.toggleAttribute('signed-out', !isSignedIn);
             if (isSignedIn) {
                 t._icon.setAttribute('icon', 'circle_person|fill|bordered|shade:tri|backing|rotate:0');
                 t._icon.setAttribute('theme', 'success');
@@ -131,6 +140,7 @@
         },
         shadowTemplate: `
 <webui-icon icon="arrow-side-into-square|rotate:180" fill></webui-icon>
+<span class="label"></span>
 <slot name="panel-content"></slot>
 <style type="text/css">
 :host {
@@ -139,6 +149,23 @@ cursor:pointer;
 padding:1px;
 align-items:center;
 justify-content:center;
+}
+.label {
+display:none;
+}
+:host([signed-out][sign-in-label]) {
+gap:0.4em;
+padding:0.25em 0.75em;
+border-radius:var(--corners);
+background-color:var(--color-primary);
+color:var(--color-primary-offset);
+}
+:host([signed-out][sign-in-label]) .label {
+display:inline;
+}
+:host(:focus-visible) {
+outline:2px solid var(--color-focus, currentColor);
+outline-offset:2px;
 }
 </style>
 `

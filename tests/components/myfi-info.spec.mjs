@@ -10,6 +10,17 @@ test('shows the sign in icon when signed out', async ({ page }) => {
     await expect(el.locator('webui-icon').first()).toHaveAttribute('theme', 'warning');
     await expect.poll(() => el.evaluate(c => c.getAttribute('title') || c.getAttribute('aria-label'))).toContain('Sign-In');
 });
+test('sign-in-label shows a labeled button while signed out, and only the icon once signed in', async ({ page }) => {
+    const root = await mount(page, '<webui-myfi-info sign-in-label="Sign in"></webui-myfi-info>');
+    const el = root.locator('webui-myfi-info');
+    const label = el.locator('.label');
+    await expect(label).toHaveText('Sign in');
+    await expect(label).toBeVisible();
+    await expect(el).toHaveAttribute('signed-out', '');
+    await page.evaluate(() => webui.setData('session-user-role', 1));
+    await expect(el).not.toHaveAttribute('signed-out');
+    await expect(label).toBeHidden();
+});
 test('on localhost, clicking simulates sign in and updates the icon', async ({ page }) => {
     const { el } = await info(page);
     await el.evaluate(c => c.click());

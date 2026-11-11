@@ -148,6 +148,10 @@ test.describe('webui.parseMarkdown inline', () => {
     test('times are not read as emoji', async ({ page }) => {
         expect(await md(page, 'At 10:30:00 :smile:')).toBe('<p>At 10:30:00 <webui-emoji emoji="smile"></webui-emoji></p>');
     });
+    test('a theme name and a colon theme inline code, and other text before a colon stays in the code', async ({ page }) => {
+        expect(await md(page, '`danger:code` `problem:checkouttimeouts` `person:` `test:min` `danger:`')).toBe(
+            '<p><code theme="danger">code</code> <code>problem:checkouttimeouts</code> <code>person:</code> <code>test:min</code> <code>danger:</code></p>');
+    });
     test('escapes keep characters as text, and are left as written in code', async ({ page }) => {
         expect(await md(page, '\\*a\\* \\<b\\> \\:smile\\: \\| \\`code\\`')).toBe('<p>*a* &lt;b&gt; :smile: | `code`</p>');
         expect(await md(page, '`a\\_b`')).toBe('<p><code>a\\_b</code></p>');

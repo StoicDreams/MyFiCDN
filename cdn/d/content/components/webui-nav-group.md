@@ -1,5 +1,5 @@
 <webui-page-segment elevation="10">
-    The `<webui-nav-group>` component creates a collapsible container for nested navigation items. It manages an open/close state, displays a configurable icon, and is typically generated and managed within a `<webui-nav>` hierarchy to organize related `<webui-nav-link>` elements.
+    The `<webui-nav-group>` component creates a collapsible container for nested navigation items. It manages an open/close state, displays a configurable icon, and is typically generated and managed within a `<webui-nav>` hierarchy to organize related `<webui-nav-link>` elements. When the page being shown is one of its links, the group opens by itself so visitors can see where they are. It never closes on its own.
 </webui-page-segment>
 
 <webui-side-by-side>

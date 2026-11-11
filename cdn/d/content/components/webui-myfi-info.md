@@ -23,6 +23,14 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+### Sign-in label
+
+Set `sign-in-label` to show a labeled button while the visitor is signed out, such as `sign-in-label="Sign in"`. Without it, signed-out visitors see only the sign-in icon. Once signed in, the button goes back to the account icon.
+
+```html:Code Snippet
+<webui-myfi-info sign-in-label="Sign in"></webui-myfi-info>
+```
+
 ### Source Code
 
 <webui-code src="https://cdn.myfi.ws/webui/myfi-info.js" language="javascript" label="myfi-info.js"></webui-code>
