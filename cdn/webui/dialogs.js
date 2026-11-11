@@ -7,8 +7,25 @@
  */
 "use strict"
 const webuiDialog = function (data) {
-    return webuiDialog._handler(data);
+    if (webuiDialog._handler) return webuiDialog._handler(data);
+    // The handler is set up when webui-dialogs connects, which can be after a page's first call while it starts,
+    // so hold the dialog until then. Closing it first means it never opens.
+    let opened = null;
+    let closed = false;
+    const promise = new Promise((resolve, reject) => {
+        webuiDialog._pending.push(() => {
+            if (closed) return;
+            opened = webuiDialog._handler(data);
+            opened.then(resolve, reject);
+        });
+    });
+    promise.close = () => {
+        closed = true;
+        opened?.close();
+    };
+    return promise;
 }
+webuiDialog._pending = [];
 {
     const defaultDialogOptions = { content: "Missing Content", confirm: "Ok" };
     const defaultWaitOptions = { hideclose: true, ignoreBackdropClick: true, content: 'Loading, please wait!' };
@@ -98,6 +115,10 @@ const webuiDialog = function (data) {
     webui.define("webui-dialogs", {
         preload: 'icon alert',
         linkCss: true,
+        connected() {
+            // Dialogs asked for before this was on the page, which can only open now.
+            webuiDialog._pending.splice(0).forEach(open => open());
+        },
         constructor() {
             const t = this;
             webuiDialog.alert = webui.alert;

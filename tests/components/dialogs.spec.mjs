@@ -21,6 +21,22 @@ test('webui.dialog shows title and content, and confirm resolves', async ({ page
     await expect(el.locator('dialog')).toBeHidden();
     expect(await result(page)).toBe('confirmed');
 });
+test('a dialog opened before webui-dialogs is ready shows once it is, and one closed before then never shows', async ({ page }) => {
+    await ready(page);
+    // As if the page called webui.dialog while it was starting, before its webui-dialogs element connected.
+    await page.evaluate(() => {
+        document.querySelector('webui-dialogs').remove();
+        webuiDialog._handler = null;
+        webui.dialog({ content: '<p>Closed early</p>' }).close();
+    });
+    await open(page, { content: '<p>Waited</p>' });
+    expect(await result(page)).toBe('open');
+    const el = await ready(page);
+    await expect(el.locator('form > section p')).toHaveText('Waited');
+    await el.locator('#dlg-confirm').click();
+    await expect(el.locator('dialog')).toBeHidden();
+    expect(await result(page)).toBe('confirmed');
+});
 test('cancel, close, and Escape reject with canceled', async ({ page }) => {
     const el = await ready(page);
     await open(page, { content: 'x', cancel: 'No' });
