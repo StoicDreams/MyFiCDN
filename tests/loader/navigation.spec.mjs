@@ -69,6 +69,21 @@ test('internal links route without a reload', async ({ page }) => {
     await expect(page).toHaveURL(/\/contact$/);
     expect(await page.evaluate(() => window.__sameDocument)).toBe(true);
 });
+test('a #part link stays on the current page and scrolls to its target', async ({ page }) => {
+    const root = await mount(page, `<a href="#far" style="position:fixed;top:0;left:50%;z-index:9999">jump</a>
+<div style="height:3000px"></div><h2 id="far" hash="far">Far heading</h2><div style="height:3000px"></div>`);
+    await page.evaluate(() => { window.__sameDocument = true; });
+    const heading = root.locator('#far');
+    await root.locator('a').click();
+    await expect(page).toHaveURL(/\/about#far$/);
+    await expect(heading).toBeInViewport();
+    expect(await page.evaluate(() => window.__sameDocument)).toBe(true);
+    // Scrolling away and clicking the same link again scrolls back.
+    await heading.evaluate(el => el.previousElementSibling.scrollIntoView());
+    await expect(heading).not.toBeInViewport();
+    await root.locator('a').click();
+    await expect(heading).toBeInViewport();
+});
 test('links with a target, modifier keys, or another scheme are left to the browser', async ({ page }) => {
     const root = await mount(page, '<a id="t" href="/contact" target="_blank"></a><a id="k" href="/contact"></a><a id="m" href="mailto:a@b.c"></a>');
     const prevented = await root.evaluate(r => {

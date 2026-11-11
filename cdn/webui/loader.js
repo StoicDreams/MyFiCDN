@@ -2942,9 +2942,18 @@ const webui = (() => {
     }
     let currentPageUrl = getCurrentPageUrl();
     function changePage(url, replace = false) {
-        const target = new URL(url, document.baseURI);
+        // Sites set <base href="/">, so a "#part" link would otherwise resolve to the home page instead of this one.
+        const base = url.startsWith("#") ? location.href : document.baseURI;
+        const target = new URL(url, base);
         const pageUrl = `${target.pathname}${target.search}${target.hash}`;
-        if (pageUrl === currentPageUrl) return;
+        if (pageUrl === currentPageUrl) {
+            // Clicking the same "#part" link again scrolls back to it.
+            if (target.hash) {
+                currentHash = "";
+                applyHash();
+            }
+            return;
+        }
         currentPageUrl = pageUrl;
         const pageState = { appData: JSON.stringify(watchedAppData) };
         if (replace) {
