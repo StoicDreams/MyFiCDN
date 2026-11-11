@@ -30,7 +30,21 @@ webui.define("webui-button", {
             t._spacePressed = false;
             if (!t.hasAttribute('disabled')) t.click();
         });
-        t.addEventListener('click', _ => {
+        t.addEventListener('click', ev => {
+            // Only <a> follows an href natively. The loader routes paths on this site, so the button opens the rest:
+            // other sites, and links with a target or opened with Ctrl or Cmd held.
+            const href = t.getAttribute('href');
+            if (href && !t.hasAttribute('disabled')) {
+                const linkTarget = t.getAttribute('target');
+                const external = /^https?:/i.test(href) || href.startsWith('//');
+                if (linkTarget && linkTarget !== '_self') {
+                    window.open(href, linkTarget, 'noopener');
+                } else if (external && (ev.ctrlKey || ev.metaKey)) {
+                    window.open(href, '_blank', 'noopener');
+                } else if (external) {
+                    window.location.assign(href);
+                }
+            }
             if (t.getAttribute('type') === 'submit' || t.hasAttribute('submit')) {
                 t.internals_.form?.requestSubmit();
             }

@@ -78,6 +78,25 @@ test('a disabled button is announced as disabled and cannot be pressed from the 
     await expect(button).not.toHaveAttribute('aria-disabled');
     await expect(button).toHaveAttribute('tabindex', '0');
 });
+test('a button with an href to another site goes there when clicked', async ({ page }) => {
+    await page.route('https://example.com/**', route => route.fulfill({ contentType: 'text/html', body: '<p>Other site</p>' }));
+    const root = await mount(page, '<webui-button href="https://example.com/case">Read</webui-button>');
+    await root.locator('webui-button').click();
+    await expect(page).toHaveURL('https://example.com/case');
+});
+test('a button with a target, or clicked with Ctrl, opens its href in another window', async ({ page }) => {
+    const root = await mount(page, '<webui-button id="t" href="/contact" target="_blank">T</webui-button><webui-button id="o" href="https://example.com/x">O</webui-button><webui-button id="d" href="https://example.com/x" disabled>D</webui-button>');
+    const opened = await root.evaluate(r => {
+        const calls = [];
+        window.open = (...args) => { calls.push(args); return null; };
+        r.querySelector('#t').click();
+        r.querySelector('#o').dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true, cancelable: true, ctrlKey: true }));
+        r.querySelector('#d').click();
+        return calls;
+    });
+    expect(opened).toEqual([['/contact', '_blank', 'noopener'], ['https://example.com/x', '_blank', 'noopener']]);
+    await expect(page).not.toHaveURL(/example\.com|contact/);
+});
 test('a button with an href is a link, and a role or tabindex set on it is kept', async ({ page }) => {
     const root = await mount(page, '<webui-button id="a" href="/x" label="A"></webui-button><webui-button id="b" role="tab" tabindex="-1" label="B"></webui-button>');
     await expect(root.locator('#a')).toHaveAttribute('role', 'link');
