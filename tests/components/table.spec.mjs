@@ -81,3 +81,23 @@ test('a large table renders quickly as one insert', async ({ page }) => {
     await expect(el.locator('tr')).toHaveCount(501);
     expect(elapsed).toBeLessThan(1500);
 });
+test('html column templates escape row values', async ({ page }) => {
+    const template = '<template slot="column" name="Name"><b title="{TEMPLATE_NAME}" data-value="{TEMPLATE_ROWDATA}" data-row="{_ROWID}">{NAME} {TEMPLATE_AGE} {TEMPLATE_OK} {TEMPLATE_MISSING}</b></template>';
+    const el = await table(page, 'columns="Name" column-formats="Name:html"', template);
+    const name = `<img src=x onerror="window.__hacked=1">'&\`/{TEMPLATE_AGE}{APP_NAME}`;
+    await el.evaluate((c, name) => c.setData([{ Name: name, Age: 7, Ok: true, Missing: null }]), name);
+    const b = el.locator('td b');
+    await expect(b).toHaveText(`${name} 7 true`);
+    await expect(el.locator('td img')).toHaveCount(0);
+    await expect(b).toHaveAttribute('title', name);
+    const rowId = await el.evaluate(c => c._data[0]._rowId);
+    await expect(b).toHaveAttribute('data-row', rowId);
+    expect(JSON.parse(await b.getAttribute('data-value'))).toEqual({ Name: name, Age: 7, Ok: true, Missing: null, _rowId: rowId });
+    expect(await page.evaluate(() => window.__hacked)).toBeUndefined();
+});
+test('text column templates keep values as text without escaping them', async ({ page }) => {
+    const el = await table(page, 'columns="Name"', '<template slot="column" name="Name">[{NAME}]</template>');
+    await el.evaluate(c => c.setData([{ Name: '<b>A & B</b>' }]));
+    await expect(el.locator('td')).toHaveText('[<b>A & B</b>]');
+    await expect(el.locator('td b')).toHaveCount(0);
+});

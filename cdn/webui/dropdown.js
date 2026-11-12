@@ -586,18 +586,24 @@
             t._pendingValue = undefined;
             value = `${value}`;
             let o = t._select.querySelector(`option[value="${CSS.escape(value)}"]`);
+            let fellBack = false;
             if (!o) {
                 if (t.multiple) return;
                 o = t._select.querySelector('option');
                 if (!o) return;
                 value = o.value;
+                fellBack = true;
             }
-            if (t.value === value && t._value === value) return;
-            t._value = value;
-            t._select.value = value;
-            o.selected = true;
-            t.applyDataChange();
-            t.renderPicked();
+            if (t.value !== value || t._value !== value) {
+                t._value = value;
+                t._select.value = value;
+                o.selected = true;
+                t.applyDataChange();
+                t.renderPicked();
+            }
+            // The value it was given, such as none at all, is not an option, so the first option shows instead.
+            // Bound data is told, so it matches what is shown. Other listeners only hear picks, not setup.
+            if (fellBack && (t.dataset.trigger || t.dataset.bind)) t.triggerChange();
         },
         shadowTemplate: `
 <label class="hide">

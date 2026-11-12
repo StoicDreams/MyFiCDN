@@ -19,6 +19,33 @@
         }
         return [val.trim(), flagStart ? flagEnd ? 'text-center' : 'text-left' : flagEnd ? 'text-right' : 'text-justify'];
     }
+    // Row values come from APIs and visitors, so html columns get them escaped. Escaped text decodes back to the
+    // original in attributes and shows literally in content. Braces are escaped so a value can't fill other placeholders.
+    function escapeText(text) {
+        return webui.escapeForHTML(text).replace(/\{/g, '&#123;').replace(/\}/g, '&#125;');
+    }
+    function escapeValue(val) {
+        if (val === undefined || val === null) return '';
+        switch (typeof val) {
+            case 'number':
+            case 'boolean':
+            case 'function':
+                return val;
+            default:
+                return escapeText(`${val}`);
+        }
+    }
+    function fillHtmlTemplate(template, row) {
+        if (template.includes('{TEMPLATE_ROWDATA}')) {
+            const rowData = escapeText(JSON.stringify(row));
+            template = template.replaceAll('{TEMPLATE_ROWDATA}', () => rowData);
+        }
+        const escaped = {};
+        Object.keys(row).forEach(key => {
+            escaped[key] = escapeValue(row[key]);
+        });
+        return webui.replaceAppData(template, escaped);
+    }
     webui.define('webui-table', {
         _columns: [],
         columnFormats: {},
@@ -159,7 +186,7 @@
                         tr.appendChild(td);
                         let content = '';
                         if (template) {
-                            content = webui.replaceAppData(template, row);
+                            content = format === 'html' ? fillHtmlTemplate(template, row) : webui.replaceAppData(template, row);
                         } else {
                             let data = webui.getDefined(row[cm], row[cc], row[pc], '');
                             content = webui.replaceAppData(`${data}`);

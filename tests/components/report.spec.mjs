@@ -80,3 +80,16 @@ test('a filter input sends its starting value with the first request', async ({ 
     await expect.poll(() => requests.length).toBeGreaterThan(0);
     expect(requests[0]).toMatchObject({ recordCount: '5' });
 });
+test('action column templates escape row values from the api', async ({ page }) => {
+    const message = '<img src=x onerror="window.__hacked=1"> & "quotes"';
+    await page.route('**/report-api', route => route.fulfill({ contentType: 'application/json', body: JSON.stringify({ items: [{ Name: 'A', Message: message }], page: 1, total: 1 }) }));
+    const root = await mount(page, `<webui-report api="http://localhost:3199/report-api" columns="Name" sort-column="Name" append-columns=":Action:">
+<template slot="column" name="action"><webui-button title="View {TEMPLATE_MESSAGE}" data-value="{TEMPLATE_ROWDATA}"></webui-button><pre>{TEMPLATE_MESSAGE}</pre></template>
+</webui-report>`);
+    const el = root.locator('webui-report');
+    await expect(el.locator('td pre')).toHaveText(message);
+    await expect(el.locator('td img')).toHaveCount(0);
+    await expect(el.locator('td webui-button')).toHaveAttribute('title', `View ${message}`);
+    expect(JSON.parse(await el.locator('td webui-button').getAttribute('data-value')).Message).toBe(message);
+    expect(await page.evaluate(() => window.__hacked)).toBeUndefined();
+});

@@ -82,6 +82,41 @@ test('a load still waiting for its data-api data does not clear options from a n
     await page.waitForTimeout(1200);
     await expect(el.locator('option')).toHaveText(['loaded']);
 });
+test.describe('data-trigger when options load', () => {
+    test('with no saved value, the option shown first is written', async ({ page }) => {
+        await dropdown(page, 'data-subscribe="dd-trig-id" data-trigger="dd-trig-id|dd-trig-filter.id" options="One|1,Two|2"');
+        await expect.poll(() => page.evaluate(() => webui.getData('dd-trig-id'))).toBe('1');
+        expect(await page.evaluate(() => webui.getData('dd-trig-filter.id'))).toBe('1');
+    });
+    test('a single option from the api is written, so a dependent load can start', async ({ page }) => {
+        await page.route('**/dd-api**', route => route.fulfill({ contentType: 'application/json', body: '[{"value":5,"display":"Only"}]' }));
+        await dropdown(page, 'data-trigger="dd-trig-only" api="get|http://localhost:3199/dd-api"');
+        await expect.poll(() => page.evaluate(() => webui.getData('dd-trig-only'))).toBe('5');
+    });
+    test('a saved value that is not among new options is replaced by the option shown', async ({ page }) => {
+        await page.evaluate(() => webui.setData('dd-trig-old', 'gone'));
+        const el = await dropdown(page, 'data-subscribe="dd-trig-old" data-trigger="dd-trig-old" options="a,b"');
+        await expect.poll(() => page.evaluate(() => webui.getData('dd-trig-old'))).toBe('a');
+        await page.evaluate(() => webui.setData('dd-trig-old', 'b'));
+        await expect(el.locator('select')).toHaveValue('b');
+        await el.evaluate(d => d.setOptions(['c', 'd']));
+        await expect.poll(() => page.evaluate(() => webui.getData('dd-trig-old'))).toBe('c');
+    });
+    test('a saved value among the options is kept, with no change event', async ({ page }) => {
+        await page.evaluate(() => webui.setData('dd-trig-keep', 'b'));
+        const root = await mount(page, '<webui-dropdown data-subscribe="dd-trig-keep" data-trigger="dd-trig-keep"></webui-dropdown>');
+        const el = root.locator('webui-dropdown');
+        await el.evaluate(d => { window.__ddChanges = 0; d.addEventListener('change', () => ++window.__ddChanges); d.setOptions('a,b'); });
+        await expect(el.locator('select')).toHaveValue('b');
+        expect(await page.evaluate(() => [webui.getData('dd-trig-keep'), window.__ddChanges])).toEqual(['b', 0]);
+    });
+    test('without data-trigger or data-bind, loading options fires no change', async ({ page }) => {
+        const el = await dropdown(page, '');
+        await el.evaluate(d => { window.__ddChanges = 0; d.addEventListener('change', () => ++window.__ddChanges); d.setOptions('a,b'); });
+        await expect(el.locator('select')).toHaveValue('a');
+        expect(await page.evaluate(() => window.__ddChanges)).toBe(0);
+    });
+});
 test('option text is shown as text, never as markup', async ({ page }) => {
     const el = await dropdown(page, '');
     await el.evaluate(d => d.setOptions([{ value: 'x', display: '<img src=q onerror="window.__xss=1">' }, { value: 'y', display: 'R&D <b>' }]));
