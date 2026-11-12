@@ -71,6 +71,17 @@ test('api loads options and ignores outdated responses', async ({ page }) => {
     const el = await dropdown(page, 'api="get|http://localhost:3199/dd-api"');
     await expect(el.locator('option')).toHaveText(['from-api']);
 });
+test('a load still waiting for its data-api data does not clear options from a newer load', async ({ page }) => {
+    await page.route('**/dd-api**', route => route.fulfill({ contentType: 'application/json', body: '[{"value":"loaded"}]' }));
+    // The first load waits for page-dd-filter with growing pauses. A second load starts during its last, longest pause.
+    const el = await dropdown(page, 'api="get|http://localhost:3199/dd-api" data-api="page-dd-filter" data-fields="companyId"');
+    await page.waitForTimeout(700);
+    await page.evaluate(() => webui.setData('page-dd-filter', { companyId: 1 }));
+    await el.evaluate(d => d.loadData());
+    await expect(el.locator('option')).toHaveText(['loaded']);
+    await page.waitForTimeout(1200);
+    await expect(el.locator('option')).toHaveText(['loaded']);
+});
 test('option text is shown as text, never as markup', async ({ page }) => {
     const el = await dropdown(page, '');
     await el.evaluate(d => d.setOptions([{ value: 'x', display: '<img src=q onerror="window.__xss=1">' }, { value: 'y', display: 'R&D <b>' }]));

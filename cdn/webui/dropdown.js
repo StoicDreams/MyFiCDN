@@ -231,6 +231,8 @@
             let ct = t.contentType || 'application/json';
             let fetchData = null;
             const [hasRequiredData, data] = await t.getApiData(lid);
+            // A newer load started while this one waited for data, so its options must not be cleared.
+            if (t._lid !== lid) return;
             if (!hasRequiredData) {
                 t.setOptions([]);
                 return;
