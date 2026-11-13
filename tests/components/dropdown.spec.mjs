@@ -259,6 +259,20 @@ test.describe('html-options', () => {
     });
 });
 
+test('the disabled flag keeps the choice shown but stops it opening or taking focus', async ({ page }) => {
+    const el = await dropdown(page, 'label="Off" disabled options="a,b"');
+    const picker = page.getByRole('combobox', { name: 'Off' });
+    await expect(picker).toHaveText('a');
+    await expect(picker).toBeDisabled();
+    await expect(el).toHaveAttribute('aria-disabled', 'true');
+    await el.evaluate(d => d.openList());
+    await expect(el.getByRole('option')).toHaveCount(0);
+    await el.evaluate(d => d.removeAttribute('disabled'));
+    await expect(picker).toBeEnabled();
+    await expect(el).not.toHaveAttribute('aria-disabled');
+    await choose(el, 'b');
+    await expect(el.locator('select')).toHaveValue('b');
+});
 test.describe('plain options', () => {
     test('open the same styled list as html options, showing option text', async ({ page }) => {
         const root = await mount(page, `<webui-dropdown label="Plain" options='[{"id":"a","display":"A"},{"id":"b","html":"<b>Bee</b>"}]'></webui-dropdown>

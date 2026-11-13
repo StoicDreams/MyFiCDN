@@ -118,7 +118,7 @@
             };
             t.updateMode();
         },
-        flags: ['multiple', 'html-options'],
+        flags: ['multiple', 'html-options', 'disabled'],
         attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'newid', 'newlabel', 'options', 'api'],
         attrChanged(property, value) {
             const t = this;
@@ -166,6 +166,17 @@
                     break;
                 case 'value':
                     t.setValue(value);
+                    break;
+                case 'disabled':
+                    // Off, it shows its choice but can be neither opened nor focused.
+                    t._select.disabled = !!value;
+                    t._picker.disabled = !!value;
+                    if (value) {
+                        t.setAttribute('aria-disabled', 'true');
+                        t.closeList();
+                    } else {
+                        t.removeAttribute('aria-disabled');
+                    }
                     break;
                 case 'multiple':
                     t._select.multiple = !!value;
@@ -445,7 +456,7 @@
         },
         openList() {
             const t = this;
-            if (!t._useList || t.isOpen()) return;
+            if (!t._useList || t.isOpen() || t.disabled) return;
             const items = t._list.querySelectorAll('[role="option"]');
             if (!items.length) return;
             t._list.classList.add('open');
@@ -725,6 +736,13 @@ background-color:color-mix(in srgb, var(--theme-color-offset) 10%, var(--theme-c
 outline:2px solid currentColor;
 outline-offset:-2px;
 background-color:color-mix(in srgb, var(--theme-color-offset) 18%, var(--theme-color));
+}
+:host([disabled]) {
+opacity:0.6;
+}
+:host([disabled]) button,
+:host([disabled]) select {
+cursor:not-allowed;
 }
 label.hide {display:none;}
 label {
