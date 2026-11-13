@@ -16,6 +16,8 @@ webui.define("webui-alert", {
         t.btnClose.addEventListener('click', _ev => {
             t.userclosed = true;
             t.removeAttribute('show');
+            // Lets whoever added the alert know the user closed it, such as to mark a notification read.
+            t.dispatchEvent(new CustomEvent('close', { bubbles: true }));
         });
     },
     attr: ['variant', 'show'],
@@ -69,6 +71,13 @@ webui.define("webui-alert", {
         const t = this;
         if (t.hasAttribute('show')) return;
         t.setAttribute('show', true);
+    },
+    /** Removes the alert for good, as when what it was about is gone, without a close event. */
+    dismiss() {
+        const t = this;
+        t.userclosed = true;
+        t.removeAttribute('show');
+        t.remove();
     },
     hide() {
         const t = this;

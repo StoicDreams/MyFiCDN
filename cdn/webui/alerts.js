@@ -1,6 +1,7 @@
 /*!
  * Web UI Alerts - https://webui.stoicdreams.com/components#webui-alerts
- * Displays Alert icon and enables webui.alert(message:string|html, variant:string[success|warning|danger|info]) for displaying popup alerts.
+ * Displays Alert icon and enables webui.alert(message:string|html, variant:string[success|warning|danger|info]) for displaying popup alerts,
+ * and webui.addAlert(message, variant, { popup }) which resolves to the alert.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
  * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
@@ -87,7 +88,12 @@
             t.count = 0;
             t.icon = t.template.querySelector('webui-icon');
             if (!window.webuiAlert) {
-                webui.alert = async (message, variant) => {
+                // Like webui.alert, but resolves to the alert, which fires close when the user closes it. With
+                // { popup: false }, the alert only joins the list the bell opens, as for notifications loaded all
+                // at once. webui.alert itself resolves to nothing, since it is often a .catch handler whose result
+                // callers test.
+                webui.addAlert = async (message, variant, options = {}) => {
+                    const showPopup = options?.popup !== false;
                     const msg = message.nodeName ? message.innerText : message;
                     const hc = await webui.hashSHA256(`${variant}-${msg}`);
                     for (let index = alertList.length - 1; index >= 0; --index) {
@@ -98,6 +104,7 @@
                     let alert = alertList.filter(i => i._hashCode === hc)[0];
                     if (alert) {
                         alert.increment();
+                        if (!showPopup) return alert;
                         popup.appendChild(alert);
                         alert.display();
                         setTimeout(() => {
@@ -105,7 +112,7 @@
                                 alert.removeAttribute('show');
                             }
                         }, popupTiming);
-                        return;
+                        return alert;
                     }
                     alert = webui.create('webui-alert');
                     alert._hashCode = hc;
@@ -120,12 +127,17 @@
                     alert.userclosed = false;
                     alertList.push(alert);
                     t.setCount(t.count + 1);
+                    if (!showPopup) return alert;
                     popup.appendChild(alert);
                     setTimeout(() => {
                         if (alert.parentNode === popup) {
                             alert.removeAttribute('show');
                         }
                     }, popupTiming);
+                    return alert;
+                };
+                webui.alert = async (message, variant) => {
+                    await webui.addAlert(message, variant);
                 };
                 window.webuiAlert = webui.alert;
             }

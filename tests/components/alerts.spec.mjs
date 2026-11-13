@@ -48,3 +48,30 @@ test('works as a button from the keyboard', async ({ page }) => {
     await el.evaluate(c => c.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true })));
     expect(await page.evaluate(() => window.__clicks)).toBe(2);
 });
+
+test('webui.addAlert resolves to the alert, which says when the user closes it', async ({ page }) => {
+    await ready(page);
+    // webui.alert is often a .catch handler whose result is tested, so it still resolves to nothing.
+    expect(await page.evaluate(async () => (await webui.alert('Plain', 'info')) === undefined)).toBe(true);
+    const closed = await page.evaluate(async () => {
+        const alert = await webui.addAlert('Close me', 'info');
+        window.__closed = 0;
+        alert.addEventListener('close', () => window.__closed++);
+        return alert.tagName;
+    });
+    expect(closed).toBe('WEBUI-ALERT');
+    await popup(page).locator('webui-alert', { hasText: 'Close me' }).locator('#close').click();
+    expect(await page.evaluate(() => window.__closed)).toBe(1);
+});
+test('popup false adds an alert to the list without a popup, and dismiss removes it quietly', async ({ page }) => {
+    const root = await ready(page);
+    await page.evaluate(async () => {
+        window.__quiet = await webui.addAlert('Quiet one', 'info', { popup: false });
+        window.__quiet.addEventListener('close', () => { window.__closedQuietly = true; });
+    });
+    await expect(popup(page).locator('webui-alert')).toHaveCount(0);
+    await expect(root.locator('webui-alerts webui-icon')).toHaveAttribute('count', '1');
+    await page.evaluate(() => window.__quiet.dismiss());
+    await expect(root.locator('webui-alerts webui-icon')).toHaveAttribute('count', '');
+    expect(await page.evaluate(() => window.__closedQuietly)).toBeUndefined();
+});

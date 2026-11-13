@@ -353,9 +353,10 @@ const webui = (() => {
          *
          * To fully enable this process, include <webui-alerts> component in your index.html.
          *
-         * @param {string} message - Message to display to user
+         * @param {string|Node} message - Message to display to user
          * @param {string} variant - danger|success|warning|info
-         * @returns {undefined}
+         * @returns {undefined} webui.addAlert takes the same, plus { popup: false } to add it to the list without
+         * a popup, and resolves to the webui-alert, which fires close when the user closes it.
          * @example
          * webui.alert('Hello World');
          * webui.alert('Hello World', 'danger');
