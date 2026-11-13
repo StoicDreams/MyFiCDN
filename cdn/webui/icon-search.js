@@ -359,8 +359,12 @@
               t._iconPreview.removeAttribute('rotate');
           }
         },
-        setIconFromCode(pipedValue) {
+        async setIconFromCode(pipedValue) {
           const t = this;
+          // The preview is made once the icon list loads, which can be after a page sets an icon.
+          while (!t._iconPreview) {
+              await webui.wait(10);
+          }
           t.resetOptions();
           let pipedData = (pipedValue || '').split('|');
           let [icon, shape] = splitShape(pipedData.shift() || '');

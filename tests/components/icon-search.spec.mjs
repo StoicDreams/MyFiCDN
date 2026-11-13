@@ -48,6 +48,23 @@ test('setIconFromCode applies piped options', async ({ page }) => {
     await expect.poll(() => el.evaluate(c => c.pipedValue)).toContain('bell');
     expect(await el.evaluate(c => [c._iconPreview.hasAttribute('fill'), c._iconPreview.getAttribute('shape')])).toEqual([true, 'circle']);
 });
+test('setIconFromCode called before the component has set itself up waits for it, instead of failing', async ({ page }) => {
+    // The component sets itself up once the components it preloads arrive, which can be slow on a busy network.
+    await page.route('**/webui/pagination*.js', async route => {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        await route.fallback();
+    });
+    await page.evaluate(() => {
+        const root = document.createElement('div');
+        root.id = 'test-root';
+        root.innerHTML = '<webui-icon-search></webui-icon-search>';
+        document.body.appendChild(root);
+    });
+    const el = page.locator('webui-icon-search');
+    await page.evaluate(() => customElements.whenDefined('webui-icon-search'));
+    await el.evaluate(c => { c.setIconFromCode('bell|fill'); });
+    await expect.poll(() => el.evaluate(c => !!c._iconPreview && c._iconPreview.hasAttribute('fill')), { timeout: 15000 }).toBe(true);
+});
 test('the emoji toggle searches emojis instead', async ({ page }) => {
     const el = await search(page);
     await expect.poll(() => el.evaluate(c => c._emojis.length)).toBeGreaterThan(0);
