@@ -15,6 +15,6 @@
     </template>
     <template slot="template" name="content">
         This is tab page {TAB_PAGE}.
-        <webui-button class="p-abs" top="5" right="5" start-icon="trash-can" theme="danger" data-remove-item="session-dynamic-tabs:{TAB_INDEX}"></webui-button>
+        <webui-button class="p-abs" top="5" right="5" start-icon="trash" theme="danger" data-remove-item="session-dynamic-tabs:{TAB_INDEX}"></webui-button>
     </template>
 </webui-tabs>

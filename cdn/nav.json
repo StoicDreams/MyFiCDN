@@ -1,47 +1,47 @@
 [
     {
         "name": "Home",
-        "icon": "circle_emoji-house|theme:title|backing|inverted",
+        "icon": "circle_home|theme:title|backing|inverted",
         "url": "/"
     },
     {
         "name": "Components",
-        "icon": "emoji-package",
+        "icon": "puzzle-piece",
         "url": "/components"
     },
     {
         "name": "Web UI Methods",
-        "icon": "emoji-gear",
+        "icon": "function",
         "url": "/webui-methods"
     },
     {
         "name": "Tests",
-        "icon": "emoji-test_tube",
+        "icon": "circle_test|theme:info|backing|inverted",
         "children": [
             {
                 "name": "Components",
-                "icon": "emoji-puzzle_piece",
+                "icon": "puzzle-piece",
                 "children": [
                     {
                         "name": "Emojis",
-                        "icon": "emoji-face_holding_back_tears",
+                        "icon": "face-smile",
                         "url": "/tests/component/emojis"
                     }
                 ]
             },
             {
                 "name": "404 Not Found",
-                "icon": "emoji-ghost",
+                "icon": "ghost",
                 "url": "/notfound"
             },
             {
                 "name": "Under Construction",
-                "icon": "emoji-construction",
+                "icon": "traffic-cone",
                 "url": "/under-construction"
             },
             {
                 "name": "Test",
-                "icon": "emoji-alembic",
+                "icon": "code-branch",
                 "url": "/test/hello"
             }
         ]

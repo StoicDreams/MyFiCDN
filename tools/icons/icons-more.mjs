@@ -32,6 +32,13 @@ function cookieShape(R = 66, [bx, by] = [48, -48], r = 30) {
     return P(...at(0, 0, R, a0)).A(0, 0, R, a0, a1, 65).A(bx, by, r, b0, b1, 65).close();
 }
 
+// Binary digits in two rows, 1 0 above 0 1. The second row is in the second shade.
+const binaryDigits = () => {
+    const one = (x, y) => polyline([[x - 12, y - 16], [x, y - 25], [x, y + 25]]);
+    const zero = (x, y) => ellipse(x, y, 15, 25);
+    return [one(-30, -36), zero(30, -36), bi(zero(-30, 36)), bi(one(30, 36))];
+};
+
 // Shared shapes.
 const folderShape = () => polygon([[-68, -48, 10], [-18, -48, 10], [-4, -32, 0], [68, -32, 10], [68, 56, 10], [-68, 56, 10]]);
 const clipboardParts = () => [rect(-54, -54, 54, 68, 12), bi(rect(-24, -70, 24, -40, 8))];
@@ -84,7 +91,7 @@ export const MORE = [
     ['folder-plus', 'new directory add', folderShape(), ...markPlus(0, 12, 20)],
     ['box-archive', 'archive storage box archived resources', rect(-70, -62, 70, -30, 8), polyline([[-60, -30], [-60, 60], [60, 60], [60, -30]], 10), bi(line(-18, -6, 18, -6))],
     ['inbox', 'messages tray mail empty unread', rect(-68, -60, 68, 60, 12), bi(polyline([[-68, 14], [-30, 14], [-18, 32], [18, 32], [30, 14], [68, 14]]))],
-    ['cube', 'box package 3d product container block', polygon([[0, -70], [64, -36], [64, 36], [0, 70], [-64, 36], [-64, -36]]), bi(polyline([[-64, -36], [0, -2], [64, -36]])), bi(line(0, -2, 0, 70))],
+    ['cube', 'box package 3d product container block engine model', polygon([[0, -70], [64, -36], [64, 36], [0, 70], [-64, 36], [-64, -36]]), bi(polyline([[-64, -36], [0, -2], [64, -36]])), bi(line(0, -2, 0, 70))],
     ['package', 'box delivery shipping cube docker container', polygon([[0, -70], [64, -36], [64, 36], [0, 70], [-64, 36], [-64, -36]]), bi(polyline([[-64, -36], [0, -2], [64, -36]])), bi(line(0, -2, 0, 70)), tri(line(-32, -53, 32, -19))],
     ['book-open', 'read reading documentation manual guide tutorial getting started wiki knowledge base course lesson learn', P(0, -44).Q(-30, -62, -70, -56).L(-70, 48).Q(-30, 42, 0, 62).Q(30, 42, 70, 48).L(70, -56).Q(30, -62, 0, -44), bi(line(0, -44, 0, 62))],
     ['newspaper', 'news article blog magazine press post posts', rect(-66, -60, 66, 60, 12), bi(rect(-42, -36, -4, -2, 4)), bi(line(14, -30, 42, -30)), bi(line(14, -8, 42, -8)), bi(line(-42, 24, 42, 24))],
@@ -104,7 +111,7 @@ export const MORE = [
     ['align-left', 'text paragraph', ...textLines([[-62, 62], [-62, 26], [-62, 62], [-62, 26]])],
     ['align-center', 'text paragraph', ...textLines([[-62, 62], [-38, 38], [-62, 62], [-38, 38]])],
     ['align-right', 'text paragraph', ...textLines([[-62, 62], [-26, 62], [-62, 62], [-26, 62]])],
-    ['align-justify', 'text paragraph', ...textLines([[-62, 62], [-62, 62], [-62, 62], [-62, 62]])],
+    ['align-justify', 'text paragraph lorem ipsum placeholder filler', ...textLines([[-62, 62], [-62, 62], [-62, 62], [-62, 62]])],
     ['list-check', 'checklist tasks todo', bi(polyline([[-66, -46], [-56, -36], [-38, -54]])), bi(polyline([[-66, 0], [-56, 10], [-38, -8]])), bi(polyline([[-66, 46], [-56, 56], [-38, 38]])), line(-16, -44, 64, -44), line(-16, 2, 64, 2), line(-16, 48, 64, 48)],
     ['table', 'grid spreadsheet excel data rows csv', rect(-68, -56, 68, 56, 10), bi(line(-68, -18, 68, -18)), bi(line(-68, 18, 68, 18)), bi(line(-22, -18, -22, 56)), bi(line(22, -18, 22, 56))],
     ['table-columns', 'layout columns split', rect(-68, -56, 68, 56, 10), bi(line(0, -56, 0, 56))],
@@ -123,7 +130,7 @@ export const MORE = [
     ['history', 'recent past clock rotate changelog release notes restore latest', ...curvedArrow(0, 0, 64, 160, -170), bi(polyline([[0, -34], [0, 0], [26, 18]]))],
     ['stopwatch', 'timer time clock', circle(0, 10, 58), line(-18, -66, 18, -66), line(0, -66, 0, -48), bi(line(0, 10, 0, -22))],
     ['arrow-pointer', 'cursor mouse select click', polygon([[-38, -66, 4], [42, 10, 4], [6, 16, 0], [28, 58, 0], [14, 66, 0], [-8, 24, 0], [-38, 48, 4]])],
-    ['hashtag', 'hash number tag pound markdown', line(-26, -64, -40, 64), line(40, -64, 26, 64), bi(line(-62, -24, 66, -24)), bi(line(-66, 24, 62, 24))],
+    ['hashtag', 'hash number tag pound markdown word count counter', line(-26, -64, -40, 64), line(40, -64, 26, 64), bi(line(-62, -24, 66, -24)), bi(line(-66, 24, 62, 24))],
     ['at', 'email mention address', bi(circle(0, 0, 24)), P(24, -26).L(24, 10).Q(24, 30, 42, 30).Q(64, 30, 64, 0).A(0, 0, 64, 360, 110).end()],
     ['percent', 'discount sale ratio deal deals offer offers coupon tax', bi(line(-50, 60, 50, -60)), circle(-38, -38, 16), circle(38, 38, 16)],
     ['infinity', 'forever loop unlimited', smooth(Array.from({ length: 10 }, (_, i) => {
@@ -133,7 +140,7 @@ export const MORE = [
     // The ring is drawn as a line, so a filled crosshair stays a crosshair rather than a solid disc.
     ['crosshairs', 'target aim focus location', arc(0, 0, 50, -90, 270), bi(line(0, -70, 0, -26)), bi(line(0, 26, 0, 70)), bi(line(-70, 0, -26, 0)), bi(line(26, 0, 70, 0))],
     ['bullseye', 'target goal aim focus mission', ring(), bi(circle(0, 0, 42)), tri(circle(0, 0, 14))],
-    ['eye-dropper', 'color picker sample', rotate(rect(-12, -40, 12, 40, 6), 45), rotate(rect(-26, -64, 26, -40, 8), 45), bi(rotate(line(0, 40, 0, 70), 45))],
+    ['eye-dropper', 'color picker sample converter hex rgb', rotate(rect(-12, -40, 12, 40, 6), 45), rotate(rect(-26, -64, 26, -40, 8), 45), bi(rotate(line(0, 40, 0, 70), 45))],
 
     // Code and technology
     ['brackets-curly', 'code json object braces api endpoint embed variable', leftBrace(), mirror(leftBrace())],
@@ -144,7 +151,7 @@ export const MORE = [
     ['code-merge', 'git merge pull request', gitDot(-34, -50), gitDot(-34, 50), gitDot(36, 26), line(-34, -36, -34, 36), bi(P(-30, -38).Q(-10, 14, 22, 24).end())],
     ['qrcode', 'qr scan code', rect(-66, -66, -14, -14, 6), rect(14, -66, 66, -14, 6), rect(-66, 14, -14, 66, 6), bi(dot(-40, -40, 4)), bi(dot(40, -40, 4)), bi(dot(-40, 40, 4)), bi(rect(14, 14, 32, 32, 2)), bi(rect(48, 48, 66, 66, 2)), bi(line(48, 14, 66, 14)), bi(line(14, 66, 30, 66))],
     ['barcode', 'scan product code', ...[[-62, 0], [-44, 0], [-30, 1], [-10, 0], [6, 1], [24, 0], [42, 1], [62, 0]].map(([x, shade]) => (shade ? bi(line(x, -56, x, 56)) : line(x, -56, x, 56)))],
-    ['fingerprint', 'biometric identity security touch auth authentication authorization verify', arc(0, 10, 66, 200, 340), arc(0, 10, 48, 190, 360), arc(0, 10, 30, 180, 400), line(0, 10, 0, 64), bi(P(30, 10).Q(30, 50, 14, 66).end()), bi(P(-48, 10).Q(-48, 46, -30, 66).end()), bi(P(48, 10).Q(48, 40, 40, 58).end())],
+    ['fingerprint', 'biometric identity security touch auth authentication authorization verify hash checksum digest', arc(0, 10, 66, 200, 340), arc(0, 10, 48, 190, 360), arc(0, 10, 30, 180, 400), line(0, 10, 0, 64), bi(P(30, 10).Q(30, 50, 14, 66).end()), bi(P(-48, 10).Q(-48, 46, -30, 66).end()), bi(P(48, 10).Q(48, 40, 40, 58).end())],
 
     // People
     ['user-plus', 'add person invite new account follow register signup sign up join', ...smallPerson(), ...markPlus()],
@@ -154,7 +161,7 @@ export const MORE = [
     ['user-gear', 'admin administrator administration manage manager roles role permissions account settings', ...smallPerson(), ...markGear()],
     ['universal-access', 'accessibility a11y disability inclusive person', bi(ring()), circle(0, -40, 5),
         P(-42, -14).Q(0, -4, 42, -14).end(), line(0, -8, 0, 16), polyline([[-24, 50], [0, 16], [24, 50]], 4)],
-    ['id-card', 'identity badge license profile membership member', rect(-70, -50, 70, 50, 10), bi(circle(-30, -10, 14)), bi(P(-52, 30).Q(-46, 10, -30, 10).Q(-14, 10, -8, 30).end()), bi(line(12, -16, 50, -16)), bi(line(12, 10, 50, 10))],
+    ['id-card', 'identity badge license profile membership member uuid guid unique identifier', rect(-70, -50, 70, 50, 10), bi(circle(-30, -10, 14)), bi(P(-52, 30).Q(-46, 10, -30, 10).Q(-14, 10, -8, 30).end()), bi(line(12, -16, 50, -16)), bi(line(12, 10, 50, 10))],
     ['face-smile', 'happy emoji good', ...face(), bi(arc(0, 6, 34, 20, 160))],
     ['face-frown', 'sad emoji bad', ...face(), bi(arc(0, 46, 30, 200, 340))],
     ['face-meh', 'neutral emoji', ...face(), bi(line(-26, 26, 26, 26))],
@@ -219,6 +226,16 @@ export const MORE = [
         ...[45, 135, 225, 315].flatMap(deg => [-15, 15].map(side => bi(line(...at(0, 0, 33, deg + side * 1.6), ...at(0, 0, 61, deg + side * 0.75)))))],
     ['bed', 'hotel sleep rest bedroom stay lodging room', line(-68, -50, -68, 58), polyline([[-68, 32], [68, 32], [68, 58]], 6), tri(rect(-52, -2, -26, 16, 8)), bi(rect(-12, -22, 66, 16, 12))],
     ['euro', 'eur currency money price payment cost', arc(10, 0, 54, 45, 315), bi(line(-64, -14, 20, -14)), bi(line(-64, 14, 14, 14))],
+    ['binary', 'base64 encode decode bits bytes data zero one digits', ...binaryDigits()],
+    ['pdf', 'pdf document acrobat adobe file letters', P(-70, 36).L(-70, -36).L(-52, -36).Q(-34, -36, -34, -18).Q(-34, 0, -52, 0).L(-70, 0).end(),
+        bi(P(-18, -36).L(-18, 36).L(-6, 36).Q(18, 36, 18, 0).Q(18, -36, -6, -36).close()), polyline([[68, -36], [36, -36], [36, 36]]), bi(line(36, 0, 60, 0))],
+    ['contrast', 'contrast accessibility brightness half theme dark light mode', ring(), bi(P(0, -48).A(0, 0, 48, -90, 90).close())],
+    ['letter-case', 'case uppercase lowercase capitalize capital text font letters aa converter', polyline([[-72, 56], [-38, -56], [-4, 56]]), bi(line(-58, 16, -18, 16)),
+        circle(38, 32, 22), bi(line(62, 6, 62, 56))],
+    ['spool', 'thread spool sewing textile textiles fabric yarn craft tailor wallpaper', rect(-50, -68, 50, -50, 8), rect(-50, 50, 50, 68, 8),
+        line(-34, -50, -34, 50), line(34, -50, 34, 50), bi(line(-34, -24, 34, -36)), bi(line(-34, 2, 34, -10)), bi(line(-34, 28, 34, 16)), tri(P(34, 16).Q(70, 20, 60, 50).end())],
+    ['couch', 'couch sofa furniture interior interiors living room lounge home decor', rect(-46, -46, 46, 10, 12), rect(-72, -14, -46, 48, 10), rect(46, -14, 72, 48, 10),
+        bi(rect(-46, 10, 46, 48, 6)), line(-60, 48, -60, 64), line(60, 48, 60, 64)],
     ['heartbeat', 'pulse activity health medical cardio monitor uptime', polyline([[-70, 4], [-40, 4], [-22, -44], [8, 48], [26, 4], [70, 4]])],
 
     // Brands

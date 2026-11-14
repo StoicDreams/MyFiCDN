@@ -7,14 +7,19 @@ const info = async page => {
 
 test('shows the sign in icon when signed out', async ({ page }) => {
     const { el } = await info(page);
-    await expect(el.locator('webui-icon').first()).toHaveAttribute('theme', 'warning');
+    const icon = el.locator('webui-icon').first();
+    await expect(icon).toHaveAttribute('theme', 'warning');
+    // A circle with a backing, not a filled arrow, which was hard to see on the button's color.
+    await expect(icon).toHaveAttribute('icon', 'circle_arrow-side-into-square|rotate:180|backing');
+    await expect(icon).toHaveAttribute('backing');
+    await expect(icon).not.toHaveAttribute('fill');
     await expect.poll(() => el.evaluate(c => c.getAttribute('title') || c.getAttribute('aria-label'))).toContain('Sign-In');
 });
 test('sign-in-label shows a labeled button while signed out, and only the icon once signed in', async ({ page }) => {
-    const root = await mount(page, '<webui-myfi-info sign-in-label="Sign in"></webui-myfi-info>');
+    const root = await mount(page, '<webui-myfi-info sign-in-label="Sign In"></webui-myfi-info>');
     const el = root.locator('webui-myfi-info');
     const label = el.locator('.label');
-    await expect(label).toHaveText('Sign in');
+    await expect(label).toHaveText('Sign In');
     await expect(label).toBeVisible();
     await expect(el).toHaveAttribute('signed-out', '');
     await page.evaluate(() => webui.setData('session-user-role', 1));

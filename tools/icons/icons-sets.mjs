@@ -52,7 +52,7 @@ export const SETS = [
     ['memory', 'ram hardware chip', rect(-70, -30, 70, 26, 6), ...[-48, -24, 0, 24, 48].map(x => line(x, 26, x, 44)), bi(rect(-50, -14, -14, 10, 2)), bi(rect(14, -14, 50, 10, 2))],
     ['asterisk', 'required star wildcard', ...[0, 60, 120].map(deg => rotate(line(0, -62, 0, 62), deg))],
     ['regex', 'regular expression pattern search', dot(-46, 52, 4), ...[0, 60, 120].map(deg => bi(move(rotate(line(0, -34, 0, 34), deg), 24, -20)))],
-    ['function', 'math formula code fx', P(42, -58).Q(32, -68, 16, -66).Q(-6, -64, -8, -40).L(-22, 54).Q(-26, 72, -48, 66).end(), bi(line(-34, -22, 28, -22))],
+    ['function', 'math formula code fx methods', P(42, -58).Q(32, -68, 16, -66).Q(-6, -64, -8, -40).L(-22, 54).Q(-26, 72, -48, 66).end(), bi(line(-34, -22, 28, -22))],
     ['i-cursor', 'text cursor input caret', bi(P(-26, -66).Q(0, -66, 0, -50).Q(0, -66, 26, -66).end()), bi(P(-26, 66).Q(0, 66, 0, 50).Q(0, 66, 26, 66).end()), line(0, -50, 0, 50)],
     ['command', 'mac key shortcut keyboard', loop(-36, -36, 0, -270), loop(36, -36, 180, 450), loop(-36, 36, 0, 270), loop(36, 36, 180, -90),
         bi(line(-20, -36, -20, 36)), bi(line(20, -36, 20, 36)), bi(line(-36, -20, 36, -20)), bi(line(-36, 20, 36, 20))],

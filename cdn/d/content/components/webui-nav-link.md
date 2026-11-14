@@ -5,13 +5,13 @@
 <webui-side-by-side>
     ```html:Code Snippet
         <webui-flex column>
-            <webui-nav-link name="Dashboard" url="/dashboard" icon="chart-line"></webui-nav-link>
+            <webui-nav-link name="Dashboard" url="/dashboard" icon="gauge"></webui-nav-link>
             <webui-nav-link name="Messages" url="/messages" icon="envelope"></webui-nav-link>
         </webui-flex>
     ```
     <webui-page-segment elevation="10">
         <webui-flex column>
-            <webui-nav-link name="Dashboard" url="/dashboard" icon="chart-line"></webui-nav-link>
+            <webui-nav-link name="Dashboard" url="/dashboard" icon="gauge"></webui-nav-link>
             <webui-nav-link name="Messages" url="/messages" icon="envelope"></webui-nav-link>
         </webui-flex>
     </webui-page-segment>

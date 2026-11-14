@@ -5,7 +5,7 @@
     },
     {
         "name": "align-justify",
-        "tags": "text paragraph"
+        "tags": "text paragraph lorem ipsum placeholder filler"
     },
     {
         "name": "align-left",
@@ -114,6 +114,10 @@
     {
         "name": "bicycle",
         "tags": "bike cycle ride"
+    },
+    {
+        "name": "binary",
+        "tags": "base64 encode decode bits bytes data zero one digits"
     },
     {
         "name": "bluesky",
@@ -332,12 +336,20 @@
         "tags": "minimize exit fullscreen shrink"
     },
     {
+        "name": "contrast",
+        "tags": "contrast accessibility brightness half theme dark light mode"
+    },
+    {
         "name": "cookie",
         "tags": "cookies cookie policy consent privacy biscuit snack food"
     },
     {
         "name": "copy",
         "tags": "editor clone paper duplicate"
+    },
+    {
+        "name": "couch",
+        "tags": "couch sofa furniture interior interiors living room lounge home decor"
     },
     {
         "name": "credit-card",
@@ -357,7 +369,7 @@
     },
     {
         "name": "cube",
-        "tags": "box package 3d product container block"
+        "tags": "box package 3d product container block engine model"
     },
     {
         "name": "database",
@@ -457,7 +469,7 @@
     },
     {
         "name": "eye-dropper",
-        "tags": "color picker sample"
+        "tags": "color picker sample converter hex rgb"
     },
     {
         "name": "face-frown",
@@ -509,7 +521,7 @@
     },
     {
         "name": "fingerprint",
-        "tags": "biometric identity security touch auth authentication authorization verify"
+        "tags": "biometric identity security touch auth authentication authorization verify hash checksum digest"
     },
     {
         "name": "fire",
@@ -549,7 +561,7 @@
     },
     {
         "name": "function",
-        "tags": "math formula code fx"
+        "tags": "math formula code fx methods"
     },
     {
         "name": "gallery-thumbs",
@@ -621,7 +633,7 @@
     },
     {
         "name": "hashtag",
-        "tags": "hash number tag pound markdown"
+        "tags": "hash number tag pound markdown word count counter"
     },
     {
         "name": "heading",
@@ -685,11 +697,11 @@
     },
     {
         "name": "id-card",
-        "tags": "identity badge license profile membership member"
+        "tags": "identity badge license profile membership member uuid guid unique identifier"
     },
     {
         "name": "image",
-        "tags": "picture photo"
+        "tags": "picture photo convert converter jpg png webp format"
     },
     {
         "name": "images",
@@ -756,6 +768,10 @@
         "tags": "nature eco plant green"
     },
     {
+        "name": "letter-case",
+        "tags": "case uppercase lowercase capitalize capital text font letters aa converter"
+    },
+    {
         "name": "level-up",
         "tags": "upgrade rank promote experience"
     },
@@ -797,7 +813,7 @@
     },
     {
         "name": "location",
-        "tags": "map pin marker place"
+        "tags": "map pin marker place exif gps metadata"
     },
     {
         "name": "location-arrow",
@@ -934,6 +950,10 @@
     {
         "name": "paw",
         "tags": "pet animal dog cat"
+    },
+    {
+        "name": "pdf",
+        "tags": "pdf document acrobat adobe file letters"
     },
     {
         "name": "pen",
@@ -1154,6 +1174,10 @@
     {
         "name": "spinner",
         "tags": "loading wait busy progress"
+    },
+    {
+        "name": "spool",
+        "tags": "thread spool sewing textile textiles fabric yarn craft tailor wallpaper"
     },
     {
         "name": "spotify",

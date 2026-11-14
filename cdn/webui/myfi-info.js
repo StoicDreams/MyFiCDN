@@ -127,7 +127,8 @@
                 t._icon.setAttribute('theme', 'success');
                 t.setAttribute('title', 'Toggle Account Panel');
             } else {
-                t._icon.setAttribute('icon', 'arrow-side-into-square|rotate:180');
+                // A circle with a light backing, so the arrow stands out on the button's color.
+                t._icon.setAttribute('icon', 'circle_arrow-side-into-square|rotate:180|backing');
                 t._icon.setAttribute('theme', 'warning');
                 if (webui.isLocalhost) {
                     t.setAttribute('title', 'Simulate Sign-In for Dev Testing');
@@ -139,7 +140,7 @@
             t.setAttribute('aria-label', t.getAttribute('title'));
         },
         shadowTemplate: `
-<webui-icon icon="arrow-side-into-square|rotate:180" fill></webui-icon>
+<webui-icon icon="circle_arrow-side-into-square|rotate:180|backing"></webui-icon>
 <span class="label"></span>
 <slot name="panel-content"></slot>
 <style type="text/css">

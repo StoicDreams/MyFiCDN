@@ -72,7 +72,7 @@ export const ICONS = [
     ['toggle-off', 'switch disabled inactive', rect(-74, -38, 74, 38, 38), bi(circle(-36, 0, 22))],
     ['toggle-on', 'switch enabled active', rect(-74, -38, 74, 38, 38), bi(circle(36, 0, 22))],
     ['gallery-thumbs', 'images photos carousel', rect(-64, -64, 64, 24, 12), ...[-64, -29, 6, 41].map(x => bi(rect(x, 44, x + 23, 64, 4)))],
-    ['stacked-squares', 'layers copies collection template templates components', rect(-24, -64, 64, 24, 12), bi(polyline([[-44, -44], [-44, 44], [44, 44]], 12)), tri(polyline([[-64, -24], [-64, 64], [24, 64]], 12))],
+    ['stacked-squares', 'layers copies collection template templates components shapes', rect(-24, -64, 64, 24, 12), bi(polyline([[-44, -44], [-44, 44], [44, 44]], 12)), tri(polyline([[-64, -24], [-64, 64], [24, 64]], 12))],
     ['hierarchy', 'organization tree structure sitemap', rect(-18, -66, 18, -32, 8), rect(-64, 28, -30, 62, 8), rect(-17, 28, 17, 62, 8), rect(30, 28, 64, 62, 8),
         bi(line(0, -32, 0, 28)), bi(polyline([[-47, 28], [-47, -2], [47, -2], [47, 28]], 8))],
 
@@ -110,7 +110,7 @@ export const ICONS = [
     ['calendar', 'date month days done confirmed add new schedule event today week appointment booking reservation', rect(-64, -50, 64, 64, 12), line(-30, -68, -30, -36), line(30, -68, 30, -36), bi(line(-64, -14, 64, -14))],
     ['clock', 'time hour schedule pending waiting deadline latest', ring(), bi(polyline([[0, -40], [0, 0], [30, 22]]))],
     ['home', 'house main start', polygon([[-56, -6], [0, -64], [56, -6], [56, 62], [-56, 62]], 10), bi(polyline([[-16, 62], [-16, 20], [16, 20], [16, 62]], 6))],
-    ['location', 'map pin marker place', P(0, 70).Q(-58, 12, -58, -16).A(0, -16, 58, 180, 360).Q(58, 12, 0, 70), bi(circle(0, -16, 20))],
+    ['location', 'map pin marker place exif gps metadata', P(0, 70).Q(-58, 12, -58, -16).A(0, -16, 58, 180, 360).Q(58, 12, 0, 70), bi(circle(0, -16, 20))],
     ['compass', 'direction navigate explore discover guide getting started', ring(), bi(polygon([[34, -34], [10, 10], [-34, 34], [-10, -10]], 4))],
     ['flag', 'report mark goal country', bi(line(-54, -66, -54, 68)), polygon([[-54, -62, 0], [62, -62, 6], [36, -30, 6], [62, 2, 6], [-54, 2, 0]])],
 
@@ -127,7 +127,7 @@ export const ICONS = [
     ['book', 'address contacts directory read library manual documentation guide tutorial wiki knowledge base docs course lesson catalog story magazine author', polygon([[-52, -66], [58, -66], [58, 66], [-52, 66]], 12), bi(line(-30, -66, -30, 66)), bi(line(-8, -36, 34, -36))],
     ['code', 'developer programming brackets html api embed css javascript js markdown script', polyline([[-34, -40], [-70, 0], [-34, 40]]), polyline([[34, -40], [70, 0], [34, 40]]), bi(line(14, -58, -14, 58))],
     ['terminal', 'console command line shell prompt cli', polyline([[-58, -44], [-12, 0], [-58, 44]]), bi(line(6, 46, 60, 46))],
-    ['image', 'picture photo', rect(-68, -54, 68, 54, 12), bi(polyline([[-68, 40], [-20, -6], [14, 26], [32, 10], [68, 42]])), bi(circle(30, -22, 10))],
+    ['image', 'picture photo convert converter jpg png webp format', rect(-68, -54, 68, 54, 12), bi(polyline([[-68, 40], [-20, -6], [14, 26], [32, 10], [68, 42]])), bi(circle(30, -22, 10))],
     ['camera', 'photo picture', rect(-68, -36, 68, 56, 10), polygon([[-32, -36], [-20, -56], [20, -56], [32, -36]], 4), bi(circle(0, 10, 26))],
     ['video', 'movie film camera record video call', rect(-68, -44, 30, 44, 12), bi(polygon([[30, -14], [68, -38], [68, 38], [30, 14]], 6))],
     ['music', 'song audio note sound playlist', circle(-36, 44, 16), circle(36, 32, 16), line(-20, 44, -20, -42), line(52, 32, 52, -56), line(-20, -42, 52, -56), bi(line(-20, -18, 52, -32))],

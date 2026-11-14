@@ -58,7 +58,7 @@ export const KEYWORDS = {
         'automation', 'ai', 'bot', 'chart', 'graph', 'table', 'spreadsheet', 'csv', 'pdf', 'zip', 'template', 'layout',
         'design', 'color', 'font', 'text', 'editor', 'markdown', 'html', 'css', 'javascript', 'component', 'widget',
         'embed', 'url', 'website', 'web', 'browser', 'internet', 'wifi', 'bluetooth', 'usb', 'plug', 'power', 'battery',
-        'variable', 'function', 'regex', 'diff', 'version', 'repository', 'docker', 'container', 'cli', 'shell', 'sql',
+        'variable', 'function', 'regex', 'base64', 'binary', 'hash', 'uuid', 'qr code', 'lorem ipsum', 'case converter', 'word count', 'diff', 'version', 'repository', 'docker', 'container', 'cli', 'shell', 'sql',
         'queue', 'workflow', 'flow', 'diagram', 'sitemap',
     ],
     commerce: [
@@ -98,7 +98,7 @@ export const KEYWORDS = {
         'kanban', 'board', 'weather', 'sun', 'moon', 'dark mode', 'light mode', 'theme', 'rain', 'snow', 'temperature',
         'nature', 'plant', 'tree', 'leaf', 'animal', 'pet', 'food', 'drink', 'coffee', 'tools', 'wrench', 'hammer',
         'science', 'lab', 'education', 'game', 'dice', 'controller', 'sports', 'cookie', 'life ring', 'lifebuoy',
-        'hand', 'gear', 'robot', 'eye', 'bed', 'sleep',
+        'hand', 'gear', 'robot', 'eye', 'bed', 'sleep', 'contrast', 'furniture', 'interiors', 'sofa', 'sewing', 'textiles', 'thread',
     ],
 };
 
