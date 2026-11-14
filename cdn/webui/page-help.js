@@ -105,7 +105,6 @@
         handle.addEventListener('pointercancel', finish);
     }
     webui.define("webui-page-help", {
-        linkCss: false,
         watchVisibility: false,
         isInput: false,
         preload: 'icon',
@@ -519,7 +518,7 @@ padding: 0.5em 0.9em;
 border-radius: 2em;
 background-color: var(--theme-color);
 color: var(--theme-color-offset);
-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+box-shadow: var(--shadow-float, 0 2px 8px rgb(0 0 0 / 45%));
 touch-action: none;
 -webkit-user-select: none;
 user-select: none;
@@ -556,7 +555,7 @@ min-width: ${minPanelWidth}px;
 min-height: ${minPanelHeight}px;
 background-color: var(--color-background, #fff);
 color: var(--color-background-offset, #000);
-box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+box-shadow: var(--shadow-panel, 0 8px 30px rgb(0 0 0 / 50%));
 overflow: hidden;
 }
 .panel.shown {

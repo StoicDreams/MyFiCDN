@@ -32,7 +32,7 @@ test('clicking the bell lists alerts in a dialog', async ({ page }) => {
     await root.locator('webui-alerts').click();
     const dialog = root.locator('webui-dialogs dialog');
     await expect(dialog).toContainText('My Alerts');
-    await expect(dialog).toContainText('Listed');
+    await expect(root.locator('webui-dialogs form')).toContainText('Listed');
 });
 test('works as a button from the keyboard', async ({ page }) => {
     const root = await mount(page, '<webui-dialogs></webui-dialogs><webui-alerts title="Open it"></webui-alerts>');

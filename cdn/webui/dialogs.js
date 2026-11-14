@@ -114,7 +114,6 @@ webuiDialog._pending = [];
     };
     webui.define("webui-dialogs", {
         preload: 'icon alert',
-        linkCss: true,
         connected() {
             // Dialogs asked for before this was on the page, which can only open now.
             webuiDialog._pending.splice(0).forEach(open => open());
@@ -123,18 +122,14 @@ webuiDialog._pending = [];
             const t = this;
             webuiDialog.alert = webui.alert;
             t.dialog = t.template.querySelector('dialog');
-            t.form = t.template.querySelector('form');
-            t.header = t.template.querySelector('form>header>section');
-            t.content = t.template.querySelector('form>section');
-            t.footer = t.template.querySelector('form>footer');
+            t.header = t.template.querySelector('dialog>header>section');
+            // Content goes in a form in the light DOM, so page styles reach it, and its fields submit together.
+            t.content = null;
+            t.footer = t.template.querySelector('dialog>footer');
             t.btnClose = t.template.querySelector('#dlg-close');
             t.btnConfirm = t.template.querySelector('#dlg-confirm');
             t.btnCancel = t.template.querySelector('#dlg-cancel');
             let close = () => { };
-            t.form.addEventListener('submit', ev => {
-                ev.preventDefault();
-                t._onsubmit();
-            });
             document.body.addEventListener('keyup', ev => {
                 if (ev.key === 'Escape' && !t._ignoreBackdropClick) {
                     close(true);
@@ -188,7 +183,7 @@ webuiDialog._pending = [];
                             data = { ...defaultWaitOptions, ...data };
                         }
                         t._onsubmit = async function () {
-                            let formData = new FormData(t.form);
+                            let formData = new FormData(t.content);
                             let result = undefined;
                             t.content.alert();
                             if (data.onconfirm) {
@@ -278,7 +273,13 @@ webuiDialog._pending = [];
             }
             function resetNodes() {
                 t.header = replaceNode(t.header);
-                t.content = replaceNode(t.content);
+                if (t.content) t.content.remove();
+                t.content = webui.create('form', { method: 'dialog' });
+                t.content.addEventListener('submit', ev => {
+                    ev.preventDefault();
+                    t._onsubmit();
+                });
+                t.appendChild(t.content);
                 t.btnCancel = replaceNode(t.btnCancel);
                 t.btnConfirm = replaceNode(t.btnConfirm);
             }
@@ -291,23 +292,28 @@ webuiDialog._pending = [];
         },
         shadowTemplate: `
 <dialog data-stopclick aria-labelledby="dlg-title">
-<form method="dialog">
 <header>
 <section id="dlg-title"></section>
-<button id="dlg-close" value="cancel" type="button" formmethod="dialog" aria-label="Close"><webui-icon icon="xmark"></webui-icon></button>
+<button id="dlg-close" value="cancel" type="button" aria-label="Close"><webui-icon icon="xmark"></webui-icon></button>
 </header>
-<section></section>
+<section><slot></slot></section>
 <footer>
-<button id="dlg-cancel" value="cancel" type="button" formmethod="dialog" formnovalidate></button>
+<button id="dlg-cancel" value="cancel" type="button"></button>
 <span></span>
-<button id="dlg-confirm" value="confirm" type="submit" formmethod="dialog"></button>
+<button id="dlg-confirm" value="confirm" type="button"></button>
 </footer>
-</form>
 </dialog>
 <style type="text/css">
 :host {
+display:contents;
 background-color:inherit;
 color:inherit;
+}
+::slotted(form) {
+display:flex;
+flex-direction:column;
+gap:var(--padding, 1em);
+margin:0;
 }
 dialog {
 display:none;
@@ -332,18 +338,18 @@ display:flex;
 opacity:1;
 transform:scaleY(1) scaleX(1) scaleZ(1) translateX(0) translateY(0px);
 }
-form>header,
-form>section,
-form>footer {
+dialog>header,
+dialog>section,
+dialog>footer {
 display:flex;
 gap: var(--padding, 1em);
 padding:var(--padding, 1em);
 }
-form>header,
-form>footer {
+dialog>header,
+dialog>footer {
 flex-direction:row;
 }
-form>section {
+dialog>section {
 flex-direction:column;
 overflow:auto;
 max-height:calc(var(--window-height) * 0.8 - 10em);
@@ -352,11 +358,11 @@ header>section,
 footer>span {
 flex-grow:1;
 }
-form>header{
+dialog>header{
 background-color:var(--color-title);
 color:var(--color-title-offset);
 }
-form>footer {
+dialog>footer {
 background-color:var(--color-footer);
 color:var(--color-footer-offset);
 }
@@ -394,6 +400,10 @@ color:inherit;
 border-radius:var(--corners);
 }
 button:empty {display:none;}
+button:focus-visible {
+outline:var(--focus-outline, 2px solid currentColor);
+outline-offset:var(--focus-offset, 2px);
+}
 dialog.isloading header,
 dialog.isloading footer,
 dialog[data-hideclose] button#dlg-close {

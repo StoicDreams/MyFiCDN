@@ -17,7 +17,6 @@ webui.define("webui-content", {
         t._prevInlineHeight = null;
     },
     contentAttached: false,
-    linkCss: true,
     attr: ["src", 'load-delay', 'height', 'width'],
     flags: ['cache', 'nodetach', 'nofix', 'preload'],
     attrChanged(property, value) {
@@ -249,7 +248,7 @@ justify-content: center;
 content: " ";
 display:block;
 position: absolute;
-animation: spin 1s infinite linear;
+animation: webui-content-spin 1s infinite linear;
 border: 2px solid rgba(30, 30, 30, 0.5);
 border-left: 4px solid #fff;
 border-radius: 50%;
@@ -260,10 +259,24 @@ top:50px;
 }
 :host(:not(.loaded).loading):after {
 content: 'Loading';
-animation: load 2s linear infinite;
+animation: webui-content-load 2s linear infinite;
 }
 :host([visible].loaded) {
-animation: animation-fadein 300ms ease-in;
+animation: webui-content-fadein 300ms ease-in;
+}
+@keyframes webui-content-spin {
+from { transform: rotate(0deg); }
+to { transform: rotate(360deg); }
+}
+@keyframes webui-content-load {
+0% { content: 'Loading'; }
+33% { content: 'Loading.'; }
+67% { content: 'Loading..'; }
+100% { content: 'Loading...'; }
+}
+@keyframes webui-content-fadein {
+from { opacity: 0; }
+to { opacity: 1; }
 }
 </style>
 `

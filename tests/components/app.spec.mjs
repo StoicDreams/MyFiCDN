@@ -13,6 +13,10 @@ test('lays out the site and loads the page', async ({ page }) => {
     await expect(page.locator('h1')).not.toHaveText('');
     await expect(page.locator('webui-app > webui-page-segment').first()).toBeVisible();
 });
+test('dialogs are added to the page body, outside the app shadow root', async ({ page }) => {
+    await expect(page.locator('body > webui-dialogs')).toHaveCount(1);
+    expect(await page.evaluate(() => document.querySelector('webui-app').shadowRoot.querySelector('webui-dialogs'))).toBe(null);
+});
 test('applyDynamicStyles publishes layout sizes and a width class', async ({ page }) => {
     await page.evaluate(() => webui.applyDynamicStyles());
     const [width, height, body] = await page.evaluate(() => {

@@ -43,6 +43,10 @@ webui.define("webui-app", {
     },
     connected() {
         this.observeSlots();
+        // Dialogs live in the page rather than this shadow root, so the content they show gets the page's styles.
+        if (!document.querySelector('webui-dialogs')) {
+            document.body.appendChild(webui.create('webui-dialogs'));
+        }
     },
     /** Watch whatever is in the header, footer, and drawer slots, which can change as drawers are added. */
     observeSlots() {
@@ -163,7 +167,6 @@ webui.define("webui-app", {
 <slot name="right"></slot>
 <slot name="top"></slot>
 <slot name="bottom"></slot>
-<webui-dialogs></webui-dialogs>
 <style type="text/css">
 :host {
 background-color: var(--color-background, white);
@@ -264,7 +267,7 @@ transform: scale(1);
 opacity: 1;
 }
 main:focus-visible {
-outline: 2px solid var(--color-focus, currentColor);
+outline: var(--focus-outline, 2px solid currentColor);
 outline-offset: -2px;
 }
 main.transition {
@@ -276,10 +279,10 @@ width: 1em;
 height: 1em;
 }
 ::-webkit-scrollbar-thumb {
-background: rgba(90, 90, 90, 0.2);
+background: var(--color-scrollbar, rgb(90 90 90 / 20%));
 }
 ::-webkit-scrollbar-track {
-background: rgba(0, 0, 0, 0.2);
+background: var(--color-scrollbar-thumb, rgb(0 0 0 / 20%));
 }
 </style>
 `

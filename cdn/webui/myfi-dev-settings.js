@@ -12,7 +12,6 @@
 `;
     webui.define("webui-myfi-dev-settings", {
         content: true,
-        linkCss: false,
         watchVisibility: false,
         isInput: false,
         preload: '',

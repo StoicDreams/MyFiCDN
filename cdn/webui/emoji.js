@@ -80,7 +80,7 @@ display: flex;
 align-items: center;
 justify-content: center;
 font-size:70cqmin;
-font-family: "Noto Color Emoji";
+font-family: var(--font-family-emoji, "Noto Color Emoji");
 }
 </style>
         `,

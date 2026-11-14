@@ -271,7 +271,7 @@ padding:0.5em 0.75em;
 color:inherit;
 background-color:transparent;
 border:var(--theme-border-width, 1px) solid currentColor;
-border-radius:var(--corner-radius, 4px);
+border-radius:var(--corners, 4px);
 }
 button {
 font:inherit;
@@ -280,15 +280,15 @@ cursor:pointer;
 color:var(--theme-color-offset, var(--color-primary-offset, #fff));
 background-color:var(--theme-color, var(--color-primary, #333));
 border:none;
-border-radius:var(--corner-radius, 4px);
+border-radius:var(--corners, 4px);
 }
 button:disabled {
 cursor:wait;
 opacity:0.6;
 }
 input:focus-visible, button:focus-visible {
-outline:2px solid var(--color-focus, currentColor);
-outline-offset:2px;
+outline:var(--focus-outline, 2px solid currentColor);
+outline-offset:var(--focus-offset, 2px);
 }
 .trap {
 position:absolute;

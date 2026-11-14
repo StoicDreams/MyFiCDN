@@ -131,6 +131,37 @@
     --theme-color-offset: var(--color-background-offset);
     --theme-padding: var(--padding);
     --theme-border-width: 1px;
+
+    /*
+     * Component variables.
+     * This stylesheet does not reach inside a component's shadow DOM, but custom properties inherit through it.
+     * Components style their shadow DOM with these variables and the colors above, so a site changes how every
+     * component looks by setting them here or on any element, instead of components linking this stylesheet.
+     */
+    --font-family: var(--typography-family);
+    --font-family-mono: ui-monospace, 'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace;
+    --font-family-emoji: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif;
+    --font-size-small: max(var(--min-font-size), 0.8em);
+    --font-size-label: max(var(--min-font-size), 0.9em);
+    --color-focus: currentColor;
+    --focus-outline: 2px solid var(--color-focus);
+    --focus-offset: 2px;
+    --corners-round: 1em;
+    --color-backdrop: rgb(0 0 0 / 50%);
+    --color-overlay: rgb(0 0 0 / 55%);
+    --color-overlay-offset: var(--color-white);
+    --color-scrollbar: rgb(90 90 90 / 20%);
+    --color-scrollbar-thumb: rgb(0 0 0 / 20%);
+    --shadow-popup: 0 4px 16px rgb(0 0 0 / 25%);
+    --shadow-float: 0 2px 8px rgb(0 0 0 / 45%);
+    --shadow-panel: 0 8px 30px rgb(0 0 0 / 50%);
+    --color-code-background: #252525;
+    --color-code: #cccccc;
+    --color-code-muted: #858585;
+    --color-diff-removed: rgb(248 81 73 / 15%);
+    --color-diff-added: rgb(46 160 67 / 15%);
+    --color-paper: #ecddcb;
+    --color-paper-offset: var(--color-black);
 }
 
 * {
@@ -741,8 +772,8 @@ button {
 
 /* Keyboard users need to see where they are. :focus-visible shows the ring for keyboard focus, not mouse clicks. */
 :focus-visible {
-    outline: 2px solid var(--color-focus, currentColor);
-    outline-offset: 2px;
+    outline: var(--focus-outline);
+    outline-offset: var(--focus-offset);
 }
 
 /* An empty heading, such as a page subtitle that was not set, is skipped by screen readers and takes no space. */

@@ -9,7 +9,7 @@ test('setting its value opens the dialog and clears the trigger', async ({ page 
     await page.evaluate(() => customElements.whenDefined('webui-dialog-action'));
     await page.evaluate(() => webui.setData('da-open', { id: 7 }));
     const dialog = root.locator('webui-dialogs dialog');
-    await expect(dialog).toContainText('Are you sure?');
+    await expect(root.locator('webui-dialogs form')).toContainText('Are you sure?');
     expect(await page.evaluate(() => webui.getData('da-open'))).toBeUndefined();
 });
 test('confirm posts the value and closes on success', async ({ page }) => {
@@ -30,7 +30,7 @@ test('a failed request stays open and shows the error', async ({ page }) => {
     await page.evaluate(() => webui.setData('da-open', { id: 7 }));
     const dialog = root.locator('webui-dialogs dialog');
     await dialog.locator('#dlg-confirm').click();
-    await expect(dialog.locator('webui-alert')).toContainText('Nope');
+    await expect(root.locator('webui-dialogs form webui-alert')).toContainText('Nope');
     await expect(dialog).toBeVisible();
 });
 test('a network failure stays open and shows the error', async ({ page }) => {
@@ -39,5 +39,5 @@ test('a network failure stays open and shows the error', async ({ page }) => {
     await page.evaluate(() => webui.setData('da-open', { id: 7 }));
     const dialog = root.locator('webui-dialogs dialog');
     await dialog.locator('#dlg-confirm').click();
-    await expect(dialog.locator('webui-alert').last()).toContainText('Failed to fetch');
+    await expect(root.locator('webui-dialogs form webui-alert').last()).toContainText('Failed to fetch');
 });

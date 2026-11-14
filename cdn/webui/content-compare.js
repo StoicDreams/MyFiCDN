@@ -1,7 +1,6 @@
 "use strict"
 {
     webui.define("webui-content-compare", {
-        linkCss: false,
         watchVisibility: false,
         isInput: false,
         constructor() {
@@ -260,13 +259,13 @@
     min-height: 3em;
     background-color: var(--theme-color, #1e1e1e);
     color: var(--theme-color-offset, #ccc);
-    font-family: monospace;
+    font-family: var(--font-family-mono, monospace);
     font-size: 14px;
 }
 .toolbar {
     padding: 8px 16px;
-    background-color: #252525;
-    border-bottom: 1px solid #444;
+    background-color: var(--color-code-background, #252525);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-code-muted, #858585) 50%, transparent);
     display: flex;
     align-items: center;
     flex-shrink: 0;
@@ -276,9 +275,9 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-family: sans-serif;
+    font-family: var(--font-family, sans-serif);
     font-size: 13px;
-    color: #ccc;
+    color: var(--color-code, #ccc);
     user-select: none;
 }
 .compare-container {
@@ -311,10 +310,10 @@
     background-color: transparent;
 }
 .diff-cell.delete {
-    background-color: rgba(248, 81, 73, 0.15);
+    background-color: var(--color-diff-removed, rgb(248 81 73 / 15%));
 }
 .diff-cell.insert {
-    background-color: rgba(46, 160, 67, 0.15);
+    background-color: var(--color-diff-added, rgb(46 160 67 / 15%));
 }
 .diff-cell.delete.empty {
     background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(248, 81, 73, 0.05) 10px, rgba(248, 81, 73, 0.05) 20px);
@@ -326,7 +325,7 @@
     grid-column: 1 / -1;
     justify-content: center;
     background-color: rgba(255, 255, 255, 0.02);
-    color: #858585;
+    color: var(--color-code-muted, #858585);
     font-weight: bold;
     letter-spacing: 2px;
     padding: 4px 0;
@@ -347,9 +346,9 @@
     min-width: 45px;
     padding: 0 8px;
     text-align: right;
-    color: #858585;
+    color: var(--color-code-muted, #858585);
     user-select: none;
-    border-right: 1px solid #444;
+    border-right: 1px solid color-mix(in srgb, var(--color-code-muted, #858585) 50%, transparent);
     margin-right: 8px;
     flex-shrink: 0;
 }

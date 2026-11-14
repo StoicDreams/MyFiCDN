@@ -610,6 +610,9 @@ const webui = (() => {
             if (options.shadowTemplate) {
                 shadowTemplate = webui.create("template");
                 if (options.linkCss) {
+                    // Deprecated: style shadow DOM with the variables in webui.css, which inherit into it,
+                    // and put content that needs page styles in a slot. Kept so older components still work.
+                    webui.log.warn(`${name}: linkCss is deprecated. Style the shadow DOM with Web UI CSS variables, and slot content that needs page styles.`);
                     shadowTemplate.innerHTML = `<link rel="stylesheet" href="https://cdn.myfi.ws/css/webui.min.css">${options.shadowTemplate}`;
                 } else {
                     shadowTemplate.innerHTML = options.shadowTemplate;

@@ -11,7 +11,6 @@
 `;
     webui.define("webui-site-settings", {
         content: true,
-        linkCss: false,
         watchVisibility: false,
         isInput: false,
         preload: 'input-range',

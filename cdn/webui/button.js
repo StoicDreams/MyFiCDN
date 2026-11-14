@@ -193,8 +193,8 @@ box-shadow:inset -1px -1px var(--box-shadow-blur) rgba(255,255,255,0.5), inset 1
 cursor:pointer;
 }
 :host(:focus-visible) {
-outline:2px solid var(--color-focus, currentColor);
-outline-offset:2px;
+outline:var(--focus-outline, 2px solid currentColor);
+outline-offset:var(--focus-offset, 2px);
 }
 </style>
 `

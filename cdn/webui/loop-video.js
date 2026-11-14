@@ -143,8 +143,8 @@ height: 36px;
 padding: 6px;
 border: none;
 border-radius: 50%;
-background: rgba(0, 0, 0, 0.55);
-color: #fff;
+background: var(--color-overlay, rgb(0 0 0 / 55%));
+color: var(--color-overlay-offset, #fff);
 cursor: pointer;
 opacity: 0.7;
 transition: opacity 0.2s;
@@ -154,8 +154,8 @@ button:focus-visible {
 opacity: 1;
 }
 button:focus-visible {
-outline: 2px solid var(--color-focus, #fff);
-outline-offset: 2px;
+outline: var(--focus-outline, 2px solid #fff);
+outline-offset: var(--focus-offset, 2px);
 }
 svg {
 width: 100%;

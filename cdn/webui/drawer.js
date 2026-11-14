@@ -8,7 +8,7 @@
 "use strict"
 {
     const dockableTemplate = `
-<webui-toggle-icon class="pa-0" data-toggleattr="[ID]|docked" data-enabled="[ID]" icon-on="arrow-side-from-square|rotate:180" icon-off="drawer|rotate:90" title-on="Hide [NAME]" flags-on="" flags-off="fill" title-off="Dock [NAME]"></webui-toggle-icon>`;
+<webui-toggle-icon style="--toggle-icon-padding:0;" data-toggleattr="[ID]|docked" data-enabled="[ID]" icon-on="arrow-side-from-square|rotate:180" icon-off="drawer|rotate:90" title-on="Hide [NAME]" flags-on="" flags-off="fill" title-off="Dock [NAME]"></webui-toggle-icon>`;
     const closeTemplate = `
 <button class="drawer-close" aria-label="Close [NAME]" title="Close [NAME]">
 <webui-icon icon="xmark"></webui-icon>
@@ -42,7 +42,6 @@
     const isNavigation = el => !!el.querySelector('webui-nav') || el.classList.contains('nav');
     webui.define("webui-drawer", {
         preload: 'icon flex toggle-icon',
-        linkCss: false,
         constructor() {
             const t = this;
             t._idselector = `#${t._id}`;
@@ -351,10 +350,10 @@ width: 1em;
 height: 1em;
 }
 ::-webkit-scrollbar-thumb {
-background: rgba(90, 90, 90, 0.2);
+background: var(--color-scrollbar, rgb(90 90 90 / 20%));
 }
 ::-webkit-scrollbar-track {
-background: rgba(0, 0, 0, 0.2);
+background: var(--color-scrollbar-thumb, rgb(0 0 0 / 20%));
 }
 slot:not([name])::after {
 content:" ";

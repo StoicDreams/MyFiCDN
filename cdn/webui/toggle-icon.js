@@ -22,8 +22,7 @@
                 }
             });
         },
-        linkCss: true,
-        attr: ['label', 'title-on', 'title-off', 'icon', 'icon-on', 'icon-off', 'flags-on', 'flags-off', 'data-enabled', 'enabled', 'theme-on', 'theme-off', 'class'],
+                attr: ['label', 'title-on', 'title-off', 'icon', 'icon-on', 'icon-off', 'flags-on', 'flags-off', 'data-enabled', 'enabled', 'theme-on', 'theme-off', 'class'],
         attrChanged(prop, _v) {
             const t = this;
             switch (prop) {
@@ -144,16 +143,16 @@ color:var(--theme-color-offset, inherit);
 border:none;
 box-shadow:none;
 margin:0;
-padding:0 var(--padding);
+padding:var(--toggle-icon-padding, 0 var(--padding));
 cursor:pointer;
 transition: all var(--main-transition, 400ms) ease-in-out;
-border-radius:1rem;
+border-radius:var(--corners-round, 1rem);
 line-height:1rem;
 }
 span:empty {display:none;}
 button:focus-visible {
-outline:2px solid var(--color-focus, currentColor);
-outline-offset:2px;
+outline:var(--focus-outline, 2px solid currentColor);
+outline-offset:var(--focus-offset, 2px);
 }
 </style>
 `

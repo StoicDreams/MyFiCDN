@@ -124,16 +124,16 @@
     shadowTemplate: `
 <style type="text/css">
 :host(:focus-within) {
-    outline: 2px solid var(--color-focus, var(--theme-color, currentColor));
-    outline-offset: 2px;
+    outline: var(--focus-outline, 2px solid currentColor);
+    outline-offset: var(--focus-offset, 2px);
 }
 :host {
     display: block;
     position: relative;
     box-sizing: border-box;
     border: var(--theme-border-width) solid var(--theme-color);
-    background-color: #ecddcbff;
-    color: black;
+    background-color: var(--color-paper, #ecddcb);
+    color: var(--color-paper-offset, black);
     cursor: text;
     overflow: auto;
 }

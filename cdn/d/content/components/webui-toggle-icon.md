@@ -21,6 +21,10 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+### Styling
+
+Set `--toggle-icon-padding` to change the space around the button, for example `style="--toggle-icon-padding:0;"` for an icon with no padding. The button's colors come from `theme-on` and `theme-off`.
+
 ### Source Code
 
 <webui-code src="https://cdn.myfi.ws/webui/toggle-icon.js" language="javascript" label="toggle-icon.js"></webui-code>

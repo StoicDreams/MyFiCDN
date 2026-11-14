@@ -9,7 +9,6 @@
 {
     webui.define("webui-dialog-action", {
         content: true,
-        linkCss: false,
         watchVisibility: false,
         isInput: false,
         preload: '',

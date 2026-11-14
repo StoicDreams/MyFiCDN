@@ -683,8 +683,8 @@ border-radius:var(--corners);
 .list > button {display:flex;}
 button:focus-visible,
 select:focus-visible {
-outline:2px solid currentColor;
-outline-offset:2px;
+outline:var(--focus-outline, 2px solid currentColor);
+outline-offset:var(--focus-offset, 2px);
 }
 .picked {
 display:flex;
@@ -715,7 +715,7 @@ overflow:auto;
 overscroll-behavior:contain;
 border:1px solid color-mix(in srgb, var(--theme-color-offset) 25%, transparent);
 border-radius:var(--corners);
-box-shadow:0 4px 16px rgb(0 0 0 / 0.25);
+box-shadow:var(--shadow-popup, 0 4px 16px rgb(0 0 0 / 25%));
 background-color:var(--theme-color);
 color:var(--theme-color-offset);
 z-index:1000;
@@ -733,7 +733,7 @@ font-weight:bold;
 background-color:color-mix(in srgb, var(--theme-color-offset) 10%, var(--theme-color));
 }
 [role="option"].active {
-outline:2px solid currentColor;
+outline:var(--focus-outline, 2px solid currentColor);
 outline-offset:-2px;
 background-color:color-mix(in srgb, var(--theme-color-offset) 18%, var(--theme-color));
 }

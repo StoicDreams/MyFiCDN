@@ -8,7 +8,6 @@
 "use strict"
 {
     webui.define("webui-line", {
-        linkCss: false,
         watchVisibility: false,
         isInput: false,
         preload: '',

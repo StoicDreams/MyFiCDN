@@ -15,8 +15,8 @@ test('webui.dialog shows title and content, and confirm resolves', async ({ page
     const el = await ready(page);
     await open(page, { title: 'Title', content: '<p>Body</p>', confirm: 'Yes', cancel: 'No' });
     await expect(el.locator('dialog')).toBeVisible();
-    await expect(el.locator('form > header > section')).toHaveText('Title');
-    await expect(el.locator('form > section p')).toHaveText('Body');
+    await expect(el.locator('dialog > header > section')).toHaveText('Title');
+    await expect(el.locator('form p')).toHaveText('Body');
     await el.locator('#dlg-confirm').click();
     await expect(el.locator('dialog')).toBeHidden();
     expect(await result(page)).toBe('confirmed');
@@ -32,7 +32,7 @@ test('a dialog opened before webui-dialogs is ready shows once it is, and one cl
     await open(page, { content: '<p>Waited</p>' });
     expect(await result(page)).toBe('open');
     const el = await ready(page);
-    await expect(el.locator('form > section p')).toHaveText('Waited');
+    await expect(el.locator('form p')).toHaveText('Waited');
     await el.locator('#dlg-confirm').click();
     await expect(el.locator('dialog')).toBeHidden();
     expect(await result(page)).toBe('confirmed');
@@ -53,7 +53,7 @@ test('cancel, close, and Escape reject with canceled', async ({ page }) => {
 test('clicking the backdrop closes it, but clicking inside does not', async ({ page }) => {
     const el = await ready(page);
     await open(page, { content: '<p>Inside</p>' });
-    await el.locator('form > section p').click();
+    await el.locator('form p').click();
     await expect(el.locator('dialog')).toBeVisible();
     await page.mouse.click(5, 5);
     await expect(el.locator('dialog')).toBeHidden();
@@ -135,7 +135,7 @@ test('webui.dialog.wait shows until the task ends and cannot be dismissed', asyn
         window.__waited = webui.dialog.wait(new Promise(r => { window.__finish = r; }), 'Working');
     });
     await expect(el.locator('dialog')).toHaveClass(/isloading/);
-    await expect(el.locator('form > section')).toHaveText('Working');
+    await expect(el.locator('form')).toHaveText('Working');
     await page.keyboard.press('Escape');
     await expect(el.locator('dialog')).toBeVisible();
     expect(await page.evaluate(async () => { window.__finish('done'); return window.__waited; })).toBe('done');
@@ -147,7 +147,7 @@ test('dialog alerts show inside the content and clear on submit', async ({ page 
         webui.dialog({ content: 'x', onconfirm: () => false }).catch(() => {});
         webui.dialog.alert('Problem');
     });
-    const alert = el.locator('form > section webui-alert');
+    const alert = el.locator('form webui-alert');
     await expect(alert).toHaveText('Problem');
     await expect(alert).toHaveAttribute('show', 'true');
     await el.locator('#dlg-confirm').click();
@@ -201,7 +201,7 @@ test.describe('focus on open', () => {
         const el = await ready(page);
         await open(page, { content: '<div id="later"></div>', cancel: 'No' });
         await el.locator('#dlg-cancel').focus();
-        await el.locator('form > section #later').evaluate(div => { div.innerHTML = '<input name="late" />'; });
+        await el.locator('form #later').evaluate(div => { div.innerHTML = '<input name="late" />'; });
         await page.waitForTimeout(200);
         expect(await focused(page)).toBe('button');
     });
@@ -212,4 +212,21 @@ test('the close button has a name', async ({ page }) => {
     await expect(page.locator('dialog[open]').getByRole('button', { name: 'Close' })).toHaveCount(1);
     // Screen readers announce the title when the dialog opens.
     await expect(page.getByRole('dialog', { name: 'T' })).toHaveCount(1);
+});
+
+test('dialog content is in the page, where page styles reach it, and its fields submit', async ({ page }) => {
+    const el = await ready(page);
+    await page.evaluate(() => {
+        const style = document.createElement('style');
+        style.textContent = 'p.page-styled { color: rgb(1, 2, 3); }';
+        document.head.appendChild(style);
+        window.__submitted = null;
+        webui.dialog({ content: '<p class="page-styled">Styled</p><input name="answer" value="42" />', confirm: 'Ok', onconfirm: data => { window.__submitted = data.get('answer'); } });
+    });
+    const content = el.locator('form p.page-styled');
+    await expect(content).toHaveCSS('color', 'rgb(1, 2, 3)');
+    expect(await content.evaluate(p => p.getRootNode() === document)).toBe(true);
+    await el.locator('#dlg-confirm').click();
+    await expect.poll(() => page.evaluate(() => window.__submitted)).toBe('42');
+    await expect(el.locator('form')).toHaveCount(1);
 });
