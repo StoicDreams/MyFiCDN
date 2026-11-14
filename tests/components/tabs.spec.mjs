@@ -133,7 +133,20 @@ test('the shown tab is marked current, and other tabs are out of reach', async (
     await expect.poll(() => panels.evaluateAll(list => list.map(p => p.inert))).toEqual([true, true, false]);
 });
 test('a short tab is not as tall as a longer hidden tab, and a shown tab gets its full height', async ({ page }) => {
-    const el = (await mount(page, `<webui-tabs transition-timing="200">
+    // Hidden tabs collapse on a timer once the slide ends. Hold timers of the slide's length, so the test checks the
+    // slide's start and end without racing the timer, which a busy machine loses.
+    await page.evaluate(() => {
+        const setTimeoutReal = window.setTimeout;
+        window.__held = [];
+        window.setTimeout = function (callback, ms, ...args) {
+            if (ms !== 230) return setTimeoutReal(callback, ms, ...args);
+            window.__held.push(() => callback(...args));
+            return setTimeoutReal(() => { }, 0);
+        };
+        window.__releaseHeld = () => window.__held.splice(0).forEach(run => run());
+    });
+    const endSlide = () => page.evaluate(() => window.__releaseHeld());
+    const el = (await mount(page, `<webui-tabs transition-timing="230">
 <webui-button slot="tabs">Short</webui-button><div slot="content"><div style="height:100px">A</div></div>
 <webui-button slot="tabs">Tall</webui-button><div slot="content"><div style="height:900px">B</div></div></webui-tabs>`)).locator('webui-tabs');
     const height = () => el.evaluate(t => Math.round(t.getBoundingClientRect().height));
@@ -143,8 +156,10 @@ test('a short tab is not as tall as a longer hidden tab, and a shown tab gets it
     // The tab being shown has its full height at once, and the one sliding away keeps its height until it is gone.
     expect(await contentHeights()).toEqual([900, 900]);
     await expect.poll(height).toBeGreaterThan(900);
+    await endSlide();
     await expect.poll(contentHeights).toEqual([0, 900]);
     await buttons(el).first().click();
+    await endSlide();
     await expect.poll(height).toBeLessThan(300);
     await expect.poll(contentHeights).toEqual([100, 0]);
 });

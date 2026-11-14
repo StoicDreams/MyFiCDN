@@ -66,7 +66,7 @@ export const ICONS = [
     ['magnifying-glass', 'search find', lens(), bi(lensHandle())],
     ['zoom-in', 'magnify enlarge', lens(), lensHandle(), bi(line(-14, -34, -14, 6)), bi(line(-34, -14, 6, -14))],
     ['zoom-out', 'shrink', lens(), lensHandle(), bi(line(-34, -14, 6, -14))],
-    ['filter', 'funnel refine', polygon([[-66, -62, 8], [66, -62, 8], [14, 2, 0], [14, 50, 6], [-14, 64, 6], [-14, 2, 6]])],
+    ['filter', 'funnel refine', polygon([[-66, -62, 8], [66, -62, 8], [14, 2, 0], [14, 50, 6], [-14, 64, 6], [-14, 2, 6]]), bi(line(-34, -40, 34, -40))],
     ['drawer', 'panel tray', box(), bi(line(-64, 22, 64, 22))],
     ['sidebar', 'panel layout columns', box(), bi(line(-20, -64, -20, 64))],
     ['layers', 'stack levels', polygon([[0, -62], [70, -24], [0, 14], [-70, -24]], 8), bi(polyline([[-70, 6], [0, 44], [70, 6]])), tri(polyline([[-70, 34], [0, 72], [70, 34]]))],
@@ -86,13 +86,13 @@ export const ICONS = [
     ['lock', 'secure password private', rect(-50, -6, 50, 64, 12), P(-32, -6).L(-32, -28).A(0, -28, 32, 180, 360).L(32, -6).end(), bi(line(0, 20, 0, 38))],
     ['unlock', 'open unsecure', rect(-50, -6, 50, 64, 12), P(-32, -6).L(-32, -34).A(0, -34, 32, 180, 340).end(), bi(line(0, 20, 0, 38))],
     ['key', 'password access', circle(-34, -34, 30), line(-12, -12, 62, 62), bi(line(30, 30, 46, 14)), bi(line(46, 46, 60, 32))],
-    ['shield', 'security protection safe', shieldShape()],
+    ['shield', 'security protection safe', shieldShape(), bi(line(0, -50, 0, 52))],
     ['eye', 'view visible show watch', eyeShape(), bi(circle(0, 0, 22))],
 
     // Communication
     ['envelope', 'mail email message letter', rect(-68, -50, 68, 50, 10), bi(polyline([[-60, -40], [0, 8], [60, -40]]))],
     ['mail', 'envelope email message letter', rect(-68, -50, 68, 50, 10), bi(polyline([[-60, -40], [0, 8], [60, -40]]))],
-    ['comment', 'message chat bubble speech', bubble()],
+    ['comment', 'message chat bubble speech', bubble(), bi(P(-48, -18).L(-48, -26).Q(-48, -38, -36, -38).L(-24, -38).end())],
     ['feedback', 'message comment review', bubble(), bi(line(-40, -24, 40, -24)), bi(line(-40, 0, 20, 0))],
     ['messages', 'chat conversation comments', polygon([[-66, -40, 10], [26, -40, 10], [26, 26, 10], [-24, 26, 0], [-50, 50, 0], [-48, 26, 0], [-66, 26, 10]]),
         bi(polyline([[-34, -54], [-34, -66], [66, -66], [66, 4], [44, 4]], 10)), bi(line(-46, -16, 6, -16)), bi(line(-46, 4, -6, 4))],
@@ -117,7 +117,7 @@ export const ICONS = [
 
     // Files and editing
     ['file', 'document page paper', docShape(), bi(docFold())],
-    ['folder', 'directory files', polygon([[-68, -48, 10], [-18, -48, 10], [-4, -32, 0], [68, -32, 10], [68, 56, 10], [-68, 56, 10]])],
+    ['folder', 'directory files', polygon([[-68, -48, 10], [-18, -48, 10], [-4, -32, 0], [68, -32, 10], [68, 56, 10], [-68, 56, 10]]), bi(line(-50, -12, 50, -12))],
     ['copy', 'duplicate clone', rect(-28, -28, 66, 66, 12), bi(polyline([[-46, 30], [-66, 30], [-66, -66], [30, -66], [30, -46]], 12))],
     ['clipboard', 'paste board', rect(-54, -54, 54, 68, 12), bi(rect(-24, -70, 24, -40, 8))],
     ['save', 'floppy disk store', polygon([[-64, -64, 10], [40, -64, 0], [64, -40, 10], [64, 64, 10], [-64, 64, 10]]), bi(rect(-36, -64, 30, -28, 4)), bi(rect(-36, 18, 36, 64, 4))],
@@ -158,11 +158,11 @@ export const ICONS = [
 
     // Nature and weather
     ['sun', 'light day weather bright', circle(0, 0, 26), ...[0, 45, 90, 135, 180, 225, 270, 315].map(deg => bi(ray(deg)))],
-    ['moon', 'night dark mode sleep', crescent()],
-    ['cloud', 'weather storage upload sync backup', move(scale(cloudOutline(), 0.76), 0, 1)],
-    ['heart', 'love like favorite', P(0, 62).Q(-74, 8, -68, -28).Q(-62, -66, -26, -62).Q(-8, -60, 0, -42).Q(8, -60, 26, -62).Q(62, -66, 68, -28).Q(74, 8, 0, 62)],
-    ['star', 'favorite rating bookmark', polygon(Array.from({ length: 10 }, (_, i) => at(0, 6, i % 2 ? 32 : 76, -90 + 36 * i)))],
-    ['bookmark', 'save mark read later', polygon([[-44, -68, 10], [44, -68, 10], [44, 66, 2], [0, 30, 2], [-44, 66, 2]])],
+    ['moon', 'night dark mode sleep', crescent(), bi(circle(...at(0, 0, 46, 30), 7)), bi(circle(...at(0, 0, 50, 80), 4))],
+    ['cloud', 'weather storage upload sync backup', move(scale(cloudOutline(), 0.76), 0, 1), bi(move(scale(arc(2, -14, 42, 205, 260), 0.76), 0, 1))],
+    ['heart', 'love like favorite', P(0, 62).Q(-74, 8, -68, -28).Q(-62, -66, -26, -62).Q(-8, -60, 0, -42).Q(8, -60, 26, -62).Q(62, -66, 68, -28).Q(74, 8, 0, 62), bi(arc(-32, -24, 20, 195, 265))],
+    ['star', 'favorite rating bookmark', polygon(Array.from({ length: 10 }, (_, i) => at(0, 6, i % 2 ? 32 : 76, -90 + 36 * i))), bi(polygon(Array.from({ length: 10 }, (_, i) => at(0, 6, i % 2 ? 12 : 30, -90 + 36 * i))))],
+    ['bookmark', 'save mark read later', polygon([[-44, -68, 10], [44, -68, 10], [44, 66, 2], [0, 30, 2], [-44, 66, 2]]), bi(line(-24, -42, 24, -42))],
     ['trophy', 'award winner prize achievement', P(-42, -64).L(42, -64).L(42, -14).Q(42, 26, 0, 26).Q(-42, 26, -42, -14).close(), bi(polyline([[-42, -50], [-66, -50], [-66, -30], [-42, -8]], 8)), bi(polyline([[42, -50], [66, -50], [66, -30], [42, -8]], 8)), line(0, 26, 0, 50), line(-30, 64, 30, 64)],
     ['test', 'lab experiment flask science beaker', polygon([[-22, -60, 0], [22, -60, 0], [22, -18, 0], [64, 56, 12], [-64, 56, 12], [-22, -18, 0]]), line(-34, -62, 34, -62), bi(P(-46, 22).Q(-22, 8, 0, 22).Q(22, 36, 46, 22).end())],
     ['traffic-cone', 'construction under work caution', polygon([[-12, -68], [12, -68], [46, 50], [-46, 50]], 8), line(-70, 62, 70, 62), bi(line(-26, -18, 26, -18)), bi(line(-36, 16, 36, 16))],

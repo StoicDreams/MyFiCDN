@@ -44,7 +44,7 @@ export const SETS = [
     ['code-pull-request', 'git pr review merge', circle(-40, -50, 13), circle(-40, 50, 13), line(-40, -36, -40, 36), circle(40, 50, 13), P(40, 36).L(40, -18).Q(40, -40, 18, -40).L(-4, -40).end(), bi(head(-6, -40, 180, 20))],
     ['code-fork', 'git branch repository copy', circle(-40, -52, 13), circle(40, -52, 13), circle(0, 52, 13), P(-40, -38).L(-40, -20).Q(-40, 0, -20, 0).L(20, 0).Q(40, 0, 40, -20).L(40, -38).end(), bi(line(0, 0, 0, 38))],
     ['brackets-square', 'array code list', polyline([[-26, -64], [-54, -64], [-54, 64], [-26, 64]]), polyline([[26, -64], [54, -64], [54, 64], [26, 64]])],
-    ['wrench', 'settings tool fix repair', rotate(P(-12, -24).L(-12, 60).Q(-12, 72, 0, 72).Q(12, 72, 12, 60).L(12, -24).Q(38, -36, 36, -62).L(14, -48).L(-14, -48).L(-36, -62).Q(-38, -36, -12, -24), 45)],
+    ['wrench', 'settings tool fix repair', rotate(P(-12, -24).L(-12, 60).Q(-12, 72, 0, 72).Q(12, 72, 12, 60).L(12, -24).Q(38, -36, 36, -62).L(14, -48).L(-14, -48).L(-36, -62).Q(-38, -36, -12, -24), 45), bi(rotate(dot(0, 58, 4), 45))],
     ['hammer', 'build tool construct', ...rotated(-45, bi(rect(-8, -20, 8, 70, 6)), polygon([[-44, -58], [34, -58], [46, -40], [34, -20], [-44, -20]], 6))],
     ['toolbox', 'tools kit repair', rect(-70, -24, 70, 60, 10), polyline([[-28, -24], [-28, -50], [28, -50], [28, -24]], 8), bi(line(-70, 10, 70, 10)), bi(rect(-14, 2, 14, 18, 4))],
     ['nodes', 'graph network connections diagram', circle(0, -50, 16), circle(-50, 40, 16), circle(50, 40, 16), bi(line(-8, -36, -42, 26)), bi(line(8, -36, 42, 26)), bi(line(-34, 40, 34, 40))],
