@@ -1,9 +1,5 @@
 [
     {
-        "name": "address-book",
-        "tags": "contacts people directory"
-    },
-    {
         "name": "align-center",
         "tags": "text paragraph"
     },
@@ -28,8 +24,12 @@
         "tags": "food fruit health item"
     },
     {
+        "name": "area",
+        "tags": "chart graph statistics analytics"
+    },
+    {
         "name": "arrow",
-        "tags": "pointer direction right left down up diagonal next forward"
+        "tags": "pointer direction right left down up diagonal next forward previous back continue go"
     },
     {
         "name": "arrow-corner-from-square",
@@ -45,19 +45,19 @@
     },
     {
         "name": "arrow-side-from-square",
-        "tags": "external open sign out log exit leave"
+        "tags": "external open sign out log exit leave logout signout export"
     },
     {
         "name": "arrow-side-into-square",
-        "tags": "internal close sign in log enter"
+        "tags": "internal close sign in log enter login signin import"
     },
     {
         "name": "arrow-turn-down-left",
-        "tags": "return enter reply"
+        "tags": "return enter reply returns refund"
     },
     {
         "name": "arrows-left-right",
-        "tags": "horizontal resize width swap"
+        "tags": "horizontal resize width swap transaction transactions transfer transfers exchange convert flip mirror"
     },
     {
         "name": "arrows-move",
@@ -88,6 +88,10 @@
         "tags": "shopping cart buy store"
     },
     {
+        "name": "bar",
+        "tags": "chart graph statistics analytics insights report reports stats metrics column"
+    },
+    {
         "name": "barcode",
         "tags": "scan product code"
     },
@@ -100,8 +104,12 @@
         "tags": "power charge energy"
     },
     {
+        "name": "bed",
+        "tags": "hotel sleep rest bedroom stay lodging room"
+    },
+    {
         "name": "bell",
-        "tags": "alert notification alarm reminder"
+        "tags": "alert notification alarm reminder notify"
     },
     {
         "name": "bicycle",
@@ -133,15 +141,15 @@
     },
     {
         "name": "book",
-        "tags": "reading read library manual documentation"
+        "tags": "reading read library manual documentation guide tutorial wiki knowledge base docs course lesson catalog story magazine author address contacts directory"
     },
     {
         "name": "book-open",
-        "tags": "read reading documentation manual"
+        "tags": "read reading documentation manual guide tutorial getting started wiki knowledge base course lesson learn"
     },
     {
         "name": "bookmark",
-        "tags": "save mark read later"
+        "tags": "save mark read later saved"
     },
     {
         "name": "bow-arrow",
@@ -149,11 +157,11 @@
     },
     {
         "name": "box-archive",
-        "tags": "archive storage box"
+        "tags": "archive storage box archived resources"
     },
     {
         "name": "brackets-curly",
-        "tags": "code json object braces"
+        "tags": "code json object braces api endpoint embed variable"
     },
     {
         "name": "brackets-square",
@@ -161,7 +169,7 @@
     },
     {
         "name": "briefcase",
-        "tags": "work job business portfolio"
+        "tags": "work job business portfolio career careers hiring employment"
     },
     {
         "name": "broadcast",
@@ -177,11 +185,11 @@
     },
     {
         "name": "bullhorn",
-        "tags": "megaphone announce marketing"
+        "tags": "megaphone announce marketing announcement announcements news"
     },
     {
         "name": "bullseye",
-        "tags": "target goal aim focus"
+        "tags": "target goal aim focus mission"
     },
     {
         "name": "bus",
@@ -189,23 +197,11 @@
     },
     {
         "name": "calculator",
-        "tags": "math accounting numbers"
+        "tags": "math accounting numbers budget calculate finance tax"
     },
     {
         "name": "calendar",
-        "tags": "date schedule event"
-    },
-    {
-        "name": "calendar-check",
-        "tags": "date done event confirmed"
-    },
-    {
-        "name": "calendar-days",
-        "tags": "date month schedule"
-    },
-    {
-        "name": "calendar-plus",
-        "tags": "date add new event"
+        "tags": "date schedule event today week appointment booking reservation month days done confirmed add new"
     },
     {
         "name": "camera",
@@ -225,7 +221,7 @@
     },
     {
         "name": "caret",
-        "tags": "left right up down prev next drop select triangle direction expand collapse"
+        "tags": "left right up down prev next drop select triangle direction expand collapse upvote downvote vote"
     },
     {
         "name": "caret-line",
@@ -240,28 +236,12 @@
         "tags": "fortress kingdom base"
     },
     {
-        "name": "chart-area",
-        "tags": "graph statistics analytics"
-    },
-    {
-        "name": "chart-bar",
-        "tags": "graph statistics analytics"
-    },
-    {
-        "name": "chart-gantt",
-        "tags": "timeline schedule project plan"
-    },
-    {
-        "name": "chart-line",
-        "tags": "graph statistics trend analytics"
-    },
-    {
         "name": "chart-pie",
-        "tags": "graph statistics share"
+        "tags": "graph statistics share insights report budget"
     },
     {
         "name": "check",
-        "tags": "confirm done yes ok tick"
+        "tags": "confirm done yes ok tick success complete completed verify"
     },
     {
         "name": "chess-pawn",
@@ -269,7 +249,7 @@
     },
     {
         "name": "chevron",
-        "tags": "angle right next forward"
+        "tags": "angle right next forward previous back continue"
     },
     {
         "name": "chevrons-right",
@@ -293,7 +273,7 @@
     },
     {
         "name": "clock",
-        "tags": "time hour schedule"
+        "tags": "time hour schedule pending waiting deadline latest"
     },
     {
         "name": "close",
@@ -305,7 +285,7 @@
     },
     {
         "name": "code",
-        "tags": "developer programming brackets html"
+        "tags": "developer programming brackets html api embed css javascript js markdown script"
     },
     {
         "name": "code-branch",
@@ -329,7 +309,7 @@
     },
     {
         "name": "coins",
-        "tags": "money cash currency savings"
+        "tags": "money cash currency savings finance budget crypto euro"
     },
     {
         "name": "command",
@@ -337,19 +317,23 @@
     },
     {
         "name": "comment",
-        "tags": "message chat bubble speech"
+        "tags": "message chat bubble speech sms text"
     },
     {
         "name": "comment-dots",
-        "tags": "chat typing message"
+        "tags": "chat typing message sms"
     },
     {
         "name": "compass",
-        "tags": "directions map point find direction navigate explore"
+        "tags": "directions map point find direction navigate explore discover guide getting started"
     },
     {
         "name": "compress",
         "tags": "minimize exit fullscreen shrink"
+    },
+    {
+        "name": "cookie",
+        "tags": "cookies cookie policy consent privacy biscuit snack food"
     },
     {
         "name": "copy",
@@ -357,7 +341,7 @@
     },
     {
         "name": "credit-card",
-        "tags": "payment card bank"
+        "tags": "payment card bank billing subscription subscriptions recurring membership banking"
     },
     {
         "name": "crop",
@@ -369,15 +353,15 @@
     },
     {
         "name": "crown",
-        "tags": "king premium vip royal"
+        "tags": "king premium vip royal admin owner"
     },
     {
         "name": "cube",
-        "tags": "box package 3d product"
+        "tags": "box package 3d product container block"
     },
     {
         "name": "database",
-        "tags": "storage data server"
+        "tags": "storage data server cache sql"
     },
     {
         "name": "delete-left",
@@ -409,7 +393,7 @@
     },
     {
         "name": "dollar",
-        "tags": "cash money currency price payment cost"
+        "tags": "cash money currency price payment cost pricing plans billing finance sell income revenue"
     },
     {
         "name": "door-open",
@@ -417,7 +401,7 @@
     },
     {
         "name": "download",
-        "tags": "save get"
+        "tags": "save get install import"
     },
     {
         "name": "drawer",
@@ -433,7 +417,7 @@
     },
     {
         "name": "edit",
-        "tags": "pencil write modify"
+        "tags": "pencil write modify draft rename editor"
     },
     {
         "name": "ellipsis",
@@ -441,11 +425,11 @@
     },
     {
         "name": "envelope",
-        "tags": "mail email message letter"
+        "tags": "mail email message letter newsletter subscribe unsubscribe"
     },
     {
         "name": "envelope-open",
-        "tags": "mail read opened email"
+        "tags": "mail read opened email unread"
     },
     {
         "name": "equals",
@@ -453,11 +437,15 @@
     },
     {
         "name": "eraser",
-        "tags": "erase remove clean"
+        "tags": "erase remove clean clear reset"
+    },
+    {
+        "name": "euro",
+        "tags": "eur currency money price payment cost"
     },
     {
         "name": "exclamation",
-        "tags": "alert warning danger important attention"
+        "tags": "alert warning danger important attention urgent error"
     },
     {
         "name": "expand",
@@ -465,7 +453,7 @@
     },
     {
         "name": "eye",
-        "tags": "pupil look view see visible show watch"
+        "tags": "pupil look view see visible show watch vision preview hide hidden"
     },
     {
         "name": "eye-dropper",
@@ -497,7 +485,7 @@
     },
     {
         "name": "fast-forward",
-        "tags": "media speed skip"
+        "tags": "media speed skip rewind back"
     },
     {
         "name": "feather",
@@ -509,7 +497,7 @@
     },
     {
         "name": "file",
-        "tags": "document page paper"
+        "tags": "document page paper terms policy pdf csv template draft"
     },
     {
         "name": "film",
@@ -521,7 +509,7 @@
     },
     {
         "name": "fingerprint",
-        "tags": "biometric identity security touch"
+        "tags": "biometric identity security touch auth authentication authorization verify"
     },
     {
         "name": "fire",
@@ -529,7 +517,7 @@
     },
     {
         "name": "flag",
-        "tags": "report mark goal"
+        "tags": "report mark goal country"
     },
     {
         "name": "flag-checkered",
@@ -572,16 +560,20 @@
         "tags": "game controller play"
     },
     {
+        "name": "gantt",
+        "tags": "chart timeline schedule project plan roadmap pipeline"
+    },
+    {
         "name": "gauge",
-        "tags": "dashboard speed meter performance"
+        "tags": "dashboard speed meter performance status uptime"
     },
     {
         "name": "gear",
-        "tags": "cog settings options configure"
+        "tags": "cog settings options configure preferences admin administration service"
     },
     {
         "name": "gem",
-        "tags": "diamond jewel premium value"
+        "tags": "diamond jewel premium value values"
     },
     {
         "name": "ghost",
@@ -589,7 +581,7 @@
     },
     {
         "name": "gift",
-        "tags": "present reward"
+        "tags": "present reward donate"
     },
     {
         "name": "git",
@@ -601,15 +593,15 @@
     },
     {
         "name": "globe",
-        "tags": "world internet web language"
+        "tags": "world internet web language translate earth country website"
     },
     {
         "name": "graduation-cap",
-        "tags": "education school learn degree"
+        "tags": "education school learn degree course courses lesson lessons class"
     },
     {
         "name": "grid",
-        "tags": "tiles apps dashboard"
+        "tags": "tiles apps dashboard applications components widgets widget"
     },
     {
         "name": "hamburger",
@@ -621,19 +613,19 @@
     },
     {
         "name": "handshake",
-        "tags": "together partnership"
+        "tags": "together partnership partner partners sponsor investor hello"
     },
     {
         "name": "hard-drive",
-        "tags": "disk storage hdd"
+        "tags": "disk storage hdd cache"
     },
     {
         "name": "hashtag",
-        "tags": "hash number tag pound"
+        "tags": "hash number tag pound markdown"
     },
     {
         "name": "heading",
-        "tags": "title header text h"
+        "tags": "title header text h markdown"
     },
     {
         "name": "headphones",
@@ -641,15 +633,11 @@
     },
     {
         "name": "heart",
-        "tags": "love like favorite"
-    },
-    {
-        "name": "heart-pulse",
-        "tags": "health heartbeat medical cardio"
+        "tags": "love like favorite donate donation wishlist saved"
     },
     {
         "name": "heartbeat",
-        "tags": "pulse activity health monitor"
+        "tags": "pulse activity health monitor uptime medical cardio"
     },
     {
         "name": "helmet",
@@ -665,7 +653,7 @@
     },
     {
         "name": "history",
-        "tags": "recent past clock rotate"
+        "tags": "recent past clock rotate changelog release notes restore latest"
     },
     {
         "name": "home",
@@ -677,7 +665,7 @@
     },
     {
         "name": "hourglass",
-        "tags": "wait time loading sand"
+        "tags": "wait time loading sand pending waiting deadline expired"
     },
     {
         "name": "house",
@@ -689,15 +677,15 @@
     },
     {
         "name": "icons",
-        "tags": "shapes group"
+        "tags": "shapes group components"
     },
     {
         "name": "id-badge",
-        "tags": "employee name tag lanyard"
+        "tags": "employee name tag lanyard staff"
     },
     {
         "name": "id-card",
-        "tags": "identity badge license profile"
+        "tags": "identity badge license profile membership member"
     },
     {
         "name": "image",
@@ -705,11 +693,11 @@
     },
     {
         "name": "images",
-        "tags": "pictures photos gallery album"
+        "tags": "pictures photos gallery album slideshow"
     },
     {
         "name": "inbox",
-        "tags": "messages tray mail"
+        "tags": "messages tray mail empty unread"
     },
     {
         "name": "indent",
@@ -737,7 +725,7 @@
     },
     {
         "name": "jwt",
-        "tags": "key code stars"
+        "tags": "key code stars token auth"
     },
     {
         "name": "kanban",
@@ -745,7 +733,7 @@
     },
     {
         "name": "key",
-        "tags": "password access"
+        "tags": "password access token credentials auth authentication login"
     },
     {
         "name": "keyboard",
@@ -753,7 +741,7 @@
     },
     {
         "name": "landmark",
-        "tags": "bank government museum institution"
+        "tags": "bank government museum institution banking finance"
     },
     {
         "name": "laptop",
@@ -761,7 +749,7 @@
     },
     {
         "name": "layers",
-        "tags": "stack levels"
+        "tags": "stack levels template templates themes"
     },
     {
         "name": "leaf",
@@ -772,12 +760,20 @@
         "tags": "upgrade rank promote experience"
     },
     {
+        "name": "life-ring",
+        "tags": "lifebuoy life ring support help rescue safety"
+    },
+    {
         "name": "lightbulb",
         "tags": "idea tip hint"
     },
     {
+        "name": "line",
+        "tags": "chart graph statistics trend analytics insights finance investments investor investors revenue profit stock"
+    },
+    {
         "name": "link",
-        "tags": "chain url hyperlink"
+        "tags": "chain url hyperlink webhook webhooks unlink website"
     },
     {
         "name": "linkedin",
@@ -785,7 +781,7 @@
     },
     {
         "name": "list",
-        "tags": "items bullets lines"
+        "tags": "items bullets lines changelog release notes queue"
     },
     {
         "name": "list-check",
@@ -805,11 +801,11 @@
     },
     {
         "name": "location-arrow",
-        "tags": "navigation direction gps"
+        "tags": "navigation direction gps track tracking route"
     },
     {
         "name": "lock",
-        "tags": "secure password private"
+        "tags": "secure password private privacy encryption encrypt locked"
     },
     {
         "name": "magnifying-glass",
@@ -817,11 +813,11 @@
     },
     {
         "name": "mail",
-        "tags": "envelope email message letter"
+        "tags": "envelope email message letter newsletter"
     },
     {
         "name": "map",
-        "tags": "directions travel location"
+        "tags": "directions travel location roadmap route"
     },
     {
         "name": "mastodon",
@@ -841,7 +837,7 @@
     },
     {
         "name": "messages",
-        "tags": "talk communication chat conversation comments"
+        "tags": "talk communication chat conversation comments community forum"
     },
     {
         "name": "messages-question",
@@ -869,7 +865,7 @@
     },
     {
         "name": "moon",
-        "tags": "night dark mode sleep"
+        "tags": "night dark mode sleep theme"
     },
     {
         "name": "mountain",
@@ -885,15 +881,15 @@
     },
     {
         "name": "music",
-        "tags": "notes song audio note sound"
+        "tags": "notes song audio note sound playlist"
     },
     {
         "name": "newspaper",
-        "tags": "news article blog"
+        "tags": "news article blog magazine press post posts"
     },
     {
         "name": "nodes",
-        "tags": "graph network connections diagram"
+        "tags": "graph network connections diagram api webhook webhooks integration workflow flow queue"
     },
     {
         "name": "note-sticky",
@@ -905,15 +901,15 @@
     },
     {
         "name": "package",
-        "tags": "box delivery shipping cube"
+        "tags": "box delivery shipping cube docker container"
     },
     {
         "name": "paintbrush",
-        "tags": "paint art brush design"
+        "tags": "paint art brush design css style"
     },
     {
         "name": "palette",
-        "tags": "colors art paint design"
+        "tags": "colors art paint design theme themes light mode"
     },
     {
         "name": "paperclip",
@@ -929,7 +925,7 @@
     },
     {
         "name": "patreon",
-        "tags": "brand creator support"
+        "tags": "brand creator support donate sponsor"
     },
     {
         "name": "pause",
@@ -945,15 +941,15 @@
     },
     {
         "name": "pencil",
-        "tags": "edits edit write compose"
+        "tags": "edits edit write compose draft rename editor"
     },
     {
         "name": "percent",
-        "tags": "discount sale ratio"
+        "tags": "discount sale ratio deal deals offer offers coupon tax"
     },
     {
         "name": "person",
-        "tags": "accounts users user account profile"
+        "tags": "accounts users user account profile avatar member customer client guest character player hero"
     },
     {
         "name": "phone",
@@ -973,11 +969,11 @@
     },
     {
         "name": "play",
-        "tags": "start media begin"
+        "tags": "start media begin resume run execute"
     },
     {
         "name": "plug",
-        "tags": "power electric connect"
+        "tags": "power electric connect api integration integrations endpoint webhook usb connected disconnected disconnect online offline"
     },
     {
         "name": "plus",
@@ -1001,7 +997,7 @@
     },
     {
         "name": "presentation-screen",
-        "tags": "slides projector meeting"
+        "tags": "slides projector meeting slideshow"
     },
     {
         "name": "print-screen",
@@ -1013,7 +1009,7 @@
     },
     {
         "name": "puzzle-piece",
-        "tags": "plugin extension addon game"
+        "tags": "plugin extension addon game integration integrations component components widget"
     },
     {
         "name": "qrcode",
@@ -1033,7 +1029,7 @@
     },
     {
         "name": "receipt",
-        "tags": "bill invoice purchase"
+        "tags": "bill invoice purchase billing order orders tax expense expenses refund refunds"
     },
     {
         "name": "reddit",
@@ -1041,7 +1037,7 @@
     },
     {
         "name": "refresh",
-        "tags": "arrows circle reload sync update rotate"
+        "tags": "arrows circle reload sync update rotate retry again reset"
     },
     {
         "name": "regex",
@@ -1065,7 +1061,7 @@
     },
     {
         "name": "rocket",
-        "tags": "launch startup space fast"
+        "tags": "launch startup space fast release releases deploy publish beta"
     },
     {
         "name": "rss",
@@ -1081,7 +1077,7 @@
     },
     {
         "name": "scale-balanced",
-        "tags": "justice legal law compare fair"
+        "tags": "justice legal law compare fair terms of service conditions policy"
     },
     {
         "name": "scissors",
@@ -1101,15 +1097,15 @@
     },
     {
         "name": "send",
-        "tags": "paper plane submit message"
+        "tags": "paper plane submit message publish sent"
     },
     {
         "name": "server",
-        "tags": "hosting computer rack"
+        "tags": "hosting computer rack api endpoint uptime docker container"
     },
     {
         "name": "settings",
-        "tags": "gear options configure"
+        "tags": "gear options configure preferences admin administration"
     },
     {
         "name": "share",
@@ -1121,7 +1117,7 @@
     },
     {
         "name": "shield",
-        "tags": "security protection safe"
+        "tags": "security protection safe privacy policy firewall permission permissions"
     },
     {
         "name": "shuffle",
@@ -1145,7 +1141,7 @@
     },
     {
         "name": "sliders",
-        "tags": "settings adjust controls filter"
+        "tags": "settings adjust controls filter preferences"
     },
     {
         "name": "snapchat",
@@ -1181,7 +1177,7 @@
     },
     {
         "name": "stacked-squares",
-        "tags": "shapes layers copies collection"
+        "tags": "shapes layers copies collection template templates components"
     },
     {
         "name": "stamp",
@@ -1189,7 +1185,7 @@
     },
     {
         "name": "star",
-        "tags": "space shapes favorite rating bookmark"
+        "tags": "space shapes favorite rating bookmark featured recommended review reviews"
     },
     {
         "name": "steam",
@@ -1205,7 +1201,7 @@
     },
     {
         "name": "store",
-        "tags": "shop market retail"
+        "tags": "shop market retail sell warehouse"
     },
     {
         "name": "strikethrough",
@@ -1213,7 +1209,7 @@
     },
     {
         "name": "sun",
-        "tags": "light day weather bright"
+        "tags": "light day weather bright mode theme"
     },
     {
         "name": "sun-cloud",
@@ -1229,7 +1225,7 @@
     },
     {
         "name": "table",
-        "tags": "grid spreadsheet data rows excel"
+        "tags": "grid spreadsheet data rows excel csv"
     },
     {
         "name": "table-columns",
@@ -1241,7 +1237,7 @@
     },
     {
         "name": "tag",
-        "tags": "label price category"
+        "tags": "label price category pricing plans deal deals offer offers sale"
     },
     {
         "name": "tags",
@@ -1265,15 +1261,15 @@
     },
     {
         "name": "test",
-        "tags": "beaker tube science flask lab experiment"
+        "tags": "beaker tube science flask lab experiment beta"
     },
     {
         "name": "thumbs-up",
-        "tags": "positive success like approve good agree"
+        "tags": "positive success like approve good agree dislike thumbs down vote upvote downvote"
     },
     {
         "name": "thumbtack",
-        "tags": "pin attach stick"
+        "tags": "pin attach stick unpin"
     },
     {
         "name": "ticket",
@@ -1285,23 +1281,27 @@
     },
     {
         "name": "toggle-off",
-        "tags": "switch disabled"
+        "tags": "switch disabled inactive"
     },
     {
         "name": "toggle-on",
-        "tags": "switch enabled"
+        "tags": "switch enabled active"
     },
     {
         "name": "toolbox",
-        "tags": "tools kit repair"
+        "tags": "tools kit repair resources services"
     },
     {
         "name": "traffic-cone",
         "tags": "street warning construction under work caution"
     },
     {
+        "name": "train",
+        "tags": "railway rail subway metro tram transit public transport"
+    },
+    {
         "name": "trash",
-        "tags": "delete remove bin garbage"
+        "tags": "delete remove bin garbage uninstall"
     },
     {
         "name": "trash-can",
@@ -1317,7 +1317,7 @@
     },
     {
         "name": "trending-up",
-        "tags": "growth increase chart rise"
+        "tags": "growth increase chart rise insights profit revenue income investments stock"
     },
     {
         "name": "triangle",
@@ -1329,7 +1329,7 @@
     },
     {
         "name": "truck",
-        "tags": "delivery shipping transport"
+        "tags": "delivery shipping transport tracking"
     },
     {
         "name": "tv",
@@ -1349,39 +1349,47 @@
     },
     {
         "name": "undo",
-        "tags": "back revert rotate left"
+        "tags": "back revert rotate left redo restore"
+    },
+    {
+        "name": "universal-access",
+        "tags": "accessibility a11y disability inclusive person"
     },
     {
         "name": "unlock",
-        "tags": "open unsecure"
+        "tags": "open unsecure unlocked public"
     },
     {
         "name": "upload",
-        "tags": "send put"
+        "tags": "send put publish"
     },
     {
         "name": "user",
-        "tags": "person account profile"
+        "tags": "person account profile avatar member customer client guest character player hero author owner picture"
     },
     {
         "name": "user-check",
-        "tags": "verified person approved"
+        "tags": "verified person approved assign assigned verify"
+    },
+    {
+        "name": "user-gear",
+        "tags": "admin administrator administration manage manager roles role permissions account settings"
     },
     {
         "name": "user-minus",
-        "tags": "remove person"
+        "tags": "remove person unfollow"
     },
     {
         "name": "user-plus",
-        "tags": "add person invite new account"
+        "tags": "add person invite new account follow register signup sign up join"
     },
     {
         "name": "user-xmark",
-        "tags": "remove person block"
+        "tags": "remove person block reject"
     },
     {
         "name": "users",
-        "tags": "people group team"
+        "tags": "people group team members member community friend friends followers following family customer customers client clients staff"
     },
     {
         "name": "utensils",
@@ -1389,7 +1397,7 @@
     },
     {
         "name": "video",
-        "tags": "movie film camera record"
+        "tags": "movie film camera record video call"
     },
     {
         "name": "virus",
@@ -1401,7 +1409,7 @@
     },
     {
         "name": "volume",
-        "tags": "sound audio speaker"
+        "tags": "sound audio speaker unmute"
     },
     {
         "name": "volume-low",
@@ -1413,7 +1421,7 @@
     },
     {
         "name": "wallet",
-        "tags": "money payment cash"
+        "tags": "money payment cash finance budget expense"
     },
     {
         "name": "wand",
@@ -1429,7 +1437,7 @@
     },
     {
         "name": "wifi",
-        "tags": "wireless internet signal network"
+        "tags": "wireless internet signal network online offline connected"
     },
     {
         "name": "wind",
@@ -1437,7 +1445,7 @@
     },
     {
         "name": "window",
-        "tags": "browser app screen"
+        "tags": "browser app screen website web"
     },
     {
         "name": "wrench",
@@ -1449,7 +1457,7 @@
     },
     {
         "name": "xmark",
-        "tags": "close cancel delete remove times"
+        "tags": "close cancel delete remove times reject deny decline fail failed failure error clear"
     },
     {
         "name": "youtube",

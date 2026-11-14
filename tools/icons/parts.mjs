@@ -126,3 +126,40 @@ export function fileOutline() {
     return P(40, -92).L(40, -62).L(70, -62).L(40, -92).L(-58, -92).Q(-70, -92, -70, -80).L(-70, 80).Q(-70, 92, -58, 92)
         .L(58, 92).Q(70, 92, 70, 80).L(70, -62).close();
 }
+/** A closed book seen from the front, with its spine down the left. The spine is traced first, so it draws as a line. */
+export function bookOutline() {
+    return P(-62, -92).L(-62, 92).L(-74, 92).Q(-86, 92, -86, 80).L(-86, -80).Q(-86, -92, -74, -92).L(74, -92).Q(86, -92, 86, -80)
+        .L(86, 80).Q(86, 92, 74, 92).L(-62, 92).close();
+}
+/**
+ * A gear with 8 teeth. It needs more than 11 curves to keep square teeth, so it does not morph into the other shapes,
+ * and tools/icons/shapes.mjs prints it as is.
+ */
+export function gearOutline(teeth = 8, outer = 94, inner = 74) {
+    const step = 360 / teeth, points = [];
+    for (let i = 0; i < teeth; i++) {
+        const mid = -90 + step * i;
+        points.push(at(0, 0, inner, mid - 13), at(0, 0, outer, mid - 8), at(0, 0, outer, mid + 8), at(0, 0, inner, mid + 13));
+    }
+    return polygon(points, 6);
+}
+/** Chart axes down the left and along the bottom. They are traced out and back, so the shape has no area to fill. */
+export function chartOutline() {
+    return P(-88, -90).L(-88, 76).Q(-88, 88, -76, 88).L(90, 88).L(-76, 88).Q(-88, 88, -88, 76).close();
+}
+/**
+ * A calendar page: rings at the top and a line under the header, traced out and back so only the page has area. It needs
+ * more than 11 curves, so like the gear it swaps with other shapes instead of morphing.
+ */
+export function calendarOutline() {
+    const ring = (path, x) => path.L(x, -78).L(x, -96).L(x, -64).L(x, -78);
+    const path = P(-72, -78);
+    ring(path, -40);
+    ring(path, 40);
+    return path.L(72, -78).Q(84, -78, 84, -66).L(84, 80).Q(84, 92, 72, 92).L(-72, 92).Q(-84, 92, -84, 80).L(-84, -58).L(84, -58).L(-84, -58)
+        .L(-84, -66).Q(-84, -78, -72, -78);
+}
+/** A heart drawn wide and low, so an icon shrunk inside it stays clear of the sides as they narrow to the point. */
+export function heartOutline() {
+    return P(0, 94).Q(-100, 50, -94, -34).Q(-92, -90, -44, -88).Q(-14, -86, 0, -60).Q(14, -86, 44, -88).Q(92, -90, 94, -34).Q(100, 50, 0, 94);
+}

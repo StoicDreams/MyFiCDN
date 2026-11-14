@@ -1,0 +1,105 @@
+// Words people search for when picking an icon for navigation, a page, a button, or a status.
+// tests/components/icon-search.spec.mjs checks that each one finds at least one icon in Icon Search.
+// When one finds nothing, add the word to the tags of the icon that fits, or design a new icon.
+// Write words as people type them: plurals, two word phrases, and spellings with or without a space all work.
+
+export const KEYWORDS = {
+    pages: [
+        'home', 'dashboard', 'about', 'about us', 'contact', 'contact us', 'help', 'support', 'faq', 'docs', 'documentation',
+        'guide', 'tutorial', 'getting started', 'blog', 'news', 'article', 'posts', 'feed', 'profile', 'account', 'my account',
+        'settings', 'preferences', 'options', 'config', 'admin', 'administration', 'users', 'members', 'team', 'people',
+        'community', 'forum', 'search', 'explore', 'discover', 'browse', 'menu', 'navigation', 'sitemap', 'privacy',
+        'privacy policy', 'terms', 'terms of service', 'legal', 'policy', 'cookies', 'cookie policy', 'security',
+        'pricing', 'plans', 'billing', 'checkout', 'cart', 'orders', 'invoices', 'shop', 'store', 'products', 'catalog',
+        'services', 'portfolio', 'projects', 'gallery', 'photos', 'videos', 'media', 'music', 'podcasts', 'events',
+        'calendar', 'schedule', 'notifications', 'alerts', 'messages', 'inbox', 'chat', 'reports', 'analytics', 'stats',
+        'statistics', 'metrics', 'insights', 'history', 'activity', 'logs', 'timeline', 'tasks', 'todo', 'notes', 'files',
+        'documents', 'downloads', 'uploads', 'library', 'resources', 'tools', 'apps', 'applications', 'integrations',
+        'plugins', 'extensions', 'api', 'webhooks', 'developers', 'changelog', 'release notes', 'releases', 'roadmap',
+        'status', 'careers', 'jobs', 'press', 'partners', 'testimonials', 'reviews', 'feedback', 'donate', 'sponsor',
+        'newsletter', 'locations', 'directions', 'language', 'accessibility', 'keyboard shortcuts', 'favorites',
+        'bookmarks', 'saved', 'wishlist', 'followers', 'following', 'friends', 'groups', 'leaderboard', 'achievements',
+        'rewards', 'badges', 'points', 'levels', 'quests', 'inventory', 'characters', 'games', 'wiki', 'knowledge base',
+        'learn', 'courses', 'lessons', 'education', 'health', 'fitness', 'finance', 'budget', 'banking', 'investments',
+        'transactions', 'transfers', 'subscriptions', 'membership', 'premium', 'upgrade', 'coupons', 'deals', 'offers',
+        'shipping', 'delivery', 'returns', 'refunds', 'tracking', 'mission', 'vision', 'values', 'our story', 'investors',
+        'components', 'templates', 'themes', 'tickets',
+    ],
+    actions: [
+        'add', 'create', 'new', 'edit', 'update', 'save', 'delete', 'remove', 'cancel', 'close', 'open', 'submit', 'send',
+        'confirm', 'ok', 'yes', 'no', 'back', 'next', 'previous', 'forward', 'continue', 'finish', 'done', 'start', 'stop',
+        'pause', 'play', 'resume', 'retry', 'refresh', 'reload', 'sync', 'undo', 'redo', 'copy', 'cut', 'paste',
+        'duplicate', 'clone', 'share', 'export', 'import', 'download', 'upload', 'print', 'attach', 'link', 'unlink',
+        'archive', 'restore', 'filter', 'sort', 'clear', 'reset', 'select', 'move', 'drag', 'expand', 'collapse',
+        'maximize', 'minimize', 'fullscreen', 'zoom', 'view', 'preview', 'show', 'hide', 'lock', 'unlock', 'enable',
+        'disable', 'toggle', 'on', 'off', 'approve', 'reject', 'block', 'report', 'flag', 'pin', 'unpin', 'star',
+        'favorite', 'like', 'dislike', 'upvote', 'downvote', 'vote', 'follow', 'unfollow', 'invite', 'mention', 'reply',
+        'comment', 'rate', 'rating', 'review', 'publish', 'draft', 'assign', 'tag', 'label', 'rename', 'compare', 'merge',
+        'split', 'convert', 'translate', 'calculate', 'scan', 'record', 'mute', 'unmute', 'call', 'video call', 'notify',
+        'remind', 'bookmark', 'subscribe', 'unsubscribe', 'connect', 'disconnect', 'install', 'uninstall', 'deploy', 'run',
+        'execute', 'build', 'test', 'debug', 'launch', 'sign', 'verify', 'more', 'details', 'info', 'question', 'login',
+        'log in', 'logout', 'log out', 'sign in', 'sign out', 'signin', 'signout', 'signup', 'sign up', 'register', 'join',
+        'exit', 'enter', 'buy', 'sell', 'pay', 'donate', 'tip', 'rewind', 'skip', 'shuffle', 'repeat', 'loop', 'crop',
+        'resize', 'rotate', 'flip', 'align', 'indent', 'bold', 'italic', 'underline', 'strikethrough', 'highlight',
+        'write', 'compose', 'erase', 'go', 'hello', 'feed back',
+    ],
+    status: [
+        'success', 'error', 'failed', 'failure', 'warning', 'danger', 'loading', 'pending', 'waiting', 'complete',
+        'completed', 'in progress', 'progress', 'busy', 'offline', 'online', 'connected', 'disconnected', 'active',
+        'inactive', 'enabled', 'disabled', 'visible', 'hidden', 'private', 'public', 'locked', 'unlocked', 'verified',
+        'beta', 'hot', 'trending', 'popular', 'featured', 'recommended', 'top', 'latest', 'recent', 'live', 'draft',
+        'empty', 'full', 'new', 'unread', 'read', 'sent', 'archived', 'expired', 'urgent', 'important',
+    ],
+    dev: [
+        'api', 'database', 'server', 'cloud', 'hosting', 'network', 'code', 'terminal', 'console', 'bug', 'git', 'branch',
+        'commit', 'pull request', 'json', 'webhook', 'endpoint', 'integration', 'token', 'key', 'password',
+        'credentials', 'auth', 'authentication', 'authorization', 'permissions', 'roles', 'encryption', 'firewall',
+        'backup', 'storage', 'cache', 'cpu', 'memory', 'performance', 'monitor', 'uptime', 'deploy', 'pipeline',
+        'automation', 'ai', 'bot', 'chart', 'graph', 'table', 'spreadsheet', 'csv', 'pdf', 'zip', 'template', 'layout',
+        'design', 'color', 'font', 'text', 'editor', 'markdown', 'html', 'css', 'javascript', 'component', 'widget',
+        'embed', 'url', 'website', 'web', 'browser', 'internet', 'wifi', 'bluetooth', 'usb', 'plug', 'power', 'battery',
+        'variable', 'function', 'regex', 'diff', 'version', 'repository', 'docker', 'container', 'cli', 'shell', 'sql',
+        'queue', 'workflow', 'flow', 'diagram', 'sitemap',
+    ],
+    commerce: [
+        'price', 'money', 'cost', 'currency', 'cash', 'dollar', 'euro', 'bank', 'card', 'credit card', 'payment',
+        'purchase', 'order', 'basket', 'bag', 'package', 'truck', 'refund', 'coupon', 'discount', 'sale', 'tax',
+        'invoice', 'receipt', 'wallet', 'savings', 'budget', 'expense', 'income', 'revenue', 'profit', 'growth', 'sales',
+        'stock', 'warehouse', 'gift', 'crypto', 'subscription', 'plan', 'free', 'premium', 'vip',
+    ],
+    communication: [
+        'mail', 'email', 'message', 'sms', 'text message', 'chat', 'comment', 'phone', 'call', 'video', 'voicemail',
+        'contacts', 'address book', 'notification', 'bell', 'announcement', 'broadcast', 'megaphone', 'social',
+        'rss', 'conversation', 'speech', 'talk', 'mention', 'hashtag', 'at',
+    ],
+    media: [
+        'image', 'photo', 'picture', 'camera', 'movie', 'film', 'audio', 'sound', 'podcast', 'microphone', 'headphones',
+        'playlist', 'album', 'slideshow', 'presentation', 'stream', 'streaming', 'tv', 'radio', 'speaker', 'volume',
+        'screenshot', 'art', 'paint', 'brush', 'draw', 'pen', 'pencil', 'book', 'magazine', 'thumbnail',
+    ],
+    time: [
+        'time', 'clock', 'date', 'timer', 'stopwatch', 'alarm', 'reminder', 'deadline', 'today', 'day', 'week', 'month',
+        'event', 'appointment', 'booking', 'reservation', 'hour',
+    ],
+    people: [
+        'user', 'person', 'profile picture', 'avatar', 'member', 'customer', 'customers', 'client', 'clients', 'employee',
+        'staff', 'guest', 'friend', 'family', 'group', 'organization', 'company', 'business', 'identity', 'id', 'badge',
+        'character', 'hero', 'player', 'author', 'owner', 'manager',
+    ],
+    places: [
+        'house', 'office', 'building', 'school', 'hospital', 'restaurant', 'hotel', 'bed', 'location', 'map', 'map pin',
+        'marker', 'globe', 'world', 'earth', 'country', 'address', 'gps', 'route', 'travel', 'flight', 'car', 'bus',
+        'train', 'bike', 'park', 'city', 'outdoors', 'camp',
+    ],
+    things: [
+        'heart', 'star', 'flag', 'trophy', 'award', 'medal', 'crown', 'diamond', 'gem', 'lightbulb', 'idea', 'tip',
+        'magic', 'rocket', 'fire', 'shield', 'lock', 'key', 'box', 'folder', 'file', 'document', 'clipboard', 'paper',
+        'note', 'tag', 'ticket', 'receipt', 'puzzle', 'cube', 'layers', 'stack', 'grid', 'list', 'checklist', 'table',
+        'kanban', 'board', 'weather', 'sun', 'moon', 'dark mode', 'light mode', 'theme', 'rain', 'snow', 'temperature',
+        'nature', 'plant', 'tree', 'leaf', 'animal', 'pet', 'food', 'drink', 'coffee', 'tools', 'wrench', 'hammer',
+        'science', 'lab', 'education', 'game', 'dice', 'controller', 'sports', 'cookie', 'life ring', 'lifebuoy',
+        'hand', 'gear', 'robot', 'eye', 'bed', 'sleep',
+    ],
+};
+
+export const ALL_KEYWORDS = [...new Set(Object.values(KEYWORDS).flat())];

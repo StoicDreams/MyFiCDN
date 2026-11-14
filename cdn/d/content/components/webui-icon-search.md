@@ -1,5 +1,7 @@
 <webui-page-segment elevation="10">
     The `<webui-icon-search>` component provides a searchable interface for exploring the entire icon library. It includes options to filter by theme, shape, stroke width, rotation, and flags. It automatically generates ready-to-use HTML code snippets, piped attribute strings, and clickable icon cards for easy copying.
+
+    A search finds icons whose name or tags hold every word you type, so `sign in` and `contact us` work. Plurals find the singular, so `reports` finds `report`, and small words such as `us` and `the` are skipped.
 </webui-page-segment>
 
 <webui-side-by-side>

@@ -37,12 +37,18 @@ Stroke line joins: miter|round|bevel
     const defCircle = 'M1 -93Q31 -91 53 -76Q76 -59 86 -35Q95 -12 92 13Q89 37 72 59Q58 76 37 86Q10 97 -16 92Q-45 85 -64 68Q-85 47 -92 16Q-96 -10 -87 -34Q-76 -60 -56 -75Q-26 -94 1 -93z';
     const defCloud = 'M-56 74Q-77 74 -88 56Q-100 38 -90 19Q-80 0 -59 -2Q-64 -30 -46 -53Q-29 -75 0 -76Q29 -77 48 -55Q67 -34 63 -5Q84 -1 93 18Q101 38 89 56Q77 74 56 74Q0 74 -56 74z';
     const defFile = 'M40 -92Q40 -77 40 -62Q55 -62 70 -62Q55 -77 40 -92Q-9 -92 -58 -92Q-70 -92 -70 -80Q-70 0 -70 80Q-70 92 -58 92Q0 92 58 92Q70 92 70 80Q70 9 70 -62Q55 -77 40 -92z';
+    const defBook = 'M-62 -92Q-62 0 -62 92Q-68 92 -74 92Q-86 92 -86 80Q-86 0 -86 -80Q-86 -92 -74 -92Q0 -92 74 -92Q86 -92 86 -80Q86 0 86 80Q86 92 74 92Q6 92 -62 92Q-62 0 -62 -92z';
+    const defHeart = 'M0 94Q-25 83 -43 70Q-62 56 -73 40Q-97 8 -94 -34Q-93 -62 -80 -75Q-68 -89 -44 -88Q-14 -86 0 -60Q14 -86 44 -88Q68 -89 81 -75Q93 -62 94 -34Q97 8 74 40Q50 72 0 94z';
+    const defChart = 'M-88 -90Q-88 -69 -88 -48Q-88 -28 -88 -7Q-88 35 -88 76Q-88 88 -76 88Q-34 88 7 88Q49 88 90 88Q49 88 7 88Q-34 88 -76 88Q-88 88 -88 76Q-88 35 -88 -7Q-88 -48 -88 -90z';
+    // The gear and calendar have more than 11 curves, for square teeth and the rings, so they swap with other shapes instead of morphing.
+    const defGear = 'M-16 -78Q-15 -83 -14 -87Q-13 -93 -7 -93Q0 -93 7 -93Q13 -93 14 -87Q15 -83 16 -78Q17 -72 22 -70Q28 -67 34 -65Q39 -63 44 -66Q48 -69 52 -72Q57 -75 61 -71Q66 -66 71 -61Q75 -57 72 -52Q69 -48 66 -44Q63 -39 65 -34Q67 -28 70 -22Q72 -17 78 -16Q83 -15 87 -14Q93 -13 93 -7Q93 0 93 7Q93 13 87 14Q83 15 78 16Q72 17 70 22Q67 28 65 34Q63 39 66 44Q69 48 72 52Q75 57 71 61Q66 66 61 71Q57 75 52 72Q48 69 44 66Q39 63 34 65Q28 67 22 70Q17 72 16 78Q15 83 14 87Q13 93 7 93Q0 93 -7 93Q-13 93 -14 87Q-15 83 -16 78Q-17 72 -22 70Q-28 67 -34 65Q-39 63 -44 66Q-48 69 -52 72Q-57 75 -61 71Q-66 66 -71 61Q-75 57 -72 52Q-69 48 -66 44Q-63 39 -65 34Q-67 28 -70 22Q-72 17 -78 16Q-83 15 -87 14Q-93 13 -93 7Q-93 0 -93 -7Q-93 -13 -87 -14Q-83 -15 -78 -16Q-72 -17 -70 -22Q-67 -28 -65 -34Q-63 -39 -66 -44Q-69 -48 -72 -52Q-75 -57 -71 -61Q-66 -66 -61 -71Q-57 -75 -52 -72Q-48 -69 -44 -66Q-39 -63 -34 -65Q-28 -67 -22 -70Q-17 -72 -16 -78z';
+    const defCalendar = 'M-72 -78Q-56 -78 -40 -78Q-40 -87 -40 -96Q-40 -80 -40 -64Q-40 -71 -40 -78Q0 -78 40 -78Q40 -87 40 -96Q40 -80 40 -64Q40 -71 40 -78Q56 -78 72 -78Q84 -78 84 -66Q84 7 84 80Q84 92 72 92Q0 92 -72 92Q-84 92 -84 80Q-84 11 -84 -58Q0 -58 84 -58Q0 -58 -84 -58Q-84 -62 -84 -66Q-84 -78 -72 -78z';
     const defSquare = 'M0 -95Q80 -95 80 -95Q95 -95 95 -80Q95 0 95 0Q95 80 95 80Q95 95 80 95Q0 95 0 95Q-80 95 -80 95Q-95 95 -95 80Q-95 0 -95 0Q-95 -80 -95 -80Q-95 -95 -80 -95z';
     const defTriangle = 'M0 -90Q20 -55 20 -55Q40 -20 40 -20Q55 5 55 5Q90 65 90 65Q60 65 60 65Q0 65 0 65Q-55 65 -55 65Q-90 65 -90 65Q-55 5 -55 5Q-40 -20 -40 -20Q-20 -55 -20 -55z';
     const defTallTriangle = 'M0 -90Q25 -40 25 -40Q40 -10 40 -10Q55 20 55 20Q90 90 90 90Q60 90 60 90Q0 90 0 90Q-55 90 -55 90Q-90 90 -90 90Q-50 10 -50 10Q-30 -30 -30 -30Q-15 -60 -15 -60z';
     // Shape names never contain an underscore, so circle_check is the check icon in a circle. check_circle also works,
     // but the shape first is the standard, and wins when both readings fit, as in shield_circle.
-    const shapeNames = new Set(['circle', 'square', 'shield', 'triangle', 'tri', 'octo', 'octogon', 'badge', 'cloud', 'file']);
+    const shapeNames = new Set(['circle', 'square', 'shield', 'triangle', 'tri', 'octo', 'octogon', 'badge', 'cloud', 'file', 'book', 'gear', 'chart', 'calendar', 'heart']);
     function splitShape(name) {
         const first = name.indexOf('_');
         if (first > 0 && shapeNames.has(name.substring(0, first))) {
@@ -141,6 +147,21 @@ Stroke line joins: miter|round|bevel
                             break;
                         case 'shield':
                             t._backPath.setAttribute('d', defShield);
+                            break;
+                        case 'book':
+                            t._backPath.setAttribute('d', defBook);
+                            break;
+                        case 'gear':
+                            t._backPath.setAttribute('d', defGear);
+                            break;
+                        case 'chart':
+                            t._backPath.setAttribute('d', defChart);
+                            break;
+                        case 'calendar':
+                            t._backPath.setAttribute('d', defCalendar);
+                            break;
+                        case 'heart':
+                            t._backPath.setAttribute('d', defHeart);
                             break;
                         default:
                             t._backPath.setAttribute('d', defSquare);

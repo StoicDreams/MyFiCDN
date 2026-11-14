@@ -14,6 +14,7 @@
             const t = this;
             t._group = t.template.querySelector('[role="radiogroup"]');
             t._options = [];
+            t._optionInfo = new Map();
             t._value = '';
             t._group.addEventListener('click', ev => {
                 const button = ev.target.closest('button');
@@ -65,11 +66,28 @@
                 set(v) { this.setValue(v); }
             }
         },
-        /** Sets the options, as an array or a pipe separated list such as "one|two|three". */
+        /**
+         * Sets the options, as a pipe separated list such as "one|two|three", or an array (or JSON array) of values or of
+         * { value, label, icon } objects. An option with an icon shows only the icon, and its label names the button.
+         */
         setOptions(options) {
             const t = this;
-            if (typeof options === 'string') options = options.split('|');
-            t._options = (Array.isArray(options) ? options : []).map(option => `${option}`.trim()).filter(option => option);
+            if (typeof options === 'string') {
+                const text = options.trim();
+                if (text.startsWith('[')) {
+                    try { options = JSON.parse(text); } catch { options = []; }
+                } else {
+                    options = text.split('|');
+                }
+            }
+            t._optionInfo = new Map();
+            (Array.isArray(options) ? options : []).forEach(option => {
+                const info = option && typeof option === 'object' ? option : { value: option };
+                const value = `${info.value ?? ''}`.trim();
+                if (!value || t._optionInfo.has(value)) return;
+                t._optionInfo.set(value, { value, label: `${info.label || value}`, icon: info.icon ? `${info.icon}` : '' });
+            });
+            t._options = [...t._optionInfo.keys()];
             t.render();
         },
         /** Selects an option without firing change, as when data sets the value. */
@@ -91,11 +109,22 @@
             // A value that is not an option yet shows the first option, until the options catch up.
             const selected = t._options.includes(t._value) ? t._value : t._options[0];
             if (selected !== undefined && selected !== t._value) t._value = selected;
-            const current = [...t._group.children].map(button => button.dataset.value);
-            if (current.join('|') !== t._options.join('|')) {
-                t._group.replaceChildren(...t._options.map(option => {
-                    const button = webui.create('button', { type: 'button', role: 'radio', text: option });
-                    button.dataset.value = option;
+            const keyOf = ({ value, label, icon }) => `${value}\u0001${label}\u0001${icon}`;
+            const infos = t._options.map(option => t._optionInfo.get(option));
+            const current = [...t._group.children].map(button => button.dataset.key);
+            if (current.join('\u0002') !== infos.map(keyOf).join('\u0002')) {
+                t._group.replaceChildren(...infos.map(info => {
+                    const button = webui.create('button', { type: 'button', role: 'radio' });
+                    if (info.icon) {
+                        button.classList.add('icon');
+                        button.setAttribute('aria-label', info.label);
+                        button.title = info.label;
+                        button.appendChild(webui.create('webui-icon', { icon: info.icon }));
+                    } else {
+                        button.innerText = info.label;
+                    }
+                    button.dataset.value = info.value;
+                    button.dataset.key = keyOf(info);
                     return button;
                 }));
             }
@@ -138,6 +167,15 @@ color: inherit;
 cursor: pointer;
 white-space: nowrap;
 transition: background-color var(--main-transition, 200ms) ease-in-out;
+}
+button.icon {
+padding: 0.2em 0.3em;
+line-height: 0;
+}
+button.icon webui-icon {
+display: block;
+width: 1.6em;
+height: 1.6em;
 }
 button:first-child {
 border-left: none;

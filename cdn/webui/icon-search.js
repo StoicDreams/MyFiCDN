@@ -10,7 +10,7 @@
     const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json' : 'https://cdn.myfi.ws/i/emojis.json';
     // The same reading as webui-icon: a shape before or after the icon name, as in circle_check or check_circle.
-    const shapeNames = new Set(['circle', 'square', 'shield', 'triangle', 'tri', 'octo', 'octogon', 'badge', 'cloud', 'file']);
+    const shapeNames = new Set(['circle', 'square', 'shield', 'triangle', 'tri', 'octo', 'octogon', 'badge', 'cloud', 'file', 'book', 'gear', 'chart', 'calendar', 'heart']);
     function splitShape(name) {
         const first = name.indexOf('_');
         if (first > 0 && shapeNames.has(name.substring(0, first))) return [name.substring(first + 1), name.substring(0, first)];
@@ -18,9 +18,27 @@
         if (last > 0 && !name.startsWith('emoji-') && shapeNames.has(name.substring(last + 1))) return [name.substring(0, last), name.substring(last + 1)];
         return [name, ''];
     }
+    // A search matches icons whose name or tags hold every word, so "contact us" and "sign-in" work, and a plural
+    // also finds the singular, so "reports" finds "report". Small words such as "us" and "the" are skipped.
+    const stopWords = new Set(['a', 'an', 'the', 'and', 'or', 'of', 'to', 'for', 'my', 'your', 'our', 'us', 'with']);
+    function singular(word) {
+        if (word.length < 4 || word.endsWith('ss')) return word;
+        if (word.endsWith('ies')) return `${word.slice(0, -3)}y`;
+        if (/(x|ch|sh|ss)es$/.test(word)) return word.slice(0, -2);
+        return word.endsWith('s') ? word.slice(0, -1) : word;
+    }
+    function searchWords(filter) {
+        const words = filter.split(/[\s\-_]+/).filter(Boolean);
+        const kept = words.filter(word => !stopWords.has(word));
+        return (kept.length ? kept : words).map(word => [word, singular(word)]);
+    }
+    function searchText(icon) {
+        if (icon._searchText === undefined) icon._searchText = `${icon.name.replace(/[-_]+/g, ' ')} ${icon.tags || ''}`.toLowerCase();
+        return icon._searchText;
+    }
     webui.define('webui-icon-search', {
         pipedValue: '',
-        preload: "icon dropdown input-range input-text input-message pagination",
+        preload: "icon input-range input-text input-message pagination switch",
         _emojiEnabled: false,
         _filteredKeys: [],
         _viewEl: [],
@@ -93,16 +111,6 @@
                 { value: 'button', display: 'Button' },
                 { value: 'action', display: 'Action' }
             ]);
-            let shapeOptions = JSON.stringify([
-                { value: '', display: 'Square' },
-                { value: 'badge', display: 'Badge' },
-                { value: 'circle', display: 'Circle' },
-                { value: 'cloud', display: 'Cloud' },
-                { value: 'file', display: 'File' },
-                { value: 'shield', display: 'Shield' },
-                { value: 'triangle', display: 'Triangle' },
-                { value: 'octo', display: 'Octogon' },
-            ]);
             t._modPath = 1;
             t._inputs = webui.create('webui-grid', { columns: '1fr 1fr', theme: 'background' });
             t.appendChild(t._inputs);
@@ -120,22 +128,35 @@
             t._pag.addEventListener('change', _ => { t.applyPagination(); });
             t._iconFlags = webui.create('webui-flex', { name: 'icon-options', justify: 'flex-start', align: 'center', wrap: true, gap: 5, html: `<h6 class="f1">Flags:</h6>` });
             inputsColumn.appendChild(t._iconFlags);
-            function setupDropdown(key, label, attr, options) {
-                let dd = webui.create('webui-dropdown', { label: label, options: options });
-                inputsColumn.appendChild(dd);
-                dd.addEventListener('change', _ => {
-                    let value = dd.value;
+            // Each option is a switch of the current icon drawn with that choice, so you see what it does before picking it.
+            // The empty choice, which leaves the attribute off, is stored in the switch as "none".
+            const switchUpdates = [];
+            function setupSwitch(key, label, attr, options, drawn) {
+                // The label sits to the left, with the same width on every row, so the switches line up.
+                const row = webui.create('webui-flex', { name: `icon-${attr}`, align: 'center', gap: 1 });
+                row.appendChild(webui.create('h6', { class: 'f1', text: `${label}:`, style: 'margin:0;flex:0 0 auto;min-width:4.5rem;' }));
+                // It starts on the empty choice. Without a value a switch shows its first option, which for Stroke is Thin, and
+                // clicking that option would then change nothing.
+                const sw = webui.create('webui-switch', { label: label, value: 'none', style: 'flex:1 1 0;min-width:0;' });
+                row.appendChild(sw);
+                inputsColumn.appendChild(row);
+                const update = () => {
+                    const icon = t._current || 'star';
+                    sw.setAttribute('options', JSON.stringify(options.map(({ value, display }) => ({ value: value || 'none', label: display, icon: drawn(icon, value) }))));
+                };
+                switchUpdates.push(update);
+                update();
+                sw.addEventListener('change', _ => {
+                    const value = sw.value === 'none' ? '' : sw.value;
                     icons.forEach(icon => {
-                        if (!value) {
-                            icon.removeAttribute(attr);
-                        } else {
-                            icon.setAttribute(attr, value);
-                        }
+                        if (!value) icon.removeAttribute(attr);
+                        else icon.setAttribute(attr, value);
                     });
                     t.buildIconCode();
                 });
-                t[key] = dd;
+                t[key] = sw;
             }
+            t._updateSwitchIcons = () => switchUpdates.forEach(update => update());
             function setupToggleIcon(name, label, flagAttr, emojiFlag = false) {
                 t[name] = webui.create('webui-toggle-icon', { label: label, 'title-on': `Disable ${label}`, 'title-off': `Enable ${label}`, 'theme-on': 'success', 'theme-off': 'shade', 'flags-on': 'fill', 'flags-off': '' });
                 t[name].addEventListener('change', _ => {
@@ -155,18 +176,23 @@
                 });
                 t._iconFlags.appendChild(t[name]);
             }
-            setupDropdown('_theme', 'Icon Theme', 'theme', colorOptions);
-            setupDropdown('_shape', 'Shape', 'shape', shapeOptions);
-            setupDropdown('_stroke', 'Stroke', 'stroke', JSON.stringify([
-                { value: '', display: 'Regular' },
+            setupSwitch('_theme', 'Icon Theme', 'theme', JSON.parse(colorOptions), (icon, value) => `${icon}|fill${value ? `|theme:${value}` : ''}`);
+            // Square is the shape an icon has without one, so it leaves the attribute off.
+            setupSwitch('_shape', 'Shape', 'shape', [['', 'Square'], ['circle', 'Circle'], ['badge', 'Badge'], ['octo', 'Octogon'], ['triangle', 'Triangle'],
+                ['shield', 'Shield'], ['heart', 'Heart'], ['gear', 'Gear'], ['cloud', 'Cloud'], ['file', 'File'], ['book', 'Book'],
+                ['calendar', 'Calendar'], ['chart', 'Chart']].map(([value, display]) => ({ value, display })),
+                (icon, value) => `${value || 'square'}_${icon}|bordered`);
+            setupSwitch('_stroke', 'Stroke', 'stroke', [
                 { value: 'thin', display: 'Thin' },
+                { value: '', display: 'Regular' },
                 { value: 'thick', display: 'Thick' }
-            ]));
-            setupDropdown('_shade', 'Shade', 'shade', JSON.stringify([
+            ], (icon, value) => `${icon}${value ? `|stroke:${value}` : ''}`);
+            // Shades show best on a filled icon.
+            setupSwitch('_shade', 'Shade', 'shade', [
                 { value: '', display: 'Regular' },
                 { value: 'duo', display: 'Duo' },
                 { value: 'tri', display: 'Trio' }
-            ]));
+            ], (icon, value) => `${icon}|fill${value ? `|shade:${value}` : ''}`);
             t._rotate = webui.create('webui-input-range', { label: 'Rotation', min: 0, max: 355, step: 5, style: 'flex:1;' });
             {
                 function inputUpdated() {
@@ -271,16 +297,10 @@
             const t = this;
             t._filteredKeys = [];
             let source = t._emojiEnabled ? t._emojis : t._icons;
+            const words = filter ? searchWords(filter) : [];
             source.forEach(icon => {
-                if (!filter) {
-                    t._filteredKeys.push(icon);
-                    return;
-                }
-                if (icon.name.toLowerCase().indexOf(filter) !== -1) {
-                    t._filteredKeys.push(icon);
-                    return;
-                }
-                if (icon.tags && icon.tags.indexOf(filter) !== -1) {
+                const text = words.length ? searchText(icon) : '';
+                if (words.every(([word, single]) => text.includes(word) || text.includes(single))) {
                     t._filteredKeys.push(icon);
                 }
             });
@@ -351,7 +371,7 @@
           });
           ['_theme', '_shape', '_stroke', '_shade'].forEach(dd => {
               if (!t[dd]) return;
-              t[dd].value = '';
+              t[dd].value = 'none';
               t._iconPreview.removeAttribute(dd.replace('_', ''));
           });
           if (t._rotate) {
@@ -373,6 +393,7 @@
               if (segment.indexOf(':') !== -1) {
                   let kv = segment.split(':');
                   let dd = t[`_${kv[0]}`];
+                  if (kv[0] === 'shape') kv[1] = { tri: 'triangle', octogon: 'octo' }[kv[1]] || kv[1];
                   if (dd) {
                       dd.value = kv[1];
                   }
@@ -394,6 +415,7 @@
                 await webui.wait(10);
             }
             t._iconPreview.setAttribute('icon', icon);
+            t._updateSwitchIcons?.();
             t.buildIconCode();
         },
         render() {

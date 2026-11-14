@@ -74,3 +74,17 @@ test('its value is sent with a form', async ({ page }) => {
     await buttons(root).nth(1).click();
     expect(await root.locator('form').evaluate(form => new FormData(form).get('kind'))).toBe('two');
 });
+test('options with icons show the icon, named by the label, and update when an icon changes', async ({ page }) => {
+    const root = await mount(page, `<webui-switch options='[{"value":"left","label":"Left","icon":"align-left"},{"value":"right","label":"Right","icon":"align-right"}]'></webui-switch>`);
+    const el = root.locator('webui-switch');
+    await expect(buttons(root)).toHaveCount(2);
+    await expect(buttons(root).nth(1)).toHaveAttribute('aria-label', 'Right');
+    await expect(buttons(root).nth(1).locator('webui-icon')).toHaveAttribute('icon', 'align-right');
+    await expect(buttons(root).nth(1)).toHaveText('');
+    await buttons(root).nth(1).click();
+    expect(await el.evaluate(c => c.value)).toBe('right');
+    // New icons for the same values redraw the buttons and keep the selection.
+    await el.evaluate(c => c.setOptions([{ value: 'left', label: 'Left', icon: 'circle_align-left' }, { value: 'right', label: 'Right', icon: 'circle_align-right' }]));
+    await expect(buttons(root).nth(1).locator('webui-icon')).toHaveAttribute('icon', 'circle_align-right');
+    await expect(checked(root)).toHaveAttribute('aria-label', 'Right');
+});

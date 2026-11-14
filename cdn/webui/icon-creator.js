@@ -54,8 +54,15 @@
             let shapeOptions = JSON.stringify([
                 { value: '', display: 'Square' },
                 { value: 'badge', display: 'Badge' },
+                { value: 'book', display: 'Book' },
+                { value: 'calendar', display: 'Calendar' },
+                { value: 'chart', display: 'Chart' },
                 { value: 'circle', display: 'Circle' },
                 { value: 'cloud', display: 'Cloud' },
+                { value: 'file', display: 'File' },
+                { value: 'gear', display: 'Gear' },
+                { value: 'heart', display: 'Heart' },
+                { value: 'shield', display: 'Shield' },
                 { value: 'triangle', display: 'Triangle' },
                 { value: 'octo', display: 'Octogon' },
             ]);
@@ -128,7 +135,9 @@
             setupToggleIcon('_banToggle', 'Ban', 'ban');
             t._inputs = webui.create('webui-grid', { columns: t.clientWidth > 1200 ? '2fr 1fr' : '1fr' });
             t.appendChild(t._inputs);
-            t._svgContainer = webui.create('div', { style: 'display:block;position:relative;aspect-ratio:1;padding:0;margin:0;' });
+            // A square no taller than the window leaves room for the header and the variations above it, so the whole icon
+            // can be edited without scrolling. Dragging measures its current size, so it works at any size.
+            t._svgContainer = webui.create('div', { style: 'display:block;position:relative;aspect-ratio:1;padding:0;margin:0 auto;width:min(100%, max(16rem, calc(100vh - 12rem)));' });
             t._inputs.appendChild(t._svgContainer);
             t._backingHTML = webui.create('div', { 'style': 'width:100%;height:100%;overflow:hidden;position:absolute;z-index:0;top:0;left:0;color:orange;' });
             t._svgContainer.appendChild(t._backingHTML);

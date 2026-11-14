@@ -18,7 +18,15 @@ npm run icons:check  # only check the designs
 - Give an icon with several parts a second shade, and a third where parts step back, so the Shade option adds depth. Keep the main part in the first shade: an arrow's head (its shaft is `bi`, as `shadedArrow` draws curved ones), the front link of a chain, the nearest arc of a feed. Symmetric marks such as `plus`, `xmark`, `equals`, and `pause` stay one shade.
 - Give a single shape a detail in the second shade where one fits: a gloss mark in a top corner or curve (`heart`, `cloud`, `comment`, `droplet`), a split (`shield`, `location-arrow`), or a feature (moon craters, a snowline, an inner star). Leave it one shade when the detail would change what the icon means, as lines in `comment` would make it `feedback`. Also leave basic shapes, single strokes (`check`, `chevron`, `minus`), and shapes too narrow to keep a gap either side of the detail, such as `bolt`.
 - Keep the directions sites rely on: `arrow` and `chevron` point right, and `caret` points up. Sites turn them with the `rotate` attribute.
-- Do not add an icon that is only a variation of another. `webui-icon` draws these itself: a slash (`eye|ban`), a container (`circle_check|bordered`, or `file_code|bordered` and `cloud_arrow|rotate:-90|bordered`), a turn (`arrow|rotate:90`), and a mirror (`undo|flip`). The build rejects names that look like one, such as `eye-slash`, `circle-check`, `file-code`, `cloud-arrow-up`, `arrow-left`, or `ellipsis-vertical`. Variations it cannot draw, such as a plus beside a person in `user-plus`, are separate icons.
+- Do not add an icon that is only a variation of another. `webui-icon` draws these itself: a slash (`eye|ban`), a container (`circle_check|bordered`, or `file_code|bordered`, `cloud_arrow|rotate:-90|bordered`, `book_user|bordered`, `gear_bell|bordered`, `chart_bar|bordered`, and `calendar_check|bordered`), a turn (`arrow|rotate:90`), and a mirror (`undo|flip`). The build rejects names that look like one, such as `eye-slash`, `circle-check`, `file-code`, `cloud-arrow-up`, `arrow-left`, or `ellipsis-vertical`. Variations it cannot draw, such as a plus beside a person in `user-plus`, are separate icons.
+
+## Tags
+
+Icon Search finds an icon when every word typed is in its name or tags, and a plural also finds the singular. Tag an icon with the words people would search for to find it, not only what it shows: what it is used for (`plug` is tagged `api` and `integration`), the pages and buttons it labels (`scale-balanced` is tagged `terms`), and other names for the same thing (`lifebuoy`). Write two word names as separate words, and add the joined spelling when people type it that way (`sign in` and `signin`).
+
+`keywords.mjs` lists the words people use for navigation, pages, buttons, and statuses. `tests/components/icon-search.spec.mjs` checks that each one finds at least one icon. When you add a word that finds nothing, tag the icon that fits it, or design a new icon if none does.
+
+Tags are kept in `cdn/icons/all.json` once written, so removing a tag here does not remove it there. Tags for the icons in `KEEP` are edited in `all.json` directly.
 
 ## Limits
 
@@ -31,4 +39,4 @@ npm run icons:check  # only check the designs
 
 `KEEP` in `icons.mjs` lists icons whose artwork is kept as drawn, such as brand logos. Edit those with the Icon Creator.
 
-The outlines for the cloud and file shapes, as in `cloud_arrow` and `file_code`, are `cloudOutline` and `fileOutline` in `parts.mjs`. After changing one, run `node tools/icons/shapes.mjs` and copy its output into `defCloud` and `defFile` in `cdn/webui/icon.js`.
+The outlines for the cloud, file, book, gear, chart, calendar, and heart shapes, as in `cloud_arrow`, `file_code`, `book_user`, `gear_bell`, `chart_bar`, and `calendar_check`, are `cloudOutline`, `fileOutline`, `bookOutline`, `gearOutline`, `chartOutline`, `calendarOutline`, and `heartOutline` in `parts.mjs`. After changing one, run `node tools/icons/shapes.mjs` and copy its output into `defCloud`, `defFile`, `defBook`, `defGear`, `defChart`, `defCalendar`, and `defHeart` in `cdn/webui/icon.js`. The gear and calendar need more than 11 curves, for square teeth and the rings, so they swap with other shapes instead of morphing.

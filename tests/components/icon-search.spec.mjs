@@ -1,4 +1,5 @@
 import { test, expect, mount } from '../support/webui.mjs';
+import { ALL_KEYWORDS } from '../../tools/icons/keywords.mjs';
 
 const search = async page => {
     await page.setViewportSize({ width: 1600, height: 1200 });
@@ -34,6 +35,56 @@ test('search filters by name', async ({ page }) => {
     await expect.poll(() => el.evaluate(c => c._filteredKeys.map(k => k.name))).toContain('bell');
     // Every result is named or tagged with the search, such as bell-slash.
     expect(await el.evaluate(c => c._filteredKeys.every(k => `${k.name} ${k.tags || ''}`.includes('bell')))).toBe(true);
+});
+test('search matches every word, plurals, and phrases with small words', async ({ page }) => {
+    const el = await search(page);
+    const find = query => el.evaluate((c, q) => { c.runLocalFilter(q); return c._filteredKeys.map(k => k.name); }, query);
+    expect(await find('api')).toContain('plug');
+    // A plural finds the singular tag, and "us" is skipped.
+    expect(await find('reports')).toContain('flag');
+    expect(await find('categories')).toContain('tags');
+    expect(await find('contact us')).toContain('phone-handset');
+    // Every word has to match, in the name or the tags.
+    expect(await find('sign in')).toContain('arrow-side-into-square');
+    expect(await find('sign in')).not.toContain('signature');
+    expect(await find('user-plus')).toEqual(['user-plus']);
+});
+test('every common name for a page, button, or status finds an icon', async ({ page }) => {
+    // tools/icons/keywords.mjs lists them. A miss needs a tag on the icon that fits, or a new icon.
+    const el = await search(page);
+    const missing = await el.evaluate((c, words) => words.filter(word => { c.runLocalFilter(word); return c._filteredKeys.length === 0; }), ALL_KEYWORDS);
+    expect(missing).toEqual([]);
+});
+test('shape, theme, stroke, and shade are switches of the current icon drawn each way', async ({ page }) => {
+    const el = await search(page);
+    await el.evaluate(c => c.setIcon('bell'));
+    const option = (sw, value) => el.evaluate((c, [sw, value]) => c[sw].shadowRoot.querySelector(`button[data-value="${value}"]`), [sw, value]);
+    const iconOf = (sw, value) => el.evaluate((c, [sw, value]) => c[sw].shadowRoot.querySelector(`button[data-value="${value}"] webui-icon`)?.getAttribute('icon'), [sw, value]);
+    await expect.poll(() => iconOf('_shape', 'heart')).toBe('heart_bell|bordered');
+    expect(await iconOf('_theme', 'danger')).toBe('bell|fill|theme:danger');
+    expect(await iconOf('_stroke', 'thick')).toBe('bell|stroke:thick');
+    expect(await iconOf('_shade', 'duo')).toBe('bell|fill|shade:duo');
+    expect(await option('_shape', 'gear')).toBeTruthy();
+    await el.evaluate(c => ['_shape:gear', '_theme:danger', '_stroke:thick'].forEach(pick => {
+        const [sw, value] = pick.split(':');
+        c[sw].shadowRoot.querySelector(`button[data-value="${value}"]`).click();
+    }));
+    await expect.poll(() => el.evaluate(c => c.pipedValue)).toBe('gear_bell|theme:danger|stroke:thick');
+    // Square, Regular, and None leave the attribute off.
+    await el.evaluate(c => ['_shape', '_stroke'].forEach(sw => c[sw].shadowRoot.querySelector('button[data-value="none"]').click()));
+    await expect.poll(() => el.evaluate(c => c.pipedValue)).toBe('bell|theme:danger');
+    // Code sets the switches, and a new icon redraws them.
+    await el.evaluate(c => c.setIconFromCode('tri_star|stroke:thin'));
+    await expect.poll(() => el.evaluate(c => [c._shape.value, c._stroke.value, c._theme.value])).toEqual(['triangle', 'thin', 'none']);
+    await expect.poll(() => iconOf('_shape', 'heart')).toBe('heart_star|bordered');
+});
+test('the switches start on the choice that leaves the icon as it is, so the first click applies', async ({ page }) => {
+    const el = await search(page);
+    // Stroke lists Thin first, which once showed as selected on load, so clicking it did nothing.
+    expect(await el.evaluate(c => [c._theme.value, c._shape.value, c._stroke.value, c._shade.value])).toEqual(['none', 'none', 'none', 'none']);
+    expect(await el.evaluate(c => c._stroke.shadowRoot.querySelector('[aria-checked="true"]').dataset.value)).toBe('none');
+    await el.evaluate(c => c._stroke.shadowRoot.querySelector('button[data-value="thin"]').click());
+    await expect.poll(() => el.evaluate(c => c._iconPreview.getAttribute('stroke'))).toBe('thin');
 });
 test('clicking an icon selects it and updates the code', async ({ page }) => {
     const el = await search(page);

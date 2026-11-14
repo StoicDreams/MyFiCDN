@@ -34,6 +34,16 @@ test('the reference icon fills the editor', async ({ page }) => {
     expect(container).toBeGreaterThan(100);
     expect(preview).toBe(container);
 });
+test('on a wide, short screen the editor stays square and no taller than the window', async ({ page }) => {
+    const el = await creator(page);
+    await page.setViewportSize({ width: 2000, height: 880 });
+    // The editor is in a column about 1200 wide, so without a limit it was 1200 tall and ran off the screen.
+    await expect.poll(() => el.evaluate(c => Math.round(c._svgContainer.getBoundingClientRect().height))).toBeLessThan(880);
+    const [width, height, svg] = await el.evaluate(c => [c._svgContainer.clientWidth, c._svgContainer.clientHeight, c._svgPreview.clientWidth]);
+    expect(width).toBe(height);
+    // Dragging works out positions from the drawing's width, so it has to shrink with the editor.
+    expect(svg).toBe(width);
+});
 test('clicking an icon in the list loads it for editing', async ({ page }) => {
     const el = await creator(page);
     await iconFromList(el, 'bell').first().evaluate(a => a.click());
