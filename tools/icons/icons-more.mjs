@@ -228,7 +228,6 @@ export const MORE = [
     ['github', 'brand code git repository', ring(), bi(P(-22, 62).L(-22, 40).Q(-50, 36, -50, 6).Q(-50, -10, -40, -20).L(-42, -46).L(-20, -36).Q(0, -42, 20, -36).L(42, -46).L(40, -20).Q(50, -10, 50, 6).Q(50, 36, 22, 40).L(22, 62).end())],
 
     // Other names for existing icons, so people find what they expect.
-    ['settings', 'gear options configure preferences admin administration', circle(0, 0, 46), ...[0, 45, 90, 135, 180, 225, 270, 315].map(deg => ['20', line(...at(0, 0, 52, deg), ...at(0, 0, 61, deg))]), bi(circle(0, 0, 18))],
     ['menu', 'hamburger navigation bars', line(-60, -44, 60, -44), line(-60, 0, 60, 0), line(-60, 44, 60, 44)],
     ['close', 'xmark cancel times', line(-50, -50, 50, 50), line(-50, 50, 50, -50)],
     ['house', 'home main start', polygon([[-56, -6], [0, -64], [56, -6], [56, 62], [-56, 62]], 10), bi(polyline([[-16, 62], [-16, 20], [16, 20], [16, 62]], 6))],

@@ -39,8 +39,12 @@ Stroke line joins: miter|round|bevel
     const defFile = 'M40 -92Q40 -77 40 -62Q55 -62 70 -62Q55 -77 40 -92Q-9 -92 -58 -92Q-70 -92 -70 -80Q-70 0 -70 80Q-70 92 -58 92Q0 92 58 92Q70 92 70 80Q70 9 70 -62Q55 -77 40 -92z';
     const defBook = 'M-62 -92Q-62 0 -62 92Q-68 92 -74 92Q-86 92 -86 80Q-86 0 -86 -80Q-86 -92 -74 -92Q0 -92 74 -92Q86 -92 86 -80Q86 0 86 80Q86 92 74 92Q6 92 -62 92Q-62 0 -62 -92z';
     const defHeart = 'M0 94Q-25 83 -43 70Q-62 56 -73 40Q-97 8 -94 -34Q-93 -62 -80 -75Q-68 -89 -44 -88Q-14 -86 0 -60Q14 -86 44 -88Q68 -89 81 -75Q93 -62 94 -34Q97 8 74 40Q50 72 0 94z';
+    const defNote = 'M-74 -86Q0 -86 74 -86Q86 -86 86 -74Q86 -8 86 58Q72 72 58 86Q58 72 58 58Q72 58 86 58Q72 72 58 86Q-8 86 -74 86Q-86 86 -86 74Q-86 0 -86 -74Q-86 -86 -74 -86z';
+    const defScroll = 'M-70 -62Q-70 -23 -70 15Q-70 54 -70 92Q2 92 74 92Q74 15 74 -62Q1 -62 -73 -62Q-88 -62 -88 -77Q-88 -92 -73 -92Q0 -92 73 -92Q88 -92 88 -77Q88 -62 74 -62Q2 -62 -70 -62z';
+    const defWindow = 'M-74 -92Q0 -92 74 -92Q86 -92 86 -80Q86 -70 86 -60Q0 -60 -86 -60Q0 -60 86 -60Q86 8 86 76Q86 88 74 88Q0 88 -74 88Q-86 88 -86 76Q-86 -2 -86 -80Q-86 -92 -74 -92z';
+    const defTv = 'M-40 -96Q-20 -78 0 -60Q20 -78 40 -96Q20 -78 0 -60Q37 -60 74 -60Q86 -60 86 -48Q86 16 86 80Q86 92 74 92Q0 92 -74 92Q-86 92 -86 80Q-86 16 -86 -48Q-86 -60 -74 -60Q-37 -60 0 -60Q-20 -78 -40 -96z';
     const defChart = 'M-88 -90Q-88 -69 -88 -48Q-88 -28 -88 -7Q-88 35 -88 76Q-88 88 -76 88Q-34 88 7 88Q49 88 90 88Q49 88 7 88Q-34 88 -76 88Q-88 88 -88 76Q-88 35 -88 -7Q-88 -48 -88 -90z';
-    // The gear and calendar have more than 11 curves, for square teeth and the rings, so they swap with other shapes instead of morphing.
+    // The gear, calendar, and tv have more than 11 curves, for square teeth, the rings, and round corners under the antenna, so they swap with other shapes instead of morphing.
     const defGear = 'M-16 -78Q-15 -83 -14 -87Q-13 -93 -7 -93Q0 -93 7 -93Q13 -93 14 -87Q15 -83 16 -78Q17 -72 22 -70Q28 -67 34 -65Q39 -63 44 -66Q48 -69 52 -72Q57 -75 61 -71Q66 -66 71 -61Q75 -57 72 -52Q69 -48 66 -44Q63 -39 65 -34Q67 -28 70 -22Q72 -17 78 -16Q83 -15 87 -14Q93 -13 93 -7Q93 0 93 7Q93 13 87 14Q83 15 78 16Q72 17 70 22Q67 28 65 34Q63 39 66 44Q69 48 72 52Q75 57 71 61Q66 66 61 71Q57 75 52 72Q48 69 44 66Q39 63 34 65Q28 67 22 70Q17 72 16 78Q15 83 14 87Q13 93 7 93Q0 93 -7 93Q-13 93 -14 87Q-15 83 -16 78Q-17 72 -22 70Q-28 67 -34 65Q-39 63 -44 66Q-48 69 -52 72Q-57 75 -61 71Q-66 66 -71 61Q-75 57 -72 52Q-69 48 -66 44Q-63 39 -65 34Q-67 28 -70 22Q-72 17 -78 16Q-83 15 -87 14Q-93 13 -93 7Q-93 0 -93 -7Q-93 -13 -87 -14Q-83 -15 -78 -16Q-72 -17 -70 -22Q-67 -28 -65 -34Q-63 -39 -66 -44Q-69 -48 -72 -52Q-75 -57 -71 -61Q-66 -66 -61 -71Q-57 -75 -52 -72Q-48 -69 -44 -66Q-39 -63 -34 -65Q-28 -67 -22 -70Q-17 -72 -16 -78z';
     const defCalendar = 'M-72 -78Q-56 -78 -40 -78Q-40 -87 -40 -96Q-40 -80 -40 -64Q-40 -71 -40 -78Q0 -78 40 -78Q40 -87 40 -96Q40 -80 40 -64Q40 -71 40 -78Q56 -78 72 -78Q84 -78 84 -66Q84 7 84 80Q84 92 72 92Q0 92 -72 92Q-84 92 -84 80Q-84 11 -84 -58Q0 -58 84 -58Q0 -58 -84 -58Q-84 -62 -84 -66Q-84 -78 -72 -78z';
     const defSquare = 'M0 -95Q80 -95 80 -95Q95 -95 95 -80Q95 0 95 0Q95 80 95 80Q95 95 80 95Q0 95 0 95Q-80 95 -80 95Q-95 95 -95 80Q-95 0 -95 0Q-95 -80 -95 -80Q-95 -95 -80 -95z';
@@ -48,7 +52,7 @@ Stroke line joins: miter|round|bevel
     const defTallTriangle = 'M0 -90Q25 -40 25 -40Q40 -10 40 -10Q55 20 55 20Q90 90 90 90Q60 90 60 90Q0 90 0 90Q-55 90 -55 90Q-90 90 -90 90Q-50 10 -50 10Q-30 -30 -30 -30Q-15 -60 -15 -60z';
     // Shape names never contain an underscore, so circle_check is the check icon in a circle. check_circle also works,
     // but the shape first is the standard, and wins when both readings fit, as in shield_circle.
-    const shapeNames = new Set(['circle', 'square', 'shield', 'triangle', 'tri', 'octo', 'octogon', 'badge', 'cloud', 'file', 'book', 'gear', 'chart', 'calendar', 'heart']);
+    const shapeNames = new Set(['circle', 'square', 'shield', 'triangle', 'tri', 'octo', 'octogon', 'badge', 'cloud', 'file', 'book', 'gear', 'chart', 'calendar', 'heart', 'note', 'scroll', 'window', 'tv']);
     function splitShape(name) {
         const first = name.indexOf('_');
         if (first > 0 && shapeNames.has(name.substring(0, first))) {
@@ -162,6 +166,18 @@ Stroke line joins: miter|round|bevel
                             break;
                         case 'heart':
                             t._backPath.setAttribute('d', defHeart);
+                            break;
+                        case 'note':
+                            t._backPath.setAttribute('d', defNote);
+                            break;
+                        case 'scroll':
+                            t._backPath.setAttribute('d', defScroll);
+                            break;
+                        case 'window':
+                            t._backPath.setAttribute('d', defWindow);
+                            break;
+                        case 'tv':
+                            t._backPath.setAttribute('d', defTv);
                             break;
                         default:
                             t._backPath.setAttribute('d', defSquare);

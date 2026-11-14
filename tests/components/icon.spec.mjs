@@ -56,7 +56,7 @@ test('pipe delimited flags are removed when the next icon value leaves them out'
     // A theme set directly on the element is kept, even after a piped value changed it.
     await expect(el).toHaveAttribute('theme', 'warning');
 });
-for (const shape of ['octo', 'octogon', 'tri', 'triangle', 'badge', 'circle', 'cloud', 'file', 'shield', 'book', 'gear', 'chart', 'calendar', 'heart', 'other']) {
+for (const shape of ['octo', 'octogon', 'tri', 'triangle', 'badge', 'circle', 'cloud', 'file', 'shield', 'book', 'gear', 'chart', 'calendar', 'heart', 'note', 'scroll', 'window', 'tv', 'other']) {
     test(`shape ${shape} draws a backing`, async ({ page }) => {
         const root = await mount(page, `<webui-icon shape="${shape}"></webui-icon>`);
         await expect(root.locator('webui-icon path.backing')).toHaveAttribute('d', /^M/);
@@ -265,8 +265,9 @@ test('ban cuts a gap through the icon either side of the slash, leaving the shap
     await expect(el).not.toHaveAttribute('ban');
     expect(await el.evaluate(c => c.shadowRoot.querySelector('g.cut').hasAttribute('mask'))).toBe(false);
 });
-test('cloud, file, book, gear, calendar, and heart shapes keep the shrunken icon clear of their outline', async ({ page }) => {
-    const root = await mount(page, '<webui-icon icon="table|shape:file|bordered" width="200"></webui-icon><webui-icon icon="table|shape:cloud|bordered" width="200"></webui-icon><webui-icon icon="table|shape:book|bordered" width="200"></webui-icon><webui-icon icon="table|shape:gear|bordered" width="200"></webui-icon><webui-icon icon="table|shape:calendar|bordered" width="200"></webui-icon><webui-icon icon="table|shape:heart|bordered" width="200"></webui-icon>');
+test('every shape with room inside keeps the shrunken icon clear of its outline', async ({ page }) => {
+    const shapes = ['file', 'cloud', 'book', 'gear', 'calendar', 'heart', 'note', 'scroll', 'window', 'tv'];
+    const root = await mount(page, shapes.map(shape => `<webui-icon icon="table|shape:${shape}|bordered" width="200"></webui-icon>`).join(''));
     for (const el of await root.locator('webui-icon').all()) {
         await expect.poll(() => el.evaluate(c => c.shadowRoot.querySelector('g.glyph path').getAttribute('d'))).toMatch(/^M-?\d/);
         // Every point of the icon, at its scale inside the shape, is inside the outline with room for both strokes.

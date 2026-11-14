@@ -377,7 +377,7 @@
     },
     {
         "name": "dice",
-        "tags": "game random roll d6 board"
+        "tags": "game random roll d6 board pips"
     },
     {
         "name": "dice-d20",
@@ -405,7 +405,7 @@
     },
     {
         "name": "drawer",
-        "tags": "side slide panel tray"
+        "tags": "side slide panel tray sidebar layout columns"
     },
     {
         "name": "droplet",
@@ -1104,10 +1104,6 @@
         "tags": "hosting computer rack api endpoint uptime docker container"
     },
     {
-        "name": "settings",
-        "tags": "gear options configure preferences admin administration"
-    },
-    {
         "name": "share",
         "tags": "send network social"
     },
@@ -1122,10 +1118,6 @@
     {
         "name": "shuffle",
         "tags": "random mix"
-    },
-    {
-        "name": "sidebar",
-        "tags": "panel layout columns"
     },
     {
         "name": "signal",
@@ -1257,7 +1249,7 @@
     },
     {
         "name": "terminal",
-        "tags": "console command line shell"
+        "tags": "console command line shell prompt cli"
     },
     {
         "name": "test",
@@ -1301,11 +1293,7 @@
     },
     {
         "name": "trash",
-        "tags": "delete remove bin garbage uninstall"
-    },
-    {
-        "name": "trash-can",
-        "tags": "delete remove bin garbage"
+        "tags": "delete remove bin garbage uninstall can"
     },
     {
         "name": "treasure-chest",

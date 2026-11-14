@@ -163,3 +163,26 @@ export function calendarOutline() {
 export function heartOutline() {
     return P(0, 94).Q(-100, 50, -94, -34).Q(-92, -90, -44, -88).Q(-14, -86, 0, -60).Q(14, -86, 44, -88).Q(92, -90, 94, -34).Q(100, 50, 0, 94);
 }
+/** A sticky note with its bottom right corner folded up. The fold is traced inside the outline. */
+export function noteOutline() {
+    return P(-74, -86).L(74, -86).Q(86, -86, 86, -74).L(86, 58).L(58, 86).L(58, 58).L(86, 58).L(58, 86).L(-74, 86).Q(-86, 86, -86, 74)
+        .L(-86, -74).Q(-86, -86, -74, -86);
+}
+/** A scroll: a sheet hanging from a roll across the top. */
+export function scrollOutline() {
+    return P(-70, -62).L(-70, 92).L(74, 92).L(74, -62).L(-73, -62).Q(-88, -62, -88, -77).Q(-88, -92, -73, -92).L(73, -92)
+        .Q(88, -92, 88, -77).Q(88, -62, 74, -62).close();
+}
+/** A window with a title bar. The bar's line is traced across and back. */
+export function windowOutline() {
+    return P(-74, -92).L(74, -92).Q(86, -92, 86, -80).L(86, -60).L(-86, -60).L(86, -60).L(86, 76).Q(86, 88, 74, 88).L(-74, 88)
+        .Q(-86, 88, -86, 76).L(-86, -80).Q(-86, -92, -74, -92);
+}
+/**
+ * A television with an antenna, traced out and back. It needs more than 11 curves to round every corner, so like the gear
+ * it swaps with other shapes instead of morphing.
+ */
+export function tvOutline() {
+    return P(-40, -96).L(0, -60).L(40, -96).L(0, -60).L(74, -60).Q(86, -60, 86, -48).L(86, 80).Q(86, 92, 74, 92).L(-74, 92)
+        .Q(-86, 92, -86, 80).L(-86, -48).Q(-86, -60, -74, -60).L(0, -60).close();
+}

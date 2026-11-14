@@ -85,7 +85,7 @@ export const SETS = [
     ['podcast', 'audio show episode', circle(0, -14, 16), bi(arc(0, -14, 40, 135, 405)), tri(arc(0, -14, 64, 140, 400)), line(0, 2, 0, 66)],
 
     // Game documentation
-    ['dice', 'game random roll d6 board', rect(-60, -60, 60, 60, 16), ...[[-30, -30], [30, -30], [0, 0], [-30, 30], [30, 30]].map(([x, y]) => bi(dot(x, y, 5)))],
+    ['dice', 'game random roll d6 board pips', ...[[-44, -44], [44, -44], [0, 0], [-44, 44], [44, 44]].map(([x, y], i) => (i === 2 ? p => p : bi)(dot(x, y, 5)))],
     ['dice-d20', 'game rpg roll tabletop', polygon([[0, -70], [61, -35], [61, 35], [0, 70], [-61, 35], [-61, -35]]), bi(polygon([[0, -30], [36, 26], [-36, 26]])),
         bi(line(0, -70, 0, -30)), bi(line(61, 35, 36, 26)), bi(line(-61, 35, -36, 26)), bi(line(0, 70, 36, 26)), bi(line(0, 70, -36, 26))],
     ['sword', 'weapon attack combat fight', ...rotated(45, ...sword())],

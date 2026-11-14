@@ -10,7 +10,7 @@
     const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
     const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json' : 'https://cdn.myfi.ws/i/emojis.json';
     // The same reading as webui-icon: a shape before or after the icon name, as in circle_check or check_circle.
-    const shapeNames = new Set(['circle', 'square', 'shield', 'triangle', 'tri', 'octo', 'octogon', 'badge', 'cloud', 'file', 'book', 'gear', 'chart', 'calendar', 'heart']);
+    const shapeNames = new Set(['circle', 'square', 'shield', 'triangle', 'tri', 'octo', 'octogon', 'badge', 'cloud', 'file', 'book', 'gear', 'chart', 'calendar', 'heart', 'note', 'scroll', 'window', 'tv']);
     function splitShape(name) {
         const first = name.indexOf('_');
         if (first > 0 && shapeNames.has(name.substring(0, first))) return [name.substring(first + 1), name.substring(0, first)];
@@ -180,7 +180,7 @@
             // Square is the shape an icon has without one, so it leaves the attribute off.
             setupSwitch('_shape', 'Shape', 'shape', [['', 'Square'], ['circle', 'Circle'], ['badge', 'Badge'], ['octo', 'Octogon'], ['triangle', 'Triangle'],
                 ['shield', 'Shield'], ['heart', 'Heart'], ['gear', 'Gear'], ['cloud', 'Cloud'], ['file', 'File'], ['book', 'Book'],
-                ['calendar', 'Calendar'], ['chart', 'Chart']].map(([value, display]) => ({ value, display })),
+                ['calendar', 'Calendar'], ['chart', 'Chart'], ['note', 'Note'], ['scroll', 'Scroll'], ['window', 'Window'], ['tv', 'TV']].map(([value, display]) => ({ value, display })),
                 (icon, value) => `${value || 'square'}_${icon}|bordered`);
             setupSwitch('_stroke', 'Stroke', 'stroke', [
                 { value: 'thin', display: 'Thin' },
