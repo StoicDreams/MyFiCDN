@@ -10,7 +10,7 @@
 
 import { P, line, polyline, polygon, rect, circle, ellipse, dot, arc, move, rotate, scale, mirror } from './lib.mjs';
 import {
-    at, head, curvedArrow, bi, tri, box, ring, lens, lensHandle, personHead, shoulders, bubble, docShape, docFold,
+    at, head, curvedArrow, shadedArrow, bi, tri, box, ring, lens, lensHandle, personHead, shoulders, bubble, docShape, docFold,
     shieldShape, trayLine, play, eyeShape, speaker, crescent, ray, tilted, cloudOutline,
 } from './parts.mjs';
 
@@ -32,7 +32,7 @@ export const ICONS = [
     ['info', 'information about details', line(0, -18, 0, 62), bi(dot(0, -52))],
 
     // Arrows and chevrons. Turn them with the rotate and flip attributes for other directions.
-    ['arrow', 'pointer direction right next forward', line(-62, 0, 60, 0), head(62, 0, 0, 44)],
+    ['arrow', 'pointer direction right next forward', bi(line(-62, 0, 60, 0)), head(62, 0, 0, 44)],
     ['chevron', 'angle right next forward', polyline([[-22, -50], [28, 0], [-22, 50]])],
     ['caret', 'triangle direction up expand collapse', polygon([[0, -28], [56, 28], [-56, 28]], 10)],
     ['caret-line', 'triangle direction first top', bi(line(-56, -48, 56, -48)), polygon([[0, -16], [56, 40], [-56, 40]], 10)],
@@ -46,18 +46,18 @@ export const ICONS = [
         polyline([[12, -62], [-62, -62], [-62, 62], [12, 62]], 12), line(66, 0, -18, 0), bi(head(-18, 0, 180, 34))],
     ['download', 'save get', line(0, -68, 0, 24), head(0, 24, 90, 40), bi(trayLine())],
     ['upload', 'send put', line(0, 22, 0, -66), head(0, -66, -90, 40), bi(trayLine())],
-    ['refresh', 'reload sync update rotate', ...curvedArrow(0, 0, 58, 200, 330), ...curvedArrow(0, 0, 58, 20, 150)],
-    ['undo', 'back revert rotate left', ...curvedArrow(0, 4, 56, 420, 200)],
+    ['refresh', 'reload sync update rotate', ...shadedArrow(0, 0, 58, 200, 330), ...shadedArrow(0, 0, 58, 20, 150)],
+    ['undo', 'back revert rotate left', ...shadedArrow(0, 4, 56, 420, 200)],
     ['share', 'send network social', circle(46, -46, 18), circle(-46, 0, 18), circle(46, 46, 18), bi(line(-28, -8, 30, -38)), bi(line(-28, 8, 30, 38))],
-    ['expand', 'maximize fullscreen enlarge', polyline([[-64, -22], [-64, -64], [-22, -64]]), polyline([[22, -64], [64, -64], [64, -22]]), polyline([[64, 22], [64, 64], [22, 64]]), polyline([[-22, 64], [-64, 64], [-64, 22]])],
-    ['compress', 'minimize exit fullscreen shrink', polyline([[-64, -22], [-22, -22], [-22, -64]]), polyline([[22, -64], [22, -22], [64, -22]]), polyline([[64, 22], [22, 22], [22, 64]]), polyline([[-22, 64], [-22, 22], [-64, 22]])],
-    ['sort', 'order arrange up down', line(-30, 60, -30, -58), head(-30, -60, -90, 30), line(30, -60, 30, 58), head(30, 60, 90, 30)],
+    ['expand', 'maximize fullscreen enlarge', polyline([[-64, -22], [-64, -64], [-22, -64]]), bi(polyline([[22, -64], [64, -64], [64, -22]])), polyline([[64, 22], [64, 64], [22, 64]]), bi(polyline([[-22, 64], [-64, 64], [-64, 22]]))],
+    ['compress', 'minimize exit fullscreen shrink', polyline([[-64, -22], [-22, -22], [-22, -64]]), bi(polyline([[22, -64], [22, -22], [64, -22]])), polyline([[64, 22], [22, 22], [22, 64]]), bi(polyline([[-22, 64], [-22, 22], [-64, 22]]))],
+    ['sort', 'order arrange up down', bi(line(-30, 60, -30, -58)), head(-30, -60, -90, 30), bi(line(30, -60, 30, 58)), head(30, 60, 90, 30)],
 
     // Interface
     ['hamburger', 'menu navigation bars', line(-60, -44, 60, -44), line(-60, 0, 60, 0), line(-60, 44, 60, 44)],
     ['list', 'items bullets lines', bi(dot(-54, -44, 4)), bi(dot(-54, 0, 4)), bi(dot(-54, 44, 4)), line(-24, -44, 62, -44), line(-24, 0, 62, 0), line(-24, 44, 62, 44)],
-    ['grid', 'tiles apps dashboard', rect(-64, -64, -10, -10, 10), rect(10, -64, 64, -10, 10), rect(-64, 10, -10, 64, 10), rect(10, 10, 64, 64, 10)],
-    ['ellipsis', 'more options dots menu kebab vertical horizontal', circle(-48, 0, 6), circle(0, 0, 6), circle(48, 0, 6)],
+    ['grid', 'tiles apps dashboard', rect(-64, -64, -10, -10, 10), bi(rect(10, -64, 64, -10, 10)), bi(rect(-64, 10, -10, 64, 10)), rect(10, 10, 64, 64, 10)],
+    ['ellipsis', 'more options dots menu kebab vertical horizontal', circle(-48, 0, 6), bi(circle(0, 0, 6)), tri(circle(48, 0, 6))],
     ['sliders', 'settings adjust controls filter', line(-62, -44, -32, -44), line(-4, -44, 62, -44), bi(circle(-18, -44, 13)),
         line(-62, 0, 14, 0), line(42, 0, 62, 0), bi(circle(28, 0, 13)), line(-62, 44, -16, 44), line(12, 44, 62, 44), bi(circle(-2, 44, 13))],
     // Teeth are short lines with a wide stroke, so they keep rounded, even corners and fill with the body.
@@ -101,7 +101,7 @@ export const ICONS = [
     ['bell', 'notification alert alarm reminder', P(-62, 40).Q(-46, 28, -46, -6).Q(-46, -58, 0, -58).Q(46, -58, 46, -6).Q(46, 28, 62, 40).close(), line(0, -58, 0, -70), bi(arc(0, 50, 18, 0, 180))],
     ['mobile', 'phone smartphone cell device', rect(-38, -68, 38, 68, 12), bi(line(-10, 48, 10, 48))],
     ['phone', 'mobile smartphone call device', rect(-38, -68, 38, 68, 12), bi(line(-10, 48, 10, 48))],
-    ['link', 'chain url hyperlink', tilted(-70, -22, 10, 22, 22, -45), tilted(-10, -22, 70, 22, 22, -45)],
+    ['link', 'chain url hyperlink', bi(tilted(-70, -22, 10, 22, 22, -45)), tilted(-10, -22, 70, 22, 22, -45)],
     // An upright clip, three loops long, tilted 45 degrees.
     ['paperclip', 'attachment attach', rotate(P(12, -26).L(12, 34).A(0, 34, 12, 0, 180, 90).L(-12, -44).A(6, -44, 18, 180, 360, 90).L(24, 44).A(0, 44, 24, 0, 180, 90).L(-24, -14).end(), 45)],
     ['globe', 'world internet web language', ring(), bi(ellipse(0, 0, 30, 70)), bi(line(-70, 0, 70, 0))],

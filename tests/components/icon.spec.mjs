@@ -242,17 +242,28 @@ test('inside a drawn shape the icon shrinks, keeping its line weight', async ({ 
     // The stroke is widened by the same amount the icon shrinks, so the drawn line is the same thickness.
     expect(circledWidth * 0.62).toBeCloseTo(plainWidth, 1);
 });
-test('ban draws a slash with a gap in the background color', async ({ page }) => {
-    const root = await mount(page, '<webui-icon icon="eye|ban" style="--theme-color: rgb(1, 2, 3)"></webui-icon>');
+test('ban cuts a gap through the icon either side of the slash, leaving the shape border whole', async ({ page }) => {
+    const root = await mount(page, '<webui-icon icon="circle_address-book|ban|bordered|fill"></webui-icon>');
     const el = root.locator('webui-icon');
     await expect(el).toHaveAttribute('ban', 'true');
-    const [gap, slash] = await el.evaluate(c => ['path.ban-gap', 'path.ban'].map(s => {
-        const style = getComputedStyle(c.shadowRoot.querySelector(s));
-        return { display: style.display, stroke: style.stroke, width: parseFloat(style.strokeWidth.replace(/[^\d.]/g, '')) };
-    }));
-    expect(gap.display).not.toBe('none');
-    expect(gap.stroke).toBe('rgb(1, 2, 3)');
-    expect(gap.width).toBeGreaterThan(slash.width);
+    const cut = await el.evaluate(c => {
+        const shadow = c.shadowRoot;
+        const group = shadow.querySelector('g.cut');
+        const style = s => getComputedStyle(shadow.querySelector(s));
+        const width = s => parseFloat(style(s).strokeWidth);
+        return {
+            mask: group.getAttribute('mask'),
+            glyphMasked: group.contains(shadow.querySelector('g.glyph')),
+            backingMasked: group.contains(shadow.querySelector('path.backing')),
+            cutColor: [style('path.ban-cut').fill, style('path.ban-cut').stroke],
+            wider: width('path.ban-cut') > width('path.ban'),
+        };
+    });
+    // A mask, not a stroke painted in a background color, so the gap shows whatever is behind the icon.
+    expect(cut).toEqual({ mask: 'url(#ban-cut)', glyphMasked: true, backingMasked: false, cutColor: ['rgb(0, 0, 0)', 'rgb(0, 0, 0)'], wider: true });
+    await el.evaluate(c => c.setAttribute('icon', 'circle_address-book|bordered'));
+    await expect(el).not.toHaveAttribute('ban');
+    expect(await el.evaluate(c => c.shadowRoot.querySelector('g.cut').hasAttribute('mask'))).toBe(false);
 });
 test('cloud and file shapes keep the shrunken icon clear of their outline', async ({ page }) => {
     const root = await mount(page, '<webui-icon icon="table|shape:file|bordered" width="200"></webui-icon><webui-icon icon="table|shape:cloud|bordered" width="200"></webui-icon>');

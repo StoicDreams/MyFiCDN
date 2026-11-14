@@ -87,13 +87,14 @@ Stroke line joins: miter|round|bevel
             t._countSlot = t.template.querySelector('slot[name=count]');
             t._style = t.template.querySelector('defs style');
             t._backPath = t.template.querySelector('path.backing');
+            t._cut = t.template.querySelector('g.cut');
             t._dynPaths = [];
             for (let instance = 1; instance <= pathCount; ++instance) {
                 t[`_i${instance}`] = t.template.querySelector(`path.i${instance}`);
                 t._dynPaths.push(t[`_i${instance}`]);
             }
         },
-        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'shape', 'rotate', 'flip', 'count', 'stroke', 'shade'],
+        attr: ['width', 'height', 'shadow', 'icon', 'inverted', 'backing', 'shape', 'rotate', 'flip', 'count', 'stroke', 'shade', 'ban'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
@@ -106,6 +107,11 @@ Stroke line joins: miter|round|bevel
                     }
                     break;
                 case 'inverted':
+                    break;
+                case 'ban':
+                    // Masking costs drawing time, so only icons with a slash have one.
+                    if (value === null || value === undefined || value === false) t._cut.removeAttribute('mask');
+                    else t._cut.setAttribute('mask', 'url(#ban-cut)');
                     break;
                 case 'rotate':
                 case 'flip':
@@ -350,8 +356,14 @@ Stroke line joins: miter|round|bevel
 <!--! Stoic Dreams - https://webui.stoicdreams.com License - https://webui.stoicdreams.com/license Copyright 2024 Stoic Dreams Inc. -->
 <defs>
 <style></style>
+<!-- With ban, the slash cuts a gap through the icon itself, leaving the backing shape and its border whole. -->
+<mask id="ban-cut" maskUnits="userSpaceOnUse" x="-100" y="-100" width="200" height="200">
+<rect x="-100" y="-100" width="200" height="200" fill="white"></rect>
+<path class="ban-cut" d="M-60 60Q-50 50 -50 50Q-35 35 -35 35Q-20 20 -20 20Q-10 10 -10 10Q-5 5 -5 5Q5 -5 5 -5Q10 -10 10 -10Q20 -20 20 -20Q35 -35 35 -35Q50 -50 50 -50Q60 -60 60 -60z"></path>
+</mask>
 </defs>
 <path class="backing" d=""></path>
+<g class="cut">
 <g class="glyph">
 <path class="i1" d=""></path>
 <path class="i2" d=""></path>
@@ -364,10 +376,10 @@ Stroke line joins: miter|round|bevel
 <path class="i9" d=""></path>
 <path class="i10" d=""></path>
 </g>
+</g>
 </svg>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -100 200 200" class="overlay">
 <!--! Stoic Dreams - https://webui.stoicdreams.com License - https://webui.stoicdreams.com/license Copyright 2024 Stoic Dreams Inc. -->
-<path class="ban-gap" d="M-60 60Q-50 50 -50 50Q-35 35 -35 35Q-20 20 -20 20Q-10 10 -10 10Q-5 5 -5 5Q5 -5 5 -5Q10 -10 10 -10Q20 -20 20 -20Q35 -35 35 -35Q50 -50 50 -50Q60 -60 60 -60z"></path>
 <path class="ban" d="M-60 60Q-50 50 -50 50Q-35 35 -35 35Q-20 20 -20 20Q-10 10 -10 10Q-5 5 -5 5Q5 -5 5 -5Q10 -10 10 -10Q20 -20 20 -20Q35 -35 35 -35Q50 -50 50 -50Q60 -60 60 -60z"></path>
 </svg>
 <slot name="count"></slot>
@@ -505,9 +517,12 @@ stroke-width:0;
 path.ban {
 stroke-width:calc(var(--ico-stroke-width) * 1.5px);
 }
-/* A gap in the background color either side of the slash, so it reads as crossing the icon out. */
-path.ban-gap {
-stroke:var(--ico-color-offset, transparent);
+/* The mask's slash is wider than the drawn one, so the icon has a gap either side of it and reads as crossed out. */
+/* The id outranks the fill and shade rules for icon paths, which would otherwise color this one. */
+#ban-cut path.ban-cut {
+transition:none;
+fill:black;
+stroke:black;
 stroke-width:calc(var(--ico-stroke-width) * 3.5px);
 }
 webui-emoji {
@@ -521,7 +536,6 @@ justify-content:center;
 align-items:center;
 }
 :host(:not([ban])) path.ban,
-:host(:not([ban])) path.ban-gap,
 svg.main:not(.emoji) webui-emoji,
 svg.main.emoji path:not(.backing) {
 display:none;

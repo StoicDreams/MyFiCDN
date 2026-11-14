@@ -16,6 +16,12 @@ export function curvedArrow(cx, cy, r, a0, a1) {
     return [arc(cx, cy, r, a0, a1), head(x, y, forward, 28)];
 }
 
+/** A curved arrow whose arc is in the second shade, so Shade sets the head apart. */
+export function shadedArrow(cx, cy, r, a0, a1) {
+    const [shaft, tip] = curvedArrow(cx, cy, r, a0, a1);
+    return [bi(shaft), tip];
+}
+
 export const bi = path => ['bi', path];
 export const tri = path => ['tri', path];
 

@@ -15,6 +15,7 @@ npm run icons:check  # only check the designs
 - Coordinates run from -100 to 100, with y pointing down. Draw inside -75 to 75, so icons fit inside every backing shape.
 - Strokes are 10 units wide with round ends and joins. Containers are 128 units wide with 12 unit corners, and circles have a radius of 70.
 - Make the outline one closed shape where possible, so it fills cleanly, and draw details inside it with `bi`.
+- Give an icon with several parts a second shade, and a third where parts step back, so the Shade option adds depth. Keep the main part in the first shade: an arrow's head (its shaft is `bi`, as `shadedArrow` draws curved ones), the front link of a chain, the nearest arc of a feed. Symmetric marks such as `plus`, `xmark`, `equals`, and `pause` stay one shade.
 - Keep the directions sites rely on: `arrow` and `chevron` point right, and `caret` points up. Sites turn them with the `rotate` attribute.
 - Do not add an icon that is only a variation of another. `webui-icon` draws these itself: a slash (`eye|ban`), a container (`circle_check|bordered`, or `file_code|bordered` and `cloud_arrow|rotate:-90|bordered`), a turn (`arrow|rotate:90`), and a mirror (`undo|flip`). The build rejects names that look like one, such as `eye-slash`, `circle-check`, `file-code`, `cloud-arrow-up`, `arrow-left`, or `ellipsis-vertical`. Variations it cannot draw, such as a plus beside a person in `user-plus`, are separate icons.
 

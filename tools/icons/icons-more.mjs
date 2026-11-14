@@ -29,22 +29,23 @@ const heartShape = () => P(0, 62).Q(-74, 8, -68, -28).Q(-62, -66, -26, -62).Q(-8
 const microphone = () => [rect(-24, -68, 24, 18, 24), bi(P(-46, -6).Q(-46, 42, 0, 42).Q(46, 42, 46, -6).end()), bi(line(0, 42, 0, 66)), bi(line(-26, 66, 26, 66))];
 const bellShape = () => P(-62, 40).Q(-46, 28, -46, -6).Q(-46, -58, 0, -58).Q(46, -58, 46, -6).Q(46, 28, 62, 40).close();
 const leftBrace = () => P(-18, -64).Q(-40, -64, -40, -42).L(-40, -16).Q(-40, 0, -58, 0).Q(-40, 0, -40, 16).L(-40, 42).Q(-40, 64, -18, 64).end();
-const textLines = widths => widths.map(([x0, x1], i) => line(x0, -48 + i * 32, x1, -48 + i * 32));
+// Every other line is in the second shade, so Shade gives the text some depth.
+const textLines = widths => widths.map(([x0, x1], i) => (i % 2 ? bi : p => p)(line(x0, -48 + i * 32, x1, -48 + i * 32)));
 const gitDot = (x, y) => circle(x, y, 14);
 const wheel = (x, y, r = 14) => bi(circle(x, y, r));
 
 export const MORE = [
-    ['arrows-left-right', 'horizontal resize width swap', line(-64, 0, 64, 0), head(-66, 0, 180, 36), head(66, 0, 0, 36)],
-    ['arrows-move', 'move drag position pan', line(-66, 0, 66, 0), line(0, -66, 0, 66), head(-68, 0, 180, 26), head(68, 0, 0, 26), head(0, -68, -90, 26), head(0, 68, 90, 26)],
-    ['chevrons-right', 'double angle forward last', polyline([[-48, -48], [-4, 0], [-48, 48]]), polyline([[4, -48], [48, 0], [4, 48]])],
-    ['arrow-turn-down-left', 'return enter reply', polyline([[60, -58], [60, 10], [-56, 10]], 14), head(-60, 10, 180, 36)],
-    ['shuffle', 'random mix', polyline([[-68, -40], [-34, -40], [26, 40], [62, 40]], 10), head(64, 40, 0, 26), polyline([[-68, 40], [-34, 40], [26, -40], [62, -40]], 10), head(64, -40, 0, 26)],
-    ['repeat', 'loop again cycle', polyline([[-62, 14], [-62, -30], [54, -30]], 14), head(58, -30, 0, 26), polyline([[62, -14], [62, 30], [-54, 30]], 14), head(-58, 30, 180, 26)],
-    ['trending-up', 'growth increase chart rise', polyline([[-68, 42], [-20, -6], [8, 22], [62, -32]]), polyline([[22, -34], [64, -34], [64, 8]])],
+    ['arrows-left-right', 'horizontal resize width swap', bi(line(-64, 0, 64, 0)), head(-66, 0, 180, 36), head(66, 0, 0, 36)],
+    ['arrows-move', 'move drag position pan', bi(line(-66, 0, 66, 0)), bi(line(0, -66, 0, 66)), head(-68, 0, 180, 26), head(68, 0, 0, 26), head(0, -68, -90, 26), head(0, 68, 90, 26)],
+    ['chevrons-right', 'double angle forward last', bi(polyline([[-48, -48], [-4, 0], [-48, 48]])), polyline([[4, -48], [48, 0], [4, 48]])],
+    ['arrow-turn-down-left', 'return enter reply', bi(polyline([[60, -58], [60, 10], [-56, 10]], 14)), head(-60, 10, 180, 36)],
+    ['shuffle', 'random mix', polyline([[-68, -40], [-34, -40], [26, 40], [62, 40]], 10), head(64, 40, 0, 26), bi(polyline([[-68, 40], [-34, 40], [26, -40], [62, -40]], 10)), bi(head(64, -40, 0, 26))],
+    ['repeat', 'loop again cycle', polyline([[-62, 14], [-62, -30], [54, -30]], 14), head(58, -30, 0, 26), bi(polyline([[62, -14], [62, 30], [-54, 30]], 14)), bi(head(-58, 30, 180, 26))],
+    ['trending-up', 'growth increase chart rise', polyline([[-68, 42], [-20, -6], [8, 22], [62, -32]]), bi(polyline([[22, -34], [64, -34], [64, 8]]))],
 
     // Media
     ['forward', 'next skip media track', polygon([[-50, -50], [26, 0], [-50, 50]], 10), bi(line(54, -50, 54, 50))],
-    ['fast-forward', 'media speed skip', polygon([[-68, -46], [-6, 0], [-68, 46]], 8), polygon([[2, -46], [64, 0], [2, 46]], 8)],
+    ['fast-forward', 'media speed skip', bi(polygon([[-68, -46], [-6, 0], [-68, 46]], 8)), polygon([[2, -46], [64, 0], [2, 46]], 8)],
     ['volume-low', 'sound quiet audio', speaker(), bi(arc(4, 0, 34, -50, 50))],
     ['headphones', 'audio music listen headset', bi(arc(0, 12, 58, 180, 360)), rect(-70, 4, -38, 64, 10), rect(38, 4, 70, 64, 10)],
     ['film', 'movie video cinema', rect(-58, -68, 58, 68, 10), bi(line(-28, -68, -28, 68)), bi(line(28, -68, 28, 68)), bi(line(-58, 0, -28, 0)), bi(line(28, 0, 58, 0))],
@@ -63,7 +64,7 @@ export const MORE = [
     ['print-screen', 'screenshot capture', polyline([[-66, -24], [-66, -66], [-24, -66]]), polyline([[24, -66], [66, -66], [66, -24]]), polyline([[66, 24], [66, 66], [24, 66]]), polyline([[-24, 66], [-66, 66], [-66, 24]]), bi(circle(0, 0, 22))],
     ['plug', 'power electric connect', rect(-40, -26, 40, 22, 10), bi(line(-18, -26, -18, -66)), bi(line(18, -26, 18, -66)), bi(P(0, 22).Q(0, 46, -18, 54).Q(-34, 62, -34, 70).end())],
     ['microchip', 'cpu processor chip hardware', rect(-44, -44, 44, 44, 10), bi(rect(-18, -18, 18, 18, 4)), ...[-20, 20].flatMap(v => [line(v, -44, v, -66), line(v, 44, v, 66), line(-44, v, -66, v), line(44, v, 66, v)])],
-    ['signal', 'bars strength network reception', line(-54, 60, -54, 32), line(-18, 60, -18, 8), line(18, 60, 18, -18), line(54, 60, 54, -46)],
+    ['signal', 'bars strength network reception', line(-54, 60, -54, 32), line(-18, 60, -18, 8), bi(line(18, 60, 18, -18)), tri(line(54, 60, 54, -46))],
     ['bluetooth', 'wireless connect', polyline([[-34, -32], [32, 28], [0, 58], [0, -58], [32, -28], [-34, 32]])],
 
     // Files and documents
@@ -85,10 +86,10 @@ export const MORE = [
 
     // Editing and text
     ['scissors', 'cut clip', circle(-40, 42, 18), circle(40, 42, 18), bi(line(-28, 28, 46, -64)), bi(line(28, 28, -46, -64))],
-    ['crop', 'trim cut image', polyline([[-40, -70], [-40, 40], [70, 40]]), polyline([[-70, -40], [40, -40], [40, 70]])],
-    ['font', 'text type letter typography', polyline([[-56, -44], [-56, -64], [56, -64], [56, -44]]), line(0, -64, 0, 64), line(-22, 64, 22, 64)],
+    ['crop', 'trim cut image', polyline([[-40, -70], [-40, 40], [70, 40]]), bi(polyline([[-70, -40], [40, -40], [40, 70]]))],
+    ['font', 'text type letter typography', polyline([[-56, -44], [-56, -64], [56, -64], [56, -44]]), line(0, -64, 0, 64), bi(line(-22, 64, 22, 64))],
     ['bold', 'text strong weight', ['14', P(-38, 0).L(-38, -62).L(8, -62).A(8, -31, 31, -90, 90).L(-38, 0)], ['14', P(-38, 0).L(14, 0).A(14, 31, 31, -90, 90).L(-38, 62).L(-38, 0)]],
-    ['italic', 'text slant emphasis', line(-6, -62, 50, -62), line(-50, 62, 6, 62), line(22, -62, -22, 62)],
+    ['italic', 'text slant emphasis', bi(line(-6, -62, 50, -62)), bi(line(-50, 62, 6, 62)), line(22, -62, -22, 62)],
     ['underline', 'text', P(-40, -64).L(-40, -8).A(0, -8, 40, 180, 0).L(40, -64).end(), bi(line(-54, 66, 54, 66))],
     ['strikethrough', 'text delete cross out', P(44, -38).Q(36, -56, 2, -56).Q(-44, -56, -44, -28).Q(-44, -2, 0, 0).Q(46, 2, 46, 30).Q(46, 58, -2, 58).Q(-36, 58, -46, 40).end(), bi(line(-66, 0, 66, 0))],
     ['align-left', 'text paragraph', ...textLines([[-62, 62], [-62, 26], [-62, 62], [-62, 26]])],
@@ -109,11 +110,11 @@ export const MORE = [
     ['thumbtack', 'pin attach stick', polygon([[-30, -66, 6], [30, -66, 6], [22, -30, 0], [46, 6, 6], [-46, 6, 6], [-22, -30, 0]]), bi(line(0, 6, 0, 70))],
     ['window', 'browser app screen', rect(-68, -58, 68, 58, 12), bi(line(-68, -26, 68, -26)), bi(dot(-48, -42)), bi(dot(-30, -42))],
     ['gauge', 'dashboard speed meter performance', arc(0, 22, 66, 180, 360), bi(line(0, 22, 36, -16)), bi(dot(0, 22, 4)), line(-66, 22, -66, 40), line(66, 22, 66, 40)],
-    ['power', 'off on shutdown start', arc(0, 6, 58, -55, 235), line(0, -70, 0, -8)],
+    ['power', 'off on shutdown start', bi(arc(0, 6, 58, -55, 235)), line(0, -70, 0, -8)],
     ['history', 'recent past clock rotate', ...curvedArrow(0, 0, 64, 160, -170), bi(polyline([[0, -34], [0, 0], [26, 18]]))],
     ['stopwatch', 'timer time clock', circle(0, 10, 58), line(-18, -66, 18, -66), line(0, -66, 0, -48), bi(line(0, 10, 0, -22))],
     ['arrow-pointer', 'cursor mouse select click', polygon([[-38, -66, 4], [42, 10, 4], [6, 16, 0], [28, 58, 0], [14, 66, 0], [-8, 24, 0], [-38, 48, 4]])],
-    ['hashtag', 'hash number tag pound', line(-26, -64, -40, 64), line(40, -64, 26, 64), line(-62, -24, 66, -24), line(-66, 24, 62, 24)],
+    ['hashtag', 'hash number tag pound', line(-26, -64, -40, 64), line(40, -64, 26, 64), bi(line(-62, -24, 66, -24)), bi(line(-66, 24, 62, 24))],
     ['at', 'email mention address', bi(circle(0, 0, 24)), P(24, -26).L(24, 10).Q(24, 30, 42, 30).Q(64, 30, 64, 0).A(0, 0, 64, 360, 110).end()],
     ['percent', 'discount sale ratio', bi(line(-50, 60, 50, -60)), circle(-38, -38, 16), circle(38, 38, 16)],
     ['infinity', 'forever loop unlimited', smooth(Array.from({ length: 10 }, (_, i) => {
@@ -148,11 +149,11 @@ export const MORE = [
     ['paw', 'pet animal dog cat', smooth([[0, 4], [36, 34], [26, 62], [0, 54], [-26, 62], [-36, 34]]), bi(circle(-50, -6, 13)), bi(circle(-22, -42, 14)), bi(circle(22, -42, 14)), bi(circle(50, -6, 13))],
 
     // Communication
-    ['reply', 'answer respond back', P(66, 54).Q(66, -10, 4, -10).L(-58, -10).end(), head(-62, -10, 180, 36)],
+    ['reply', 'answer respond back', bi(P(66, 54).Q(66, -10, 4, -10).L(-58, -10).end()), head(-62, -10, 180, 36)],
     ['share-from-square', 'share export forward', polyline([[-8, -60], [-60, -60], [-60, 60], [60, 60], [60, 12]], 12), P(-18, 22).Q(-18, -26, 30, -26).L(58, -26).end(), bi(head(62, -26, 0, 26))],
     ['comment-dots', 'chat typing message', bubble(), bi(dot(-30, -14, 4)), bi(dot(0, -14, 4)), bi(dot(30, -14, 4))],
     ['bullhorn', 'megaphone announce marketing', polygon([[-60, -18, 6], [-22, -18, 0], [50, -58, 6], [50, 58, 6], [-22, 18, 0], [-60, 18, 6]]), bi(line(-40, 18, -30, 56))],
-    ['rss', 'feed subscribe blog', dot(-50, 50, 4), arc(-56, 56, 46, -90, 0), arc(-56, 56, 86, -90, 0)],
+    ['rss', 'feed subscribe blog', dot(-50, 50, 4), bi(arc(-56, 56, 46, -90, 0)), tri(arc(-56, 56, 86, -90, 0))],
     ['phone-handset', 'call telephone contact', P(-56, -64).L(-32, -68).L(-16, -34).L(-34, -18).Q(-18, 18, 18, 34).L(34, 16).L(68, 32).L(64, 56).Q(60, 70, 40, 68).Q(-64, 48, -68, -40).Q(-70, -60, -56, -64)],
     ['address-book', 'contacts people directory', rect(-52, -68, 62, 68, 10), bi(circle(6, -14, 16)), bi(P(-20, 34).Q(-14, 8, 6, 8).Q(26, 8, 32, 34).end()), line(-66, -36, -52, -36), line(-66, 0, -52, 0), line(-66, 36, -52, 36)],
 
@@ -177,7 +178,7 @@ export const MORE = [
     ['bicycle', 'bike cycle ride', arc(-42, 26, 28, -90, 270), arc(42, 26, 28, -90, 270), bi(polyline([[-42, 26], [-14, -18], [24, -18], [42, 26]])), bi(polyline([[-14, -18], [4, 26], [24, -18]])), line(-24, -34, -4, -34)],
     ['bus', 'transit public transport', rect(-56, -68, 56, 52, 14), bi(line(-56, -6, 56, -6)), bi(dot(-32, 22)), bi(dot(32, 22)), line(-40, 52, -40, 68), line(40, 52, 40, 68)],
     // Wings and tail fins attach to the sides of the body, so the outline has no lines crossing it.
-    ['plane', 'flight travel airplane trip', rect(-10, -70, 10, 66, 10), polygon([[-10, -18], [-70, 18], [-70, 32], [-10, 12]]), polygon([[10, -18], [70, 18], [70, 32], [10, 12]]), polygon([[-10, 46], [-32, 60], [-32, 68], [-10, 62]]), polygon([[10, 46], [32, 60], [32, 68], [10, 62]])],
+    ['plane', 'flight travel airplane trip', rect(-10, -70, 10, 66, 10), bi(polygon([[-10, -18], [-70, 18], [-70, 32], [-10, 12]])), bi(polygon([[10, -18], [70, 18], [70, 32], [10, 12]])), tri(polygon([[-10, 46], [-32, 60], [-32, 68], [-10, 62]])), tri(polygon([[10, 46], [32, 60], [32, 68], [10, 62]]))],
     ['rocket', 'launch startup space fast', P(0, -70).Q(36, -46, 36, 16).L(36, 40).L(-36, 40).L(-36, 16).Q(-36, -46, 0, -70), polyline([[-36, 10], [-60, 32], [-60, 58], [-36, 40]]), polyline([[36, 10], [60, 32], [60, 58], [36, 40]]), bi(circle(0, -16, 14)), tri(line(0, 52, 0, 70))],
     ['anchor', 'ship marine harbor', bi(circle(0, -52, 14)), line(0, -38, 0, 66), bi(line(-28, -14, 28, -14)), arc(0, 6, 60, 10, 170), head(-60, 16, 190, 22), head(60, 16, -10, 22)],
     ['building', 'office company business city', rect(-48, -68, 48, 68, 8), ...[[-20, -40], [20, -40], [-20, -12], [20, -12], [-20, 16], [20, 16]].map(([x, y]) => bi(dot(x, y, 4))), bi(line(0, 44, 0, 68))],
@@ -185,7 +186,7 @@ export const MORE = [
     ['landmark', 'bank government museum institution', polygon([[0, -70], [70, -34], [-70, -34]], 6), ...[-44, -14, 14, 44].map(x => bi(line(x, -16, x, 44))), line(-70, 62, 70, 62)],
     ['graduation-cap', 'education school learn degree', polygon([[0, -54], [74, -20], [0, 14], [-74, -20]], 4), P(-42, -2).L(-42, 32).Q(0, 58, 42, 32).L(42, -2).end(), bi(line(64, -16, 64, 34))],
     ['hospital', 'medical health care first aid', rect(-64, -54, 64, 64, 12), bi(line(0, -24, 0, 34)), bi(line(-29, 5, 29, 5)), polyline([[-24, -54], [-24, -70], [24, -70], [24, -54]], 6)],
-    ['utensils', 'restaurant food dining eat', line(-36, -68, -36, 68), polyline([[-56, -68], [-56, -34], [-16, -34], [-16, -68]], 10), P(36, 68).L(36, -68).Q(64, -50, 60, 0).L(36, 0).end()],
+    ['utensils', 'restaurant food dining eat', line(-36, -68, -36, 68), polyline([[-56, -68], [-56, -34], [-16, -34], [-16, -68]], 10), bi(P(36, 68).L(36, -68).Q(64, -50, 60, 0).L(36, 0).end())],
     ['mug-hot', 'coffee tea drink cafe', polygon([[-58, -22, 4], [34, -22, 4], [28, 60, 12], [-52, 60, 12]]), arc(36, 12, 22, -80, 90), bi(line(-34, -40, -34, -66)), bi(line(-12, -40, -12, -66)), bi(line(10, -40, 10, -66))],
     ['briefcase', 'work job business portfolio', rect(-70, -36, 70, 60, 12), polyline([[-24, -36], [-24, -60], [24, -60], [24, -36]], 8), bi(line(-70, 6, 70, 6))],
 
