@@ -4,6 +4,8 @@ Web UI is designed to use a tweaked version of Markdown when loading site conten
 
 This Markdown cheat sheet provides a quick overview of all the syntax elements supported by Web UI Markdown.
 
+For a short guide for people writing Markdown in your site or tool, use the [webui-markdown-guide](/components#webui-markdown-guide) component.
+
 ## Headings
 
 <webui-side-by-side>

@@ -326,6 +326,16 @@ webui-stoic-social-links {
     display: flex;
 }
 
+webui-markdown-guide {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+webui-markdown-guide code {
+    white-space: nowrap;
+}
+
 webui-social-links,
 webui-next-page {
     display: grid;

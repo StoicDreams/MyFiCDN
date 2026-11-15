@@ -168,6 +168,9 @@
                             // Before they are defined, setData doesn't exist and set properties would hide their setters.
                             await Promise.all([customElements.whenDefined('webui-table'), customElements.whenDefined('webui-pagination')]);
                             if (t._req !== json) return;
+                            // Elements outside the page, such as content webui-content holds while it is out of view,
+                            // are not upgraded when their definition loads, so upgrade them here.
+                            customElements.upgrade(t);
                             if (!t.columns && data.columns) {
                                 if (t.appendColumns) {
                                     t._table.setAttribute('columns', `${data.columns};${t.appendColumns}`);

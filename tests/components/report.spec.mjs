@@ -37,6 +37,30 @@ test('rows show when the data arrives before the table script has loaded', async
     await expect(el.locator('webui-alert')).toHaveCount(0);
     await expect(el.locator('webui-pagination').first()).toContainText('2');
 });
+test('rows show when the data arrives while the report is out of the page, as in a hidden webui-content', async ({ page }) => {
+    let release;
+    const scriptsHeld = new Promise(resolve => release = resolve);
+    await page.route(/\/webui\/(table|pagination)(\.min)?\.js$/, async route => {
+        await scriptsHeld;
+        await route.fallback();
+    });
+    let answered = false;
+    await page.route('**/report-api', route => {
+        answered = true;
+        return route.fulfill({ contentType: 'application/json', body: JSON.stringify({ items: [{ Name: 'A' }, { Name: 'B' }], page: 1, total: 2 }) });
+    });
+    const root = await mount(page, '<div id="holder"><webui-report api="http://localhost:3199/report-api" columns="Name" sort-column="Name"></webui-report></div>');
+    // Take the report out of the page, the way webui-content does when it scrolls out of view.
+    await page.evaluate(() => { window.__frag = document.createDocumentFragment(); window.__frag.appendChild(document.querySelector('webui-report')); });
+    await expect.poll(() => answered).toBe(true);
+    release();
+    await page.evaluate(() => Promise.all([customElements.whenDefined('webui-table'), customElements.whenDefined('webui-pagination')]));
+    await page.waitForTimeout(300);
+    await page.evaluate(() => document.getElementById('holder').appendChild(window.__frag));
+    const el = root.locator('webui-report');
+    await expect(el.locator('td')).toHaveText(['A', 'B']);
+    await expect(el.locator('webui-alert')).toHaveCount(0);
+});
 test('label displays a heading', async ({ page }) => {
     const { el } = await report(page, 'label="Sales"');
     await expect(el.locator('h3')).toHaveText('Sales');

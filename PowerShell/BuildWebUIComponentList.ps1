@@ -1,14 +1,17 @@
-# Define paths
+# Builds cdn/webui/components.json, the list of components webui-components shows, from the docs pages in
+# cdn/d/content/components. Each page's file name is the component's name, so a component without a docs page
+# is not listed.
 Set-Location $PSScriptRoot
-Set-Location ../cdn/webui
-$folderPath = "./"
-$outputFile = "./components.json"
+Set-Location ../cdn
 
-$names = Get-ChildItem -Path $folderPath -File -Filter *.js |
-Where-Object { $_.BaseName -notmatch '\.min$' -and $_.BaseName -ne 'loader' } |
-Sort-Object -Unique -Property BaseName |
-Select-Object -ExpandProperty BaseName
+# Documented, but kept off the list. webui-fa was removed from it in 71f83fff5.
+$exclude = @('webui-fa')
+
+$names = Get-ChildItem -Path ./d/content/components -File -Filter *.md |
+Select-Object -ExpandProperty BaseName |
+Where-Object { $exclude -notcontains $_ } |
+Sort-Object -Unique
 
 $names |
 ConvertTo-Json -Depth 3 |
-Set-Content -Path $outputFile -Encoding UTF8
+Set-Content -Path ./webui/components.json -Encoding UTF8
