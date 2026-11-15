@@ -15,6 +15,28 @@ test('loads rows from the api', async ({ page }) => {
     await expect(el.locator('td')).toHaveText(['A', 'B']);
     expect(requests[0]).toEqual({ perPage: 10, page: 1, sortColumn: 'Name', sortOrder: 'asc' });
 });
+test('rows show when the data arrives before the table script has loaded', async ({ page }) => {
+    // Hold the table and pagination scripts until the report has its data, as on a slow connection.
+    let release;
+    const scriptsHeld = new Promise(resolve => release = resolve);
+    await page.route(/\/webui\/(table|pagination)(\.min)?\.js$/, async route => {
+        await scriptsHeld;
+        await route.fallback();
+    });
+    let answered = false;
+    await page.route('**/report-api', route => {
+        answered = true;
+        return route.fulfill({ contentType: 'application/json', body: JSON.stringify({ items: [{ Name: 'A' }, { Name: 'B' }], page: 1, total: 2 }) });
+    });
+    const root = await mount(page, '<webui-report api="http://localhost:3199/report-api" columns="Name" sort-column="Name"></webui-report>');
+    await expect.poll(() => answered).toBe(true);
+    await page.waitForTimeout(200);
+    release();
+    const el = root.locator('webui-report');
+    await expect(el.locator('td')).toHaveText(['A', 'B']);
+    await expect(el.locator('webui-alert')).toHaveCount(0);
+    await expect(el.locator('webui-pagination').first()).toContainText('2');
+});
 test('label displays a heading', async ({ page }) => {
     const { el } = await report(page, 'label="Sales"');
     await expect(el.locator('h3')).toHaveText('Sales');
