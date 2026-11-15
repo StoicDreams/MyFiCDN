@@ -18,6 +18,13 @@ test('setValue escapes markup, and stringifies objects', async ({ page }) => {
     await expect(code.locator('code')).toContainText('"a": 1');
     expect(await code.evaluate(el => el.value)).toContain('"a": 1');
 });
+test('text is not highlighted', async ({ page }) => {
+    const root = await mount(page, '<webui-code lang="text"></webui-code>');
+    const code = root.locator('webui-code');
+    await code.evaluate(el => el.setValue("Don't guess. I haven't said # 2 -- yet."));
+    await expect(code.locator('code')).toHaveText("Don't guess. I haven't said # 2 -- yet.");
+    await expect(code.locator('code span')).toHaveCount(0);
+});
 test('highlights html tags and attributes', async ({ page }) => {
     const root = await mount(page, '<webui-code lang="html"></webui-code>');
     const code = root.locator('webui-code');

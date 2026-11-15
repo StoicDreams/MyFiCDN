@@ -128,6 +128,10 @@
                 { regex: /(\[.*?\]\s*\([^\)]+\))/g, class: 'link' }
             ]
         },
+        // Plain text, such as prompts or prose, is shown without highlighting.
+        text: {
+            patterns: []
+        },
         default: {
             patterns: [
                 { regex: /(".*?"|'.*?')/g, class: 'string' },

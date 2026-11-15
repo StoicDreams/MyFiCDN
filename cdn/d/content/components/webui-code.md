@@ -38,6 +38,10 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+### Plain text
+
+Set `lang="text"` (or `language="text"`) for prose, such as a prompt or a message to copy, so nothing in it is highlighted. Without a known language, the default rules color quoted text, numbers, and comments, which can catch apostrophes and `#` in ordinary writing.
+
 ### Source Code
 
 <webui-code src="https://cdn.myfi.ws/webui/code.js" language="javascript" label="code.js"></webui-code>
