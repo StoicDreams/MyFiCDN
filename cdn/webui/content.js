@@ -213,8 +213,6 @@ webui.define("webui-content", {
 <style type="text/css">
 :host {
 display:block;
---scroll-color: color-mix(in srgb, var(--theme-color) 20%, transparent);
---scroll-shadow: -4px 0 -4px rgba(255, 255, 255, 0.2) inset;
 overflow:auto;
 box-sizing:border-box;
 }
@@ -233,8 +231,11 @@ min-height:100%;
 }
 ::-webkit-scrollbar,
 *::-webkit-scrollbar {
-background-color: var(--scroll-color);
-box-shadow: var(--scroll-shadow);
+background-color: var(--color-scrollbar, color-mix(in srgb, var(--theme-color-offset, currentColor) 10%, transparent));
+}
+::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+background-color: var(--color-scrollbar-thumb, color-mix(in srgb, var(--theme-color-offset, currentColor) 45%, transparent));
 }
 :host(:not(.loaded)) {
 display:flex;

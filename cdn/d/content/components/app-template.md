@@ -135,7 +135,7 @@ The `linkCss` option, which added the whole stylesheet to every instance, is dep
 | `--focus-outline`, `--focus-offset`, `--color-focus` | The keyboard focus ring. |
 | `--color-backdrop`, `--backdrop-blur` | Behind dialogs and panels. |
 | `--color-overlay`, `--color-overlay-offset` | Controls drawn over images and video. |
-| `--color-scrollbar`, `--color-scrollbar-thumb` | Scrollbars. |
+| `--color-scrollbar`, `--color-scrollbar-thumb` | Scrollbar track and thumb. Unset, they are drawn from the text color of what they scroll, so they show on any theme. |
 | `--shadow-popup`, `--shadow-float`, `--shadow-panel` | Shadows for menus, floating buttons, and panels. |
 | `--elevation-{0-25}` | The same shadows as the `elevation` attribute. |
 | `--color-code`, `--color-code-background`, `--color-code-muted` | Code and diff views. |

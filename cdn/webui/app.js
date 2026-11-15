@@ -279,10 +279,13 @@ width: 1em;
 height: 1em;
 }
 ::-webkit-scrollbar-thumb {
-background: var(--color-scrollbar, rgb(90 90 90 / 20%));
+background: var(--color-scrollbar-thumb, color-mix(in srgb, var(--theme-color-offset, currentColor) 45%, transparent));
 }
 ::-webkit-scrollbar-track {
-background: var(--color-scrollbar-thumb, rgb(0 0 0 / 20%));
+background: var(--color-scrollbar, color-mix(in srgb, var(--theme-color-offset, currentColor) 10%, transparent));
+}
+::-webkit-scrollbar-corner {
+background: transparent;
 }
 </style>
 `
