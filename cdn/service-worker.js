@@ -20,7 +20,7 @@ self.addEventListener('fetch', event => {
     }
     event.respondWith(onFetch(event))
 });
-const currentVersion = '0.11.92';
+const currentVersion = '0.11.93';
 const cacheNamePrefix = 'offline-cache-';
 const cacheName = `${cacheNamePrefix}${currentVersion}`;
 async function onInstall(event) {
