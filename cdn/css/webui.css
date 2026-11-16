@@ -156,6 +156,7 @@
     --color-code-muted: #858585;
     --color-diff-removed: rgb(248 81 73 / 15%);
     --color-diff-added: rgb(46 160 67 / 15%);
+    --fill-accent: var(--color-tertiary);
     --color-paper: #ecddcb;
     --color-paper-offset: var(--color-black);
 }

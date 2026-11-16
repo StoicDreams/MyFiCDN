@@ -141,6 +141,7 @@ The `linkCss` option, which added the whole stylesheet to every instance, is dep
 | `--color-code`, `--color-code-background`, `--color-code-muted` | Code and diff views. |
 | `--color-diff-added`, `--color-diff-removed` | Added and removed lines. |
 | `--color-paper`, `--color-paper-offset` | Writing areas. |
+| `--fill-accent` | A color or gradient for accent text, such as the number in `webui-stat`. Set a gradient here to give accents a stylized look. |
 | `--main-transition`, `--transition-speed` | Animation timing. |
 
 A site changes any of these in its own CSS, on `:root` or on a single element.
