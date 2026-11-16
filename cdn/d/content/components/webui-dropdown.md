@@ -21,7 +21,7 @@
 
 Options open in the dropdown's own list, so every dropdown looks the same in every browser. The list has the same keyboard support as a select: arrow keys, Home, End, Enter or Space to pick, Escape to close, and typing a letter to jump to an option. A hidden `<select>` underneath holds the value and fires `input` and `change`. On touch screens, plain dropdowns use the device's native picker instead.
 
-When options load and the dropdown's value, such as a saved `data-subscribe` value or none at all, is not among them, it shows the first option. A dropdown with `data-trigger` or `data-bind` then fires `change`, so its data holds the option shown, and a page whose user has only one choice still loads what depends on it.
+When options load and the dropdown's value, such as a saved `data-subscribe` value or none at all, is not among them, it shows the first option. A dropdown with `data-trigger` or `data-bind` then fires `change`, so its data holds the option shown, and a page whose user has only one choice still loads what depends on it. It also fires `change` when its value is among the options but one of its `data-trigger` or `data-bind` keys holds something else, such as a page filter cleared on navigation beside a saved `session-` choice, so a revisited page loads for the choice it shows.
 
 By default option text is plain text. Add the `html-options` flag to show options as HTML instead, such as an icon or color swatch beside each name. It uses the list on touch screens too.
 

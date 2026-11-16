@@ -612,9 +612,22 @@
                 t.applyDataChange();
                 t.renderPicked();
             }
-            // The value it was given, such as none at all, is not an option, so the first option shows instead.
-            // Bound data is told, so it matches what is shown. Other listeners only hear picks, not setup.
-            if (fellBack && (t.dataset.trigger || t.dataset.bind)) t.triggerChange();
+            // Bound data is told whenever it doesn't match what is shown, so it matches: when the value it was given,
+            // such as none at all, is not an option and the first option shows instead, or when the value came from
+            // one of its keys, such as a saved choice, while another, such as a filter cleared on every page change,
+            // is empty. Other listeners only hear picks, not setup.
+            if ((t.dataset.trigger || t.dataset.bind) && (fellBack || t.triggerKeysDiffer(value))) t.triggerChange();
+        },
+        // Whether any key in data-trigger or data-bind holds something other than this value. Keys with a
+        // getter (key:getter) write another property, so they aren't compared.
+        triggerKeysDiffer(value) {
+            const t = this;
+            return [t.dataset.trigger, t.dataset.bind].filter(Boolean).join('|').split('|').some(key => {
+                key = key.trim();
+                if (!key || key.indexOf(':') !== -1) return false;
+                const data = webui.getData(key);
+                return data === undefined || data === null || `${data}` !== value;
+            });
         },
         shadowTemplate: `
 <label class="hide">

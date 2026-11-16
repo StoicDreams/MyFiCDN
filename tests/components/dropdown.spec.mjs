@@ -110,6 +110,16 @@ test.describe('data-trigger when options load', () => {
         await expect(el.locator('select')).toHaveValue('b');
         expect(await page.evaluate(() => [webui.getData('dd-trig-keep'), window.__ddChanges])).toEqual(['b', 0]);
     });
+    test('a saved value among the options is written to its other keys that are empty, such as a page filter', async ({ page }) => {
+        // As on a page revisited: the saved choice survives navigation, and the filter, cleared on every page change, is empty.
+        await page.evaluate(() => webui.setData('session-dd-trig-co', '2'));
+        const root = await mount(page, '<webui-dropdown data-subscribe="session-dd-trig-co" data-trigger="session-dd-trig-co|dd-trig-co-filter.companyId"></webui-dropdown>');
+        const el = root.locator('webui-dropdown');
+        await el.evaluate(d => d.setOptions('One|1,Two|2'));
+        await expect(el.locator('select')).toHaveValue('2');
+        await expect.poll(() => page.evaluate(() => webui.getData('dd-trig-co-filter.companyId'))).toBe('2');
+        expect(await page.evaluate(() => webui.getData('session-dd-trig-co'))).toBe('2');
+    });
     test('without data-trigger or data-bind, loading options fires no change', async ({ page }) => {
         const el = await dropdown(page, '');
         await el.evaluate(d => { window.__ddChanges = 0; d.addEventListener('change', () => ++window.__ddChanges); d.setOptions('a,b'); });
