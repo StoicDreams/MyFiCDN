@@ -347,6 +347,11 @@ const webui = (() => {
             Object.keys(cachedSessionData).forEach((key) => {
                 watchedSessionData[key] = cachedSessionData[key];
             });
+            // A theme chosen with webui-theme-selector applies before the page draws, so it never flashes the default.
+            const theme = watchedSessionData["session-theme"];
+            if (typeof theme === "string" && theme) {
+                document.documentElement.dataset.theme = theme;
+            }
         }
         /**
          * Alert system for displaying alerts to user
