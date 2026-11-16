@@ -26,7 +26,7 @@ webui.define('webui-poweredby', {
     connected() {
         const t = this;
         if (!t.version) {
-            t.setAttribute("version", "0.11.91");
+            t.setAttribute("version", "0.11.92");
             webui.setData('webui-version', t.getAttribute('version'));
         }
     },
