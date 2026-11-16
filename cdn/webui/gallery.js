@@ -102,7 +102,9 @@
             t.flexImage.classList.add('pa-2');
             t.flexImage.style.height = 'calc(0.8 * var(--main-height))';
             const fit = 'max-width:100%;max-height:100%;object-fit:contain;';
-            t._img = webui.create('img', { style: fit, alt: '' });
+            // height:auto overrides img:not(:only-child) in webui.css, which sizes images in text to 1em, since
+            // the viewer's image sits beside its video.
+            t._img = webui.create('img', { style: `${fit}height:auto;`, alt: '' });
             t._video = webui.create('video', { style: fit, controls: '', playsinline: '', preload: 'metadata', hidden: '' });
             t.flexImage.appendChild(t._img);
             t.flexImage.appendChild(t._video);
