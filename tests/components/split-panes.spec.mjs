@@ -95,6 +95,25 @@ test('too narrow for both, the end pane covers the start pane, with a full heigh
     await expect(split.locator('.bar')).toBeVisible();
 });
 
+test('single shows one pane at a time at any width, with a button to each', async ({ page }) => {
+    const root = await mount(page, panes('single start-label="My Issues" end-label="Issue"', 1400));
+    const split = root.locator('webui-split-panes');
+    await expect(split).toHaveAttribute('narrow', '');
+    await expect(split.locator('.bar')).toBeHidden();
+    const toStart = split.getByRole('button', { name: 'My Issues' });
+    const toEnd = split.getByRole('button', { name: 'Issue', exact: true });
+    await toStart.click();
+    await expect(split).toHaveAttribute('show', 'start');
+    await expect(split.locator('.end')).toBeHidden();
+    await toEnd.click();
+    await expect(split).toHaveAttribute('show', 'end');
+    // Without single, the panes are side by side again, since there is room.
+    await split.evaluate(el => el.removeAttribute('single'));
+    await expect(split).not.toHaveAttribute('narrow', '');
+    await expect(split.locator('.bar')).toBeVisible();
+    await split.evaluate(el => el.setAttribute('single', ''));
+    await expect(split).toHaveAttribute('narrow', '');
+});
 test('fill keeps the panes inside the visible part of what scrolls them, so only the panes scroll', async ({ page }) => {
     const root = await mount(page, `
 <div id="box" style="width:1000px;height:500px;overflow:auto;padding:10px;box-sizing:border-box;">

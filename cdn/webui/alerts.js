@@ -1,7 +1,7 @@
 /*!
  * Web UI Alerts - https://webui.stoicdreams.com/components#webui-alerts
  * Displays Alert icon and enables webui.alert(message:string|html, variant:string[success|warning|danger|info]) for displaying popup alerts,
- * and webui.addAlert(message, variant, { popup }) which resolves to the alert.
+ * webui.addAlert(message, variant, { popup }) which resolves to the alert, and webui.clearAlerts({ close }) which removes them all.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
  * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
@@ -135,6 +135,21 @@
                         }
                     }, popupTiming);
                     return alert;
+                };
+                // Removes every alert, from the popup and from the list the bell opens. Alerts are removed quietly,
+                // like alert.dismiss(), unless { close: true } is passed, which fires close on each as if the user
+                // closed it, such as to mark notifications read.
+                webui.clearAlerts = (options = {}) => {
+                    const fireClose = options?.close === true;
+                    const cleared = alertList.splice(0, alertList.length);
+                    cleared.forEach(alert => {
+                        const wasOpen = !alert.userclosed;
+                        alert.dismiss();
+                        if (fireClose && wasOpen) {
+                            alert.dispatchEvent(new CustomEvent('close', { bubbles: true }));
+                        }
+                    });
+                    t.setCount(0);
                 };
                 webui.alert = async (message, variant) => {
                     await webui.addAlert(message, variant);

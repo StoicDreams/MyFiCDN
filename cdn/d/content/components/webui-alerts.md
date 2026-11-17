@@ -50,6 +50,22 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+## Adding and Clearing Alerts from JavaScript
+
+<webui-page-segment elevation="10">
+    - `webui.alert(message, variant)` : Shows a popup alert and adds it to the list the bell opens.
+    - `webui.addAlert(message, variant, { popup })` : Same, but resolves to the alert, which fires `close` when the user closes it. Pass `{ popup: false }` to only add it to the list.
+    - `webui.clearAlerts()` : Removes every alert, from the popup and from the list, and resets the bell's count. Alerts are removed quietly, without a `close` event.
+    - `webui.clearAlerts({ close: true })` : Same, but fires `close` on each alert as if the user closed it, such as to mark notifications read.
+</webui-page-segment>
+
+```javascript:Code Snippet
+// Clear everything, such as when the user signs out.
+webui.clearAlerts();
+// Clear everything and let each alert's owner know it was closed, such as to mark notifications read.
+webui.clearAlerts({ close: true });
+```
+
 ## Full context sample
 
 ```html:index.html

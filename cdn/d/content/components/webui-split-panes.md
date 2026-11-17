@@ -5,6 +5,8 @@
 
     `min` is the narrowest each pane can be, in pixels, and is 400 by default. When there is not room for both panes at that width, the component gets the `narrow` attribute and the end pane covers the start pane, as a drawer does. A full height button down its left side, labeled with `start-label`, goes back to the start pane, and a full height button down the right side of the start pane, labeled with `end-label`, brings the end pane back. `show` says which pane is seen while narrow, `start` or `end`, and changing it sends a `show` event.
 
+    With the `single` flag, the component is `narrow` at any width, so one pane shows at a time with the buttons to switch between them, as when a user prefers one pane at a time. Remove it to show the panes side by side again when there is room.
+
     With the `fill` flag, the panes are as tall as the visible part of whatever scrolls them, below where they start, and follow it as it is resized. Without it, give the component a height.
 </webui-page-segment>
 

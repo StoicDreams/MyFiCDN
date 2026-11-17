@@ -26,7 +26,7 @@
     webui.define('webui-split-panes', {
         preload: 'icon',
         attr: ['ratio', 'min', 'show', 'start-label', 'end-label'],
-        flags: ['fill'],
+        flags: ['fill', 'single'],
         constructor() {
             const t = this;
             t._bar = t.template.querySelector('.bar');
@@ -56,6 +56,9 @@
                     break;
                 case 'fill':
                     t.watchFill();
+                    break;
+                case 'single':
+                    t.checkNarrow();
                     break;
             }
         },
@@ -151,10 +154,13 @@
                 ev.preventDefault();
             });
         },
-        /** Too narrow for both panes at their minimum, the end pane covers the start pane, and show says which is seen. */
+        /**
+         * Too narrow for both panes at their minimum, or with single at any width, the end pane covers the start pane,
+         * and show says which is seen.
+         */
         checkNarrow() {
             const t = this;
-            const narrow = t.clientWidth > 0 && t.clientWidth < t.minWidth() * 2 + BAR;
+            const narrow = t.hasAttribute('single') || (t.clientWidth > 0 && t.clientWidth < t.minWidth() * 2 + BAR);
             if (narrow !== t.hasAttribute('narrow')) t.toggleAttribute('narrow', narrow);
             t.applyRatio();
         },

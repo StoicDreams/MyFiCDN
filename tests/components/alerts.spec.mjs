@@ -75,3 +75,41 @@ test('popup false adds an alert to the list without a popup, and dismiss removes
     await expect(root.locator('webui-alerts webui-icon')).toHaveAttribute('count', '');
     expect(await page.evaluate(() => window.__closedQuietly)).toBeUndefined();
 });
+test('webui.clearAlerts removes every alert from the popup and the list', async ({ page }) => {
+    const root = await mount(page, '<webui-dialogs></webui-dialogs><webui-alerts></webui-alerts>');
+    await page.evaluate(async () => {
+        await webui.alert('First', 'info');
+        await webui.alert('Second', 'warning');
+        await webui.addAlert('Third', 'info', { popup: false });
+        window.__closed = 0;
+        document.addEventListener('close', () => window.__closed++);
+    });
+    await expect(root.locator('webui-alerts webui-icon')).toHaveAttribute('count', '3');
+    await page.evaluate(() => webui.clearAlerts());
+    await expect(popup(page).locator('webui-alert')).toHaveCount(0);
+    await expect(root.locator('webui-alerts webui-icon')).toHaveAttribute('count', '');
+    // Cleared quietly by default, so nothing is marked as closed by the user.
+    expect(await page.evaluate(() => window.__closed)).toBe(0);
+    await root.locator('webui-alerts').click();
+    await expect(root.locator('webui-dialogs form')).toContainText('You have no alerts at this time.');
+});
+test('webui.clearAlerts with close true fires close on each alert', async ({ page }) => {
+    await ready(page);
+    await page.evaluate(async () => {
+        window.__closed = [];
+        for (const text of ['One', 'Two']) {
+            const alert = await webui.addAlert(text, 'info');
+            alert.addEventListener('close', () => window.__closed.push(text));
+        }
+        webui.clearAlerts({ close: true });
+    });
+    expect(await page.evaluate(() => window.__closed)).toEqual(['One', 'Two']);
+    await expect(popup(page).locator('webui-alert')).toHaveCount(0);
+});
+test('alerts added after webui.clearAlerts show again', async ({ page }) => {
+    const root = await ready(page);
+    await page.evaluate(async () => { await webui.alert('Again', 'info'); webui.clearAlerts(); await webui.alert('Again', 'info'); });
+    await expect(popup(page).locator('webui-alert')).toHaveText('Again');
+    await expect(popup(page).locator('.counter')).toHaveCount(0);
+    await expect(root.locator('webui-alerts webui-icon')).toHaveAttribute('count', '1');
+});
