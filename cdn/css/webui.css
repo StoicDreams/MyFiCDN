@@ -166,7 +166,15 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-*:not(:defined) {
+/*
+ * Web UI components stay hidden until they are defined, so they never show unstyled.
+ * Only the app and what is in it, not the whole page, because browser extensions such as password managers
+ * add their own undefined elements to the page, and hiding those leaves an invisible box over the page.
+ */
+webui-app:not(:defined),
+webui-app :not(:defined),
+webui-dialogs:not(:defined),
+webui-dialogs :not(:defined) {
     opacity: 0;
 }
 
