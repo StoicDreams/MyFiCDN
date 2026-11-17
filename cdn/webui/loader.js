@@ -3872,6 +3872,16 @@ function setupWebuiTooltips() {
             CloseIfOpen();
         }
     }
+    const regionRoles = new Set(["navigation", "main", "banner", "contentinfo", "complementary", "region", "search", "form", "group", "dialog", "alertdialog", "list", "menu", "menubar", "toolbar", "tablist", "radiogroup", "tree", "grid", "table", "application", "document", "article", "feed"]);
+    const regionTags = new Set(["NAV", "MAIN", "ASIDE", "HEADER", "FOOTER", "SECTION", "FORM", "DIALOG", "FIELDSET", "UL", "OL", "TABLE", "ARTICLE"]);
+    // Elements given a title, which asks for a tooltip, even on a region.
+    const titled = new WeakSet();
+    /** An element whose aria-label names a region of the page rather than a control. */
+    function isRegionLabel(el) {
+        if (titled.has(el)) return false;
+        const role = el.getAttribute("role");
+        return role ? regionRoles.has(role) : regionTags.has(el.tagName);
+    }
     function CheckContainersForAriaLabel(target) {
         while (target && target !== target.parentNode) {
             if (!target.getAttribute) {
@@ -3882,11 +3892,16 @@ function setupWebuiTooltips() {
             if (title && title != "null") {
                 target.setAttribute("aria-label", title);
                 target.removeAttribute("title");
+                titled.add(target);
+                return [target, title];
             } else if (title === "null") {
                 target.removeAttribute("title");
             }
             let ariaLabel = target.getAttribute("aria-label");
             if (ariaLabel) {
+                // A landmark or group label names a whole region for screen readers, such as the nav's "Site menu".
+                // Showing it for everything inside would flicker on and off between that region's own labels.
+                if (isRegionLabel(target)) return [null, null];
                 return [target, ariaLabel];
             }
             target = target.parentNode || target.host;

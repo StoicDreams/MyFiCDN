@@ -156,6 +156,29 @@ test('tooltips show aria-labels and titles on hover', async ({ page }) => {
     // The button already has the label, so screen readers do not also hear the tooltip.
     await expect(page.locator('body > .tooltip')).toHaveAttribute('aria-hidden', 'true');
 });
+test('a landmark label such as the nav\'s Site menu is not shown as a tooltip, but a title on a region is', async ({ page }) => {
+    const root = await mount(page, `<div role="navigation" aria-label="Site menu" style="position:fixed;top:200px;left:200px;width:300px;padding:20px;z-index:9999">
+<a id="text" href="#a" aria-label="Home">Home</a><br><br><a id="icon" href="#b" aria-label="Settings">⚙</a></div>
+<section id="titled" title="Region help" style="position:fixed;top:500px;left:200px;width:200px;height:40px">Region</section>`);
+    const tooltip = page.locator('body > .tooltip');
+    // Moving between the links and the space around them, as a mouse does over the nav.
+    for (const [x, y] of [[210, 210], [400, 230], [210, 210]]) {
+        await page.mouse.move(x, y);
+        await page.waitForTimeout(50);
+        await expect(tooltip).not.toHaveText('Site menu');
+    }
+    await root.locator('#text').hover();
+    await expect(tooltip).toHaveClass(/closed/);
+    await root.locator('#icon').hover();
+    await expect(tooltip).toHaveText('Settings');
+    await page.mouse.move(450, 300);
+    await expect(tooltip).toHaveClass(/closed/);
+    await root.locator('#titled').hover({ position: { x: 150, y: 20 } });
+    await expect(tooltip).toHaveText('Region help');
+    await page.mouse.move(5, 5);
+    await root.locator('#titled').hover({ position: { x: 160, y: 25 } });
+    await expect(tooltip).toHaveText('Region help');
+});
 test('a tooltip never blocks clicks, and closes when its element is hidden under a still pointer', async ({ page }) => {
     const root = await mount(page, '<button id="hide" title="Hides itself" style="position:fixed;top:300px;left:300px;z-index:9999">x</button><button id="below" style="position:fixed;top:250px;left:250px;width:200px;height:60px">Below</button>');
     await root.locator('#hide').hover();
