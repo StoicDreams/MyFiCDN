@@ -16,6 +16,27 @@ test('empty headings take no space and are skipped', async ({ page }) => {
     await expect(root.locator('#full')).toBeVisible();
 });
 
+test('the header is a darker blend of the title color, and a site can change the blend', async ({ page }) => {
+    const root = await mount(page, '<header id="plain">Title</header><div id="title" style="background-color:var(--color-title)"></div><header id="site" style="--color-header:var(--color-title)">Site</header>');
+    const bg = id => root.locator(id).evaluate(el => getComputedStyle(el).backgroundColor);
+    const title = await bg('#title');
+    expect(await bg('#plain')).not.toBe(title);
+    expect(await bg('#site')).toBe(title);
+});
+
+test('page headings are text without a color bar, unless they have a theme', async ({ page }) => {
+    const root = await mount(page, '<webui-content slot="x" nest><h2 id="plain">Plain</h2><h2 id="themed" theme="primary">Themed</h2></webui-content>');
+    const bg = id => root.locator(id).evaluate(el => getComputedStyle(el).backgroundColor);
+    await expect.poll(() => bg('#plain')).toBe('rgba(0, 0, 0, 0)');
+    await expect.poll(() => bg('#themed')).not.toBe('rgba(0, 0, 0, 0)');
+});
+
+test('text fields are styled as fields', async ({ page }) => {
+    const root = await mount(page, '<input id="field" type="text">');
+    const style = await root.locator('#field').evaluate(el => [getComputedStyle(el).borderTopStyle, getComputedStyle(el).borderTopLeftRadius]);
+    expect(style).toEqual(['solid', '4px']);
+});
+
 test('every CSS variable a component uses without a fallback is defined', async () => {
     const { readFileSync, readdirSync } = await import('node:fs');
     const dir = new URL('../../cdn/webui/', import.meta.url);

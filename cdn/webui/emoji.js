@@ -7,7 +7,7 @@
  */
 "use strict"
 {
-    const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json' : 'https://cdn.myfi.ws/i/emojis.json';
+    const emojiSource = `${webui.cdnRoot}i/emojis.json`;
     let emojiMap = {};
     let isLoaded = false;
     let loading = null;

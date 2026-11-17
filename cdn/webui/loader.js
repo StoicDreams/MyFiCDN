@@ -7,11 +7,17 @@
  */
 "use strict";
 const webui = (() => {
+    // Framework files load from wherever this loader came from, so a page that loads the loader from a local
+    // MyFiCDN server (http://localhost:3180) gets its components, styles, and data from there too.
+    const cdnRoot = (() => {
+        try {
+            const src = document.currentScript && document.currentScript.src;
+            if (src) return new URL("../", src).href;
+        } catch (_) { }
+        return "https://cdn.myfi.ws/";
+    })();
     {
-        const markdownSrc =
-            location.port === "3180"
-                ? "/js/mdparse.min.js"
-                : "https://cdn.myfi.ws/js/mdparse.min.js";
+        const markdownSrc = `${cdnRoot}js/mdparse.min.js`;
         import(markdownSrc).then((module) => {
             webui.markdown = new module.MarkdownParser();
             webui.loaded = true;
@@ -294,6 +300,15 @@ const webui = (() => {
          * webui.appSrc = '/custom-components';
          */
         appSrc = "/wc";
+        /**
+         * Root url of the Web UI framework files, taken from where the loader was loaded.
+         * Read it to load other framework files from the same place, such as the local MyFiCDN server in development.
+         *
+         * @returns {string} 'https://cdn.myfi.ws/'
+         * @example
+         * fetch(`${webui.cdnRoot}roles.json`);
+         */
+        cdnRoot = cdnRoot;
         /**
          * Postfix for web components.
          * Set this to '' if you want non-minified versions of web components.
@@ -618,7 +633,7 @@ const webui = (() => {
                     // Deprecated: style shadow DOM with the variables in webui.css, which inherit into it,
                     // and put content that needs page styles in a slot. Kept so older components still work.
                     webui.log.warn(`${name}: linkCss is deprecated. Style the shadow DOM with Web UI CSS variables, and slot content that needs page styles.`);
-                    shadowTemplate.innerHTML = `<link rel="stylesheet" href="https://cdn.myfi.ws/css/webui.min.css">${options.shadowTemplate}`;
+                    shadowTemplate.innerHTML = `<link rel="stylesheet" href="${cdnRoot}css/webui.min.css">${options.shadowTemplate}`;
                 } else {
                     shadowTemplate.innerHTML = options.shadowTemplate;
                 }
@@ -2594,7 +2609,7 @@ const webui = (() => {
     }
     const webui = new WebUI();
     webui
-        .fetchWithCache("https://cdn.myfi.ws/roles.json", true)
+        .fetchWithCache(`${cdnRoot}roles.json`, true)
         .then((r) => {
             Object.assign(roles, r);
             Object.freeze(roles);
@@ -3436,7 +3451,7 @@ const webui = (() => {
     // Component Watcher
     const appPrefix = `APP-`;
     const wuiPrefix = `WEBUI-`;
-    const wcRoot = location.port === "3180" ? "" : "https://cdn.myfi.ws/";
+    const wcRoot = cdnRoot;
     const wcMin = ".min";
     const MAX_COMPONENT_LOAD_ATTEMPTS = 3;
     const componentLoads = new Map();

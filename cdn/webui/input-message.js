@@ -134,7 +134,8 @@
     display: block;
     position: relative;
     box-sizing: border-box;
-    border: var(--theme-border-width) solid var(--theme-color);
+    border: var(--theme-border-width, 1px) solid var(--theme-color);
+    border-radius: var(--corners, 0);
     background-color: var(--color-paper, #ecddcb);
     color: var(--color-paper-offset, black);
     cursor: text;
@@ -142,8 +143,9 @@
 }
 label {
     display: block;
-    padding: var(--padding);
+    padding: calc(0.5 * var(--padding)) var(--padding);
     margin: 0;
+    font-size: var(--font-size-label, 0.9em);
     background-color: var(--theme-color);
     color: var(--theme-color-offset);
 }

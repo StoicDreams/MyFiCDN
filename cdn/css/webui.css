@@ -47,14 +47,15 @@
     --color-theme-offset: var(--color-background-offset);
 
     --box-shadow-blur: 2px;
-    --link-shadow: 0 0 5px #00C9FF;
+    --link-shadow: 0 0 0 transparent;
     --main-transition: 300ms;
     --readability-line-limit: 66ch;
     --backdrop-blur: blur(4px);
     --transition-speed: 180ms;
-    --corners: 3px;
-    --padding: 5px;
-    --button-padding: calc(1 * var(--padding)) calc(2 * var(--padding));
+    --corners: 8px;
+    --corners-small: 4px;
+    --padding: 8px;
+    --button-padding: calc(0.75 * var(--padding)) calc(1.75 * var(--padding));
     --nav-transition-in: 300ms;
     --nav-transition-out: 300ms;
     --window-width: 900px;
@@ -64,56 +65,56 @@
     --header-height: 0px;
     --footer-height: 0px;
     --elevation-0: none;
-    --elevation-1: 0px 0px 1px 1px rgba(0, 0, 0, 0.2);
-    --elevation-2: 0px 0px 1px 2px rgba(0, 0, 0, 0.2);
-    --elevation-3: 0px 0px 2px 2px rgba(0, 0, 0, 0.2), ;
-    --elevation-4: 0px 0px 2px 3px rgba(0, 0, 0, 0.2);
-    --elevation-5: 0px 0px 3px 3px rgba(0, 0, 0, 0.2);
-    --elevation-6: 0px 0px 3px 4px rgba(0, 0, 0, 0.2);
-    --elevation-7: 0px 0px 4px 4px rgba(0, 0, 0, 0.2);
-    --elevation-8: 0px 0px 4px 5px rgba(0, 0, 0, 0.2);
-    --elevation-9: 0px 0px 5px 5px rgba(0, 0, 0, 0.2);
-    --elevation-10: 0px 0px 5px 6px rgba(0, 0, 0, 0.2);
-    --elevation-11: 0px 0px 6px 6px rgba(0, 0, 0, 0.2);
-    --elevation-12: 0px 0px 6px 7px rgba(0, 0, 0, 0.2);
-    --elevation-13: 0px 0px 7px 7px rgba(0, 0, 0, 0.2);
-    --elevation-14: 0px 0px 7px 8px rgba(0, 0, 0, 0.2);
-    --elevation-15: 0px 0px 8px 8px rgba(0, 0, 0, 0.2);
-    --elevation-16: 0px 0px 8px 9px rgba(0, 0, 0, 0.2);
-    --elevation-17: 0px 0px 9px 9px rgba(0, 0, 0, 0.2);
-    --elevation-18: 0px 0px 9px 10px rgba(0, 0, 0, 0.2);
-    --elevation-19: 0px 0px 10px 10px rgba(0, 0, 0, 0.2);
-    --elevation-20: 0px 0px 10px 11px rgba(0, 0, 0, 0.2);
-    --elevation-21: 0px 0px 11px 11px rgba(0, 0, 0, 0.2);
-    --elevation-22: 0px 0px 11px 12px rgba(0, 0, 0, 0.2);
-    --elevation-23: 0px 0px 12px 12px rgba(0, 0, 0, 0.2);
-    --elevation-24: 0px 0px 12px 13px rgba(0, 0, 0, 0.2);
-    --elevation-25: 0px 0px 13px 13px rgba(0, 0, 0, 0.2);
-    --elevation-n1: inset 0px 0px 1px 1px rgba(0, 0, 0, 0.2);
-    --elevation-n2: inset 0px 0px 1px 2px rgba(0, 0, 0, 0.2);
-    --elevation-n3: inset 0px 0px 2px 2px rgba(0, 0, 0, 0.2), ;
-    --elevation-n4: inset 0px 0px 2px 3px rgba(0, 0, 0, 0.2);
-    --elevation-n5: inset 0px 0px 3px 3px rgba(0, 0, 0, 0.2);
-    --elevation-n6: inset 0px 0px 3px 4px rgba(0, 0, 0, 0.2);
-    --elevation-n7: inset 0px 0px 4px 4px rgba(0, 0, 0, 0.2);
-    --elevation-n8: inset 0px 0px 4px 5px rgba(0, 0, 0, 0.2);
-    --elevation-n9: inset 0px 0px 5px 5px rgba(0, 0, 0, 0.2);
-    --elevation-n10: inset 0px 0px 5px 6px rgba(0, 0, 0, 0.2);
-    --elevation-n11: inset 0px 0px 6px 6px rgba(0, 0, 0, 0.2);
-    --elevation-n12: inset 0px 0px 6px 7px rgba(0, 0, 0, 0.2);
-    --elevation-n13: inset 0px 0px 7px 7px rgba(0, 0, 0, 0.2);
-    --elevation-n14: inset 0px 0px 7px 8px rgba(0, 0, 0, 0.2);
-    --elevation-n15: inset 0px 0px 8px 8px rgba(0, 0, 0, 0.2);
-    --elevation-n16: inset 0px 0px 8px 9px rgba(0, 0, 0, 0.2);
-    --elevation-n17: inset 0px 0px 9px 9px rgba(0, 0, 0, 0.2);
-    --elevation-n18: inset 0px 0px 9px 10px rgba(0, 0, 0, 0.2);
-    --elevation-n19: inset 0px 0px 10px 10px rgba(0, 0, 0, 0.2);
-    --elevation-n20: inset 0px 0px 10px 11px rgba(0, 0, 0, 0.2);
-    --elevation-n21: inset 0px 0px 11px 11px rgba(0, 0, 0, 0.2);
-    --elevation-n22: inset 0px 0px 11px 12px rgba(0, 0, 0, 0.2);
-    --elevation-n23: inset 0px 0px 12px 12px rgba(0, 0, 0, 0.2);
-    --elevation-n24: inset 0px 0px 12px 13px rgba(0, 0, 0, 0.2);
-    --elevation-n25: inset 0px 0px 13px 13px rgba(0, 0, 0, 0.2);
+    --elevation-1: 0 1px 2px rgb(0 0 0 / 19%);
+    --elevation-2: 0 1px 4px rgb(0 0 0 / 20%);
+    --elevation-3: 0 2px 6px rgb(0 0 0 / 21%);
+    --elevation-4: 0 2px 8px rgb(0 0 0 / 22%);
+    --elevation-5: 0 2px 10px rgb(0 0 0 / 23%);
+    --elevation-6: 0 3px 12px rgb(0 0 0 / 24%);
+    --elevation-7: 0 4px 14px rgb(0 0 0 / 25%);
+    --elevation-8: 0 4px 16px rgb(0 0 0 / 26%);
+    --elevation-9: 0 4px 18px rgb(0 0 0 / 27%);
+    --elevation-10: 0 5px 20px rgb(0 0 0 / 28%);
+    --elevation-11: 0 6px 22px rgb(0 0 0 / 29%);
+    --elevation-12: 0 6px 24px rgb(0 0 0 / 30%);
+    --elevation-13: 0 6px 26px rgb(0 0 0 / 31%);
+    --elevation-14: 0 7px 28px rgb(0 0 0 / 32%);
+    --elevation-15: 0 8px 30px rgb(0 0 0 / 33%);
+    --elevation-16: 0 8px 32px rgb(0 0 0 / 34%);
+    --elevation-17: 0 8px 34px rgb(0 0 0 / 35%);
+    --elevation-18: 0 9px 36px rgb(0 0 0 / 36%);
+    --elevation-19: 0 10px 38px rgb(0 0 0 / 37%);
+    --elevation-20: 0 10px 40px rgb(0 0 0 / 38%);
+    --elevation-21: 0 10px 42px rgb(0 0 0 / 39%);
+    --elevation-22: 0 11px 44px rgb(0 0 0 / 40%);
+    --elevation-23: 0 12px 46px rgb(0 0 0 / 40%);
+    --elevation-24: 0 12px 48px rgb(0 0 0 / 40%);
+    --elevation-25: 0 12px 50px rgb(0 0 0 / 40%);
+    --elevation-n1: inset 0 1px 2px rgb(0 0 0 / 19%);
+    --elevation-n2: inset 0 1px 4px rgb(0 0 0 / 20%);
+    --elevation-n3: inset 0 2px 6px rgb(0 0 0 / 21%);
+    --elevation-n4: inset 0 2px 8px rgb(0 0 0 / 22%);
+    --elevation-n5: inset 0 2px 10px rgb(0 0 0 / 23%);
+    --elevation-n6: inset 0 3px 12px rgb(0 0 0 / 24%);
+    --elevation-n7: inset 0 4px 14px rgb(0 0 0 / 25%);
+    --elevation-n8: inset 0 4px 16px rgb(0 0 0 / 26%);
+    --elevation-n9: inset 0 4px 18px rgb(0 0 0 / 27%);
+    --elevation-n10: inset 0 5px 20px rgb(0 0 0 / 28%);
+    --elevation-n11: inset 0 6px 22px rgb(0 0 0 / 29%);
+    --elevation-n12: inset 0 6px 24px rgb(0 0 0 / 30%);
+    --elevation-n13: inset 0 6px 26px rgb(0 0 0 / 31%);
+    --elevation-n14: inset 0 7px 28px rgb(0 0 0 / 32%);
+    --elevation-n15: inset 0 8px 30px rgb(0 0 0 / 33%);
+    --elevation-n16: inset 0 8px 32px rgb(0 0 0 / 34%);
+    --elevation-n17: inset 0 8px 34px rgb(0 0 0 / 35%);
+    --elevation-n18: inset 0 9px 36px rgb(0 0 0 / 36%);
+    --elevation-n19: inset 0 10px 38px rgb(0 0 0 / 37%);
+    --elevation-n20: inset 0 10px 40px rgb(0 0 0 / 38%);
+    --elevation-n21: inset 0 10px 42px rgb(0 0 0 / 39%);
+    --elevation-n22: inset 0 11px 44px rgb(0 0 0 / 40%);
+    --elevation-n23: inset 0 12px 46px rgb(0 0 0 / 40%);
+    --elevation-n24: inset 0 12px 48px rgb(0 0 0 / 40%);
+    --elevation-n25: inset 0 12px 50px rgb(0 0 0 / 40%);
     --drawer-width-left: 240px;
     --drawer-width-right: 240px;
     --drawer-width-mini-left: 56px;
@@ -123,7 +124,7 @@
     --typography-family: system-ui, 'Roboto', 'Helvetica', Arial, sans-serif;
     --typography-size: 16px;
     --typography-weight: 400;
-    --typography-lineheight: 1.33;
+    --typography-lineheight: 1.5;
     --typography-letterspacing: normal;
     --theme-color: var(--color-background);
     --theme-color-offset: var(--color-background-offset);
@@ -159,6 +160,33 @@
     --fill-accent: var(--color-tertiary);
     --color-paper: #ecddcb;
     --color-paper-offset: var(--color-black);
+
+    /*
+     * Surfaces and lines.
+     * Derived from the site's background and text colors, so they suit light and dark sites without being set.
+     * A surface is a panel a shade off the page, such as a card, table header, or code block.
+     * A field is where visitors type, a shade the other way, so it reads as a place to type.
+     */
+    --color-surface: color-mix(in srgb, var(--color-background) 93%, var(--color-background-offset));
+    --color-surface-offset: var(--color-background-offset);
+    --color-surface-raised: color-mix(in srgb, var(--color-background) 87%, var(--color-background-offset));
+    --color-field: color-mix(in srgb, var(--color-background) 82%, var(--color-black));
+    --color-field-offset: var(--color-background-offset);
+    --color-line: color-mix(in srgb, var(--color-background-offset) 14%, transparent);
+    --color-line-strong: color-mix(in srgb, var(--color-background-offset) 28%, transparent);
+    --color-muted: color-mix(in srgb, var(--color-background-offset) 68%, var(--color-background));
+    --color-link: color-mix(in srgb, var(--color-info) 55%, var(--color-background-offset));
+    --color-heading: color-mix(in srgb, var(--color-title) 72%, var(--color-background-offset));
+    --color-hover: color-mix(in srgb, currentColor 10%, transparent);
+    /*
+     * The page header is a blend of the title color, a little darker so the title reads as a heading over the page.
+     * A site keeps its title color and sets this to blend more or less, such as
+     * color-mix(in srgb, var(--color-title) 35%, var(--color-background)) for a header close to the page.
+     */
+    --color-header: color-mix(in srgb, var(--color-title) 78%, var(--color-black));
+    --color-header-offset: var(--color-title-offset);
+    --shadow-raised: 0 1px 2px rgb(0 0 0 / 20%), 0 2px 8px rgb(0 0 0 / 16%);
+    --transition-fast: 150ms ease-out;
 }
 
 * {
@@ -322,9 +350,9 @@ header {
     flex-wrap: wrap;
     align-items: center;
     gap: var(--padding);
-    background-color: var(--color-title);
-    color: var(--color-title-offset);
-    box-shadow: 0px 4px 12px 1px rgba(0, 0, 0, 0.4);
+    background-color: var(--color-header);
+    color: var(--color-header-offset);
+    box-shadow: 0 1px 0 rgb(0 0 0 / 20%), 0 2px 10px rgb(0 0 0 / 22%);
 }
 
 webui-stoic-social-links {
@@ -366,7 +394,7 @@ footer::before {
 footer:not([slot="content-footer"]) {
     background-color: var(--color-footer);
     color: var(--color-footer-offset);
-    box-shadow: 0px 4px 12px 1px inset rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 1px 0 var(--color-line);
     --theme-color: var(--color-footer);
     --theme-color-offset: var(--color-footer-offset);
 }
@@ -503,61 +531,38 @@ h5,
 h6 {
     display: flex;
     flex-wrap: nowrap;
-    font-size: calc(var(--typography-size) * 1.75);
+    align-items: center;
+    font-weight: 700;
+    line-height: 1.25;
     margin: 0;
-    padding: var(--padding);
-    border-radius: var(--corners) var(--corners) 0 0;
+    padding: 0;
     gap: 0.6ch;
     background-color: transparent;
     color: inherit;
 }
 
-webui-app>h1:not([theme]),
-webui-content>h1:not([theme]),
-.readable-content>h1:not([theme]),
-.content>h1:not([theme]) {
-    --theme-color: var(--color-title);
-    --theme-color-offset: var(--color-title-offset);
+h1 {
+    font-size: 2em;
 }
 
-webui-app>h2:not([theme]),
-webui-content>h2:not([theme]),
-.readable-content>h2:not([theme]),
-.content>h2:not([theme]) {
-    --theme-color: var(--color-primary);
-    --theme-color-offset: var(--color-primary-offset);
+h2 {
+    font-size: 1.6em;
 }
 
-webui-app>h3:not([theme]),
-webui-content>h3:not([theme]),
-.readable-content>h3:not([theme]),
-.content>h3:not([theme]) {
-    --theme-color: var(--color-secondary);
-    --theme-color-offset: var(--color-secondary-offset);
+h3 {
+    font-size: 1.3em;
 }
 
-webui-app>h4:not([theme]),
-webui-content>h4:not([theme]),
-.readable-content>h4:not([theme]),
-.content>h4:not([theme]) {
-    --theme-color: var(--color-tertiary);
-    --theme-color-offset: var(--color-tertiary-offset);
+h4 {
+    font-size: 1.15em;
 }
 
-webui-app>h5:not([theme]),
-webui-content>h5:not([theme]),
-.readable-content>h5:not([theme]),
-.content>h5:not([theme]) {
-    --theme-color: var(--color-info);
-    --theme-color-offset: var(--color-info-offset);
+h5 {
+    font-size: 1.05em;
 }
 
-webui-app>h6:not([theme]),
-webui-content>h6:not([theme]),
-.readable-content>h6:not([theme]),
-.content>h6:not([theme]) {
-    --theme-color: var(--color-success);
-    --theme-color-offset: var(--color-success-offset);
+h6 {
+    font-size: 1em;
 }
 
 header[slot="header"] h1,
@@ -575,122 +580,39 @@ header[slot="header"] h1:has(~h2:not(:empty)):after {
     content: ":";
 }
 
-p+h1,
-p+h2,
-p+h3,
-p+h4,
-p+h5,
-p+h6 {
+/*
+ * Page headings are text in the site's title color, with a thin rule under top level sections,
+ * so content leads instead of full width color bars. A heading with a theme attribute keeps a color bar.
+ */
+:where(webui-app, webui-content, .readable-content, .content)>:is(h1, h2, h3, h4, h5, h6) {
+    margin: 1.5em 0 0.5em;
+    color: var(--color-heading);
+    letter-spacing: -0.01em;
+}
+
+:where(webui-app, webui-content, .readable-content, .content)>:is(h1, h2, h3, h4, h5, h6):first-child {
     margin-top: var(--padding);
 }
 
-.content>h1,
-.content>h2,
-.content>h3,
-.content>h4,
-.content>h5,
-.content>h6,
-.readable-content>h1,
-.readable-content>h2,
-.readable-content>h3,
-.readable-content>h4,
-.readable-content>h5,
-.readable-content>h6,
-webui-app>h1,
-webui-app>h2,
-webui-app>h3,
-webui-app>h4,
-webui-app>h5,
-webui-app>h6,
-webui-content>h1,
-webui-content>h2,
-webui-content>h3,
-webui-content>h4,
-webui-content>h5,
-webui-content>h6,
-main h1,
-main h2,
-main h3,
-main h4,
-main h5,
-main h6 {
-    box-shadow: 0px 4px 12px 1px rgba(0, 0, 0, 0.4);
+:where(webui-app, webui-content, .readable-content, .content)>h2 {
+    padding-bottom: 0.25em;
+    border-bottom: 1px solid var(--color-line-strong);
 }
 
-.content>h1,
-.content>h2,
-.content>h3,
-.content>h4,
-.content>h5,
-.content>h6,
-.readable-content>h1,
-.readable-content>h2,
-.readable-content>h3,
-.readable-content>h4,
-.readable-content>h5,
-.readable-content>h6,
-webui-app>h1,
-webui-app>h2,
-webui-app>h3,
-webui-app>h4,
-webui-app>h5,
-webui-app>h6,
-webui-content>h1,
-webui-content>h2,
-webui-content>h3,
-webui-content>h4,
-webui-content>h5,
-webui-content>h6 {
-    padding: var(--padding);
-    font-size: calc(var(--typography-size) * 1.75);
+:where(webui-app, webui-content, .readable-content, .content)>:is(h4, h5, h6) {
+    color: inherit;
 }
 
-.content>h1,
-.readable-content>h1,
-webui-app>h1,
-webui-content>h1 {
-    background-color: var(--color-title);
-    color: var(--color-title-offset);
+:where(webui-app, webui-content, .readable-content, .content)>h6 {
+    color: var(--color-muted);
 }
 
-.content>h2,
-.readable-content>h2,
-webui-app>h2,
-webui-content>h2 {
-    background-color: var(--color-primary);
-    color: var(--color-primary-offset);
-}
-
-.content>h3,
-.readable-content>h3,
-webui-app>h3,
-webui-content>h3 {
-    background-color: var(--color-secondary);
-    color: var(--color-secondary-offset);
-}
-
-.content>h4,
-.readable-content>h4,
-webui-app>h4,
-webui-content>h4 {
-    background-color: var(--color-tertiary);
-    color: var(--color-tertiary-offset);
-}
-
-.content>h5,
-.readable-content>h5,
-webui-app>h5,
-webui-content>h5 {
-    background-color: var(--color-info);
-    color: var(--color-info-offset);
-}
-
-.content>h6,
-.readable-content>h6,
-webui-app>h6,
-webui-content>h6 {
-    background-color: var(--color-action);
-    color: var(--color-action-offset);
+:where(webui-app, webui-content, .readable-content, .content)>:is(h1, h2, h3, h4, h5, h6)[theme] {
+    background-color: var(--theme-color);
+    color: var(--theme-color-offset);
+    padding: calc(0.75 * var(--padding)) calc(1.5 * var(--padding));
+    border-radius: var(--corners);
+    border-bottom: none;
 }
 
 a {
@@ -707,6 +629,23 @@ a:visited,
 a:focus,
 a:active {
     color: inherit;
+}
+
+/* Links in running text take the link color, so they stand out from the words around them. */
+:is(p, li, td, dd, blockquote, figcaption)>a:is(:link, :visited):not(.btn, [class*="theme-"]) {
+    color: var(--color-link);
+}
+
+a[href],
+a[data-click] {
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 1px;
+    transition: color var(--transition-fast), text-decoration-thickness var(--transition-fast);
+}
+
+a[href]:hover,
+a[data-click]:hover {
+    text-decoration-thickness: 2px;
 }
 
 p {
@@ -815,6 +754,39 @@ textarea {
     height: 100%;
 }
 
+/* Fields: a shade off the page, a thin border, and the info color around the one being typed in. */
+input:is(:not([type]), [type=text], [type=password], [type=email], [type=search], [type=url], [type=tel], [type=number], [type=date], [type=datetime-local], [type=time], [type=month], [type=week]),
+textarea,
+select {
+    font: inherit;
+    background-color: var(--color-field);
+    color: var(--color-field-offset);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--corners-small);
+    padding: calc(0.5 * var(--padding)) var(--padding);
+    transition: border-color var(--transition-fast);
+}
+
+input:is(:not([type]), [type=text], [type=password], [type=email], [type=search], [type=url], [type=tel], [type=number], [type=date], [type=datetime-local], [type=time], [type=month], [type=week]):focus,
+textarea:focus,
+select:focus {
+    border-color: var(--color-info);
+    outline: 2px solid color-mix(in srgb, var(--color-info) 55%, transparent);
+    outline-offset: 1px;
+}
+
+::placeholder {
+    color: var(--color-muted);
+    opacity: 1;
+}
+
+input[type=checkbox],
+input[type=radio],
+input[type=range],
+progress {
+    accent-color: var(--color-info);
+}
+
 svg {
     fill: currentColor;
     transition-property: all;
@@ -825,6 +797,9 @@ svg {
 
 hr {
     width: 100%;
+    height: 1px;
+    border: none;
+    background-color: var(--color-line-strong);
     margin: calc(3*var(--padding)) 0;
 }
 
@@ -832,8 +807,15 @@ pre,
 .auto_message_box {
     display: grid;
     position: relative;
-    background-color: var(--color-black);
-    color: var(--color-white);
+    background-color: var(--color-code-background);
+    color: var(--color-code);
+    border: 1px solid var(--color-line);
+    border-radius: var(--corners);
+}
+
+pre {
+    font-family: var(--font-family-mono);
+    font-size: 0.9em;
 }
 
 webui-code {
@@ -899,15 +881,15 @@ main>.paper>pre {
 
 code {
     display: inline;
-    background-color: var(--color-info);
-    color: var(--color-info-offset);
-    border-radius: var(--corners);
-    outline: 1.5px solid var(--theme);
+    font-family: var(--font-family-mono);
+    font-size: 0.9em;
+    background-color: color-mix(in srgb, currentColor 12%, transparent);
+    color: inherit;
+    border-radius: var(--corners-small);
     white-space: pre-wrap;
     overflow: hidden;
     word-break: break-all;
-    margin: 0 -0.25ch;
-    padding: 0 0.5ch;
+    padding: 0.1em 0.4ch;
 }
 
 [theme] code,
@@ -920,7 +902,9 @@ pre>code {
     display: block;
     position: relative;
     z-index: 1;
-    padding: var(--padding);
+    padding: calc(1.5 * var(--padding));
+    font-size: 1em;
+    border-radius: inherit;
     background-color: inherit;
     color: inherit;
     height: 100%;
@@ -935,25 +919,38 @@ webui-table>table {
     width: -webkit-fill-available;
 }
 
+/*
+ * Tables: a header on a raised surface, rows divided by thin lines, and a faint stripe.
+ * A table, row, or cell with a theme uses that color for its header instead.
+ */
 table {
-    border: 0px solid var(--theme-color);
+    border: 0px solid var(--color-line);
     border-collapse: collapse;
 }
 
-table tr:nth-child(odd) {
-    background-color: color-mix(in srgb, var(--theme-color) 10%, transparent);
+table tr:nth-child(even) {
+    background-color: color-mix(in srgb, currentColor 4%, transparent);
 }
 
 table>tr:first-child>td,
 table th {
+    background-color: var(--color-surface-raised);
+    color: var(--color-surface-offset);
+    font-weight: 600;
+    text-align: left;
+}
+
+:is(table, tr, th)[theme] th,
+th[theme] {
     background-color: var(--theme-color);
     color: var(--theme-color-offset);
 }
 
 table th,
 table td {
-    border: 0px solid var(--theme-color);
-    padding: var(--padding);
+    border: 0px solid var(--color-line);
+    border-bottom-width: 1px;
+    padding: var(--padding) calc(1.5 * var(--padding));
 }
 
 table.bordered,
@@ -1391,9 +1388,15 @@ webui-paper,
     flex-direction: row;
     gap: var(--padding);
     align-items: center;
-    padding: var(--padding);
+    padding: calc(0.75 * var(--padding)) var(--padding);
+    border-radius: var(--corners);
     text-decoration: none;
     font-size: 1em;
+    transition: background-color var(--transition-fast);
+}
+
+.navlink:not(.active):hover {
+    background-color: var(--color-hover);
 }
 
 .navlink.active {
@@ -1403,7 +1406,7 @@ webui-paper,
 
 .field-group-line {
     gap: 0;
-    outline: 1.5px solid var(--color-info);
+    outline: 1px solid var(--color-line-strong);
     border-radius: var(--corners);
     overflow: hidden;
 }
@@ -1436,10 +1439,11 @@ webui-paper,
 blockquote,
 .quote {
     display: block;
-    margin: var(--padding);
-    padding: var(--padding);
-    border-left: calc(2 * var(--padding)) solid var(--theme-color);
-    box-shadow: var(--elevation-10);
+    margin: var(--padding) 0;
+    padding: var(--padding) calc(2 * var(--padding));
+    border-left: 4px solid var(--theme-color);
+    border-radius: 0 var(--corners) var(--corners) 0;
+    background-color: var(--color-surface);
     box-sizing: border-box;
 }
 
@@ -1582,11 +1586,22 @@ webui-card>header {
     display: flex;
     flex-direction: row;
     justify-content: start;
+    align-items: center;
     flex-wrap: nowrap;
-    font-size: 1.3em;
+    gap: var(--padding);
+    font-size: 1.2em;
     font-weight: 600;
+    line-height: 1.3;
     height: min-content;
-    padding: 0 0 0 5px;
+    padding: calc(1.25 * var(--padding)) calc(0.5 * var(--padding)) var(--padding);
+}
+
+/* The card's theme color marks its top edge and title, instead of filling the header. */
+webui-card>header[class*="theme-"] {
+    background-color: transparent;
+    color: color-mix(in srgb, var(--theme-color) 65%, var(--color-surface-offset));
+    box-shadow: inset 0 3px 0 var(--theme-color);
+    border-bottom: 1px solid var(--color-line);
 }
 
 webui-card header>section:first-child {
@@ -1606,7 +1621,7 @@ webui-card>header:empty {
 }
 
 webui-card>section {
-    padding: var(--padding);
+    padding: calc(1.5 * var(--padding));
 }
 
 webui-cards,
@@ -1763,6 +1778,17 @@ a.btn:active,
 .btn {
     background-color: var(--color-button);
     color: var(--color-button-offset);
+    font-weight: 500;
+    box-shadow: var(--shadow-raised);
+    transition: filter var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn:not(:disabled, [disabled], .disabled):hover {
+    filter: brightness(1.12);
+}
+
+.btn:not(:disabled, [disabled], .disabled):active {
+    transform: translateY(1px);
 }
 
 .icon,
@@ -1772,7 +1798,7 @@ a.btn:active,
     gap: 0.5em;
     align-items: center;
     text-decoration: none;
-    padding: calc(1 * var(--padding)) calc(2 * var(--padding));
+    padding: var(--button-padding);
     border-radius: var(--corners);
     min-height: 2em;
     user-select: text;

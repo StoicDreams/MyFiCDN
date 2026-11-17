@@ -185,6 +185,7 @@ width:max-content;
 padding-left: var(--padding);
 white-space:pre-wrap;
 text-overflow: ellipsis;
+font-size:var(--font-size-label, 0.9em);
 }
 input {
 height:max-content;
@@ -195,6 +196,22 @@ line-height:normal;
 box-sizing:border-box;
 font:inherit;
 max-width:100%;
+min-width:0;
+padding:calc(0.5 * var(--padding, 8px)) var(--padding, 8px);
+background-color:var(--color-field, Field);
+color:var(--color-field-offset, FieldText);
+border:1px solid var(--color-line-strong, currentColor);
+border-radius:var(--corners-small, 4px);
+transition:border-color var(--transition-fast, 150ms);
+}
+input::placeholder {
+color:var(--color-muted, GrayText);
+opacity:1;
+}
+input:focus {
+border-color:var(--color-info, Highlight);
+outline:2px solid color-mix(in srgb, var(--color-info, Highlight) 55%, transparent);
+outline-offset:1px;
 }
 label:empty {
 display:none;

@@ -7,7 +7,7 @@
  */
 "use strict"
 {
-    const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json' : 'https://cdn.myfi.ws/i/emojis.json';
+    const emojiSource = `${webui.cdnRoot}i/emojis.json`;
     webui.define("webui-emoji-search", {
         preload: 'pagination input-range flex grid input-text',
         _filteredKeys: [],

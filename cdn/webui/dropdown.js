@@ -651,10 +651,15 @@ box-sizing:border-box;
 align-items: center;
 width:100%;
 width:-webkit-fill-available;
---theme-color:white;
---theme-color-offset:black;
+--theme-color:var(--color-field, white);
+--theme-color-offset:var(--color-field-offset, black);
 background-color: color-mix(in srgb, var(--theme-color) 90%, black);
 color:var(--theme-color-offset);
+}
+/* Without a theme, the label sits on the page and only the picker looks like a field. */
+:host(:not([theme])) {
+background-color:transparent;
+color:inherit;
 }
 :host([stack]) {
 display:grid;
@@ -667,11 +672,13 @@ min-width:0;
 select {
 display:block;
 flex-grow:1;
-padding: var(--padding, 2px 5px);
+padding: calc(0.5 * var(--padding, 8px)) var(--padding, 8px);
 height:100%;
 background-color:var(--theme-color);
 color:var(--theme-color-offset);
-border-radius:var(--corners);
+border:1px solid var(--color-line-strong, transparent);
+border-radius:var(--corners-small, 4px);
+font:inherit;
 max-width:100%;
 appearance: none;
 -webkit-appearance: none;
@@ -683,14 +690,14 @@ align-items:center;
 gap:var(--padding, 0.5em);
 min-width:0;
 min-height:2em;
-padding: var(--padding, 2px 5px);
+padding: calc(0.5 * var(--padding, 8px)) var(--padding, 8px);
 font:inherit;
 text-align:start;
 cursor:pointer;
-border:none;
+border:1px solid var(--color-line-strong, transparent);
 background-color:var(--theme-color);
 color:var(--theme-color-offset);
-border-radius:var(--corners);
+border-radius:var(--corners-small, 4px);
 }
 .list > select {display:none;}
 .list > button {display:flex;}

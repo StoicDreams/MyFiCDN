@@ -124,8 +124,9 @@ webui.define("webui-alert", {
 display:none;
 flex-direction:row;
 gap:var(--padding);
-padding:var(--padding, 1em);
+padding:var(--padding, 1em) calc(1.5 * var(--padding, 1em));
 align-items:center;
+border-radius:var(--corners);
 justify-content:start;
 opacity:0;
 transform:scaleY(0);

@@ -149,8 +149,7 @@
     function fixSpecialCharacters(text) {
         return text.replace(/\|/g, '<i class="vl"></i>');
     }
-    const isLocalDev = location.port === '3180';
-    const srcRoot = isLocalDev ? '' : 'https://cdn.myfi.ws';
+    const srcRoot = webui.cdnRoot.replace(/\/$/, '');
     webui.define("webui-standard-methods", {
         content: true,
         watchVisibility: false,

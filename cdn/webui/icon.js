@@ -74,7 +74,7 @@ Stroke line joins: miter|round|bevel
     }
     function loadIcon(name) {
         if (!cache[name]) {
-            const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
+            const srcRoot = `${webui.cdnRoot}icons/`;
             cache[name] = webui.fetchWithCache(`${srcRoot}${name}.webui`)
                 .then(iconDef => {
                     if (iconDef.startsWith("WEBUI-ICON-")) {

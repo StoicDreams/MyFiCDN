@@ -180,6 +180,22 @@ test('webui.appConfig holds the loaded config', async ({ page }) => {
 test('webui.appSrc and webui.appMin locate site components', async ({ page }) => {
     expect(await page.evaluate(() => [webui.appSrc, webui.appMin])).toEqual(['/wc', '.min']);
 });
+test('webui.cdnRoot is where the loader came from, and framework components load from there', async ({ page, baseURL }) => {
+    const root = `${new URL(baseURL).origin}/`;
+    expect(await page.evaluate(() => webui.cdnRoot)).toBe(root);
+    const scripts = await page.evaluate(() => [...document.querySelectorAll('script[src*="/webui/"]')].map(s => s.src));
+    expect(scripts.length).toBeGreaterThan(1);
+    expect(scripts.every(src => src.startsWith(root))).toBe(true);
+});
+test('framework components load files from webui.cdnRoot, never a fixed cdn.myfi.ws address', async () => {
+    const { readFileSync, readdirSync } = await import('node:fs');
+    const dir = new URL('../../cdn/webui/', import.meta.url);
+    // A fixed address skips the local MyFiCDN server, so a site on localhost shows live icons and images instead.
+    const fixed = readdirSync(dir)
+        .filter(f => f.endsWith('.js') && !f.endsWith('.min.js') && f !== 'loader.js')
+        .filter(f => /https:\/\/cdn\.myfi\.ws\//.test(readFileSync(new URL(f, dir), 'utf8')));
+    expect(fixed).toEqual([]);
+});
 test('webui.isLocalhost is true on localhost', async ({ page }) => {
     expect(await page.evaluate(() => webui.isLocalhost)).toBe(true);
 });

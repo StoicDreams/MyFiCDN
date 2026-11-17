@@ -131,18 +131,24 @@ The `linkCss` option, which added the whole stylesheet to every instance, is dep
 | `--font-family`, `--font-family-mono`, `--font-family-emoji` | Text, code, and emoji fonts. |
 | `--font-size-small`, `--font-size-label`, `--min-font-size` | Smaller text that stays readable. |
 | `--padding`, `--button-padding` | Spacing. |
-| `--corners`, `--corners-round` | Corner radius, and the radius for round buttons and badges. |
+| `--corners`, `--corners-small`, `--corners-round` | Corner radius for panels and buttons, a smaller one for fields and inline code, and the radius for round buttons and badges. |
+| `--color-header`, `--color-header-offset` | The page header: a blend of the title color, darker by default. Sites keep their title color and set this to blend it more or less. |
+| `--color-heading` | Page heading text, the title color adjusted to read on the background. |
+| `--color-surface`, `--color-surface-raised`, `--color-surface-offset` | Panels a shade off the page, such as cards, quotes, and table headers. |
+| `--color-field`, `--color-field-offset` | Where visitors type. |
+| `--color-line`, `--color-line-strong` | Borders and dividers. |
+| `--color-muted`, `--color-link`, `--color-hover` | Secondary text, links in running text, and the highlight behind hovered items. |
 | `--focus-outline`, `--focus-offset`, `--color-focus` | The keyboard focus ring. |
 | `--color-backdrop`, `--backdrop-blur` | Behind dialogs and panels. |
 | `--color-overlay`, `--color-overlay-offset` | Controls drawn over images and video. |
 | `--color-scrollbar`, `--color-scrollbar-thumb` | Scrollbar track and thumb. Unset, they are drawn from the text color of what they scroll, so they show on any theme. |
-| `--shadow-popup`, `--shadow-float`, `--shadow-panel` | Shadows for menus, floating buttons, and panels. |
+| `--shadow-raised`, `--shadow-popup`, `--shadow-float`, `--shadow-panel` | Shadows for buttons, menus, floating buttons, and panels. |
 | `--elevation-{0-25}` | The same shadows as the `elevation` attribute. |
 | `--color-code`, `--color-code-background`, `--color-code-muted` | Code and diff views. |
 | `--color-diff-added`, `--color-diff-removed` | Added and removed lines. |
 | `--color-paper`, `--color-paper-offset` | Writing areas. |
 | `--fill-accent` | A color or gradient for accent text, such as the number in `webui-stat`. Set a gradient here to give accents a stylized look. |
-| `--main-transition`, `--transition-speed` | Animation timing. |
+| `--main-transition`, `--transition-speed`, `--transition-fast` | Animation timing. |
 
 A site changes any of these in its own CSS, on `:root` or on a single element.
 

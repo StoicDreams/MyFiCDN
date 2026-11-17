@@ -7,8 +7,7 @@
  */
 "use strict"
 {
-    const isLocalDev = location.port === '3180';
-    const srcRoot = isLocalDev ? '' : 'https://cdn.myfi.ws';
+    const srcRoot = webui.cdnRoot.replace(/\/$/, '');
     webui.define("webui-components", {
         content: true,
         watchVisibility: false,

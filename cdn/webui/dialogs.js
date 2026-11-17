@@ -321,7 +321,9 @@ opacity:0;
 padding:0;
 transform:scaleY(0) scaleX(0) scaleZ(0.8) translateX(-500px) translateY(500px);
 border-radius:var(--corners, 0);
-border:none;
+border:1px solid var(--color-line, transparent);
+box-shadow:var(--shadow-panel, none);
+overflow:hidden;
 max-width:80%;
 max-height:80%;
 flex-direction:column;
@@ -343,7 +345,11 @@ dialog>section,
 dialog>footer {
 display:flex;
 gap: var(--padding, 1em);
-padding:var(--padding, 1em);
+padding:var(--padding, 1em) calc(1.5 * var(--padding, 1em));
+}
+dialog>section {
+padding-top:calc(1.5 * var(--padding, 1em));
+padding-bottom:calc(1.5 * var(--padding, 1em));
 }
 dialog>header,
 dialog>footer {
@@ -359,8 +365,8 @@ footer>span {
 flex-grow:1;
 }
 dialog>header{
-background-color:var(--color-title);
-color:var(--color-title-offset);
+background-color:var(--color-header, var(--color-title));
+color:var(--color-header-offset, var(--color-title-offset));
 }
 dialog>footer {
 background-color:var(--color-footer);

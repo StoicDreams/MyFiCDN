@@ -301,8 +301,12 @@
             const t = this;
             t._panel.classList.remove('anchored');
             ['right', 'bottom', 'max-height'].forEach(prop => t._panel.style.removeProperty(prop));
-            t._panel.style.left = `${Math.round(left)}px`;
-            t._panel.style.top = `${Math.round(top)}px`;
+            // A panel against the right or bottom edge rounds down, so a fractional size never passes the edge.
+            const rect = t._panel.getBoundingClientRect();
+            left = Math.min(Math.round(left), Math.floor(window.innerWidth - rect.width));
+            top = Math.min(Math.round(top), Math.floor(window.innerHeight - rect.height));
+            t._panel.style.left = `${Math.max(0, left)}px`;
+            t._panel.style.top = `${Math.max(0, top)}px`;
         },
         /**
          * Places the panel by its bottom right corner, so content that renders after it opens grows it up and to

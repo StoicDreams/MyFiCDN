@@ -78,6 +78,6 @@ test('shows a focus ring when reached by keyboard', async ({ page }) => {
 test('--toggle-icon-padding sets the button padding, which defaults to the Web UI padding at the sides', async ({ page }) => {
     const root = await mount(page, '<webui-toggle-icon id="plain"></webui-toggle-icon><webui-toggle-icon id="tight" style="--toggle-icon-padding:0;"></webui-toggle-icon>');
     const padding = id => root.locator(`#${id} button`).evaluate(b => [getComputedStyle(b).paddingTop, getComputedStyle(b).paddingLeft]);
-    expect(await padding('plain')).toEqual(['0px', '5px']);
+    expect(await padding('plain')).toEqual(['0px', '8px']);
     expect(await padding('tight')).toEqual(['0px', '0px']);
 });

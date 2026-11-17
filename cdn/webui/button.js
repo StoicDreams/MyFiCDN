@@ -154,25 +154,32 @@ webui.define("webui-button", {
 <slot name="end-icon"></slot>
 <style type="text/css">
 :host {
---theme-shadow-blur:var(--box-shadow-blur, 2px);
 display: inline-flex;
 flex-flow: row;
 gap: 0.5em;
 align-items: center;
 justify-content: center;
 text-decoration: none;
-padding: calc(1 * var(--padding)) calc(2 * var(--padding));
+padding: var(--button-padding, 0.5em 1em);
 border-radius: var(--corners);
+font-weight: 500;
 min-height: 1em;
 -webkit-user-select: text;
 user-select: text;
-background-color: color-mix(in srgb, var(--theme-color) 90%, black);
+background-color: var(--theme-color);
 color: var(--theme-color-offset);
 -webkit-user-select: none;
 -ms-user-select: none;
 user-select: none;
-box-shadow:inset 1px 1px var(--theme-shadow-blur) rgba(255,255,255,0.5), inset -1px -1px var(--theme-shadow-blur) rgba(0,0,0,0.5), 1px 1px var(--theme-shadow-blur) rgba(0,0,0,0.5);
+box-shadow: var(--shadow-raised, 0 1px 3px rgb(0 0 0 / 30%));
+transition: filter var(--transition-fast, 150ms), transform var(--transition-fast, 150ms);
 white-space:nowrap;
+}
+:host(:not([disabled]):hover) {
+filter: brightness(1.12);
+}
+:host(:not([disabled]):active) {
+transform: translateY(1px);
 }
 :host([wrap]) {
 white-space:wrap;
@@ -185,9 +192,8 @@ justify-content:end;
 }
 :host([disabled]) {
 pointer-events:none;
-background-color: color-mix(in srgb, var(--theme-color) 50%, #888888);
-color: color-mix(in srgb, var(--theme-color-offset) 50%, #888888);
-box-shadow:inset -1px -1px var(--box-shadow-blur) rgba(255,255,255,0.5), inset 1px 1px var(--box-shadow-blur) rgba(0,0,0,0.5);
+opacity: 0.5;
+box-shadow: none;
 }
 :host(:not([disabled])) {
 cursor:pointer;

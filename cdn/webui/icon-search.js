@@ -7,8 +7,8 @@
  */
 "use strict"
 {
-    const srcRoot = webui.getData('appName') === 'My Fidelity CDN' ? '/icons/' : 'https://cdn.myfi.ws/icons/';
-    const emojiSource = webui.getData('appName') === 'My Fidelity CDN' ? '/i/emojis.json' : 'https://cdn.myfi.ws/i/emojis.json';
+    const srcRoot = `${webui.cdnRoot}icons/`;
+    const emojiSource = `${webui.cdnRoot}i/emojis.json`;
     // The same reading as webui-icon: a shape before or after the icon name, as in circle_check or check_circle.
     const shapeNames = new Set(['circle', 'square', 'shield', 'triangle', 'tri', 'octo', 'octogon', 'badge', 'cloud', 'file', 'book', 'gear', 'chart', 'calendar', 'heart', 'note', 'scroll', 'window', 'tv']);
     function splitShape(name) {

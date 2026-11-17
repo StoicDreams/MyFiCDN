@@ -181,6 +181,7 @@ flex-grow:1;
 line-height:normal;
 box-sizing:border-box;
 font:inherit;
+accent-color:var(--color-info, auto);
 }
 label:empty {
 display:none;
