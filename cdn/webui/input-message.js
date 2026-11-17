@@ -110,6 +110,9 @@
     },
     setValue(value) {
       const t = this;
+      // Bound data can be undefined or null, such as a page's value before anything is typed, which a textarea
+      // would show as the text "undefined".
+      value = `${webui.getDefined(value, "")}`;
       if (t._field.value === value) return;
       t._field.value = value;
       t._wrap.dataset.replicatedValue = value;

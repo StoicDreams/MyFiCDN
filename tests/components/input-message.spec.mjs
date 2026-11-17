@@ -16,6 +16,18 @@ test('typing updates value, and the value property updates the field', async ({ 
     await el.evaluate(c => { c.value = 'set'; });
     await expect(el.locator('textarea')).toHaveValue('set');
 });
+test('a missing value shows an empty field, not the text undefined', async ({ page }) => {
+    const root = await mount(page, '<webui-input-message data-bind="note-text"></webui-input-message>');
+    const el = root.locator('webui-input-message');
+    await page.evaluate(() => webui.setData('note-text', 'kept'));
+    await expect(el.locator('textarea')).toHaveValue('kept');
+    await page.evaluate(() => webui.setData('note-text', undefined));
+    await expect(el.locator('textarea')).toHaveValue('');
+    await el.evaluate(c => c.setValue(null));
+    await expect(el.locator('textarea')).toHaveValue('');
+    await el.evaluate(c => c.setValue(12));
+    await expect(el.locator('textarea')).toHaveValue('12');
+});
 test('it submits with forms', async ({ page }) => {
     const root = await mount(page, '<form><webui-input-message name="note"></webui-input-message></form>');
     await root.locator('textarea').fill('sent');
