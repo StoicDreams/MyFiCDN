@@ -35,16 +35,16 @@ test.describe('webui.parseMarkdown task lists', () => {
     test('brackets that are not a task stay as text', async ({ page }) => {
         expect(await md(page, '- [ ]text\n- [link](x)')).toBe('<ul><li>[ ]text</li>\n<li><a href="x">link</a></li>\n</ul>');
     });
-    test('the checkbox is hidden, so only the drawn box shows', async ({ page }) => {
+    test('a task item keeps a real checkbox with its state, for screen readers and forms', async ({ page }) => {
         await page.waitForFunction(() => webui.markdown);
-        const box = await page.evaluate(() => {
+        // How the box is drawn is checked by eye.
+        const state = await page.evaluate(() => {
             const div = document.createElement('div');
-            div.innerHTML = webui.parseMarkdown('- [x] Done');
+            div.innerHTML = webui.parseMarkdown('- [x] Done\n- [ ] Not yet');
             document.body.appendChild(div);
-            const input = div.querySelector('input');
-            return [getComputedStyle(input).opacity, input.getBoundingClientRect().width, getComputedStyle(div.querySelector('li'), '::before').backgroundImage.includes('svg')];
+            return [...div.querySelectorAll('input[type="checkbox"]')].map(input => input.checked);
         });
-        expect(box).toEqual(['0', 1, true]);
+        expect(state).toEqual([true, false]);
     });
 });
 

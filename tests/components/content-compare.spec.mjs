@@ -47,8 +47,8 @@ test('shows its lines without a set height', async ({ page }) => {
     const el = root.locator('webui-content-compare');
     await el.evaluate((c, [a, b]) => c.setDiff(a, b), [lines('a', 'b', 'c'), lines('a', 'x', 'c')]);
     await expect(el.locator('.diff-row')).toHaveCount(3);
-    // Each row is at least a line tall, so the scrolling area must fit all three.
-    await expect.poll(() => el.evaluate(c => c.shadowRoot.querySelector('.compare-container').clientHeight)).toBeGreaterThan(60);
+    // Without a set height, the scrolling area must still fit its rows, or it clips them out of sight.
+    await expect(el.locator('.diff-row').last()).toBeInViewport();
 });
 test('scrolls within a set height', async ({ page }) => {
     const root = await mount(page, '<webui-content-compare style="height:200px"></webui-content-compare>');
@@ -56,9 +56,10 @@ test('scrolls within a set height', async ({ page }) => {
     const many = Array.from({ length: 100 }, (_, i) => `line ${i}`);
     await el.evaluate((c, [a, b]) => c.setDiff(a, b), [lines(...many), lines(...many.map(l => `${l}!`))]);
     await el.locator('.toggle-mode').check();
-    await expect.poll(() => el.evaluate(c => c.getBoundingClientRect().height)).toBe(200);
+    // A hundred lines don't fit, so the lines scroll inside it.
     await expect.poll(() => el.evaluate(c => {
         const box = c.shadowRoot.querySelector('.compare-container');
-        return box.scrollHeight > box.clientHeight;
+        box.scrollTop = 100000;
+        return box.scrollTop > 0;
     })).toBe(true);
 });

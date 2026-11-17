@@ -66,34 +66,33 @@ test('layout size variables follow the header and the window', async ({ page }) 
     await expect.poll(async () => parseInt(await variable('--main-height'))).toBe(500 - header - footer);
 });
 for (const width of [360, 375]) {
-    test(`main stays inside a ${width}px phone window when page content is wide`, async ({ page }) => {
+    test(`on a ${width}px phone, wide page content scrolls inside main and the page does not scroll sideways`, async ({ page }) => {
         await page.setViewportSize({ width, height: 700 });
         await page.evaluate(() => webui._appSettings.app.setPageContent('<p id="narrow">Short text</p><div id="wide" style="width:600px">Wide content</div>'));
         await expect(page.locator('webui-app > #wide')).toBeAttached();
-        await expect.poll(() => page.evaluate(() => {
+        // Trying to scroll the page sideways leaves it where it is.
+        await expect.poll(() => page.evaluate(() => { window.scrollTo(400, window.scrollY); return window.scrollX; })).toBe(0);
+        // Text that can wrap shows whole; only content that cannot shrink scrolls, inside main.
+        await expect(page.locator('#narrow')).toBeInViewport({ ratio: 1 });
+        expect(await page.evaluate(() => {
             const main = document.querySelector('webui-app').shadowRoot.querySelector('main');
-            return Math.round(main.getBoundingClientRect().right);
-        })).toBeLessThanOrEqual(width);
-        // Text that can wrap fits the window; only content that cannot shrink scrolls inside main.
-        const right = await page.evaluate(() => ({
-            app: document.querySelector('webui-app').getBoundingClientRect().right,
-            narrow: document.getElementById('narrow').getBoundingClientRect().right,
-        }));
-        expect(right.app).toBeLessThanOrEqual(width);
-        expect(right.narrow).toBeLessThanOrEqual(width);
+            main.scrollLeft = 100000;
+            return main.scrollLeft > 0;
+        })).toBe(true);
     });
 }
-test('the content footer takes no space without content, and shows when it has some', async ({ page }) => {
+test('the content footer is marked empty without content, and shows when it has some', async ({ page }) => {
     const slot = () => page.evaluate(() => {
         const slot = document.querySelector('webui-app').shadowRoot.querySelector('slot[name="content-footer"]');
-        return { empty: slot.hasAttribute('empty'), display: getComputedStyle(slot).display, assigned: slot.assignedNodes().length };
+        return { empty: slot.hasAttribute('empty'), assigned: slot.assignedNodes().length };
     });
     const before = await slot();
     if (before.assigned) {
-        expect(before).toMatchObject({ empty: false, display: 'grid' });
+        expect(before).toMatchObject({ empty: false });
         await page.evaluate(() => document.querySelectorAll('webui-app > [slot="content-footer"]').forEach(el => el.remove()));
     }
-    await expect.poll(slot).toMatchObject({ empty: true, display: 'none' });
+    await expect.poll(slot).toMatchObject({ empty: true });
     await page.evaluate(() => document.querySelector('webui-app').append(Object.assign(document.createElement('footer'), { slot: 'content-footer', textContent: 'Links' })));
-    await expect.poll(slot).toMatchObject({ empty: false, display: 'grid' });
+    await expect.poll(slot).toMatchObject({ empty: false });
+    await expect(page.locator('webui-app > footer[slot="content-footer"]')).toBeVisible();
 });

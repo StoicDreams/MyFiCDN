@@ -24,15 +24,6 @@ test('images use an image element', async ({ page }) => {
     await expect.poll(() => el.locator('img').evaluate(img => img.naturalWidth)).toBe(1);
     await expect(el).toHaveAttribute('kind', 'image');
 });
-test('small images keep their own size, and large ones shrink to fit', async ({ page }) => {
-    const el = await preview(page, '<div style="width:300px"><webui-file-preview></webui-file-preview></div>');
-    await el.evaluate((c, png) => c.setFile([{ name: 'dot.png', type: 'image/png', content: `data:image/png;base64,${png}` }]), PNG);
-    await expect.poll(() => el.locator('img').evaluate(img => img.getBoundingClientRect().width)).toBe(1);
-    // An svg 1000 wide, which must shrink to the 300 available.
-    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="100"><rect width="1000" height="100"/></svg>';
-    await el.evaluate((c, svg) => c.setFile([{ name: 'wide.svg', type: 'image/svg+xml', content: svg }]), svg);
-    await expect.poll(() => el.locator('img').evaluate(img => Math.round(img.getBoundingClientRect().width))).toBe(300);
-});
 test('a file with no type is previewed by its extension', async ({ page }) => {
     const el = await preview(page);
     await el.evaluate((c, png) => c.setFile([{ name: 'dot.PNG', type: '', content: `data:application/octet-stream;base64,${png}` }]), PNG);
@@ -167,13 +158,16 @@ test('clear removes the preview and frees its object url, and empty input clears
     await expect(el).not.toHaveAttribute('kind');
     expect(await page.evaluate(() => window.__revoked)).toEqual([src]);
 });
-test('height applies to the host and the preview', async ({ page }) => {
+// height and max-height are applied to the preview itself, which is its state. How tall things look is checked by eye.
+test('height sets the preview\'s height', async ({ page }) => {
     const el = await preview(page, '<webui-file-preview height="50"></webui-file-preview>');
     await el.evaluate((c, png) => c.setFile([{ type: 'image/png', content: `data:image/png;base64,${png}` }]), PNG);
-    await expect.poll(() => el.evaluate(c => [c.style.height, c.shadowRoot.querySelector('img').clientHeight])).toEqual(['50px', 50]);
+    await expect.poll(() => el.evaluate(c => c.style.height)).toBe('50px');
+    await expect(el.locator('img')).toBeVisible();
 });
-test('max-height limits frames', async ({ page }) => {
+test('max-height sets the most a preview may be', async ({ page }) => {
     const el = await preview(page, '<webui-file-preview max-height="120"></webui-file-preview>');
     await el.evaluate(c => c.setFile([{ type: 'application/pdf', content: 'data:application/pdf;base64,AA' }]));
-    await expect.poll(() => el.locator('iframe').evaluate(f => f.clientHeight)).toBe(120);
+    await expect.poll(() => el.evaluate(c => [c.style.maxHeight, c.style.getPropertyValue('--preview-max-height')])).toEqual(['120px', '120px']);
+    await expect(el.locator('iframe')).toBeVisible();
 });

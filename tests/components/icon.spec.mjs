@@ -1,6 +1,7 @@
 import { test, expect, mount } from '../support/webui.mjs';
 import { readFileSync, readdirSync } from 'node:fs';
 
+// Drawing is what webui-icon does, so these tests check what it draws (Websites/CLAUDE.md, What tests check).
 const path = (el, n) => el.locator(`path.i${n}`);
 // Chrome reports stroke widths that use a variable as calc(16.1px) rather than 16.1px, so tests read the number.
 

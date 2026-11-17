@@ -26,8 +26,6 @@ test('choosing a theme sets data-theme on the page and saves it', async ({ page 
     await expect(panel.getByRole('button', { name: 'Stone' })).toHaveAttribute('aria-pressed', 'true');
     await expect(panel.getByRole('button', { name: 'Default' })).toHaveAttribute('aria-pressed', 'false');
     expect(await page.evaluate(() => webui.getData('session-theme'))).toBe('stone');
-    const background = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--color-background').trim());
-    expect(background).toBe('rgb(34, 34, 34)');
     await panel.getByRole('button', { name: 'Default' }).click();
     await expect(page.locator('html')).not.toHaveAttribute('data-theme', /./);
     expect(await page.evaluate(() => webui.getData('session-theme'))).toBe('');

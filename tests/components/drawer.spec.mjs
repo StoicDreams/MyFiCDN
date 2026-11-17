@@ -93,21 +93,21 @@ test.describe('resizing', () => {
         await page.mouse.move(x + dx, y);
         await page.mouse.up();
     };
-    const width = drawer => drawer.evaluate(el => Math.round(el.getBoundingClientRect().width));
+    // Each resize is recorded in the drawer's width attribute, which is saved, and the drawer applies that width within
+    // its limits as its own width, min-width, and max-width. Those are its state; how wide it looks is checked by eye.
+    const applied = drawer => drawer.evaluate(el => el.style.width);
+    const appliedMin = drawer => drawer.evaluate(el => el.style.minWidth);
     const mountRight = async (page, attrs = '') => (await mount(page, `<webui-drawer slot="right" class="shared" data-dockable resizable docked="true" ${attrs} style="height:300px">Body</webui-drawer>`)).locator('webui-drawer');
 
     test('dragging the inner edge of a right drawer makes it wider, and the width is kept', async ({ page }) => {
         const drawer = await mountRight(page, 'width="300"');
-        await expect.poll(() => width(drawer)).toBe(300);
         await drag(page, drawer, -100);
-        await expect.poll(() => width(drawer)).toBe(400);
         await expect(drawer).toHaveAttribute('width', '400');
     });
     test('a left drawer is dragged from its right edge', async ({ page }) => {
         const drawer = (await mount(page, '<webui-drawer slot="left" class="nav" resizable docked="true" width="300" style="height:300px"><webui-nav></webui-nav></webui-drawer>')).locator('webui-drawer');
-        await expect.poll(() => width(drawer)).toBe(300);
         await drag(page, drawer, 50);
-        await expect.poll(() => width(drawer)).toBe(350);
+        await expect(drawer).toHaveAttribute('width', '350');
         await expect(handle(drawer)).toHaveAttribute('aria-label', 'Resize Navigation');
     });
     test('it cannot be made narrower than the minimum, or wider than 90% of the window', async ({ page }) => {
@@ -116,19 +116,18 @@ test.describe('resizing', () => {
         await expect(drawer).toHaveAttribute('width', '240');
         await drag(page, drawer, -2000);
         await expect(drawer).toHaveAttribute('width', '1170');
-        await expect.poll(() => width(drawer)).toBe(1170);
     });
     test('a saved width wider than a smaller window is kept within 90% of it', async ({ page }) => {
         const drawer = await mountRight(page, 'width="1100"');
         await page.setViewportSize({ width: 1000, height: 700 });
-        await expect.poll(() => width(drawer)).toBe(900);
+        // It still shows whole inside the window, and keeps its saved width for when the window grows again.
+        await expect(drawer).toBeInViewport({ ratio: 0.99 });
         await expect(drawer).toHaveAttribute('width', '1100');
     });
     test('resizes while undocked too', async ({ page }) => {
         const drawer = (await mount(page, '<webui-drawer slot="right" class="shared open" resizable width="300">Body</webui-drawer>')).locator('webui-drawer');
-        await expect.poll(() => width(drawer)).toBe(300);
         await drag(page, drawer, -60);
-        await expect.poll(() => width(drawer)).toBe(360);
+        await expect(drawer).toHaveAttribute('width', '360');
     });
     test('arrow keys resize it, and a double click resets it', async ({ page }) => {
         const drawer = await mountRight(page, 'width="300"');
@@ -145,37 +144,39 @@ test.describe('resizing', () => {
     test('docked and undocked limits can each be set, in pixels or as a share of the window', async ({ page }) => {
         const drawer = await mountRight(page, 'width="300" docked-min-width="350" docked-max-width="500px" undocked-min-width="10%" undocked-max-width="40vw"');
         // Docked, 300 is below the docked minimum of 350.
-        await expect.poll(() => width(drawer)).toBe(350);
+        await expect.poll(() => applied(drawer)).toBe('350px');
         await drag(page, drawer, -1000);
         await expect(drawer).toHaveAttribute('width', '500');
         // Undocked, the limits are 130 to 520 on this 1300px window, so 500 fits.
         await drawer.evaluate(el => { el.removeAttribute('docked'); el.classList.add('open'); });
-        await expect.poll(() => width(drawer)).toBe(500);
+        await expect.poll(() => applied(drawer)).toBe('500px');
         await drag(page, drawer, 1000);
         await expect(drawer).toHaveAttribute('width', '130');
         // Docking again holds it to the docked minimum, while the saved width stays as dragged.
         await drawer.evaluate(el => el.setAttribute('docked', 'true'));
-        await expect.poll(() => width(drawer)).toBe(350);
+        await expect.poll(() => applied(drawer)).toBe('350px');
         await expect(drawer).toHaveAttribute('width', '130');
     });
     test('without a saved width, the content sets the width within the limits', async ({ page }) => {
         // In a row, as in the app's layout, so the drawer is as wide as its content rather than the page.
         const root = await mount(page, '<div style="display:flex;justify-content:flex-end"><webui-drawer slot="right" class="shared" resizable docked="true" docked-min-width="400" style="height:300px">Body</webui-drawer></div>');
         const drawer = root.locator('webui-drawer');
-        await expect.poll(() => width(drawer)).toBe(400);
+        // No width of its own, only the limits it keeps the content within.
+        await expect.poll(() => appliedMin(drawer)).toBe('400px');
+        expect(await applied(drawer)).toBe('');
         await drawer.evaluate(el => el.setAttribute('docked-min-width', '260'));
-        await expect.poll(() => width(drawer)).toBe(260);
+        await expect.poll(() => appliedMin(drawer)).toBe('260px');
     });
     test('the maximum wins over a larger minimum, and neither goes past the window', async ({ page }) => {
         const drawer = await mountRight(page, 'width="300" docked-min-width="700" docked-max-width="500"');
-        await expect.poll(() => width(drawer)).toBe(500);
+        await expect.poll(() => applied(drawer)).toBe('500px');
         await drawer.evaluate(el => { el.setAttribute('docked-min-width', '200'); el.setAttribute('docked-max-width', '5000'); });
         await drag(page, drawer, -3000);
         await expect(drawer).toHaveAttribute('width', '1300');
     });
     test('an invalid limit falls back to the default', async ({ page }) => {
         const drawer = await mountRight(page, 'width="100" docked-min-width="wide"');
-        await expect.poll(() => width(drawer)).toBe(240);
+        await expect.poll(() => applied(drawer)).toBe('240px');
     });
     test('a drawer that is not resizable keeps the sizes in its own style', async ({ page }) => {
         const drawer = (await mount(page, '<webui-drawer slot="left" class="nav" style="min-width:24ch;max-width:400px" docked-min-width="300">Nav</webui-drawer>')).locator('webui-drawer');

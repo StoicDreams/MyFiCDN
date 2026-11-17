@@ -66,6 +66,7 @@ test('shows a focus ring around the box while typing', async ({ page }) => {
     const root = await mount(page, '<webui-input-message label="Note"></webui-input-message>');
     const el = root.locator('webui-input-message');
     await el.locator('textarea').focus();
+    // An accessibility rule, so the ring itself is checked (Websites/CLAUDE.md, What tests check).
     expect(await el.evaluate(e => getComputedStyle(e).outlineWidth)).toBe('2px');
 });
 test('without a label, its title names the field', async ({ page }) => {

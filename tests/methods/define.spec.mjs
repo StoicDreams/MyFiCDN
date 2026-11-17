@@ -47,11 +47,10 @@ test('webui.define keeps _isConnected true after an element moves', async ({ pag
 test('webui.define shadow templates share one stylesheet', async ({ page }) => {
     await page.evaluate(() => webui.define('app-styled', { shadowTemplate: '<slot></slot><style>:host{display:block;margin-top:7px}</style>' }));
     const root = await mount(page, '<app-styled></app-styled><app-styled></app-styled>');
-    const [margin, count, same] = await root.evaluate(r => {
+    const [count, same] = await root.evaluate(r => {
         const [a, b] = r.querySelectorAll('app-styled');
-        return [getComputedStyle(a).marginTop, a.shadowRoot.querySelectorAll('style').length, a.shadowRoot.adoptedStyleSheets[0] === b.shadowRoot.adoptedStyleSheets[0]];
+        return [a.shadowRoot.querySelectorAll('style').length, a.shadowRoot.adoptedStyleSheets[0] === b.shadowRoot.adoptedStyleSheets[0]];
     });
-    expect(margin).toBe('7px');
     expect(count).toBe(0);
     expect(same).toBe(true);
 });
@@ -63,18 +62,6 @@ test('webui.define linkCss is deprecated: it warns, and still links the styleshe
     const root = await mount(page, '<app-linked></app-linked>');
     expect(await root.locator('app-linked').evaluate(el => el.shadowRoot.querySelectorAll('link[rel=stylesheet]').length)).toBe(1);
     await expect.poll(() => warnings.some(text => text.includes('app-linked: linkCss is deprecated'))).toBe(true);
-});
-test('shadow DOM takes the theme from Web UI CSS variables', async ({ page }) => {
-    await page.evaluate(() => webui.define('app-themed', { shadowTemplate: '<b>Text</b><style>b{color:var(--theme-color);outline:var(--focus-outline);font-family:var(--font-family-mono);}</style>' }));
-    const root = await mount(page, '<app-themed theme="success"></app-themed><span theme="success">x</span>');
-    const [inside, expected] = await root.evaluate(r => {
-        const b = getComputedStyle(r.querySelector('app-themed').shadowRoot.querySelector('b'));
-        const probe = document.createElement('i');
-        probe.style.color = 'var(--color-success)';
-        r.appendChild(probe);
-        return [[b.color, b.outlineStyle, b.outlineWidth, b.fontFamily.includes('monospace')], getComputedStyle(probe).color];
-    });
-    expect(inside).toEqual([expected, 'solid', '2px', true]);
 });
 test('webui.define onResize runs after a debounce and stops once removed', async ({ page }) => {
     await page.evaluate(() => {

@@ -132,7 +132,7 @@ test('the shown tab is marked current, and other tabs are out of reach', async (
     await expect(buttons(el).first()).not.toHaveAttribute('aria-current');
     await expect.poll(() => panels.evaluateAll(list => list.map(p => p.inert))).toEqual([true, true, false]);
 });
-test('a short tab is not as tall as a longer hidden tab, and a shown tab gets its full height', async ({ page }) => {
+test('a hidden tab takes no room once the slide ends, so a short tab leaves nothing to scroll', async ({ page }) => {
     // Hidden tabs collapse on a timer once the slide ends. Hold timers of the slide's length, so the test checks the
     // slide's start and end without racing the timer, which a busy machine loses.
     await page.evaluate(() => {
@@ -146,20 +146,23 @@ test('a short tab is not as tall as a longer hidden tab, and a shown tab gets it
         window.__releaseHeld = () => window.__held.splice(0).forEach(run => run());
     });
     const endSlide = () => page.evaluate(() => window.__releaseHeld());
-    const el = (await mount(page, `<webui-tabs transition-timing="230">
+    // A box around the tabs that is too short for the tall tab only scrolls while the tall tab is shown.
+    const root = await mount(page, `<div id="box" style="height:300px;overflow:auto"><webui-tabs transition-timing="230">
 <webui-button slot="tabs">Short</webui-button><div slot="content"><div style="height:100px">A</div></div>
-<webui-button slot="tabs">Tall</webui-button><div slot="content"><div style="height:900px">B</div></div></webui-tabs>`)).locator('webui-tabs');
-    const height = () => el.evaluate(t => Math.round(t.getBoundingClientRect().height));
-    const contentHeights = () => el.evaluate(t => [...t.querySelectorAll('[slot="content"]')].map(c => Math.round(c.getBoundingClientRect().height)));
-    await expect.poll(height).toBeLessThan(300);
+<webui-button slot="tabs">Tall</webui-button><div slot="content"><div style="height:900px">B</div></div></webui-tabs></div>`);
+    const el = root.locator('webui-tabs');
+    const scrolls = () => root.locator('#box').evaluate(box => { box.scrollTop = 100000; const moved = box.scrollTop > 0; box.scrollTop = 0; return moved; });
+    const hidden = () => el.evaluate(t => [...t.querySelectorAll('[slot="content"]')].map(c => c.hasAttribute('tab-hidden')));
+    await expect.poll(hidden).toEqual([false, true]);
+    await expect.poll(scrolls).toBe(false);
     await buttons(el).nth(1).click();
-    // The tab being shown has its full height at once, and the one sliding away keeps its height until it is gone.
-    expect(await contentHeights()).toEqual([900, 900]);
-    await expect.poll(height).toBeGreaterThan(900);
+    // The tab being shown opens at once, and the one sliding away stays open until the slide ends.
+    expect(await hidden()).toEqual([false, false]);
+    await expect.poll(scrolls).toBe(true);
     await endSlide();
-    await expect.poll(contentHeights).toEqual([0, 900]);
+    await expect.poll(hidden).toEqual([true, false]);
     await buttons(el).first().click();
     await endSlide();
-    await expect.poll(height).toBeLessThan(300);
-    await expect.poll(contentHeights).toEqual([100, 0]);
+    await expect.poll(hidden).toEqual([false, true]);
+    await expect.poll(scrolls).toBe(false);
 });

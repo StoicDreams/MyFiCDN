@@ -184,7 +184,11 @@ test('a tooltip never blocks clicks, and closes when its element is hidden under
     await root.locator('#hide').hover();
     const tooltip = page.locator('body > .tooltip');
     await expect(tooltip).toHaveClass(/open/);
-    expect(await tooltip.evaluate(el => getComputedStyle(el).pointerEvents)).toBe('none');
+    // A click where the tooltip is reaches the page beneath it. Its place is only used to aim the click.
+    await page.evaluate(() => { window.__clickedOn = null; document.addEventListener('click', ev => { window.__clickedOn = ev.target.className; }, { once: true }); });
+    const tip = await tooltip.boundingBox();
+    await page.mouse.click(tip.x + tip.width / 2, tip.y + tip.height / 2);
+    expect(await page.evaluate(() => window.__clickedOn)).not.toContain('tooltip');
     // Hiding it without moving the mouse, as a closing panel does to its close button.
     await root.locator('#hide').evaluate(el => { el.style.display = 'none'; });
     await expect(tooltip).toHaveClass(/closed/);

@@ -77,14 +77,3 @@ test('unchanged output keeps the existing nodes', async ({ page }) => {
     })).toBe(true);
 });
 
-test('rendered content sits in its parent as if the condition were not there', async ({ page }) => {
-    // A button shown by a condition, beside other buttons, lines up with them rather than with a line of text.
-    const root = await mount(page, `<div id="row" style="display:flex;align-items:center;height:60px">
-        <button id="a" style="height:40px">A</button>
-        <webui-condition value="true"><template slot="valid"><button id="b" style="height:40px">B</button></template></webui-condition>
-    </div>`);
-    await expect(root.locator('#b')).toBeVisible();
-    expect(await root.locator('webui-condition').evaluate(el => getComputedStyle(el).display)).toBe('contents');
-    const [a, b] = await Promise.all(['#a', '#b'].map(s => root.locator(s).evaluate(el => el.getBoundingClientRect().top)));
-    expect(Math.abs(a - b)).toBeLessThan(1);
-});

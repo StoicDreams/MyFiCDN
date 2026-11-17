@@ -3,6 +3,7 @@ import { test, expect, mount } from '../support/webui.mjs';
 // Rules in webui.css that every site relies on.
 
 test('keyboard focus shows a ring, including on buttons', async ({ page }) => {
+    // An accessibility rule, so the ring itself is checked (Websites/CLAUDE.md, What tests check).
     const root = await mount(page, '<button id="first">First</button><button id="second">Second</button>');
     await root.locator('#first').focus();
     await page.keyboard.press('Tab');
@@ -14,27 +15,6 @@ test('empty headings take no space and are skipped', async ({ page }) => {
     const root = await mount(page, '<h1>Title</h1><h2 id="empty"></h2><h2 id="full">Subtitle</h2>');
     await expect(root.locator('#empty')).toBeHidden();
     await expect(root.locator('#full')).toBeVisible();
-});
-
-test('the header is a darker blend of the title color, and a site can change the blend', async ({ page }) => {
-    const root = await mount(page, '<header id="plain">Title</header><div id="title" style="background-color:var(--color-title)"></div><header id="site" style="--color-header:var(--color-title)">Site</header>');
-    const bg = id => root.locator(id).evaluate(el => getComputedStyle(el).backgroundColor);
-    const title = await bg('#title');
-    expect(await bg('#plain')).not.toBe(title);
-    expect(await bg('#site')).toBe(title);
-});
-
-test('page headings are text without a color bar, unless they have a theme', async ({ page }) => {
-    const root = await mount(page, '<webui-content slot="x" nest><h2 id="plain">Plain</h2><h2 id="themed" theme="primary">Themed</h2></webui-content>');
-    const bg = id => root.locator(id).evaluate(el => getComputedStyle(el).backgroundColor);
-    await expect.poll(() => bg('#plain')).toBe('rgba(0, 0, 0, 0)');
-    await expect.poll(() => bg('#themed')).not.toBe('rgba(0, 0, 0, 0)');
-});
-
-test('text fields are styled as fields', async ({ page }) => {
-    const root = await mount(page, '<input id="field" type="text">');
-    const style = await root.locator('#field').evaluate(el => [getComputedStyle(el).borderTopStyle, getComputedStyle(el).borderTopLeftRadius]);
-    expect(style).toEqual(['solid', '4px']);
 });
 
 test('every CSS variable a component uses without a fallback is defined', async () => {

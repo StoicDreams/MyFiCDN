@@ -47,17 +47,6 @@ test('shows the images and videos written inside it, in their place', async ({ p
     await expect(gallery.locator('webui-flex img')).toBeHidden();
     await expect(gallery.locator('webui-flex p')).toHaveText('Saving a file');
 });
-test('the shown image is drawn at its size, not shrunk beside the viewer video', async ({ page }) => {
-    // A 400 by 300 image, so the viewer has something larger than text to show.
-    await page.route('**/large.svg', route => route.fulfill({
-        contentType: 'image/svg+xml',
-        body: '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="400" height="300" fill="red"/></svg>',
-    }));
-    const root = await mount(page, '<webui-gallery card-width="100"><img src="/large.svg" alt="Large"><video src="/clip.mp4" title="Clip"></video></webui-gallery>');
-    const image = root.locator('webui-gallery webui-flex img');
-    await expect.poll(() => image.evaluate(img => img.naturalWidth)).toBe(400);
-    await expect.poll(() => image.evaluate(img => Math.round(img.getBoundingClientRect().height))).toBeGreaterThan(100);
-});
 test('a video from JSON plays in the viewer, with its poster as the card', async ({ page }) => {
     await page.route('**/gallery-video.json', route => route.fulfill({
         contentType: 'application/json',

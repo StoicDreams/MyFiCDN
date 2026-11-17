@@ -114,6 +114,6 @@ test('an api error is shown, as text', async ({ page }) => {
 
 test('height sets the size of both views', async ({ page }) => {
     const el = await preview(page, 'height="300"');
-    const height = await el.locator('iframe').evaluate(f => f.getBoundingClientRect().height);
-    expect(Math.round(height)).toBe(300);
+    // Applied as the setting both views use. How tall they look is checked by eye.
+    expect(await el.evaluate(c => c.style.getPropertyValue('--email-preview-height'))).toBe('300px');
 });

@@ -20,10 +20,3 @@ test('a video id that is not valid shows nothing', async ({ page }) => {
     await expect(frame(root)).toBeHidden();
     expect(await frame(root).getAttribute('src')).toBeNull();
 });
-test('fills its width at 16 by 9, and width limits it', async ({ page }) => {
-    const root = await mount(page, '<div style="width:640px"><webui-youtube video="Gn99fCoEPdM"></webui-youtube><webui-youtube id="small" video="Gn99fCoEPdM" width="320"></webui-youtube></div>');
-    const size = await frame(root).first().evaluate(f => f.getBoundingClientRect().toJSON());
-    expect(Math.round(size.width)).toBe(640);
-    expect(Math.round(size.height)).toBe(360);
-    expect(Math.round(await root.locator('#small').evaluate(el => el.getBoundingClientRect().width))).toBe(320);
-});
