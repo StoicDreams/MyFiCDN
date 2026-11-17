@@ -120,7 +120,9 @@
             t._close = t.template.querySelector('.panel button.close');
             t._slot = t.template.querySelector('slot');
             // The footer can change height, such as when its content wraps.
-            t._footerObserver = new ResizeObserver(() => t.placeAboveFooter());
+            // Positions are written in the next frame, since writing them in an observer's callback is reported as a
+            // ResizeObserver loop error.
+            t._footerObserver = new ResizeObserver(() => requestAnimationFrame(() => t.placeAboveFooter()));
             t._onResize = () => {
                 t.placeAboveFooter();
                 t.keepInView();
@@ -170,9 +172,9 @@
             });
             t._panel.querySelectorAll('.resize').forEach(handle => t.trackResize(handle, handle.dataset.edge));
             // Content can finish rendering after the panel opens, and a panel that grows must stay in view.
-            t._panelObserver = new ResizeObserver(() => {
+            t._panelObserver = new ResizeObserver(() => requestAnimationFrame(() => {
                 if (!t._resizing && t.isOpen()) t.keepPanelInView();
-            });
+            }));
             t._panelObserver.observe(t._panel);
             t._panel.addEventListener('keydown', ev => {
                 if (ev.key === 'Escape') {

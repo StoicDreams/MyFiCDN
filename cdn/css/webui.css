@@ -740,8 +740,11 @@ webui-paper,
 webui-table {
     display: block;
 }
+/* What a webui-condition shows sits in the cell itself (the condition is display: contents), so it lines up too. */
 webui-table table td > *,
-webui-table table th > * {
+webui-table table th > *,
+webui-table table td > webui-condition > *,
+webui-table table th > webui-condition > * {
     vertical-align: middle;
 }
 webui-paper,

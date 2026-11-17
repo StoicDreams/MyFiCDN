@@ -34,3 +34,21 @@ test('page styles and inline styles can hide it', async ({ page }) => {
     await shown.evaluate(el => { el.style.display = ''; });
     expect(await shown.evaluate(el => getComputedStyle(el).display)).toBe('flex');
 });
+
+test('wrap-at changes its layout without a ResizeObserver loop error', async ({ page }) => {
+    // Wrapping changes the flex's own height, which an observer watching it reports in the same frame unless the
+    // attribute is set in the next frame.
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    const root = await mount(page, `<div id="box" style="width:500px"><webui-flex wrap-at="600">
+        <div style="width:400px;height:40px"></div><div style="width:400px;height:40px"></div>
+    </webui-flex></div>`);
+    const el = root.locator('webui-flex');
+    await expect(el).toHaveAttribute('wrap', '');
+    await root.locator('#box').evaluate(box => { box.style.width = '900px'; });
+    await expect(el).not.toHaveAttribute('wrap');
+    await root.locator('#box').evaluate(box => { box.style.width = '450px'; });
+    await expect(el).toHaveAttribute('wrap', '');
+    await page.waitForTimeout(200);
+    expect(errors.filter(e => e.includes('ResizeObserver'))).toEqual([]);
+});

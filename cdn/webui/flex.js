@@ -35,15 +35,15 @@ webui.define('webui-flex', {
         if (t._wrapObserver) return;
         const wrapAt = parseInt(t.getAttribute('wrap-at'));
         if (Number.isFinite(wrapAt)) {
+            // Wrapping changes this element's own height, so the attribute is set in the next frame, and only when it
+            // changes, or the observer reports the change in the same frame as a ResizeObserver loop error.
             const observer = new ResizeObserver(entries => {
-                for (const entry of entries) {
-                    const width = entry.contentRect.width;
-                    if (width < wrapAt) {
-                        t.setAttribute('wrap', '');
-                    } else {
-                        t.removeAttribute('wrap');
-                    }
-                }
+                const width = entries[entries.length - 1].contentRect.width;
+                const wrap = width < wrapAt;
+                cancelAnimationFrame(t._wrapFrame);
+                t._wrapFrame = requestAnimationFrame(() => {
+                    if (t.hasAttribute('wrap') !== wrap) t.toggleAttribute('wrap', wrap);
+                });
             });
             observer.observe(t);
             t._wrapObserver = observer;

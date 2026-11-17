@@ -177,10 +177,10 @@
 <slot name="valid"></slot>
 <slot name="invalid"></slot>
 <style type="text/css">
+/* The content shown takes the condition's place in its parent's layout, so a button shown by a condition lines up with
+the buttons beside it, and a block fills the width as it would without the condition. */
 :host {
-display:inline;
-width:100%;
-width:-webkit-fill-available;
+display:contents;
 }
 slot[name] {
 display:none;
