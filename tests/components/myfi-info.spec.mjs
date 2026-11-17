@@ -26,6 +26,20 @@ test('sign-in-label shows a labeled button while signed out, and only the icon o
     await expect(el).not.toHaveAttribute('signed-out');
     await expect(label).toBeHidden();
 });
+test('signing in goes to stoicdreams.com for this site, and comes back to the page it was on', async ({ page }) => {
+    const { el } = await info(page);
+    const urls = await el.evaluate(c => ({
+        page: c.signinUrl('/remote/?desk=1'),
+        home: c.signinUrl('/'),
+        here: c.signinUrl(),
+        domain: location.hostname,
+        path: location.pathname + location.search,
+    }));
+    const signin = `https://www.stoicdreams.com/signin?domain=${encodeURIComponent(urls.domain)}`;
+    expect(urls.page).toBe(`${signin}&return=${encodeURIComponent('/remote/?desk=1')}`);
+    expect(urls.home).toBe(signin);
+    expect(urls.here).toBe(urls.path === '/' ? signin : `${signin}&return=${encodeURIComponent(urls.path)}`);
+});
 test('on localhost, clicking simulates sign in and updates the icon', async ({ page }) => {
     const { el } = await info(page);
     await el.evaluate(c => c.click());

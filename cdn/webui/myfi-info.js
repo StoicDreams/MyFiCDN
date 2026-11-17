@@ -84,10 +84,18 @@
                         webui.setData('session-user-role', 1);
                         webui.alert('Simulated sign-in for LocalHost testing.', 'success');
                     } else {
-                        location.href = `https://www.stoicdreams.com/signin?domain=${domain}`;
+                        location.href = t.signinUrl();
                     }
                 }
             });
+        },
+        /**
+         * The address that signs this site in on www.stoicdreams.com, and comes back to `path` (this page by default)
+         * once signed in. stoicdreams.com only sends visitors back to a path on this same site.
+         */
+        signinUrl(path = location.pathname + location.search) {
+            const url = `https://www.stoicdreams.com/signin?domain=${encodeURIComponent(domain)}`;
+            return path && path !== '/' ? `${url}&return=${encodeURIComponent(path)}` : url;
         },
         attr: ['exclude', 'sign-in-label'],
         attrChanged(property, value) {
