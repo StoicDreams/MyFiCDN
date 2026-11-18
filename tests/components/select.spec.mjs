@@ -263,3 +263,22 @@ test('icon-only shows just the chosen picture in the field, and every name in th
     await expect(el.locator('.pick')).toHaveAttribute('title', 'Payments API');
     await expect(el.locator('.pick-picture svg.fallback text')).toHaveText('PA');
 });
+
+test('the list is named by the select, and hovering between tiles shows no tooltip', async ({ page }) => {
+    const el = await select(page, 'title="Projects"');
+    await field(el).click();
+    await expect(page.getByRole('listbox', { name: 'Projects' })).toHaveCount(1);
+    // The gap between the first two tiles, where only the list is under the pointer.
+    const first = await tile(page, 'Acme Storefront').boundingBox();
+    const second = await tile(page, 'Docs').boundingBox();
+    const x = (first.x + first.width + second.x) / 2;
+    const y = first.y + first.height / 2;
+    await page.evaluate(() => {
+        window.__moveHandled = new Promise(resolve => {
+            document.body.addEventListener('mousemove', () => requestAnimationFrame(() => resolve()), { once: true });
+        });
+    });
+    await page.mouse.move(x, y);
+    await page.evaluate(() => window.__moveHandled);
+    await expect(page.locator('body > .tooltip')).toHaveClass(/closed/);
+});

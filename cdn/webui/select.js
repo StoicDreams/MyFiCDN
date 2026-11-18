@@ -251,11 +251,11 @@ outline-offset:var(--focus-offset, 3px);
 .tile[hidden] {
 display:none;
 }
-/* A check in the corner marks each chosen tile. */
+/* A check in the top-left corner marks each chosen tile, leaving the top-right for its badge. */
 .check {
 position:absolute;
 top:0.45em;
-right:0.45em;
+left:0.45em;
 display:none;
 width:1.35em;
 height:1.35em;
@@ -271,14 +271,15 @@ height:100%;
 .tile[aria-selected="true"] .check {
 display:block;
 }
+/* Every picture is the same size, whatever its name or badge, so the icons line up across the grid. */
 .picture {
 display:flex;
 align-items:center;
 justify-content:center;
-flex:1 1 auto;
-min-height:0;
-width:58%;
+flex:0 0 auto;
+width:48%;
 max-width:4.5em;
+aspect-ratio:1;
 }
 .picture img {
 width:100%;
@@ -296,14 +297,26 @@ filter:drop-shadow(0 2px 4px rgb(0 0 0 / 22%));
 font-size:2.8em;
 color:var(--color-title, currentColor);
 }
-.badge {
+/* A tile's badge sits over its top-right corner, as a count does on an icon, so it never takes the picture's room. */
+.tile .badge {
+position:absolute;
+top:0.3em;
+right:0.3em;
+z-index:1;
 display:inline-flex;
-flex-wrap:wrap;
+flex-wrap:nowrap;
 align-items:center;
 justify-content:center;
-gap:0.2em;
-max-width:100%;
-font-size:0.85em;
+gap:0.3em;
+max-width:calc(100% - 2.2em);
+padding:0.3em 0.5em;
+box-sizing:border-box;
+font-size:0.9em;
+line-height:1;
+border-radius:999px;
+background-color:color-mix(in srgb, var(--tile-surface) 80%, black);
+border:1px solid var(--tile-border);
+box-shadow:0 1px 3px rgb(0 0 0 / 25%);
 }
 .name {
 display:-webkit-box;
@@ -312,6 +325,8 @@ display:-webkit-box;
 max-width:100%;
 overflow:hidden;
 line-height:1.2;
+/* Room for two lines, so a one line name sits where a two line one starts. */
+min-height:2.4em;
 font-size:0.85em;
 font-weight:600;
 overflow-wrap:anywhere;
@@ -675,7 +690,8 @@ transform:none;
             t._tiles.forEach((tile, index) => { tile.hidden = !!words && !t._options[index].display.toLowerCase().includes(words); });
         },
         listName() {
-            return this.getAttribute('title') || (this._label.textContent || '').trim() || 'Choose';
+            // Web UI's tooltips move a title to aria-label, so either names the list.
+            return this.getAttribute('title') || this.getAttribute('aria-label') || (this._label.textContent || '').trim() || 'Choose';
         },
         focusTile(tile, tiles) {
             if (!tile) return;

@@ -3929,7 +3929,7 @@ function setupWebuiTooltips() {
             CloseIfOpen();
         }
     }
-    const regionRoles = new Set(["navigation", "main", "banner", "contentinfo", "complementary", "region", "search", "form", "group", "dialog", "alertdialog", "list", "menu", "menubar", "toolbar", "tablist", "radiogroup", "tree", "grid", "table", "application", "document", "article", "feed"]);
+    const regionRoles = new Set(["navigation", "main", "banner", "contentinfo", "complementary", "region", "search", "form", "group", "dialog", "alertdialog", "list", "listbox", "menu", "menubar", "toolbar", "tablist", "radiogroup", "tree", "grid", "table", "application", "document", "article", "feed"]);
     const regionTags = new Set(["NAV", "MAIN", "ASIDE", "HEADER", "FOOTER", "SECTION", "FORM", "DIALOG", "FIELDSET", "UL", "OL", "TABLE", "ARTICLE"]);
     // Elements given a title, which asks for a tooltip, even on a region.
     const titled = new WeakSet();
@@ -3983,6 +3983,12 @@ function setupWebuiTooltips() {
                     return;
                 }
                 if (target === capturedElement || target === skippedElement) {
+                    return;
+                }
+                // A move from before the element was hidden or removed, such as by the click it led to, would put
+                // the tooltip in the window's corner, since the element has no box left to show it by.
+                if (!target.isConnected || !target.getClientRects().length) {
+                    CloseIfOpen();
                     return;
                 }
                 let targetDisplay = `${target.innerText}`.trim();

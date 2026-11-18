@@ -231,6 +231,18 @@ test('a tooltip never blocks clicks, and closes when its element is hidden under
     await root.locator('#hide').evaluate(el => { el.style.display = 'none'; });
     await expect(tooltip).toHaveClass(/closed/);
 });
+test('a mouse move handled after its element was hidden shows no tooltip', async ({ page }) => {
+    const root = await mount(page, '<button id="gone" title="Rename" style="position:fixed;top:300px;left:300px;z-index:9999">x</button>');
+    const tooltip = page.locator('body > .tooltip');
+    // A move, then the element hidden before the tooltip's frame, as a click that hides its button does.
+    await root.locator('#gone').evaluate(el => new Promise(resolve => {
+        el.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, composed: true }));
+        el.style.display = 'none';
+        requestAnimationFrame(() => requestAnimationFrame(resolve));
+    }));
+    await expect(tooltip).toHaveClass(/closed/);
+    await expect(tooltip).not.toHaveText('Rename');
+});
 test('a tooltip shows above an open dropdown list', async ({ page }) => {
     const options = JSON.stringify(['One', 'Two', 'Three', 'Four'].map(name => ({ value: name, html: `<span title="About ${name}">${name}</span>` })));
     const root = await mount(page, `<webui-dropdown html-options options='${options}' style="position:fixed;top:100px;left:100px;width:200px"></webui-dropdown>`);
