@@ -23,11 +23,22 @@ test('data-subscribe calls named setters on components', async ({ page }) => {
     await expect.poll(() => root.locator('app-sub').evaluate(el => [el.got, el.other])).toEqual([1, [2, 'other-key']]);
 });
 test('data-subscribe reaches components that finish loading late', async ({ page }) => {
+    // The component's script is held until the test lets it go, so the element is on the page, and its
+    // subscription registered, before the component exists.
+    let requested, release;
+    const wasRequested = new Promise(resolve => { requested = resolve; });
+    const released = new Promise(resolve => { release = resolve; });
     await page.route('**/webui/condition.*', async route => {
-        await new Promise(r => setTimeout(r, 400));
+        requested();
+        await released;
         await route.fallback();
     });
-    const root = await mount(page, '<webui-condition data-subscribe="late-key:setValue"><template slot="invalid">{TEMPLATE_LATE_KEY}not valid</template></webui-condition>');
+    // mount waits for the component, so it only finishes once the script is let go.
+    const mounting = mount(page, '<webui-condition data-subscribe="late-key:setValue"><template slot="invalid">{TEMPLATE_LATE_KEY}not valid</template></webui-condition>');
+    // The loader registers an element's subscription before it asks for its script.
+    await wasRequested;
+    release();
+    const root = await mounting;
     await expect(root.locator('webui-condition')).toHaveText('not valid');
 });
 test('data-subscribe adds and swaps classes', async ({ page }) => {
@@ -40,7 +51,7 @@ test('data-subscribe adds and swaps classes', async ({ page }) => {
 test('data-trigger writes input values to data', async ({ page }) => {
     const root = await mount(page, '<input data-trigger="bind-t"><input type="hidden" id="hid" data-trigger="bind-h">');
     await root.locator('input').first().fill('typed');
-    expect(await page.evaluate(() => webui.getData('bind-t'))).toBe('typed');
+    await expect.poll(() => page.evaluate(() => webui.getData('bind-t'))).toBe('typed');
     await root.locator('#hid').evaluate(el => el.setAttribute('value', 'hidden'));
     await expect.poll(() => page.evaluate(() => webui.getData('bind-h'))).toBe('hidden');
 });
@@ -60,7 +71,7 @@ test('data-bind syncs both directions', async ({ page }) => {
     await page.evaluate(() => webui.setData('bind-both', 'from data'));
     await expect(root.locator('input')).toHaveValue('from data');
     await root.locator('input').fill('from input');
-    expect(await page.evaluate(() => webui.getData('bind-both'))).toBe('from input');
+    await expect.poll(() => page.evaluate(() => webui.getData('bind-both'))).toBe('from input');
 });
 test('data-default sets missing data', async ({ page }) => {
     await mount(page, '<span data-default="bind-d:start"></span>');
@@ -72,8 +83,10 @@ test('data-default with only a value sets the default for the bound key', async 
 });
 test('data-default with only a value leaves existing data alone', async ({ page }) => {
     await page.evaluate(() => webui.setData('bind-kept', 'saved'));
-    await mount(page, '<input data-bind="bind-kept" data-default="start">');
-    await page.waitForTimeout(100);
+    // The second element comes later in the page, so once its default is set the first element's was handled.
+    const root = await mount(page, '<input data-bind="bind-kept" data-default="start"><span data-default="bind-handled:yes"></span>');
+    await expect.poll(() => page.evaluate(() => webui.getData('bind-handled'))).toBe('yes');
+    await expect(root.locator('input')).toHaveValue('saved');
     expect(await page.evaluate(() => webui.getData('bind-kept'))).toBe('saved');
 });
 test('data-default turns a bound toggle on', async ({ page }) => {
@@ -81,9 +94,10 @@ test('data-default turns a bound toggle on', async ({ page }) => {
     await expect.poll(() => root.locator('webui-toggle-icon').evaluate(el => el.value)).toBe(true);
 });
 test('an input that writes to data starts the data at its own value', async ({ page }) => {
-    await mount(page, '<webui-input-range min="5" max="105" step="5" value="5" data-subscribe="start-filter.count:setValue" data-trigger="start-filter.count"></webui-input-range><input value="abc" data-bind="start-text"><input type="checkbox" value="on" data-trigger="start-check"><webui-button data-trigger="start-button" data-value="clicked" value="no"></webui-button>');
+    // The last input comes after the checkbox and the button, so once its start value is in data theirs were handled.
+    await mount(page, '<webui-input-range min="5" max="105" step="5" value="5" data-subscribe="start-filter.count:setValue" data-trigger="start-filter.count"></webui-input-range><input value="abc" data-bind="start-text"><input type="checkbox" value="on" data-trigger="start-check"><webui-button data-trigger="start-button" data-value="clicked" value="no"></webui-button><input value="last" data-bind="start-last">');
     await expect.poll(() => page.evaluate(() => webui.getData('start-filter'))).toEqual({ count: '5' });
-    expect(await page.evaluate(() => webui.getData('start-text'))).toBe('abc');
+    await expect.poll(() => page.evaluate(() => [webui.getData('start-text'), webui.getData('start-last')])).toEqual(['abc', 'last']);
     // A checkbox's value is there even when unchecked, and a button only writes when clicked.
     expect(await page.evaluate(() => [webui.getData('start-check'), webui.getData('start-button')])).toEqual([undefined, undefined]);
 });
@@ -109,28 +123,45 @@ test('elevation, theme, and position attributes are applied', async ({ page }) =
     const root = await mount(page, '<div elevation="3" theme="info" top="5" left="1em"></div>');
     const div = root.locator('div');
     await expect(div).toHaveClass('elevation-3');
-    expect(await div.evaluate(el => [el.style.top, el.style.left, el.style.getPropertyValue('--theme-color')])).toEqual(['5px', '1em', 'var(--color-info)']);
+    await expect.poll(() => div.evaluate(el => [el.style.top, el.style.left, el.style.getPropertyValue('--theme-color')])).toEqual(['5px', '1em', 'var(--color-info)']);
     await div.evaluate(el => el.setAttribute('elevation', '-2'));
     await expect(div).toHaveClass('elevation-n2');
 });
 test('attributes inside code blocks and templates are not applied', async ({ page }) => {
-    const root = await mount(page, '<code><div elevation="3"></div></code>');
-    await page.waitForTimeout(50);
-    await expect(root.locator('div')).not.toHaveClass(/elevation/);
+    // The paragraph comes later in the page, so once its elevation is applied the code block was handled.
+    const root = await mount(page, '<code><div elevation="3"></div></code><template><div elevation="3"></div></template><p elevation="2"></p>');
+    await expect(root.locator('p')).toHaveClass('elevation-2');
+    await expect(root.locator('code div')).not.toHaveClass(/elevation/);
+    expect(await root.locator('template').evaluate(el => el.content.querySelector('div').className)).toBe('');
 });
 test('components load automatically, and a list of preloads tolerates extra separators', async ({ page }) => {
+    const requests = [];
+    page.on('request', request => requests.push(new URL(request.url()).pathname));
     await page.evaluate(() => webui.define('app-pl', { preload: 'paper, quote ;line' }));
     await mount(page, '<app-pl></app-pl>');
     await expect.poll(() => page.evaluate(() => ['webui-paper', 'webui-quote', 'webui-line'].every(n => customElements.get(n)))).toBe(true);
-    expect(await page.evaluate(() => performance.getEntriesByType('resource').some(e => e.name.endsWith('/webui/.min.js') || e.name.endsWith('/webui/.js')))).toBe(false);
+    // Every name in the list is requested in one go, so a request for an empty name would have been made with the
+    // last of these, which has loaded.
+    await expect.poll(() => requests.filter(path => /\/webui\/(paper|quote|line)\./.test(path)).length).toBe(3);
+    expect(requests.filter(path => /\/webui\/\.(min\.)?js$/.test(path))).toEqual([]);
 });
 test('a component that fails to load is only retried a few times', async ({ page }) => {
     let requests = 0;
     await page.route('**/webui/does-not-exist.*', route => { requests++; return route.fulfill({ status: 404, body: '' }); });
-    for (let i = 0; i < 6; i++) {
-        await page.evaluate(() => document.body.appendChild(document.createElement('webui-does-not-exist')));
-        await page.waitForTimeout(60);
+    const add = name => page.evaluate(name => { document.body.appendChild(document.createElement(name)); }, name);
+    const loading = () => page.evaluate(() => !!document.head.querySelector('script[src*="/webui/does-not-exist."]'));
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        await add('webui-does-not-exist');
+        await expect.poll(() => requests).toBe(attempt);
+        // The loader takes the script off the page when it fails, and only then is the next attempt allowed.
+        await expect.poll(loading).toBe(false);
     }
+    for (let i = 0; i < 3; i++) await add('webui-does-not-exist');
+    // Another missing component, added last, is asked for after the loader has dealt with the elements before it.
+    let later = 0;
+    await page.route('**/webui/also-missing.*', route => { later++; return route.fulfill({ status: 404, body: '' }); });
+    await add('webui-also-missing');
+    await expect.poll(() => later).toBe(1);
     expect(requests).toBe(3);
 });
 test('session data survives a reload', async ({ page }) => {
@@ -138,7 +169,7 @@ test('session data survives a reload', async ({ page }) => {
     await expect.poll(() => page.evaluate(() => sessionStorage.getItem('session-data'))).toContain('v1');
     await page.reload();
     await page.waitForFunction(() => typeof webui === 'object' && webui.loaded);
-    expect(await page.evaluate(() => webui.getData('session-keep'))).toBe('v1');
+    await expect.poll(() => page.evaluate(() => webui.getData('session-keep'))).toBe('v1');
 });
 test('corrupt session data does not stop the framework loading', async ({ page }) => {
     await page.evaluate(() => sessionStorage.setItem('session-data', '{bad'));

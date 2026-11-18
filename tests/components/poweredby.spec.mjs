@@ -6,7 +6,7 @@ test('links to Web UI and reports its version', async ({ page }) => {
     await expect(el.locator('a')).toHaveAttribute('href', 'https://webui.stoicdreams.com');
     await expect(el).toHaveAttribute('version', /^\d+\.\d+\.\d+$/);
     const version = await el.getAttribute('version');
-    expect(await page.evaluate(() => webui.getData('webui-version'))).toBe(version);
+    await expect.poll(() => page.evaluate(() => webui.getData('webui-version'))).toBe(version);
     await expect(el.locator('a')).toHaveAttribute('title', `Web UI version ${version}`);
 });
 test('matches the version file', async ({ page }) => {

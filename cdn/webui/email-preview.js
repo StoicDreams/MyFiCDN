@@ -200,7 +200,14 @@
             const empty = !email.html && !email.text;
             const placeholder = t.getAttribute('placeholder') || 'The email shows here as you write it.';
             const safe = emailSafeHtml(empty ? `<p style="font-family:sans-serif;color:#71717a;">${webui.escapeHtml(placeholder)}</p>` : email.html);
-            if (t._frame.srcdoc !== safe.html) t._frame.srcdoc = safe.html;
+            if (t._frame.srcdoc !== safe.html) {
+                // A new frame, not a new srcdoc on the same one: a frame still loading its last document can
+                // keep showing it, which left the preview behind what was typed.
+                const frame = t._frame.cloneNode(false);
+                frame.srcdoc = safe.html;
+                t._frame.replaceWith(frame);
+                t._frame = frame;
+            }
             t._textView.textContent = empty ? placeholder : (email.text || '(no text version)');
             const notices = [...(email.notices || [])];
             if (safe.removed.length) {

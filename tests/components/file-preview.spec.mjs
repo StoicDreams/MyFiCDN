@@ -31,15 +31,17 @@ test('a file with no type is previewed by its extension', async ({ page }) => {
 });
 test('pdfs load in a frame that is not sandboxed, so the viewer works', async ({ page }) => {
     const el = await preview(page);
-    expect(await shown(el, [{ name: 'a.pdf', type: 'application/pdf', content: `data:application/pdf;base64,${b64('%PDF-1.4')}` }]))
-        .toMatchObject({ tag: 'iframe', src: expect.stringMatching(/^blob:/), sandbox: null });
-    expect(await el.locator('iframe').evaluate(f => fetch(f.src).then(r => r.blob()).then(b => b.type))).toBe('application/pdf');
+    // setFile builds the element synchronously, so one read in the same call is final.
+    const view = await shown(el, [{ name: 'a.pdf', type: 'application/pdf', content: `data:application/pdf;base64,${b64('%PDF-1.4')}` }]);
+    expect(view).toMatchObject({ tag: 'iframe', src: expect.stringMatching(/^blob:/), sandbox: null });
+    await expect.poll(() => el.locator('iframe').evaluate(f => fetch(f.src).then(r => r.blob()).then(b => b.type))).toBe('application/pdf');
 });
 for (const [name, type, tag] of [['clip.mp4', 'video/mp4', 'video'], ['clip.mov', '', 'video'], ['clip.webm', 'video/webm', 'video'], ['song.mp3', 'audio/mpeg', 'audio'], ['song.ogg', 'application/ogg', 'audio'], ['song.flac', '', 'audio']]) {
     test(`${name} plays in ${tag === 'video' ? 'a video' : 'an audio'} element with controls`, async ({ page }) => {
         const el = await preview(page);
-        expect(await shown(el, [{ name, type, content: `data:application/octet-stream;base64,${b64('not media')}` }]))
-            .toMatchObject({ tag, controls: true, src: expect.stringMatching(/^blob:/) });
+        // setFile builds the element synchronously, so one read in the same call is final.
+        const view = await shown(el, [{ name, type, content: `data:application/octet-stream;base64,${b64('not media')}` }]);
+        expect(view).toMatchObject({ tag, controls: true, src: expect.stringMatching(/^blob:/) });
     });
 }
 test('media the browser cannot play shows the file details and a download link', async ({ page }) => {
@@ -59,8 +61,9 @@ test('html files are sandboxed so they cannot run scripts on this site', async (
     const el = await preview(page);
     await el.evaluate(c => c.setFile([{ type: 'text/html', content: '<script>parent.__hacked = 1</script>' }]));
     await expect(el.locator('iframe')).toHaveAttribute('sandbox', '');
-    await page.waitForTimeout(100);
-    expect(await page.evaluate(() => window.__hacked)).toBeUndefined();
+    // The frame has loaded the file, script included, so the script has had its chance to run.
+    await expect(el.locator('iframe').contentFrame().locator('script')).toHaveCount(1);
+    await expect.poll(() => page.evaluate(() => window.__hacked)).toBeUndefined();
 });
 test('text is shown as text, not rendered as html', async ({ page }) => {
     const el = await preview(page);
@@ -156,7 +159,7 @@ test('clear removes the preview and frees its object url, and empty input clears
     await el.evaluate(c => c.setFile([]));
     await expect(el.locator('iframe')).toHaveCount(0);
     await expect(el).not.toHaveAttribute('kind');
-    expect(await page.evaluate(() => window.__revoked)).toEqual([src]);
+    await expect.poll(() => page.evaluate(() => window.__revoked)).toEqual([src]);
 });
 // height and max-height are applied to the preview itself, which is its state. How tall things look is checked by eye.
 test('height sets the preview\'s height', async ({ page }) => {

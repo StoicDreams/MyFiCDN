@@ -13,7 +13,7 @@ test('variant picks the icon shape and theme', async ({ page }) => {
     const root = await mount(page, '<webui-alert show variant="danger">x</webui-alert>');
     const alert = root.locator('webui-alert');
     await expect(alert.locator('#icon')).toHaveAttribute('shape', 'octogon');
-    expect(await alert.evaluate(el => el.style.getPropertyValue('--theme-color'))).toBe('var(--color-danger)');
+    await expect.poll(() => alert.evaluate(el => el.style.getPropertyValue('--theme-color'))).toBe('var(--color-danger)');
     await alert.evaluate(el => el.setAttribute('variant', 'success'));
     await expect(alert.locator('#icon')).toHaveAttribute('shape', 'circle');
 });
@@ -22,7 +22,7 @@ test('the close button hides it and records that', async ({ page }) => {
     const alert = root.locator('webui-alert');
     await alert.locator('#close').click();
     await expect(alert).not.toHaveAttribute('show');
-    expect(await alert.evaluate(el => el.userclosed)).toBe(true);
+    await expect.poll(() => alert.evaluate(el => el.userclosed)).toBe(true);
 });
 test('fixed hides the close button', async ({ page }) => {
     const root = await mount(page, '<webui-alert show fixed>x</webui-alert>');

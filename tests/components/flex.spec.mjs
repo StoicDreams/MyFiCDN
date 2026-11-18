@@ -4,7 +4,7 @@ import { test, expect, mount } from '../support/webui.mjs';
 // settings it applies. Where its items end up is checked by eye.
 test('attributes control gap, alignment, and direction', async ({ page }) => {
     const root = await mount(page, '<webui-flex gap="10" justify="center" align="end" column grow wrap></webui-flex>');
-    expect(await root.locator('webui-flex').evaluate(el => {
+    await expect.poll(() => root.locator('webui-flex').evaluate(el => {
         const style = getComputedStyle(el);
         return [style.columnGap, style.justifyContent, style.alignItems, style.flexDirection, style.flexGrow, style.flexWrap];
     })).toEqual(['10px', 'center', 'end', 'column', '1', 'wrap']);
@@ -43,6 +43,7 @@ test('wrap-at changes its layout without a ResizeObserver loop error', async ({ 
     await expect(el).not.toHaveAttribute('wrap');
     await root.locator('#box').evaluate(box => { box.style.width = '450px'; });
     await expect(el).toHaveAttribute('wrap', '');
-    await page.waitForTimeout(200);
+    // A loop error is reported in the frame after the layout change, so two frames later it would have arrived.
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     expect(errors.filter(e => e.includes('ResizeObserver'))).toEqual([]);
 });

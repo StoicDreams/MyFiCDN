@@ -26,8 +26,8 @@ test('exclude leaves out the named components', async ({ page }) => {
     const root = await mount(page, '<webui-components exclude="app-template, webui-app webui-app-config"></webui-components>');
     const buttons = root.locator('webui-components > webui-tabs > webui-button');
     await expect(buttons).toHaveCount(names.length - 3);
-    expect(await tabButton(root, 'webui-app')).toBeNull();
-    expect(await tabButton(root, 'webui-alert')).not.toBeNull();
+    await expect.poll(() => tabButton(root, 'webui-app')).toBeNull();
+    await expect.poll(() => tabButton(root, 'webui-alert')).not.toBeNull();
 });
 test('nohash tabs leave the url alone', async ({ page }) => {
     const root = await mount(page, '<webui-components nohash></webui-components>');
@@ -53,6 +53,6 @@ test('a link to another component opens its tab instead of leaving the page', as
         await link.click();
         const target = await tabs.evaluate(el => Array.from(el.querySelectorAll(':scope > [slot="tabs"]')).findIndex(b => b.textContent.trim() === 'webui-tabs'));
         await expect.poll(() => tabs.evaluate(el => el._index)).toBe(target);
-        expect(await page.evaluate(() => location.pathname)).toBe(path);
+        await expect.poll(() => page.evaluate(() => location.pathname)).toBe(path);
     }
 });

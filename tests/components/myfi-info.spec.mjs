@@ -94,5 +94,5 @@ test('works as a button from the keyboard', async ({ page }) => {
     await el.focus();
     await page.keyboard.press('Enter');
     await page.keyboard.press('Space');
-    expect(await page.evaluate(() => window.__clicks)).toBe(2);
+    await expect.poll(() => page.evaluate(() => window.__clicks)).toBe(2);
 });

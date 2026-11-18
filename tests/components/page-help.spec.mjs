@@ -20,6 +20,23 @@ const PANEL_KEY = 'webui-page-help-position-panel';
 /** The panel or bubble shows inside the window. Positions are rounded, so a fraction of a pixel can pass the edge. */
 const inWindow = locator => expect(locator).toBeInViewport({ ratio: 0.95 });
 const isOpen = help => help.evaluate(el => el.isOpen());
+// Makes the help content render as the opening animation starts, and records that the animation was playing,
+// so a test never has to guess how long after the click the animation is still running.
+const renderAsItAnimates = help => help.evaluate(el => {
+    const panel = el.shadowRoot.querySelector('.panel');
+    const animate = panel.animate;
+    window.__renderedWhile = null;
+    panel.animate = function (...args) {
+        const animation = animate.apply(panel, args);
+        if (window.__renderedWhile === null) {
+            const late = el.querySelector('.late');
+            late.style.height = '2000px';
+            late.style.width = '900px';
+            window.__renderedWhile = animation.playState;
+        }
+        return animation;
+    };
+});
 // The element with focus, looking through shadow roots.
 const focused = page => page.evaluate(() => {
     let active = document.activeElement;
@@ -87,19 +104,19 @@ test('clicking the bubble opens the content in a panel', async ({ page }) => {
     // Content stays usable, since it is shown in place rather than copied.
     await page.evaluate(() => { window.__clicked = 0; document.querySelector('button.inside').addEventListener('click', () => window.__clicked++); });
     await help.locator('button.inside').click();
-    expect(await page.evaluate(() => window.__clicked)).toBe(1);
+    await expect.poll(() => page.evaluate(() => window.__clicked)).toBe(1);
 });
 test('the page stays usable while the panel is open', async ({ page }) => {
     const help = await ready(page, `<button id="page-button" style="position:fixed;left:20px;top:20px">Page</button><input id="page-input" style="position:fixed;left:20px;top:60px" />${HELP}`);
     await page.evaluate(() => { window.__pageClicks = 0; document.getElementById('page-button').addEventListener('click', () => window.__pageClicks++); });
     await help.locator('button.bubble').click();
-    await page.locator('#page-button').click({ timeout: 2000 });
-    expect(await page.evaluate(() => window.__pageClicks)).toBe(1);
+    await page.locator('#page-button').click();
+    await expect.poll(() => page.evaluate(() => window.__pageClicks)).toBe(1);
     await page.locator('#page-input').fill('typing while reading');
     await expect(page.locator('#page-input')).toHaveValue('typing while reading');
     // Neither clicking the page nor Escape from the page closes it.
     await page.keyboard.press('Escape');
-    expect(await isOpen(help)).toBe(true);
+    await expect.poll(() => isOpen(help)).toBe(true);
     await expect(panel(help)).toBeVisible();
 });
 test('the close button and Escape in the panel close it, and focus returns to the bubble', async ({ page }) => {
@@ -120,7 +137,7 @@ test('closing from code leaves focus on the page', async ({ page }) => {
     await page.locator('#page-input').focus();
     await help.evaluate(el => el.close());
     await expect.poll(() => isOpen(help)).toBe(false);
-    expect(await focused(page)).toBe('input.');
+    await expect.poll(() => focused(page)).toBe('input.');
 });
 test('the panel first opens whole, inside the window', async ({ page }) => {
     const help = await ready(page);
@@ -130,11 +147,11 @@ test('the panel first opens whole, inside the window', async ({ page }) => {
 test('the panel can be dragged by its header, and opens where it was left', async ({ page }) => {
     const help = await ready(page);
     await help.locator('button.bubble').click();
-    expect(await saved(page, PANEL_KEY)).toBeNull();
+    await expect.poll(() => saved(page, PANEL_KEY)).toBeNull();
     await drag(page, help, -200, -150, help.locator('.panel header'), { x: 20, y: 10 });
-    expect(await isOpen(help)).toBe(true);
+    await expect.poll(() => isOpen(help)).toBe(true);
+    await expect.poll(() => saved(page, PANEL_KEY)).toEqual({ left: expect.any(Number), top: expect.any(Number) });
     const place = await saved(page, PANEL_KEY);
-    expect(place).toEqual({ left: expect.any(Number), top: expect.any(Number) });
     await help.locator('.panel button.close').click();
     await expect.poll(() => isOpen(help)).toBe(false);
     // The help on another page opens where the panel was left.
@@ -168,7 +185,7 @@ test('dragging the panel or bubble across the page does not select text', async 
     const bubbleDrag = await selectionDuring(help.locator('button.bubble'), { x: 10, y: 10 });
     expect(bubbleDrag).toEqual({ selected: '', selectStartAllowed: false });
     // The page can select text again afterwards.
-    expect(await page.evaluate(() => document.dispatchEvent(new Event('selectstart', { cancelable: true })))).toBe(true);
+    await expect.poll(() => page.evaluate(() => document.dispatchEvent(new Event('selectstart', { cancelable: true })))).toBe(true);
 });
 test('pressing the close button does not drag the panel', async ({ page }) => {
     const help = await ready(page);
@@ -178,7 +195,7 @@ test('pressing the close button does not drag the panel', async ({ page }) => {
     await page.mouse.down();
     await page.mouse.move(close.left - 100, close.top - 100, { steps: 3 });
     await page.mouse.up();
-    expect(await page.evaluate(() => webui.storage.getItem('webui-page-help-position-panel'))).toBe('');
+    await expect.poll(() => page.evaluate(() => webui.storage.getItem('webui-page-help-position-panel'))).toBe('');
 });
 test('the panel cannot be dragged out of the window, and stays in view when the window shrinks', async ({ page }) => {
     const help = await ready(page);
@@ -195,11 +212,12 @@ test('the panel can be resized from its corner, and keeps that size', async ({ p
     await help.locator('button.bubble').click();
     await drag(page, help, -300, -300, help.locator('.panel header'), { x: 20, y: 10 });
     // Only a size the user chose is saved.
-    expect(Object.keys(await saved(page, PANEL_KEY))).toEqual(['left', 'top']);
+    await expect.poll(async () => Object.keys(await saved(page, PANEL_KEY) || {})).toEqual(['left', 'top']);
     const panelBox = await box(panel(help));
     await drag(page, help, 120, 90, panel(help), { x: panelBox.width - 3, y: panelBox.height - 3 });
+    const sized = { left: expect.any(Number), top: expect.any(Number), width: expect.any(Number), height: expect.any(Number) };
+    await expect.poll(() => saved(page, PANEL_KEY)).toEqual(sized);
     const size = await saved(page, PANEL_KEY);
-    expect(size).toEqual({ left: expect.any(Number), top: expect.any(Number), width: expect.any(Number), height: expect.any(Number) });
     await help.locator('.panel button.close').click();
     await expect.poll(() => isOpen(help)).toBe(false);
     // Opened again, it has the size chosen.
@@ -213,15 +231,15 @@ test('content that renders after opening leaves the panel whole inside the windo
     await help.locator('.late').evaluate(el => { el.style.height = '2000px'; el.style.width = '900px'; });
     await inWindow(panel(help));
     // The content scrolls inside the panel instead.
-    expect(await help.locator('.panel .body').evaluate(el => { el.scrollTop = 100000; return el.scrollTop > 0; })).toBe(true);
+    await expect.poll(() => help.locator('.panel .body').evaluate(el => { el.scrollTop = 100000; return el.scrollTop > 0; })).toBe(true);
 });
 test('content that renders while the panel animates open still leaves it whole inside the window', async ({ page }) => {
     // Apps play the opening animation, and their help content often renders during it.
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     const help = await ready(page, '<webui-page-help heading="Page Help"><div class="late">Loading</div></webui-page-help>');
+    await renderAsItAnimates(help);
     await help.locator('button.bubble').click();
-    await page.waitForTimeout(50);
-    await help.locator('.late').evaluate(el => { el.style.height = '2000px'; el.style.width = '900px'; });
+    await expect.poll(() => page.evaluate(() => window.__renderedWhile)).toBe('running');
     // Once the animation ends, the panel is whole and inside the window.
     await expect.poll(async () => (await panel(help).evaluate(el => el.getAnimations().length))).toBe(0);
     await inWindow(panel(help));
@@ -232,9 +250,9 @@ test('a panel opened where it was left stays in view when content renders while 
     await page.addInitScript(() => sessionStorage.setItem('webui-page-help-position-panel', JSON.stringify({ left: 780, top: 640 })));
     const help = await ready(page, '<webui-page-help heading="Page Help"><div class="late">Loading</div></webui-page-help>');
     await help.evaluate(() => webui.storage.setItem('webui-page-help-position-panel', JSON.stringify({ left: 780, top: 640 })));
+    await renderAsItAnimates(help);
     await help.locator('button.bubble').click();
-    await page.waitForTimeout(50);
-    await help.locator('.late').evaluate(el => { el.style.height = '2000px'; el.style.width = '900px'; });
+    await expect.poll(() => page.evaluate(() => window.__renderedWhile)).toBe('running');
     await expect.poll(async () => (await panel(help).evaluate(el => el.getAnimations().length))).toBe(0);
     await inWindow(panel(help));
 });
@@ -243,22 +261,22 @@ test('the panel can be resized from its top left corner and its edges, but not p
     await help.locator('button.bubble').click();
     await drag(page, help, -250, -200, help.locator('.resize[data-edge="nw"]'));
     // Resizing saves the size chosen.
-    expect(await saved(page, PANEL_KEY)).toEqual({ left: expect.any(Number), top: expect.any(Number), width: expect.any(Number), height: expect.any(Number) });
+    await expect.poll(() => saved(page, PANEL_KEY)).toEqual({ left: expect.any(Number), top: expect.any(Number), width: expect.any(Number), height: expect.any(Number) });
     await drag(page, help, -5000, 0, help.locator('.resize[data-edge="w"]'));
     await inWindow(panel(help));
     await drag(page, help, 0, -5000, help.locator('.resize[data-edge="n"]'));
     await inWindow(panel(help));
     // It cannot shrink below its smallest size, which the component keeps at 120px high.
     await drag(page, help, 0, 5000, help.locator('.resize[data-edge="n"]'));
-    expect((await saved(page, PANEL_KEY)).height).toBe(120);
+    await expect.poll(async () => (await saved(page, PANEL_KEY)).height).toBe(120);
 });
 test('dragging moves the bubble without opening it, and the position is remembered', async ({ page }) => {
     const help = await ready(page);
-    expect(await saved(page, BUBBLE_KEY)).toBeNull();
+    await expect.poll(() => saved(page, BUBBLE_KEY)).toBeNull();
     await drag(page, help, -400, -300);
-    expect(await isOpen(help)).toBe(false);
+    await expect.poll(() => isOpen(help)).toBe(false);
+    await expect.poll(() => saved(page, BUBBLE_KEY)).toEqual({ right: expect.any(Number), bottom: expect.any(Number) });
     const place = await saved(page, BUBBLE_KEY);
-    expect(place).toEqual({ right: expect.any(Number), bottom: expect.any(Number) });
     // A help bubble on the next page starts where this one was left.
     const next = await ready(page, '<webui-page-help><p>Next page</p></webui-page-help>');
     await expect.poll(() => next.locator('.float').evaluate(el => [el.style.right, el.style.bottom])).toEqual([`${place.right}px`, `${place.bottom}px`]);
@@ -282,14 +300,14 @@ test('it cannot be dragged out of the window, and stays in view when the window 
 test('a separate storage key keeps a separate position, and resetPosition forgets it', async ({ page }) => {
     const help = await ready(page, '<webui-page-help storage-key="demo-help"><p>x</p></webui-page-help>');
     await drag(page, help, -300, -200);
-    expect(await page.evaluate(() => webui.storage.getItem('demo-help'))).toContain('right');
-    expect(await page.evaluate(() => webui.storage.getItem('webui-page-help-position'))).toBe('');
+    await expect.poll(() => page.evaluate(() => webui.storage.getItem('demo-help'))).toContain('right');
+    await expect.poll(() => page.evaluate(() => webui.storage.getItem('webui-page-help-position'))).toBe('');
     await help.locator('button.bubble').click();
     await drag(page, help, -100, -100, help.locator('.panel header'), { x: 20, y: 10 });
-    expect(await page.evaluate(() => webui.storage.getItem('demo-help-panel'))).toContain('left');
+    await expect.poll(() => page.evaluate(() => webui.storage.getItem('demo-help-panel'))).toContain('left');
     await help.evaluate(el => el.resetPosition());
-    expect(await page.evaluate(() => webui.storage.getItem('demo-help'))).toBe('');
-    expect(await page.evaluate(() => webui.storage.getItem('demo-help-panel'))).toBe('');
+    await expect.poll(() => page.evaluate(() => webui.storage.getItem('demo-help'))).toBe('');
+    await expect.poll(() => page.evaluate(() => webui.storage.getItem('demo-help-panel'))).toBe('');
     // Both show whole, back where they start.
     await inWindow(help.locator('button.bubble'));
     await inWindow(panel(help));
@@ -320,6 +338,6 @@ test('leaving the page removes an open panel', async ({ page }) => {
     const help = await ready(page);
     await help.locator('button.bubble').click();
     await page.evaluate(() => document.getElementById('test-root').innerHTML = '');
-    expect(await help.count()).toBe(0);
-    expect(await page.evaluate(() => document.querySelectorAll(':popover-open').length)).toBe(0);
+    await expect.poll(() => help.count()).toBe(0);
+    await expect.poll(() => page.evaluate(() => document.querySelectorAll(':popover-open').length)).toBe(0);
 });

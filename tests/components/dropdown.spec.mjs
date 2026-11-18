@@ -8,7 +8,7 @@ const dropdown = async (page, attributes) => {
 test('options accept lists, display|value pairs, and json', async ({ page }) => {
     const el = await dropdown(page, 'options="a, Two|2, Three:3"');
     await expect(el.locator('option')).toHaveText(['a', 'Two', 'Three']);
-    expect(await el.locator('option').evaluateAll(o => o.map(x => x.value))).toEqual(['a', '2', '3']);
+    await expect.poll(() => el.locator('option').evaluateAll(o => o.map(x => x.value))).toEqual(['a', '2', '3']);
     await el.evaluate(d => d.setOptions('[{"value":"x","display":"X"},"y"]'));
     await expect(el.locator('option')).toHaveText(['X', 'y']);
     await el.evaluate(d => d.setOptions(['z']));
@@ -46,7 +46,7 @@ test('multiple stores an array', async ({ page }) => {
 test('value and display read the selection', async ({ page }) => {
     const el = await dropdown(page, 'options="One|1,Two|2"');
     await choose(el, 'Two');
-    expect(await el.evaluate(d => [d.value, d.display])).toEqual(['2', 'Two']);
+    await expect.poll(() => el.evaluate(d => [d.value, d.display])).toEqual(['2', 'Two']);
 });
 test('label and icons display', async ({ page }) => {
     const el = await dropdown(page, 'label="Pick" icon="xmark" end-icon="caret" options="a"');
@@ -73,20 +73,26 @@ test('api loads options and ignores outdated responses', async ({ page }) => {
 });
 test('a load still waiting for its data-api data does not clear options from a newer load', async ({ page }) => {
     await page.route('**/dd-api**', route => route.fulfill({ contentType: 'application/json', body: '[{"value":"loaded"}]' }));
-    // The first load waits for page-dd-filter with growing pauses. A second load starts during its last, longest pause.
-    const el = await dropdown(page, 'api="get|http://localhost:3199/dd-api" data-api="page-dd-filter" data-fields="companyId"');
-    await page.waitForTimeout(700);
+    // The first load waits for page-dd-filter with growing pauses, about 1.1 seconds in all. The test moves the
+    // clock itself, so a second load starts during the first one's last, longest pause, 610ms to 1122ms in.
+    const el = await dropdown(page, 'data-api="page-dd-filter" data-fields="companyId"');
+    await page.clock.install();
+    await page.clock.pauseAt(Date.now() + 60000);
+    await el.evaluate(d => d.setAttribute('api', 'get|http://localhost:3199/dd-api'));
+    await page.clock.runFor(700);
     await page.evaluate(() => webui.setData('page-dd-filter', { companyId: 1 }));
-    await el.evaluate(d => d.loadData());
+    await el.evaluate(d => { d.loadData(); });
+    await page.clock.runFor(150);
     await expect(el.locator('option')).toHaveText(['loaded']);
-    await page.waitForTimeout(1200);
+    // Past the end of the first load, which must leave the newer options alone.
+    await page.clock.runFor(2000);
     await expect(el.locator('option')).toHaveText(['loaded']);
 });
 test.describe('data-trigger when options load', () => {
     test('with no saved value, the option shown first is written', async ({ page }) => {
         await dropdown(page, 'data-subscribe="dd-trig-id" data-trigger="dd-trig-id|dd-trig-filter.id" options="One|1,Two|2"');
         await expect.poll(() => page.evaluate(() => webui.getData('dd-trig-id'))).toBe('1');
-        expect(await page.evaluate(() => webui.getData('dd-trig-filter.id'))).toBe('1');
+        await expect.poll(() => page.evaluate(() => webui.getData('dd-trig-filter.id'))).toBe('1');
     });
     test('a single option from the api is written, so a dependent load can start', async ({ page }) => {
         await page.route('**/dd-api**', route => route.fulfill({ contentType: 'application/json', body: '[{"value":5,"display":"Only"}]' }));
@@ -108,7 +114,7 @@ test.describe('data-trigger when options load', () => {
         const el = root.locator('webui-dropdown');
         await el.evaluate(d => { window.__ddChanges = 0; d.addEventListener('change', () => ++window.__ddChanges); d.setOptions('a,b'); });
         await expect(el.locator('select')).toHaveValue('b');
-        expect(await page.evaluate(() => [webui.getData('dd-trig-keep'), window.__ddChanges])).toEqual(['b', 0]);
+        await expect.poll(() => page.evaluate(() => [webui.getData('dd-trig-keep'), window.__ddChanges])).toEqual(['b', 0]);
     });
     test('a saved value among the options is written to its other keys that are empty, such as a page filter', async ({ page }) => {
         // As on a page revisited: the saved choice survives navigation, and the filter, cleared on every page change, is empty.
@@ -118,13 +124,13 @@ test.describe('data-trigger when options load', () => {
         await el.evaluate(d => d.setOptions('One|1,Two|2'));
         await expect(el.locator('select')).toHaveValue('2');
         await expect.poll(() => page.evaluate(() => webui.getData('dd-trig-co-filter.companyId'))).toBe('2');
-        expect(await page.evaluate(() => webui.getData('session-dd-trig-co'))).toBe('2');
+        await expect.poll(() => page.evaluate(() => webui.getData('session-dd-trig-co'))).toBe('2');
     });
     test('without data-trigger or data-bind, loading options fires no change', async ({ page }) => {
         const el = await dropdown(page, '');
         await el.evaluate(d => { window.__ddChanges = 0; d.addEventListener('change', () => ++window.__ddChanges); d.setOptions('a,b'); });
         await expect(el.locator('select')).toHaveValue('a');
-        expect(await page.evaluate(() => window.__ddChanges)).toBe(0);
+        await expect.poll(() => page.evaluate(() => window.__ddChanges)).toBe(0);
     });
 });
 test('option text is shown as text, never as markup', async ({ page }) => {
@@ -132,7 +138,7 @@ test('option text is shown as text, never as markup', async ({ page }) => {
     await el.evaluate(d => d.setOptions([{ value: 'x', display: '<img src=q onerror="window.__xss=1">' }, { value: 'y', display: 'R&D <b>' }]));
     await expect(el.locator('option')).toHaveText(['<img src=q onerror="window.__xss=1">', 'R&D <b>']);
     await expect(el.locator('option img, option b')).toHaveCount(0);
-    expect(await page.evaluate(() => window.__xss)).toBeUndefined();
+    await expect.poll(() => page.evaluate(() => window.__xss)).toBeUndefined();
 });
 test('without a label, its title names the select', async ({ page }) => {
     await mount(page, '<webui-dropdown title="Project" options="a|b"></webui-dropdown>');
@@ -144,7 +150,7 @@ test('a template never reads option data as markup', async ({ page }) => {
     await el.evaluate(d => d.setOptions([{ id: 1, name: '<img src=q onerror="window.__xss=1">' }]));
     await expect(el.locator('option')).toHaveText('<img src=q onerror="window.__xss=1">');
     await expect(el.locator('option img, option b')).toHaveCount(0);
-    expect(await page.evaluate(() => window.__xss)).toBeUndefined();
+    await expect.poll(() => page.evaluate(() => window.__xss)).toBeUndefined();
 });
 test('the multiple flag lets the select pick several options', async ({ page }) => {
     const el = await dropdown(page, 'multiple options="a,b"');
@@ -180,7 +186,7 @@ test.describe('html-options', () => {
         await expect(el.locator('[role="listbox"]')).toBeHidden();
         await expect(el.locator('button')).toHaveAttribute('aria-expanded', 'false');
         await expect(el.locator('button .picked i')).toHaveText('Green');
-        expect(await el.evaluate(d => [d.value, d.display])).toEqual(['g', 'Green']);
+        await expect.poll(() => el.evaluate(d => [d.value, d.display])).toEqual(['g', 'Green']);
         await expect.poll(() => page.evaluate(() => webui.getData('dd-color').id)).toBe('g');
     });
     test('the keyboard opens, moves through, and picks options', async ({ page }) => {
@@ -201,7 +207,7 @@ test.describe('html-options', () => {
         await page.keyboard.press('Escape');
         await expect(el.locator('[role="listbox"]')).toBeHidden();
         await expect(el.locator('button')).toBeFocused();
-        expect(await el.evaluate(d => d.value)).toBe('g');
+        await expect.poll(() => el.evaluate(d => d.value)).toBe('g');
     });
     test('clicking outside closes the list without a change', async ({ page }) => {
         const el = await htmlDropdown(page);
@@ -209,7 +215,7 @@ test.describe('html-options', () => {
         await expect(el.locator('[role="listbox"]')).toBeVisible();
         await page.mouse.click(5, 300);
         await expect(el.locator('[role="listbox"]')).toBeHidden();
-        expect(await el.evaluate(d => d.value)).toBe('r');
+        await expect.poll(() => el.evaluate(d => d.value)).toBe('r');
     });
     test('setValue and the value attribute update the picker', async ({ page }) => {
         const el = await htmlDropdown(page, 'value="g"');
@@ -290,12 +296,12 @@ test.describe('plain options', () => {
 test.describe('on touch screens', () => {
     test.use({ hasTouch: true, isMobile: true });
     test('plain options keep the native select, while html options use the list', async ({ page }) => {
-        expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
+        await expect.poll(() => page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true);
         const plain = await dropdown(page, 'options="a,b"');
         await expect(plain.locator('select')).toBeVisible();
         await expect(plain.locator('button')).toBeHidden();
         await plain.locator('select').selectOption('b');
-        expect(await plain.evaluate(d => d.value)).toBe('b');
+        await expect.poll(() => plain.evaluate(d => d.value)).toBe('b');
         const root = await mount(page, `<webui-dropdown html-options options="a,b"></webui-dropdown>`);
         await expect(root.locator('webui-dropdown button')).toBeVisible();
     });

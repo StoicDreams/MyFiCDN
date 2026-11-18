@@ -27,7 +27,8 @@ test('links with a role only show for users with that role', async ({ page }) =>
     await nav.evaluate((c, routes) => c.buildNav(routes), routes);
     await expect(nav.locator('webui-nav-link[url="/admin"]')).toHaveCount(0);
     await page.evaluate(() => webui.setData('session-user-role', 1));
-    await page.waitForTimeout(50);
+    // The nav rebuilds as it takes the new role, so once it has the role the links are final.
+    await expect.poll(() => nav.evaluate(c => c.userRole)).toBe(1);
     await expect(nav.locator('webui-nav-link[url="/admin"]')).toHaveCount(0);
     await page.evaluate(() => webui.setData('session-user-role', 5));
     await expect(nav.locator('webui-nav-link[url="/admin"]')).toHaveCount(1);
@@ -49,9 +50,13 @@ test('open groups are remembered', async ({ page }) => {
     await expect.poll(() => nav.locator('webui-nav-group').evaluate(g => g.isOpen)).toBe(true);
 });
 test('does not load the unused fa component', async ({ page }) => {
-    await mount(page, '<webui-nav></webui-nav>');
-    await page.waitForTimeout(200);
-    expect(await page.evaluate(() => customElements.get('webui-fa'))).toBeUndefined();
+    const requests = [];
+    page.on('request', request => { if (/\/webui\/fa\./.test(request.url())) requests.push(request.url()); });
+    const root = await mount(page, '<webui-nav></webui-nav>');
+    // The nav sets its role once the components it preloads have loaded, so every request it makes has started.
+    await expect(root.locator('webui-nav')).toHaveAttribute('role', 'navigation');
+    expect(requests).toEqual([]);
+    await expect.poll(() => page.evaluate(() => customElements.get('webui-fa'))).toBeUndefined();
 });
 test('is a navigation landmark', async ({ page }) => {
     const root = await mount(page, '<webui-nav></webui-nav>');

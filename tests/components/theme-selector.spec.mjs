@@ -25,10 +25,10 @@ test('choosing a theme sets data-theme on the page and saves it', async ({ page 
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'stone');
     await expect(panel.getByRole('button', { name: 'Stone' })).toHaveAttribute('aria-pressed', 'true');
     await expect(panel.getByRole('button', { name: 'Default' })).toHaveAttribute('aria-pressed', 'false');
-    expect(await page.evaluate(() => webui.getData('session-theme'))).toBe('stone');
+    await expect.poll(() => page.evaluate(() => webui.getData('session-theme'))).toBe('stone');
     await panel.getByRole('button', { name: 'Default' }).click();
     await expect(page.locator('html')).not.toHaveAttribute('data-theme', /./);
-    expect(await page.evaluate(() => webui.getData('session-theme'))).toBe('');
+    await expect.poll(() => page.evaluate(() => webui.getData('session-theme'))).toBe('');
 });
 
 test('each theme shows its color swatches', async ({ page }) => {
@@ -61,24 +61,32 @@ test('switches an open drawer over from other content instead of closing it', as
 
 test('works as a button from the keyboard', async ({ page }) => {
     const root = await mount(page, `<webui-dialogs></webui-dialogs><webui-theme-selector>${themes}</webui-theme-selector>`);
-    await root.locator('webui-theme-selector').focus();
+    const button = root.locator('webui-theme-selector');
+    // It can take focus once it has set itself up as a button.
+    await expect(button).toHaveAttribute('tabindex', '0');
+    await button.focus();
+    await expect(button).toBeFocused();
     await page.keyboard.press('Enter');
     await expect(page.locator('webui-theme-selector[panel]').getByRole('button')).toHaveCount(3);
 });
 
 test('a saved theme is applied by the loader before the page draws', async ({ page }) => {
     await page.evaluate(() => webui.setData('session-theme', 'stone'));
-    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 50)));
+    // Session data is saved to storage shortly after it is set.
+    await expect.poll(() => page.evaluate(() => `${webui.storage.getItem('session-data') || ''}`)).toContain('stone');
     await page.reload();
     await page.waitForFunction(() => typeof webui === 'object');
-    expect(await page.evaluate(() => document.documentElement.dataset.theme)).toBe('stone');
+    // The loader applies it as it starts, so one read as soon as the loader exists is final, and a later one
+    // would not show that it was there before the page drew.
+    const theme = await page.evaluate(() => document.documentElement.dataset.theme);
+    expect(theme).toBe('stone');
 });
 
 test('a saved theme the site no longer offers falls back to the default', async ({ page }) => {
     await page.evaluate(() => webui.setData('session-theme', 'retired'));
     await mount(page, `<webui-theme-selector>${themes}</webui-theme-selector>`);
     await expect(page.locator('html')).not.toHaveAttribute('data-theme', /./);
-    expect(await page.evaluate(() => webui.getData('session-theme'))).toBe('');
+    await expect.poll(() => page.evaluate(() => webui.getData('session-theme'))).toBe('');
 });
 
 test('updates the browser theme-color to the theme background', async ({ page }) => {

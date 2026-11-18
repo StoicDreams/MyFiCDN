@@ -10,6 +10,21 @@ const report = async (page, attributes = '', response = { items: [{ Name: 'A' },
     return { el: root.locator('webui-report'), requests };
 };
 
+// Counts the report API answers the page has read, so a test can wait until the report has its data.
+const countAnswers = page => page.evaluate(() => {
+    window.__answers = 0;
+    const original = window.fetch;
+    window.fetch = async (...args) => {
+        const response = await original(...args);
+        const url = typeof args[0] === 'string' ? args[0] : args[0]?.url || `${args[0]}`;
+        if (url.includes('report-api')) {
+            const json = response.json.bind(response);
+            response.json = async () => { const data = await json(); window.__answers++; return data; };
+        }
+        return response;
+    };
+});
+
 test('loads rows from the api', async ({ page }) => {
     const { el, requests } = await report(page);
     await expect(el.locator('td')).toHaveText(['A', 'B']);
@@ -23,14 +38,10 @@ test('rows show when the data arrives before the table script has loaded', async
         await scriptsHeld;
         await route.fallback();
     });
-    let answered = false;
-    await page.route('**/report-api', route => {
-        answered = true;
-        return route.fulfill({ contentType: 'application/json', body: JSON.stringify({ items: [{ Name: 'A' }, { Name: 'B' }], page: 1, total: 2 }) });
-    });
+    await page.route('**/report-api', route => route.fulfill({ contentType: 'application/json', body: JSON.stringify({ items: [{ Name: 'A' }, { Name: 'B' }], page: 1, total: 2 }) }));
+    await countAnswers(page);
     const root = await mount(page, '<webui-report api="http://localhost:3199/report-api" columns="Name" sort-column="Name"></webui-report>');
-    await expect.poll(() => answered).toBe(true);
-    await page.waitForTimeout(200);
+    await expect.poll(() => page.evaluate(() => window.__answers)).toBe(1);
     release();
     const el = root.locator('webui-report');
     await expect(el.locator('td')).toHaveText(['A', 'B']);
@@ -44,18 +55,17 @@ test('rows show when the data arrives while the report is out of the page, as in
         await scriptsHeld;
         await route.fallback();
     });
-    let answered = false;
-    await page.route('**/report-api', route => {
-        answered = true;
-        return route.fulfill({ contentType: 'application/json', body: JSON.stringify({ items: [{ Name: 'A' }, { Name: 'B' }], page: 1, total: 2 }) });
-    });
+    await page.route('**/report-api', route => route.fulfill({ contentType: 'application/json', body: JSON.stringify({ items: [{ Name: 'A' }, { Name: 'B' }], page: 1, total: 2 }) }));
+    await countAnswers(page);
     const root = await mount(page, '<div id="holder"><webui-report api="http://localhost:3199/report-api" columns="Name" sort-column="Name"></webui-report></div>');
+    // The report has drawn its table, so the page has asked for the table's script, which is held.
+    await expect(root.locator('webui-report webui-table')).toBeAttached();
     // Take the report out of the page, the way webui-content does when it scrolls out of view.
     await page.evaluate(() => { window.__frag = document.createDocumentFragment(); window.__frag.appendChild(document.querySelector('webui-report')); });
-    await expect.poll(() => answered).toBe(true);
+    await expect.poll(() => page.evaluate(() => window.__answers)).toBe(1);
     release();
-    await page.evaluate(() => Promise.all([customElements.whenDefined('webui-table'), customElements.whenDefined('webui-pagination')]));
-    await page.waitForTimeout(300);
+    // The report gives its table the rows while it is still out of the page.
+    await expect.poll(() => page.evaluate(() => window.__frag.querySelector('webui-table')?._data?.length)).toBe(2);
     await page.evaluate(() => document.getElementById('holder').appendChild(window.__frag));
     const el = root.locator('webui-report');
     await expect(el.locator('td')).toHaveText(['A', 'B']);
@@ -76,11 +86,16 @@ test('every filter is subscribed separately, and included in requests', async ({
     await expect.poll(() => requests.at(-1)['rp-a']).toBe(9);
 });
 test('required filters hold the request until present', async ({ page }) => {
+    await page.clock.install();
     const { el, requests } = await report(page, 'filters="rp-need" required-filters="rp-need"');
-    await page.waitForTimeout(500);
-    expect(requests).toEqual([]);
+    // The report has rendered, which is when it first tries to load, and the clock moves past the pause it
+    // takes before a request.
+    await expect(el).toHaveAttribute('data-subscribe', /rp-need:loadData/);
+    await page.clock.runFor(2000);
     await page.evaluate(() => webui.setData('rp-need', 1));
     await expect(el.locator('td').first()).toHaveText('A');
+    // The only request is the one with the filter, so nothing was asked for before it was set.
+    expect(requests).toEqual([expect.objectContaining({ 'rp-need': 1 })]);
 });
 test('missing settings explain what is wrong', async ({ page }) => {
     const root = await mount(page, '<webui-report api="/x"></webui-report><webui-report sort-column="a"></webui-report>');
@@ -93,7 +108,7 @@ test('api errors display as text, not html', async ({ page }) => {
     const alert = root.locator('webui-report webui-alert');
     await expect(alert).toContainText('API Error: <img');
     await expect(alert.locator('img')).toHaveCount(0);
-    expect(await page.evaluate(() => window.__hacked)).toBeUndefined();
+    await expect.poll(() => page.evaluate(() => window.__hacked)).toBeUndefined();
 });
 test('sorting requests the new order', async ({ page }) => {
     const { el, requests } = await report(page, 'sortable="Name"');
@@ -137,5 +152,5 @@ test('action column templates escape row values from the api', async ({ page }) 
     await expect(el.locator('td img')).toHaveCount(0);
     await expect(el.locator('td webui-button')).toHaveAttribute('title', `View ${message}`);
     expect(JSON.parse(await el.locator('td webui-button').getAttribute('data-value')).Message).toBe(message);
-    expect(await page.evaluate(() => window.__hacked)).toBeUndefined();
+    await expect.poll(() => page.evaluate(() => window.__hacked)).toBeUndefined();
 });

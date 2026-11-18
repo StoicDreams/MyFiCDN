@@ -1,5 +1,20 @@
 import { test, expect, mount } from '../support/webui.mjs';
 
+/**
+ * Move the mouse, and wait until the tooltip has decided what to show for that move.
+ * The tooltip decides in the animation frame after a mouse move. This listener is added after the tooltip's own, so
+ * it runs after it, and the frame it asks for comes after the one the tooltip asked for.
+ */
+async function moveMouse(page, x, y) {
+    await page.evaluate(() => {
+        window.__moveHandled = new Promise(resolve => {
+            document.body.addEventListener('mousemove', () => requestAnimationFrame(() => resolve()), { once: true });
+        });
+    });
+    await page.mouse.move(x, y);
+    await page.evaluate(() => window.__moveHandled);
+}
+
 // These run on the real site shell, since routing needs webui-app.
 test.use({ startUrl: '/about' });
 
@@ -10,9 +25,17 @@ test('webui.navigateTo loads a page without a full reload', async ({ page }) => 
     expect(await page.evaluate(() => window.__sameDocument)).toBe(true);
 });
 test('webui.navigateTo to the current url adds no history entry', async ({ page }) => {
-    const before = await page.evaluate(() => history.length);
-    await page.evaluate(() => webui.navigateTo('/about'));
-    expect(await page.evaluate(() => history.length)).toBe(before);
+    // The history entry is added, or not, before navigateTo returns.
+    const [before, after] = await page.evaluate(() => {
+        const before = history.length;
+        webui.navigateTo('/about');
+        return [before, history.length];
+    });
+    expect(after).toBe(before);
+    // The next navigation adds exactly one entry, so the first added none later either.
+    await page.evaluate(() => webui.navigateTo('/contact'));
+    await expect(page.locator('webui-app')).toContainText('feedback form');
+    await expect.poll(() => page.evaluate(() => history.length)).toBe(before + 1);
 });
 test('back and forward keep history intact', async ({ page }) => {
     await page.evaluate(() => webui.navigateTo('/contact'));
@@ -23,7 +46,7 @@ test('back and forward keep history intact', async ({ page }) => {
     await page.goBack();
     await expect(page).toHaveURL(/\/contact$/);
     await expect(page.locator('webui-app')).toContainText('feedback form');
-    expect(await page.evaluate(() => history.length)).toBe(length);
+    await expect.poll(() => page.evaluate(() => history.length)).toBe(length);
     await page.goForward();
     await expect(page).toHaveURL(/\/privacy$/);
 });
@@ -34,28 +57,40 @@ test('webui.updateHash keeps the query string and can replace history', async ({
     const length = await page.evaluate(() => history.length);
     await page.evaluate(() => webui.updateHash('two', true));
     await expect(page).toHaveURL(/#two$/);
-    expect(await page.evaluate(() => history.length)).toBe(length);
+    await expect.poll(() => page.evaluate(() => history.length)).toBe(length);
 });
 test('a slow page cannot replace a newer one', async ({ page }) => {
+    // The slow page is held until the newer one is showing, then let go.
+    let requested, release;
+    const wasRequested = new Promise(resolve => { requested = resolve; });
+    const released = new Promise(resolve => { release = resolve; });
     await page.route('**/d/privacy.md', async route => {
-        await new Promise(r => setTimeout(r, 900));
+        requested();
+        await released;
         await route.fallback();
     });
-    const loaded = await page.evaluate(async () => {
+    await page.evaluate(() => {
         const app = webui._appSettings.app;
         const original = app.setPageContent;
-        const urls = [];
+        window.__pagesSet = [];
         app.setPageContent = function (content, data, url) {
-            if (content) urls.push(url);
+            if (content) window.__pagesSet.push(url);
             return original.call(this, content, data, url);
         };
         webui.navigateTo('/privacy');
-        await webui.wait(30);
-        webui.navigateTo('/contact');
-        await webui.wait(1500);
-        return urls;
     });
-    expect(loaded).toEqual(['/d/contact.md']);
+    await wasRequested;
+    await page.evaluate(() => webui.navigateTo('/contact'));
+    const main = page.locator('webui-app main');
+    await expect(page.locator('webui-app')).toContainText('feedback form');
+    await expect(main).not.toHaveClass(/transition/);
+    release();
+    // A third page loads after the slow one was let go, so by the time it shows the slow one has had its chance.
+    await page.evaluate(() => webui.navigateTo('/terms'));
+    await expect(page).toHaveURL(/\/terms$/);
+    await expect.poll(() => page.evaluate(() => window.__pagesSet)).toEqual(['/d/contact.md', '/d/terms.md']);
+    await expect(main).not.toHaveClass(/transition/);
+    expect(await page.evaluate(() => window.__pagesSet)).toEqual(['/d/contact.md', '/d/terms.md']);
 });
 test('a missing page shows the not found content', async ({ page }) => {
     await page.evaluate(() => webui.navigateTo('/does-not-exist'));
@@ -101,13 +136,12 @@ test('links with a target, modifier keys, or another scheme are left to the brow
 });
 test('data-click clicks elements subscribed with :click', async ({ page }) => {
     const root = await mount(page, '<a id="c" data-click="nav-fb">x</a><button id="s" data-subscribe="nav-fb:click">y</button>');
-    expect(await root.evaluate(async r => {
-        let clicks = 0;
-        await webui.wait(20);
-        r.querySelector('#s').addEventListener('click', () => clicks++);
+    await root.evaluate(r => {
+        window.__clicks = 0;
+        r.querySelector('#s').addEventListener('click', () => window.__clicks++);
         r.querySelector('#c').click();
-        return clicks;
-    })).toBe(1);
+    });
+    await expect.poll(() => page.evaluate(() => window.__clicks)).toBe(1);
 });
 test('data-toggleclass, data-setattr, data-toggleattr, and data-removeclass update elements', async ({ page }) => {
     const root = await mount(page, `<i id="target" class="on"></i>
@@ -143,8 +177,11 @@ test('dynamic styles only refresh when a click changed something', async ({ page
     })).toEqual([2, 2]);
 });
 test('disabled elements stop click handling', async ({ page }) => {
-    const root = await mount(page, '<button disabled data-toggleclass="x" id="a"></button><div disabled="true" id="b" data-toggleclass="x"></div>');
+    const root = await mount(page, '<button disabled data-toggleclass="x" id="a"></button><div disabled="true" id="b" data-toggleclass="x"></div><div id="c" data-toggleclass="x"></div>');
     await root.locator('#b').evaluate(el => el.click());
+    // A click on an element that is not disabled, made afterwards, shows the first click has been handled.
+    await root.locator('#c').evaluate(el => el.click());
+    await expect(root.locator('#c')).toHaveClass('x');
     await expect(root.locator('#b')).not.toHaveClass('x');
 });
 test('tooltips show aria-labels and titles on hover', async ({ page }) => {
@@ -163,8 +200,8 @@ test('a landmark label such as the nav\'s Site menu is not shown as a tooltip, b
     const tooltip = page.locator('body > .tooltip');
     // Moving between the links and the space around them, as a mouse does over the nav.
     for (const [x, y] of [[210, 210], [400, 230], [210, 210]]) {
-        await page.mouse.move(x, y);
-        await page.waitForTimeout(50);
+        await moveMouse(page, x, y);
+        await expect(tooltip).toHaveClass(/closed/);
         await expect(tooltip).not.toHaveText('Site menu');
     }
     await root.locator('#text').hover();
@@ -188,6 +225,7 @@ test('a tooltip never blocks clicks, and closes when its element is hidden under
     await page.evaluate(() => { window.__clickedOn = null; document.addEventListener('click', ev => { window.__clickedOn = ev.target.className; }, { once: true }); });
     const tip = await tooltip.boundingBox();
     await page.mouse.click(tip.x + tip.width / 2, tip.y + tip.height / 2);
+    await expect.poll(() => page.evaluate(() => window.__clickedOn)).not.toBeNull();
     expect(await page.evaluate(() => window.__clickedOn)).not.toContain('tooltip');
     // Hiding it without moving the mouse, as a closing panel does to its close button.
     await root.locator('#hide').evaluate(el => { el.style.display = 'none'; });
@@ -236,53 +274,88 @@ test('a tab named in the url wins over the saved tab', async ({ page }) => {
 test.describe('first page load', () => {
     test.use({ startUrl: '/__blank' });
     /**
-     * Serve the page with the given content, and return how long after it arrived the page showed.
-     * With holdFade, timers of 250 ms or more never run, so the page can only show if it does not wait for the fade.
+     * Serve the page with the given content, and open it with every timer of 250 ms or more held, the fade's among
+     * them. A held timer only runs when the test runs it, so the page can only show before then if it does not
+     * wait for the fade.
      */
-    async function shownAfter(page, markdown, { holdFade = false } = {}) {
+    async function openWithFadeHeld(page, markdown) {
         await page.route('**/d/about.md', route => route.fulfill({ contentType: 'text/plain', body: markdown }));
-        await page.addInitScript(holdFade => {
-            if (holdFade) {
-                const setTimeoutReal = window.setTimeout;
-                window.setTimeout = function (callback, ms, ...args) {
-                    return ms >= 250 ? setTimeoutReal(() => { }, 0) : setTimeoutReal(callback, ms, ...args);
-                };
-            }
-            window.__shown = null;
+        await page.addInitScript(() => {
+            const setTimeoutReal = window.setTimeout;
+            window.__heldTimers = [];
+            window.setTimeout = function (callback, ms, ...args) {
+                if (ms >= 250) {
+                    window.__heldTimers.push({ ms, run: () => callback(...args) });
+                    return setTimeoutReal(() => { }, 0);
+                }
+                return setTimeoutReal(callback, ms, ...args);
+            };
+            window.__shown = false;
             const watch = () => {
                 const main = document.querySelector('webui-app')?.main;
                 if (!main) return requestAnimationFrame(watch);
                 new MutationObserver(() => {
-                    if (main.classList.contains('transition') || window.__shown) return;
-                    window.__shown = performance.now();
-                    window.__undefinedWhenShown = document.querySelectorAll('webui-app :not(:defined)').length;
+                    if (!main.classList.contains('transition')) window.__shown = true;
                 }).observe(main, { attributes: true, attributeFilter: ['class'] });
             };
             watch();
-        }, holdFade);
+        });
         await page.goto('/about');
-        await expect.poll(() => page.evaluate(() => window.__shown), { timeout: 5000 }).not.toBeNull();
-        return page.evaluate(() => window.__shown - performance.getEntriesByType('resource').find(e => /\/d\/about\.md/.test(e.name)).responseEnd);
     }
+    const shown = page => page.evaluate(() => window.__shown);
     test('shows a page without components straight away', async ({ page }) => {
         // Later navigations wait 300 ms for the fade. The first page shows without that timer, so it shows even when
         // long timers never run. Timing it instead failed on busy machines, where a frame alone can take over 150 ms.
-        await shownAfter(page, '# Quick\n\nNothing to load here.', { holdFade: true });
+        await openWithFadeHeld(page, '# Quick\n\nNothing to load here.');
+        await expect.poll(() => shown(page)).toBe(true);
     });
     test('waits for the page components, but not forever', async ({ page }) => {
-        // A component that never loads still lets the page show, after at most the fade time.
         await page.route('**/webui/never-loads.min.js', () => { });
-        const gap = await shownAfter(page, '# Slow\n\n<webui-never-loads></webui-never-loads>');
-        expect(gap).toBeGreaterThanOrEqual(290);
-        // Generous, since a busy test machine can be slow. Without the cap it would never show.
-        expect(gap).toBeLessThan(1500);
+        await openWithFadeHeld(page, '# Slow\n\n<webui-never-loads></webui-never-loads>');
+        // The page is in place and the loader has started the wait that ends with the first of the component
+        // loading and the fade time passing. Its timer is the only one of 300 ms on a first load.
+        await expect(page.locator('webui-app webui-never-loads')).toBeAttached();
+        await expect.poll(() => page.evaluate(() => window.__heldTimers.some(timer => timer.ms === 300))).toBe(true);
+        // A page that did not wait for its component would show in the next frame.
+        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+        expect(await shown(page)).toBe(false);
+        // A component that never loads still lets the page show, once the fade time has passed.
+        // Running a held timer twice is not possible, and a timer held later is run by a later try, so repeating
+        // this only moves time on.
+        await expect.poll(() => page.evaluate(() => {
+            window.__heldTimers.splice(0).forEach(timer => timer.run());
+            return window.__shown;
+        })).toBe(true);
     });
 });
 test('navigating fades the old page out before showing the new one', async ({ page }) => {
     const main = page.locator('webui-app main');
+    const app = page.locator('webui-app');
     await expect(main).not.toHaveClass(/transition/);
-    const start = await page.evaluate(() => { webui.navigateTo('/contact'); return performance.now(); });
+    // The test moves the clock, so the 300 ms fade is checked without waiting for, or measuring, real time.
+    await page.clock.install();
+    await page.clock.pauseAt(Date.now() + 60 * 60 * 1000);
+    await page.evaluate(() => {
+        // Resolves once the loader has read the new page's content, and so has started waiting out the fade.
+        // This reaction is added before the loader's own, so the microtask it queues runs after the loader's.
+        const readText = Response.prototype.text;
+        window.__contentRead = new Promise(resolve => {
+            Response.prototype.text = function () {
+                const body = readText.call(this);
+                if (new URL(this.url).pathname === '/d/contact.md') body.then(() => queueMicrotask(resolve));
+                return body;
+            };
+        });
+        webui.navigateTo('/contact');
+    });
     await expect(main).toHaveClass(/transition/);
+    await page.evaluate(() => window.__contentRead);
+    // One millisecond short of the fade, the old page is still there, faded out.
+    await page.clock.runFor(299);
+    await expect(main).toHaveClass(/transition/);
+    await expect(app).not.toContainText('feedback form');
+    await page.clock.runFor(1);
+    await expect(app).toContainText('feedback form');
+    await page.clock.resume();
     await expect(main).not.toHaveClass(/transition/);
-    expect(await page.evaluate(s => performance.now() - s, start)).toBeGreaterThanOrEqual(300);
 });

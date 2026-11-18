@@ -12,7 +12,7 @@ test('typing updates value, and the value property updates the field', async ({ 
     const root = await mount(page, '<webui-input-message></webui-input-message>');
     const el = root.locator('webui-input-message');
     await el.locator('textarea').fill('typed');
-    expect(await el.evaluate(c => c.value)).toBe('typed');
+    await expect.poll(() => el.evaluate(c => c.value)).toBe('typed');
     await el.evaluate(c => { c.value = 'set'; });
     await expect(el.locator('textarea')).toHaveValue('set');
 });
@@ -31,7 +31,7 @@ test('a missing value shows an empty field, not the text undefined', async ({ pa
 test('it submits with forms', async ({ page }) => {
     const root = await mount(page, '<form><webui-input-message name="note"></webui-input-message></form>');
     await root.locator('textarea').fill('sent');
-    expect(await root.locator('form').evaluate(f => new FormData(f).get('note'))).toBe('sent');
+    await expect.poll(() => root.locator('form').evaluate(f => new FormData(f).get('note'))).toBe('sent');
 });
 test('sanitize removes scripts but keeps ordinary text', async ({ page }) => {
     const root = await mount(page, '<webui-input-message sanitize></webui-input-message>');
@@ -53,21 +53,21 @@ test('shift tab inserts the tab text in place of the selection', async ({ page }
     await field.evaluate(t => t.setSelectionRange(1, 3));
     await field.press('Shift+Tab');
     await expect(field).toHaveValue('a  d');
-    expect(await field.evaluate(t => t.selectionStart)).toBe(3);
+    await expect.poll(() => field.evaluate(t => t.selectionStart)).toBe(3);
 });
 test('fires one input event per change', async ({ page }) => {
     const root = await mount(page, '<webui-input-message></webui-input-message>');
     const el = root.locator('webui-input-message');
     await el.evaluate(c => { window.__inputs = 0; c.addEventListener('input', () => window.__inputs++); });
     await el.locator('textarea').fill('x');
-    expect(await page.evaluate(() => window.__inputs)).toBe(1);
+    await expect.poll(() => page.evaluate(() => window.__inputs)).toBe(1);
 });
 test('shows a focus ring around the box while typing', async ({ page }) => {
     const root = await mount(page, '<webui-input-message label="Note"></webui-input-message>');
     const el = root.locator('webui-input-message');
     await el.locator('textarea').focus();
     // An accessibility rule, so the ring itself is checked (Websites/CLAUDE.md, What tests check).
-    expect(await el.evaluate(e => getComputedStyle(e).outlineWidth)).toBe('2px');
+    await expect.poll(() => el.evaluate(e => getComputedStyle(e).outlineWidth)).toBe('2px');
 });
 test('without a label, its title names the field', async ({ page }) => {
     await mount(page, '<webui-input-message title="Script"></webui-input-message>');

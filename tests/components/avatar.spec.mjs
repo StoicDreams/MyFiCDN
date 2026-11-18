@@ -12,8 +12,8 @@ test('paths display as images and cannot inject attributes', async ({ page }) =>
     const root = await mount(page, `<webui-avatar src='/x" onerror="window.__hacked=1'></webui-avatar>`);
     const image = root.locator('webui-avatar img');
     await expect(image).toHaveAttribute('alt', 'avatar image');
-    expect(await image.getAttribute('onerror')).toBeNull();
-    expect(await page.evaluate(() => window.__hacked)).toBeUndefined();
+    await expect.poll(() => image.getAttribute('onerror')).toBeNull();
+    await expect.poll(() => page.evaluate(() => window.__hacked)).toBeUndefined();
 });
 test('inline svg is used directly, and removing src clears it', async ({ page }) => {
     const root = await mount(page, '<webui-avatar src="<svg></svg>"></webui-avatar>');

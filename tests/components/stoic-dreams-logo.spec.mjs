@@ -9,7 +9,7 @@ test('draws the logo with its text', async ({ page }) => {
 });
 test('adds its font once', async ({ page }) => {
     await mount(page, '<webui-stoic-dreams-logo></webui-stoic-dreams-logo><webui-stoic-dreams-logo></webui-stoic-dreams-logo>');
-    expect(await page.locator('#webui-font-nunito').count()).toBe(1);
+    await expect.poll(() => page.locator('#webui-font-nunito').count()).toBe(1);
 });
 test('embeds its font once, as WOFF2', async ({ page }) => {
     await mount(page, '<webui-stoic-dreams-logo text="MyFi" text2="CDN"></webui-stoic-dreams-logo>');

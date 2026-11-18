@@ -4,6 +4,10 @@ const show = async (page, attributes) => {
     const root = await mount(page, `<webui-condition ${attributes}><template slot="valid">VALID</template><template slot="invalid">INVALID</template></webui-condition>`);
     return root.locator('webui-condition');
 };
+const shows = async (page, attributes, text) => {
+    const el = await show(page, attributes);
+    await expect(el).toHaveText(text);
+};
 
 test('a subscribed value picks valid or invalid content', async ({ page }) => {
     const el = await show(page, 'data-subscribe="cond-a"');
@@ -22,29 +26,28 @@ for (const value of ['0', 'false', 'null', 'undefined', '[]', '{}', '{TEMPLATE_X
 test('value is readable and settable', async ({ page }) => {
     const el = await show(page, 'data-value="abc"');
     await expect(el).toHaveText('VALID');
-    expect(await el.evaluate(c => c.value)).toBe('abc');
+    await expect.poll(() => el.evaluate(c => c.value)).toBe('abc');
     await el.evaluate(c => { c.value = 'false'; });
     await expect(el).toHaveText('INVALID');
 });
 test('data-equals and data-unequals compare values', async ({ page }) => {
-    expect(await (await show(page, 'data-value="a" data-equals="a"')).innerText()).toBeDefined();
-    await expect(await show(page, 'data-value="a" data-equals="a"')).toHaveText('VALID');
-    await expect(await show(page, 'data-value="a" data-equals="b"')).toHaveText('INVALID');
-    await expect(await show(page, 'data-value="a" data-unequals="b"')).toHaveText('VALID');
-    await expect(await show(page, 'data-value="a" data-unequals="a"')).toHaveText('INVALID');
+    await shows(page, 'data-value="a" data-equals="a"', 'VALID');
+    await shows(page, 'data-value="a" data-equals="b"', 'INVALID');
+    await shows(page, 'data-value="a" data-unequals="b"', 'VALID');
+    await shows(page, 'data-value="a" data-unequals="a"', 'INVALID');
 });
 test('data-contains checks for text', async ({ page }) => {
-    await expect(await show(page, 'data-value="hello" data-contains="ell"')).toHaveText('VALID');
-    await expect(await show(page, 'data-value="hello" data-contains="xyz"')).toHaveText('INVALID');
+    await shows(page, 'data-value="hello" data-contains="ell"', 'VALID');
+    await shows(page, 'data-value="hello" data-contains="xyz"', 'INVALID');
 });
 test('data-match tests a pattern', async ({ page }) => {
-    await expect(await show(page, 'data-value="abc" data-match="^ab"')).toHaveText('VALID');
-    await expect(await show(page, 'data-value="xyz" data-match="^ab"')).toHaveText('INVALID');
+    await shows(page, 'data-value="abc" data-match="^ab"', 'VALID');
+    await shows(page, 'data-value="xyz" data-match="^ab"', 'INVALID');
 });
 test('data-ignore-case applies to every comparison', async ({ page }) => {
-    await expect(await show(page, 'data-value="ABC" data-equals="abc" data-ignore-case')).toHaveText('VALID');
-    await expect(await show(page, 'data-value="abc" data-equals="ABC" data-ignore-case')).toHaveText('VALID');
-    await expect(await show(page, 'data-value="ABC" data-match="^ab" data-ignore-case')).toHaveText('VALID');
+    await shows(page, 'data-value="ABC" data-equals="abc" data-ignore-case', 'VALID');
+    await shows(page, 'data-value="abc" data-equals="ABC" data-ignore-case', 'VALID');
+    await shows(page, 'data-value="ABC" data-match="^ab" data-ignore-case', 'VALID');
 });
 test('templates can display the subscribed value', async ({ page }) => {
     const root = await mount(page, `<webui-condition data-subscribe="cond-b:setValue">
@@ -56,11 +59,20 @@ test('templates can display the subscribed value', async ({ page }) => {
     await expect(el).toHaveText('aaa is Valid!');
 });
 test('the value still arrives when the component loads slowly', async ({ page }) => {
+    // The component's script is held until the page has asked for it and handled the element without it.
+    let release, asked;
+    const held = new Promise(resolve => { release = resolve; });
+    const requested = new Promise(resolve => { asked = resolve; });
     await page.route('**/webui/condition.*', async route => {
-        await new Promise(r => setTimeout(r, 500));
+        asked();
+        await held;
         await route.fallback();
     });
-    const root = await mount(page, '<webui-condition data-subscribe="cond-c:setValue"><template slot="invalid">{TEMPLATE_COND_C}none</template></webui-condition>');
+    const mounted = mount(page, '<webui-condition data-subscribe="cond-c:setValue"><template slot="invalid">{TEMPLATE_COND_C}none</template></webui-condition>');
+    await requested;
+    await expect(page.locator('#test-root webui-condition')).toBeAttached();
+    release();
+    const root = await mounted;
     await expect(root.locator('webui-condition')).toHaveText('none');
 });
 test('templates without a slot count as valid', async ({ page }) => {
@@ -70,10 +82,12 @@ test('templates without a slot count as valid', async ({ page }) => {
 test('unchanged output keeps the existing nodes', async ({ page }) => {
     const el = await show(page, 'data-value="a"');
     await expect(el).toHaveText('VALID');
-    expect(await el.evaluate(c => {
+    // checkConditions is synchronous, so the nodes are final when this returns.
+    const kept = await el.evaluate(c => {
         const first = c.firstChild === null ? null : [...c.childNodes].find(n => n.nodeType === 3);
         c.checkConditions();
         return [...c.childNodes].includes(first);
-    })).toBe(true);
+    });
+    expect(kept).toBe(true);
 });
 

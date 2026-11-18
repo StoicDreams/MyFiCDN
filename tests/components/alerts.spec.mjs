@@ -43,16 +43,17 @@ test('works as a button from the keyboard', async ({ page }) => {
     await el.evaluate(c => { window.__clicks = 0; c.addEventListener('click', () => window.__clicks++, true); });
     await el.focus();
     await page.keyboard.press('Enter');
-    expect(await page.evaluate(() => window.__clicks)).toBe(1);
+    await expect.poll(() => page.evaluate(() => window.__clicks)).toBe(1);
     // Enter opens a dialog, which takes focus, so Space is sent to the control directly.
     await el.evaluate(c => c.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true })));
-    expect(await page.evaluate(() => window.__clicks)).toBe(2);
+    await expect.poll(() => page.evaluate(() => window.__clicks)).toBe(2);
 });
 
 test('webui.addAlert resolves to the alert, which says when the user closes it', async ({ page }) => {
     await ready(page);
     // webui.alert is often a .catch handler whose result is tested, so it still resolves to nothing.
-    expect(await page.evaluate(async () => (await webui.alert('Plain', 'info')) === undefined)).toBe(true);
+    const plain = await page.evaluate(async () => (await webui.alert('Plain', 'info')) === undefined);
+    expect(plain).toBe(true);
     const closed = await page.evaluate(async () => {
         const alert = await webui.addAlert('Close me', 'info');
         window.__closed = 0;
@@ -61,7 +62,7 @@ test('webui.addAlert resolves to the alert, which says when the user closes it',
     });
     expect(closed).toBe('WEBUI-ALERT');
     await popup(page).locator('webui-alert', { hasText: 'Close me' }).locator('#close').click();
-    expect(await page.evaluate(() => window.__closed)).toBe(1);
+    await expect.poll(() => page.evaluate(() => window.__closed)).toBe(1);
 });
 test('popup false adds an alert to the list without a popup, and dismiss removes it quietly', async ({ page }) => {
     const root = await ready(page);
@@ -73,7 +74,7 @@ test('popup false adds an alert to the list without a popup, and dismiss removes
     await expect(root.locator('webui-alerts webui-icon')).toHaveAttribute('count', '1');
     await page.evaluate(() => window.__quiet.dismiss());
     await expect(root.locator('webui-alerts webui-icon')).toHaveAttribute('count', '');
-    expect(await page.evaluate(() => window.__closedQuietly)).toBeUndefined();
+    await expect.poll(() => page.evaluate(() => window.__closedQuietly)).toBeUndefined();
 });
 test('webui.clearAlerts removes every alert from the popup and the list', async ({ page }) => {
     const root = await mount(page, '<webui-dialogs></webui-dialogs><webui-alerts></webui-alerts>');
@@ -89,7 +90,7 @@ test('webui.clearAlerts removes every alert from the popup and the list', async 
     await expect(popup(page).locator('webui-alert')).toHaveCount(0);
     await expect(root.locator('webui-alerts webui-icon')).toHaveAttribute('count', '');
     // Cleared quietly by default, so nothing is marked as closed by the user.
-    expect(await page.evaluate(() => window.__closed)).toBe(0);
+    await expect.poll(() => page.evaluate(() => window.__closed)).toBe(0);
     await root.locator('webui-alerts').click();
     await expect(root.locator('webui-dialogs form')).toContainText('You have no alerts at this time.');
 });
@@ -103,7 +104,7 @@ test('webui.clearAlerts with close true fires close on each alert', async ({ pag
         }
         webui.clearAlerts({ close: true });
     });
-    expect(await page.evaluate(() => window.__closed)).toEqual(['One', 'Two']);
+    await expect.poll(() => page.evaluate(() => window.__closed)).toEqual(['One', 'Two']);
     await expect(popup(page).locator('webui-alert')).toHaveCount(0);
 });
 test('alerts added after webui.clearAlerts show again', async ({ page }) => {

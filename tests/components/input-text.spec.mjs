@@ -47,7 +47,7 @@ test('number fields clamp to min and max', async ({ page }) => {
 });
 test('value and placeholder properties read and write', async ({ page }) => {
     const el = await input(page, 'placeholder="P"');
-    expect(await el.evaluate(c => c.placeholder)).toBe('P');
+    await expect.poll(() => el.evaluate(c => c.placeholder)).toBe('P');
     await el.evaluate(c => { c.placeholder = 'Q'; c.value = 'V'; });
     await expect(el.locator('input')).toHaveAttribute('placeholder', 'Q');
     await expect(el.locator('input')).toHaveValue('V');
@@ -58,8 +58,8 @@ test('fires one input event per change, and writes to data-trigger', async ({ pa
     const el = await input(page, 'data-trigger="it-value"');
     await el.evaluate(c => { window.__inputs = 0; c.addEventListener('input', () => window.__inputs++); });
     await el.locator('input').fill('x');
-    expect(await page.evaluate(() => window.__inputs)).toBe(1);
-    expect(await page.evaluate(() => webui.getData('it-value'))).toBe('x');
+    await expect.poll(() => page.evaluate(() => window.__inputs)).toBe(1);
+    await expect.poll(() => page.evaluate(() => webui.getData('it-value'))).toBe('x');
 });
 test('Ctrl+Enter submits the form', async ({ page }) => {
     const root = await mount(page, '<form><webui-input-text name="q"></webui-input-text></form>');
@@ -68,7 +68,7 @@ test('Ctrl+Enter submits the form', async ({ page }) => {
         f.addEventListener('submit', ev => { ev.preventDefault(); window.__submits++; });
     });
     await root.locator('input').press('Control+Enter');
-    expect(await page.evaluate(() => window.__submits)).toBe(1);
+    await expect.poll(() => page.evaluate(() => window.__submits)).toBe(1);
 });
 test('the label names the field, and without one its title does', async ({ page }) => {
     const root = await mount(page, '<webui-input-text label="Project Name"></webui-input-text><webui-input-text title="Value of api_url"></webui-input-text>');

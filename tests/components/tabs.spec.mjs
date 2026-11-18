@@ -16,16 +16,25 @@ test('clicking a tab moves to its content', async ({ page }) => {
     const el = await tabs(page, 'transition-timing="0"');
     await buttons(el).nth(1).click();
     await expect(buttons(el).nth(1)).toHaveAttribute('theme', 'active');
-    expect(await el.evaluate(c => [c._index, c._slotContent.style.translate])).toEqual([1, '-100%']);
+    await expect.poll(() => el.evaluate(c => [c._index, c._slotContent.style.translate])).toEqual([1, '-100%']);
+});
+test('a tab that is no longer active drops its active theme, rather than taking a theme named null', async ({ page }) => {
+    const el = await tabs(page, 'transition-timing="0"');
+    const first = buttons(el).first();
+    await expect(first).toHaveAttribute('theme', 'active');
+    await buttons(el).nth(1).click();
+    await expect(buttons(el).nth(1)).toHaveAttribute('theme', 'active');
+    await expect(first).not.toHaveAttribute('theme');
+    await expect.poll(() => first.evaluate(c => [c.style.getPropertyValue('--theme-color'), c.style.getPropertyValue('--theme-color-offset')])).toEqual(['', '']);
 });
 test('tabs with a hash update the url, without history on first load', async ({ page }) => {
     const before = await page.evaluate(() => history.length);
     const el = await tabs(page);
     await expect(page).toHaveURL(/#one$/);
-    expect(await page.evaluate(() => history.length)).toBe(before);
+    await expect.poll(() => page.evaluate(() => history.length)).toBe(before);
     await buttons(el).nth(1).click();
     await expect(page).toHaveURL(/#two$/);
-    expect(await page.evaluate(() => history.length)).toBe(before + 1);
+    await expect.poll(() => page.evaluate(() => history.length)).toBe(before + 1);
 });
 test('the tab named in the url starts selected', async ({ page }) => {
     await page.evaluate(() => history.replaceState(null, '', '#two'));
@@ -33,7 +42,7 @@ test('the tab named in the url starts selected', async ({ page }) => {
     const el = await tabs(page);
     await expect(buttons(el).nth(1)).toHaveAttribute('theme', 'active');
     await expect(page).toHaveURL(/#two$/);
-    expect(await page.evaluate(() => history.length)).toBe(before);
+    await expect.poll(() => page.evaluate(() => history.length)).toBe(before);
     await buttons(el).first().click();
     await expect(page).toHaveURL(/#one$/);
 });
@@ -61,7 +70,7 @@ test('fields in hidden tabs are disabled', async ({ page }) => {
 test('the tab index syncs with data', async ({ page }) => {
     const el = await tabs(page, 'data-subscribe="tb-index:setTab"');
     await buttons(el).nth(1).click();
-    expect(await page.evaluate(() => webui.getData('tb-index'))).toBe(1);
+    await expect.poll(() => page.evaluate(() => webui.getData('tb-index'))).toBe(1);
     await page.evaluate(() => webui.setData('tb-index', 2));
     await expect(buttons(el).nth(2)).toHaveAttribute('theme', 'active');
 });
@@ -72,10 +81,22 @@ test('a saved index past the end falls back to the last tab', async ({ page }) =
 });
 test('vertical tabs do not scroll the page on load', async ({ page }) => {
     await page.setViewportSize({ width: 1200, height: 300 });
-    await page.evaluate(() => { document.body.style.paddingTop = '1000px'; });
-    await tabs(page, 'vertical');
-    await page.waitForTimeout(100);
-    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    // Scrolling to the tabs is smooth, so it is counted when asked for instead of waiting to see the page move.
+    await page.evaluate(() => {
+        document.body.style.paddingTop = '1000px';
+        window.__scrolls = 0;
+        const scrollIntoView = Element.prototype.scrollIntoView;
+        Element.prototype.scrollIntoView = function (...args) {
+            if (this.nodeName === 'WEBUI-TABS') window.__scrolls++;
+            return scrollIntoView.apply(this, args);
+        };
+    });
+    const el = await tabs(page, 'vertical');
+    // The first tab is selected once the tabs have set themselves up.
+    await expect.poll(() => el.evaluate(c => c._initiated)).toBe(true);
+    await expect(buttons(el).first()).toHaveAttribute('theme', 'active');
+    const scrolled = await page.evaluate(() => [window.__scrolls, window.scrollY]);
+    expect(scrolled).toEqual([0, 0]);
 });
 test('narrow windows stack the tabs', async ({ page }) => {
     const el = await tabs(page);
@@ -99,12 +120,12 @@ test('setData builds tabs from templates', async ({ page }) => {
 });
 test('pad and transition timing apply', async ({ page }) => {
     const el = await tabs(page, 'pad="4" transition-timing="200"');
-    expect(await el.evaluate(c => [c.style.getPropertyValue('--theme-padding'), c._slotContent.style.transitionDuration])).toEqual(['4px', '200ms']);
+    await expect.poll(() => el.evaluate(c => [c.style.getPropertyValue('--theme-padding'), c._slotContent.style.transitionDuration])).toEqual(['4px', '200ms']);
 });
 test('the index attribute picks the starting tab, and later switches tabs', async ({ page }) => {
     const el = await tabs(page, 'index="1" transition-timing="0"');
     await expect(buttons(el).nth(1)).toHaveAttribute('theme', 'active');
-    expect(await el.evaluate(c => c._index)).toBe(1);
+    await expect.poll(() => el.evaluate(c => c._index)).toBe(1);
     await el.evaluate(c => c.setAttribute('index', '2'));
     await expect(buttons(el).nth(2)).toHaveAttribute('theme', 'active');
 });
@@ -157,7 +178,7 @@ test('a hidden tab takes no room once the slide ends, so a short tab leaves noth
     await expect.poll(scrolls).toBe(false);
     await buttons(el).nth(1).click();
     // The tab being shown opens at once, and the one sliding away stays open until the slide ends.
-    expect(await hidden()).toEqual([false, false]);
+    await expect.poll(() => hidden()).toEqual([false, false]);
     await expect.poll(scrolls).toBe(true);
     await endSlide();
     await expect.poll(hidden).toEqual([true, false]);

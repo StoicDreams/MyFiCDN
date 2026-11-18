@@ -10,7 +10,7 @@ test('setting its value opens the dialog and clears the trigger', async ({ page 
     await page.evaluate(() => webui.setData('da-open', { id: 7 }));
     const dialog = root.locator('webui-dialogs dialog');
     await expect(root.locator('webui-dialogs form')).toContainText('Are you sure?');
-    expect(await page.evaluate(() => webui.getData('da-open'))).toBeUndefined();
+    await expect.poll(() => page.evaluate(() => webui.getData('da-open'))).toBeUndefined();
 });
 test('confirm posts the value and closes on success', async ({ page }) => {
     let body;

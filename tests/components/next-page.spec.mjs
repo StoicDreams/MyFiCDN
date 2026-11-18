@@ -13,7 +13,6 @@ test('hides when there is no next page', async ({ page }) => {
     const el = root.locator('webui-next-page');
     await el.evaluate(c => c.setValue({ name: 'Home' }));
     await expect(el.locator('webui-button')).toBeAttached();
-    await page.waitForTimeout(350);
     await el.evaluate(c => c.setValue(null));
     await expect(el).toBeHidden();
     await expect(el.locator('webui-button')).toHaveCount(0);

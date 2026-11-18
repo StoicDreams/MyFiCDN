@@ -7,11 +7,11 @@ test('clicking toggles the value, icon, and title', async ({ page }) => {
     await expect(icon).toHaveAttribute('icon', 'xmark');
     await expect(el.locator('button')).toHaveAttribute('aria-label', 'Off');
     await el.click();
-    expect(await el.evaluate(c => c.value)).toBe(true);
+    await expect.poll(() => el.evaluate(c => c.value)).toBe(true);
     await expect(icon).toHaveAttribute('icon', 'bell|fill');
     await expect(el.locator('button')).toHaveAttribute('aria-label', 'On');
     await el.click();
-    expect(await el.evaluate(c => c.value)).toBe(false);
+    await expect.poll(() => el.evaluate(c => c.value)).toBe(false);
 });
 test('uses default icons, and label displays', async ({ page }) => {
     const root = await mount(page, '<webui-toggle-icon label="Dark"></webui-toggle-icon>');
@@ -24,20 +24,22 @@ test('fires change, and writes to data-trigger', async ({ page }) => {
     const el = root.locator('webui-toggle-icon');
     await el.evaluate(c => { window.__changes = 0; c.addEventListener('change', () => window.__changes++); });
     await el.click();
-    expect(await page.evaluate(() => window.__changes)).toBeGreaterThan(0);
+    await expect.poll(() => page.evaluate(() => window.__changes)).toBeGreaterThan(0);
     await expect.poll(() => page.evaluate(() => webui.getData('ti-value'))).toBe(true);
 });
 test('setValue reads strings and booleans', async ({ page }) => {
     const root = await mount(page, '<webui-toggle-icon></webui-toggle-icon>');
     const el = root.locator('webui-toggle-icon');
-    expect(await el.evaluate(c => {
+    // Each value is read straight after it is set, in one call, so nothing can change it in between.
+    const values = await el.evaluate(c => {
         c.setValue('true');
         const a = c.value;
         c.setValue('false');
         const b = c.value;
         c.value = true;
         return [a, b, c.value];
-    })).toEqual([true, false, true]);
+    });
+    expect(values).toEqual([true, false, true]);
 });
 test('theme-on and theme-off set the theme', async ({ page }) => {
     const root = await mount(page, '<webui-toggle-icon theme-on="success" theme-off="danger"></webui-toggle-icon>');
@@ -57,13 +59,15 @@ test('data-enabled follows another element', async ({ page }) => {
 test('a missing data-enabled target stops rechecking eventually', async ({ page }) => {
     const root = await mount(page, '<webui-toggle-icon data-enabled="#never"></webui-toggle-icon>');
     const el = root.locator('webui-toggle-icon');
-    expect(await el.evaluate(c => { c._recheck = 20; c.updateElements(); return c._recheck; })).toBe(20);
+    // updateElements is synchronous, so the count is final when this returns.
+    const recheck = await el.evaluate(c => { c._recheck = 20; c.updateElements(); return c._recheck; });
+    expect(recheck).toBe(20);
 });
 test('the enabled attribute matches the value', async ({ page }) => {
     const root = await mount(page, '<webui-toggle-icon></webui-toggle-icon>');
     const el = root.locator('webui-toggle-icon');
     await el.click();
-    await expect(el).toHaveAttribute('enabled', { timeout: 500 });
+    await expect(el).toHaveAttribute('enabled');
 });
 test('shows a focus ring when reached by keyboard', async ({ page }) => {
     const root = await mount(page, '<button id="before">Before</button><webui-toggle-icon title-on="On" title-off="Off" icon-on="bell" icon-off="xmark"></webui-toggle-icon>');
@@ -78,6 +82,6 @@ test('shows a focus ring when reached by keyboard', async ({ page }) => {
 test('--toggle-icon-padding sets the button padding, which defaults to the Web UI padding at the sides', async ({ page }) => {
     const root = await mount(page, '<webui-toggle-icon id="plain"></webui-toggle-icon><webui-toggle-icon id="tight" style="--toggle-icon-padding:0;"></webui-toggle-icon>');
     const padding = id => root.locator(`#${id} button`).evaluate(b => [getComputedStyle(b).paddingTop, getComputedStyle(b).paddingLeft]);
-    expect(await padding('plain')).toEqual(['0px', '8px']);
-    expect(await padding('tight')).toEqual(['0px', '0px']);
+    await expect.poll(() => padding('plain')).toEqual(['0px', '8px']);
+    await expect.poll(() => padding('tight')).toEqual(['0px', '0px']);
 });

@@ -74,6 +74,32 @@ export const test = base.extend({
             window.addEventListener('error', event => {
                 window.__reportTestError(event.error?.stack || event.message);
             });
+            // The app config loads user roles on startup. This resolves once the loader has applied that first
+            // response, so it cannot overwrite roles a test sets afterwards.
+            const realFetch = window.fetch;
+            let startupRoles = true;
+            window.__startupRolesApplied = new Promise(resolve => {
+                // Promise reactions run in the order they were added, and these are added before the loader's own,
+                // so a microtask queued from here runs after the loader has handled the same result.
+                const applied = () => queueMicrotask(resolve);
+                window.fetch = function (input, ...rest) {
+                    const result = realFetch.call(window, input, ...rest);
+                    if (!startupRoles) return result;
+                    const url = typeof input === 'string' ? input : input?.url || `${input}`;
+                    if (!/\/user\/roles$/.test(new URL(url, location.href).pathname)) return result;
+                    startupRoles = false;
+                    result.then(response => {
+                        if (response.status !== 200) return applied();
+                        const readText = response.text;
+                        response.text = function () {
+                            const body = readText.call(this);
+                            body.then(applied, applied);
+                            return body;
+                        };
+                    }, applied);
+                    return result;
+                };
+            });
             window.addEventListener('unhandledrejection', event => {
                 const reason = event.reason;
                 // Failed requests are expected here, since anything outside this site is blocked during tests.
@@ -84,12 +110,11 @@ export const test = base.extend({
             });
         });
         await page.route('**/*', route => serveFromDisk(route, useMinified, baseURL));
-        // The app config loads user roles on startup, and that response must not overwrite roles a test sets.
-        const rolesLoaded = page.waitForResponse('https://api.myfi.ws/user/roles');
         await page.goto(startUrl);
-        await page.waitForFunction(() => typeof webui === 'object' && webui.loaded && webui.appConfig?.appName);
-        await rolesLoaded;
-        await page.evaluate(() => new Promise(resolve => setTimeout(resolve)));
+        // The loader adds the tooltip a moment after it starts, and a hover before then shows nothing.
+        await page.waitForFunction(() => typeof webui === 'object' && webui.loaded && webui.appConfig?.appName
+            && document.querySelector('body > .tooltip'));
+        await page.evaluate(() => window.__startupRolesApplied);
         await use(page);
         expect(errors, 'Uncaught errors happened while this test ran').toEqual([]);
     },

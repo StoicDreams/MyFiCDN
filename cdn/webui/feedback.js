@@ -95,7 +95,11 @@
         },
         setTheme(value) {
             const t = this;
-            t._icon.setAttribute('theme', value);
+            if (value) {
+                t._icon.setAttribute('theme', value);
+            } else {
+                t._icon.removeAttribute('theme');
+            }
         },
         attr: ['title', 'data-post', 'flags'],
         attrChanged(property, value) {

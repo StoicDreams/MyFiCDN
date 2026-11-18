@@ -9,5 +9,5 @@ test('icon updates are safe while icon loading is not implemented', async ({ pag
     const el = root.locator('webui-fa');
     await expect(el.locator('slot[name="icon"]')).toHaveText('');
     await el.evaluate(c => c.setAttribute('icon', 'moon'));
-    expect(await el.evaluate(c => c.icon)).toBe('moon');
+    await expect.poll(() => el.evaluate(c => c.icon)).toBe('moon');
 });

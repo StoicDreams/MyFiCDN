@@ -7,8 +7,9 @@ test('displays the named emoji', async ({ page }) => {
 test('downloads the emoji map once, only when first needed', async ({ page }) => {
     let requests = 0;
     page.on('request', request => { if (request.url().includes('emojis.json')) requests++; });
-    const root = await mount(page, '<webui-emoji></webui-emoji>');
-    await page.waitForTimeout(100);
+    const root = await mount(page, '<webui-emoji><i id="unrendered"></i></webui-emoji>');
+    // Rendering replaces the content, so the marker going shows the component has rendered with no emoji.
+    await expect(root.locator('#unrendered')).toHaveCount(0);
     expect(requests).toBe(0);
     await root.locator('webui-emoji').evaluate(el => el.setAttribute('emoji', 'grinning'));
     await expect(root.locator('webui-emoji')).not.toHaveText('');
@@ -24,5 +25,5 @@ test('an unknown emoji stays empty and logs the problem', async ({ page }) => {
 });
 test('height sets both dimensions', async ({ page }) => {
     const root = await mount(page, '<webui-emoji height="20"></webui-emoji>');
-    expect(await root.locator('webui-emoji').evaluate(el => [el.style.height, el.style.width])).toEqual(['20px', '20px']);
+    await expect.poll(() => root.locator('webui-emoji').evaluate(el => [el.style.height, el.style.width])).toEqual(['20px', '20px']);
 });

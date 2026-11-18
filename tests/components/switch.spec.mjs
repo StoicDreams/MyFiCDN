@@ -7,7 +7,7 @@ test('shows each option, with the first selected', async ({ page }) => {
     const root = await mount(page, '<webui-switch options="one|two|line break"></webui-switch>');
     await expect(buttons(root)).toHaveText(['one', 'two', 'line break']);
     await expect(checked(root)).toHaveText('one');
-    expect(await root.locator('webui-switch').evaluate(el => el.value)).toBe('one');
+    await expect.poll(() => root.locator('webui-switch').evaluate(el => el.value)).toBe('one');
 });
 test('the value attribute picks the option', async ({ page }) => {
     const root = await mount(page, '<webui-switch value="two" options="one|two|three"></webui-switch>');
@@ -24,7 +24,7 @@ test('clicking an option selects it and fires input and change', async ({ page }
     await buttons(root).nth(2).click();
     await expect(checked(root)).toHaveText('three');
     await buttons(root).nth(2).click();
-    expect(await page.evaluate(() => window.__events)).toEqual(['input', 'change:three']);
+    await expect.poll(() => page.evaluate(() => window.__events)).toEqual(['input', 'change:three']);
 });
 test('setValue selects without firing change, and an unknown value falls back to the first option', async ({ page }) => {
     const root = await mount(page, '<webui-switch options="one|two"></webui-switch>');
@@ -59,7 +59,7 @@ test('arrow keys move the selection, and only the selected option is a tab stop'
     await expect(checked(root)).toHaveText('large');
     await page.keyboard.press('Home');
     await expect(checked(root)).toHaveText('small');
-    expect(await buttons(root).evaluateAll(list => list.map(b => b.tabIndex))).toEqual([0, -1, -1]);
+    await expect.poll(() => buttons(root).evaluateAll(list => list.map(b => b.tabIndex))).toEqual([0, -1, -1]);
     await expect(root.locator('webui-switch [role="radiogroup"]')).toHaveAttribute('aria-label', 'Size');
 });
 test('data-bind keeps the switch and data in step', async ({ page }) => {
@@ -72,7 +72,7 @@ test('data-bind keeps the switch and data in step', async ({ page }) => {
 test('its value is sent with a form', async ({ page }) => {
     const root = await mount(page, '<form><webui-switch name="kind" options="one|two"></webui-switch></form>');
     await buttons(root).nth(1).click();
-    expect(await root.locator('form').evaluate(form => new FormData(form).get('kind'))).toBe('two');
+    await expect.poll(() => root.locator('form').evaluate(form => new FormData(form).get('kind'))).toBe('two');
 });
 test('options with icons show the icon, named by the label, and update when an icon changes', async ({ page }) => {
     const root = await mount(page, `<webui-switch options='[{"value":"left","label":"Left","icon":"align-left"},{"value":"right","label":"Right","icon":"align-right"}]'></webui-switch>`);
@@ -82,7 +82,7 @@ test('options with icons show the icon, named by the label, and update when an i
     await expect(buttons(root).nth(1).locator('webui-icon')).toHaveAttribute('icon', 'align-right');
     await expect(buttons(root).nth(1)).toHaveText('');
     await buttons(root).nth(1).click();
-    expect(await el.evaluate(c => c.value)).toBe('right');
+    await expect.poll(() => el.evaluate(c => c.value)).toBe('right');
     // New icons for the same values redraw the buttons and keep the selection.
     await el.evaluate(c => c.setOptions([{ value: 'left', label: 'Left', icon: 'circle_align-left' }, { value: 'right', label: 'Right', icon: 'circle_align-right' }]));
     await expect(buttons(root).nth(1).locator('webui-icon')).toHaveAttribute('icon', 'circle_align-right');

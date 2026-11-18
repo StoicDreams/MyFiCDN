@@ -12,5 +12,5 @@ test('hides the citation when there is none', async ({ page }) => {
 });
 test('theme sets the color', async ({ page }) => {
     const root = await mount(page, '<webui-quote theme="info">Words</webui-quote>');
-    expect(await root.locator('webui-quote').evaluate(c => c.style.getPropertyValue('--theme-color'))).toBe('var(--color-info)');
+    await expect.poll(() => root.locator('webui-quote').evaluate(c => c.style.getPropertyValue('--theme-color'))).toBe('var(--color-info)');
 });

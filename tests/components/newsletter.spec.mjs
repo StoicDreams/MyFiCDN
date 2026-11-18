@@ -65,7 +65,7 @@ test('signing up posts the key and email, then thanks the visitor', async ({ pag
     const signup = calls().find(call => call.path === '/newsletter/signup');
     expect(signup.method).toBe('POST');
     expect(JSON.parse(signup.body)).toEqual({ key: KEY, email: 'person@example.com' });
-    expect(await page.evaluate(() => window.__subscribed)).toBe(1);
+    await expect.poll(() => page.evaluate(() => window.__subscribed)).toBe(1);
 });
 
 test('Enter in the email field submits', async ({ page }) => {
@@ -124,6 +124,8 @@ test('confirm waits for a click, then posts the token', async ({ page }) => {
     await button.click();
     await expect(el.locator('#status')).toHaveText('You are subscribed to Weekly Notes from www.example.com.');
     await expect(button).toBeHidden();
+    // The post made by the click is the only call, so nothing was sent before it.
+    expect(calls()).toHaveLength(1);
     const confirm = calls()[0];
     expect(confirm.path).toBe('/newsletter/confirm');
     expect(JSON.parse(confirm.body)).toEqual({ token: 'abc-123' });

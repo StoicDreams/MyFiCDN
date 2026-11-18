@@ -43,7 +43,7 @@ test('each item keeps its File', async ({ page }) => {
     const root = await mount(page, '<webui-file-select data-trigger="fs-file"></webui-file-select>');
     await root.locator('webui-file-select input').setInputFiles([file('a.mp4', 'video/mp4')]);
     await expect.poll(() => page.evaluate(() => webui.getData('fs-file')?.length)).toBe(1);
-    expect(await page.evaluate(() => {
+    await expect.poll(() => page.evaluate(() => {
         const item = webui.getData('fs-file')[0];
         return [item.file instanceof File, item.file.name];
     })).toEqual([true, 'a.mp4']);

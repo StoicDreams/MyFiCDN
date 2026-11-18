@@ -18,5 +18,5 @@ test('start adds a start time, and changing the video updates the frame', async 
 test('a video id that is not valid shows nothing', async ({ page }) => {
     const root = await mount(page, '<webui-youtube video="../../evil?x=1"></webui-youtube>');
     await expect(frame(root)).toBeHidden();
-    expect(await frame(root).getAttribute('src')).toBeNull();
+    await expect.poll(() => frame(root).getAttribute('src')).toBeNull();
 });

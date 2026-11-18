@@ -36,15 +36,12 @@ test('webui.closest accepts events', async ({ page }) => {
 });
 test('webui.querySelector and webui.querySelectorAll search shadow roots', async ({ page }) => {
     await mount(page, '<webui-alert id="a" show>x</webui-alert><p class="light">y</p>');
-    expect(await page.evaluate(async () => {
-        await new Promise(r => setTimeout(r, 50));
-        return [
-            webui.querySelector('p.light').nodeName,
-            webui.querySelector('#close').nodeName,
-            webui.querySelectorAll('#close').length,
-            webui.querySelector('.missing') === undefined,
-        ];
-    })).toEqual(['P', 'BUTTON', 1, true]);
+    await expect.poll(() => page.evaluate(() => [
+        webui.querySelector('p.light')?.nodeName,
+        webui.querySelector('#close')?.nodeName,
+        webui.querySelectorAll('#close').length,
+        webui.querySelector('.missing') === undefined,
+    ])).toEqual(['P', 'BUTTON', 1, true]);
 });
 test('webui.getHtmlFromTemplate renders assigned templates', async ({ page }) => {
     expect(await page.evaluate(() => webui.getHtmlFromTemplate({ assignedElements: () => [{ innerHTML: '**{X}**' }] }, { x: 'a' }))).toContain('<strong>a</strong>');
@@ -115,6 +112,17 @@ test('webui.setTheme sets theme variables', async ({ page }) => {
         webui.setTheme(el, 'info');
         return [el.style.getPropertyValue('--theme-color'), el.style.getPropertyValue('--theme-color-offset')];
     })).toEqual(['var(--color-info)', 'var(--color-info-offset)']);
+});
+test('webui.setTheme with no theme clears the theme variables', async ({ page }) => {
+    expect(await page.evaluate(() => {
+        const el = document.createElement('div');
+        webui.setTheme(el, 'info');
+        webui.setTheme(el, null);
+        const cleared = [el.style.getPropertyValue('--theme-color'), el.style.getPropertyValue('--theme-color-offset')];
+        webui.setTheme(el, 'info');
+        webui.setTheme(el, '');
+        return [...cleared, el.style.getPropertyValue('--theme-color')];
+    })).toEqual(['', '', '']);
 });
 test('webui.targetMatchesCheck walks up to the parent', async ({ page }) => {
     expect(await page.evaluate(() => {

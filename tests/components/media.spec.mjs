@@ -6,7 +6,7 @@ const image = root => root.locator('webui-media img');
 test('shows the image with its alt text', async ({ page }) => {
     const root = await mount(page, '<div style="width:800px"><webui-media src="/Logo.svg" alt="Logo"><p id="text">Hello</p></webui-media></div>');
     await expect(image(root)).toHaveAttribute('alt', 'Logo');
-    expect(await image(root).evaluate(img => img.src)).toContain('/Logo.svg');
+    await expect.poll(() => image(root).evaluate(img => img.src)).toContain('/Logo.svg');
     await expect(image(root)).toBeVisible();
     await expect(root.locator('#text')).toBeVisible();
 });

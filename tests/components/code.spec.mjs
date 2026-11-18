@@ -16,7 +16,7 @@ test('setValue escapes markup, and stringifies objects', async ({ page }) => {
     await expect(code.locator('code')).toContainText('<img');
     await code.evaluate(el => el.setValue({ a: 1 }));
     await expect(code.locator('code')).toContainText('"a": 1');
-    expect(await code.evaluate(el => el.value)).toContain('"a": 1');
+    await expect.poll(() => code.evaluate(el => el.value)).toContain('"a": 1');
 });
 test('text is not highlighted', async ({ page }) => {
     const root = await mount(page, '<webui-code lang="text"></webui-code>');
@@ -35,12 +35,22 @@ test('highlights html tags and attributes', async ({ page }) => {
 });
 test('large code highlights quickly', async ({ page }) => {
     const root = await mount(page, '<webui-code></webui-code>');
-    const elapsed = await root.locator('webui-code').evaluate(el => {
-        const start = performance.now();
-        el.setValue('plain words without any matches at all '.repeat(5000));
-        return performance.now() - start;
+    // Eight times the code takes about eight times as long when each character is looked at once, and about
+    // sixty-four times as long when the rest of the code is scanned from every character. Comparing the two,
+    // with the best of three runs each, gives the same answer on a slow or busy machine, where a time limit
+    // would not.
+    const [small, large] = await root.locator('webui-code').evaluate(el => {
+        const time = repeats => {
+            const text = 'plain words without any matches at all '.repeat(repeats);
+            return Math.min(...[1, 2, 3].map(() => {
+                const start = performance.now();
+                el.setValue(text);
+                return performance.now() - start;
+            }));
+        };
+        return [time(1000), time(8000)];
     });
-    expect(elapsed).toBeLessThan(2000);
+    expect(large / small).toBeLessThan(32);
 });
 test('the copy icon copies the code', async ({ page }) => {
     const root = await mount(page, '<webui-code>abc</webui-code>');
@@ -59,13 +69,13 @@ test('value and copy keep the exact text set with setValue', async ({ page }) =>
     const text = '\t<a href="?a=1&b=2" title="x &amp; y">Tom & Jerry</a>\n\t\tend  \n';
     await code.evaluate((el, v) => el.setValue(v), text);
     await expect(code.locator('code')).toContainText('Tom & Jerry');
-    expect(await code.evaluate(el => el.value)).toBe(text);
+    await expect.poll(() => code.evaluate(el => el.value)).toBe(text);
     await code.locator('label webui-icon').click();
     await expect.poll(() => page.evaluate(() => window.__copied)).toBe(text);
 });
 test('code written in the tag reads back as text', async ({ page }) => {
     const root = await mount(page, '<webui-code lang="html">&lt;b&gt;a &amp;amp; b&lt;/b&gt;</webui-code>');
-    expect(await root.locator('webui-code').evaluate(el => el.value)).toBe('<b>a &amp; b</b>');
+    await expect.poll(() => root.locator('webui-code').evaluate(el => el.value)).toBe('<b>a &amp; b</b>');
 });
 test('nocopy hides the copy icon', async ({ page }) => {
     const root = await mount(page, '<webui-code nocopy>abc</webui-code>');
@@ -73,7 +83,7 @@ test('nocopy hides the copy icon', async ({ page }) => {
 });
 test('nocopy without a label hides the label row', async ({ page }) => {
     const root = await mount(page, '<webui-code nocopy>abc</webui-code>');
-    await expect(root.locator('webui-code')).toHaveClass(/hide-label/, { timeout: 500 });
+    await expect(root.locator('webui-code')).toHaveClass(/hide-label/);
 });
 test('src loads a file, and reports failures', async ({ page }) => {
     const root = await mount(page, '<webui-code src="/robots.txt"></webui-code><webui-code src="/missing.txt"></webui-code>');

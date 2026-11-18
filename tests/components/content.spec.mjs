@@ -26,13 +26,19 @@ test('hiding and showing nested content does not refetch or re-render it', async
     const root = await mount(page, '<webui-content nest src="/robots.txt" load-delay="0"></webui-content>');
     const el = root.locator('webui-content');
     await expect(el).toContainText('User-agent', { timeout: 8000 });
-    await el.evaluate(c => { c.firstElementChild.dataset.kept = '1'; });
+    // Counts each time the component finishes checking whether it needs to load, which is what showing it starts.
+    await el.evaluate(c => {
+        c.firstElementChild.dataset.kept = '1';
+        window.__checks = 0;
+        const original = c.fetchContent;
+        c.fetchContent = async function () { await original.call(c); window.__checks++; };
+    });
     for (let i = 0; i < 2; i++) {
         await el.evaluate(c => c.removeAttribute('visible'));
         await el.evaluate(c => c.setAttribute('visible', '1'));
-        await page.waitForTimeout(150);
+        await expect.poll(() => page.evaluate(() => window.__checks)).toBeGreaterThan(i);
     }
-    expect(await page.evaluate(() => window.__count)).toBe(1);
+    await expect.poll(() => page.evaluate(() => window.__count)).toBe(1);
     await expect(el.locator('[data-kept]')).toHaveCount(1);
 });
 test('changing src loads the new content', async ({ page }) => {
@@ -46,7 +52,7 @@ test('failures show a message and can retry', async ({ page }) => {
     const root = await mount(page, '<webui-content nest src="/missing.md" load-delay="0"></webui-content>');
     const el = root.locator('webui-content');
     await expect(el).toContainText('Failed to load content from /missing.md', { timeout: 8000 });
-    expect(await el.evaluate(c => c._contentLoaded)).toBe(false);
+    await expect.poll(() => el.evaluate(c => c._contentLoaded)).toBe(false);
 });
 test('full html documents are refused', async ({ page }) => {
     await page.route('**/doc.md', route => route.fulfill({ body: '<!DOCTYPE html><html></html>' }));
@@ -58,7 +64,7 @@ test('setHtml sets content directly', async ({ page }) => {
     const el = root.locator('webui-content');
     await el.evaluate(c => c.setHtml('<p>Direct</p>'));
     await expect(el.locator('p')).toHaveText('Direct');
-    expect(await el.evaluate(c => c.contentAttached)).toBe(true);
+    await expect.poll(() => el.evaluate(c => c.contentAttached)).toBe(true);
 });
 test('children detach while hidden and return with their height held', async ({ page }) => {
     const root = await mount(page, '<webui-content><p style="height:50px">Body</p></webui-content>');

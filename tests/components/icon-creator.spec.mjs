@@ -2,25 +2,36 @@ import { test, expect, mount } from '../support/webui.mjs';
 import { readFileSync } from 'node:fs';
 
 // The first icon listed, and the bell's first path, read from the files, so adding or redrawing icons does not break these tests.
-const firstIcon = `WEBUI-ICON-${JSON.parse(readFileSync(new URL('../../cdn/icons/all.json', import.meta.url), 'utf8'))[0].name.toUpperCase()}`;
+const allIcons = JSON.parse(readFileSync(new URL('../../cdn/icons/all.json', import.meta.url), 'utf8'));
+const firstIcon = `WEBUI-ICON-${allIcons[0].name.toUpperCase()}`;
+// The creator lists and draws every icon, which is hundreds of files to load. These tests only use the first icon
+// and the bell, so the list is cut to a few, which keeps them quick on a busy machine.
+const fewIcons = [...allIcons.slice(0, 3), ...allIcons.filter(icon => icon.name.startsWith('bell'))];
 const bellPath = readFileSync(new URL('../../cdn/icons/bell.webui', import.meta.url), 'utf8').replace(/\r/g, '').split('\n')[1];
 
 const creator = async page => {
     await page.setViewportSize({ width: 1600, height: 1200 });
+    await page.route('**/icons/all.json', route => route.fulfill({ contentType: 'application/json', body: JSON.stringify(fewIcons) }));
     const root = await mount(page, '<webui-icon-creator></webui-icon-creator>');
     const el = root.locator('webui-icon-creator');
-    await expect(el.locator('a').first()).toBeVisible({ timeout: 10000 });
+    await expect(el.locator('a').first()).toBeVisible();
     return el;
 };
 const iconFromList = (el, name) => el.locator('a').filter({ has: el.page().locator(`label:text-is("${name}")`) });
 
 test('a resize while it is still loading is harmless', async ({ page }) => {
+    // A component it uses is held back, so it is still loading when the resize arrives.
+    let release;
+    const held = new Promise(resolve => { release = resolve; });
     await page.route('**/webui/dropdown.*', async route => {
-        await new Promise(r => setTimeout(r, 500));
+        await held;
         await route.fallback();
     });
+    await page.route('**/icons/all.json', route => route.fulfill({ contentType: 'application/json', body: JSON.stringify(fewIcons) }));
     const root = await mount(page, '<webui-icon-creator></webui-icon-creator>');
     await root.locator('webui-icon-creator').evaluate(c => c.onResize());
+    release();
+    await expect(root.locator('webui-icon-creator webui-dropdown').first()).toBeVisible();
 });
 test('opens with the first icon drawn in the editor', async ({ page }) => {
     const el = await creator(page);

@@ -54,7 +54,7 @@ test('sortable headers toggle direction and fire update-sort', async ({ page }) 
     await expect(header.locator('webui-icon')).toHaveAttribute('icon', /rotate:0/);
     await header.click();
     await el.locator('th webui-flex').click();
-    expect(await page.evaluate(() => window.__sorts)).toEqual([['Name', 'desc'], ['Name', 'asc']]);
+    await expect.poll(() => page.evaluate(() => window.__sorts)).toEqual([['Name', 'desc'], ['Name', 'asc']]);
     await expect(el).toHaveAttribute('current-sort-dir', 'asc');
 });
 test('bordered toggles the class', async ({ page }) => {
@@ -66,20 +66,24 @@ test('bordered toggles the class', async ({ page }) => {
 test('each row is stored as page data', async ({ page }) => {
     const el = await table(page, 'columns="A"');
     await el.evaluate(c => c.setData([{ A: 1 }]));
-    expect(await el.evaluate(c => webui.getData(`page-tr-${c._data[0]._rowId}`).A)).toBe(1);
+    await expect.poll(() => el.evaluate(c => webui.getData(`page-tr-${c._data[0]._rowId}`).A)).toBe(1);
 });
-test('a large table renders quickly as one insert', async ({ page }) => {
+test('a large table renders as one insert', async ({ page }) => {
     const el = await table(page, 'columns="A;B;C;D"');
     await expect(el.locator('tr')).toHaveCount(1);
-    const elapsed = await el.evaluate(async c => {
+    // Counts the inserts that put rows of cells on the page, which is what keeps a large table quick. Counting
+    // them gives the same answer on any machine, where timing the render would not.
+    const inserts = await el.evaluate(c => new Promise(resolve => {
         const rows = Array.from({ length: 500 }, (_, i) => ({ A: i, B: 'b', C: 'c', D: 'd' }));
-        const start = performance.now();
+        const observer = new MutationObserver(records => {
+            observer.disconnect();
+            resolve(records.filter(record => [...record.addedNodes].some(node => node.nodeName === 'TR' && node.querySelector('td'))).length);
+        });
+        observer.observe(c, { childList: true, subtree: true });
         c.setData(rows);
-        await webui.wait(0);
-        return performance.now() - start;
-    });
+    }));
     await expect(el.locator('tr')).toHaveCount(501);
-    expect(elapsed).toBeLessThan(1500);
+    expect(inserts).toBe(1);
 });
 test('html column templates escape row values', async ({ page }) => {
     const template = '<template slot="column" name="Name"><b title="{TEMPLATE_NAME}" data-value="{TEMPLATE_ROWDATA}" data-row="{_ROWID}">{NAME} {TEMPLATE_AGE} {TEMPLATE_OK} {TEMPLATE_MISSING}</b></template>';
@@ -93,7 +97,7 @@ test('html column templates escape row values', async ({ page }) => {
     const rowId = await el.evaluate(c => c._data[0]._rowId);
     await expect(b).toHaveAttribute('data-row', rowId);
     expect(JSON.parse(await b.getAttribute('data-value'))).toEqual({ Name: name, Age: 7, Ok: true, Missing: null, _rowId: rowId });
-    expect(await page.evaluate(() => window.__hacked)).toBeUndefined();
+    await expect.poll(() => page.evaluate(() => window.__hacked)).toBeUndefined();
 });
 test('text column templates keep values as text without escaping them', async ({ page }) => {
     const el = await table(page, 'columns="Name"', '<template slot="column" name="Name">[{NAME}]</template>');

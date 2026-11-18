@@ -20,31 +20,33 @@ test('data-transfer copies every listed key', async ({ page }) => {
     await page.evaluate(() => { webui.setData('s1', 'A'); webui.setData('s2', 'B'); });
     const root = await mount(page, '<webui-button data-transfer="s1:d1|s2:d2">x</webui-button>');
     await root.locator('webui-button').click();
-    expect(await page.evaluate(() => [webui.getData('d1'), webui.getData('d2')])).toEqual(['A', 'B']);
+    await expect.poll(() => page.evaluate(() => [webui.getData('d1'), webui.getData('d2')])).toEqual(['A', 'B']);
 });
 test('data-clear removes listed keys', async ({ page }) => {
     await page.evaluate(() => { webui.setData('c1', 1); webui.setData('c2', 2); });
     const root = await mount(page, '<webui-button data-clear="c1|c2">x</webui-button>');
     await root.locator('webui-button').click();
-    expect(await page.evaluate(() => [webui.getData('c1'), webui.getData('c2')])).toEqual([undefined, undefined]);
+    await expect.poll(() => page.evaluate(() => [webui.getData('c1'), webui.getData('c2')])).toEqual([undefined, undefined]);
 });
 test('data-remove-item removes from arrays and objects, and ignores missing data', async ({ page }) => {
     await page.evaluate(() => { webui.setData('list', ['a', 'b']); webui.setData('map', { k: 1, j: 2 }); });
     const root = await mount(page, '<webui-button id="a" data-remove-item="list:0"></webui-button><webui-button data-remove-item="map:k"></webui-button><webui-button data-remove-item="none:0"></webui-button>');
     const buttons = root.locator('webui-button');
     for (let i = 0; i < 3; i++) await buttons.nth(i).evaluate(el => el.click());
-    expect(await page.evaluate(() => [webui.getData('list'), webui.getData('map')])).toEqual([['b'], { j: 2 }]);
+    await expect.poll(() => page.evaluate(() => [webui.getData('list'), webui.getData('map')])).toEqual([['b'], { j: 2 }]);
 });
 test('submit submits its form, and is harmless without one', async ({ page }) => {
     const root = await mount(page, '<form><webui-button submit>Go</webui-button></form><webui-button submit id="lone">Lone</webui-button>');
-    expect(await root.evaluate(r => {
+    // The clicks and the submit event are synchronous, so the count is final when this returns.
+    const submitted = await root.evaluate(r => {
         let submits = 0;
         const form = r.querySelector('form');
         form.addEventListener('submit', ev => { ev.preventDefault(); submits++; });
         form.querySelector('webui-button').click();
         r.querySelector(':scope > webui-button').click();
         return submits;
-    })).toBe(1);
+    });
+    expect(submitted).toBe(1);
 });
 test('a form reset leaves data-value buttons working', async ({ page }) => {
     const root = await mount(page, '<form><webui-button data-trigger="btn-r" data-value="9">x</webui-button></form>');
@@ -63,7 +65,7 @@ test('it is a button that keyboard users can reach and press', async ({ page }) 
     await expect(button).toBeFocused();
     await page.keyboard.press('Enter');
     await page.keyboard.press('Space');
-    expect(await page.evaluate(() => window.__clicks)).toBe(2);
+    await expect.poll(() => page.evaluate(() => window.__clicks)).toBe(2);
     await expect(page.getByRole('button', { name: 'Go' })).toHaveCount(1);
 });
 test('a disabled button is announced as disabled and cannot be pressed from the keyboard', async ({ page }) => {
@@ -71,12 +73,22 @@ test('a disabled button is announced as disabled and cannot be pressed from the 
     const button = root.locator('webui-button');
     await expect(button).toHaveAttribute('aria-disabled', 'true');
     await expect(button).toHaveAttribute('tabindex', '-1');
-    await button.evaluate(el => { window.__clicks = 0; el.addEventListener('click', () => window.__clicks++); el.focus(); });
-    await page.keyboard.press('Enter');
-    expect(await page.evaluate(() => window.__clicks)).toBe(0);
+    // The key is sent straight to the button, since a disabled one cannot take focus. Handling it is synchronous,
+    // so the count is final when each call returns.
+    const press = () => button.evaluate(el => {
+        window.__clicks ??= 0;
+        if (!el.__counted) { el.__counted = true; el.addEventListener('click', () => window.__clicks++); }
+        el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+        return window.__clicks;
+    });
+    const whileDisabled = await press();
+    expect(whileDisabled).toBe(0);
     await button.evaluate(el => el.removeAttribute('disabled'));
     await expect(button).not.toHaveAttribute('aria-disabled');
     await expect(button).toHaveAttribute('tabindex', '0');
+    // The same key presses it once enabled.
+    const onceEnabled = await press();
+    expect(onceEnabled).toBe(1);
 });
 test('a button with an href to another site goes there when clicked', async ({ page }) => {
     await page.route('https://example.com/**', route => route.fulfill({ contentType: 'text/html', body: '<p>Other site</p>' }));

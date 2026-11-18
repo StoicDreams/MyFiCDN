@@ -10,7 +10,7 @@ const search = async page => {
 test('lists one page of emojis', async ({ page }) => {
     const el = await search(page);
     await expect(el.locator('.grid a')).toHaveCount(20);
-    expect(await el.evaluate(c => c.pageCount)).toBeGreaterThan(1);
+    await expect.poll(() => el.evaluate(c => c.pageCount)).toBeGreaterThan(1);
 });
 test('search filters the list', async ({ page }) => {
     const el = await search(page);

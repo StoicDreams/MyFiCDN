@@ -27,7 +27,7 @@ test('a message posts as text, closes, and alerts', async ({ page }) => {
     await dialog.locator('#dlg-confirm').click();
     await expect(dialog).toBeHidden();
     expect(sent).toEqual(['Hello', 'text/plain']);
-    expect(await page.evaluate(() => window.__alerts)).toEqual(['Thanks']);
+    await expect.poll(() => page.evaluate(() => window.__alerts)).toEqual(['Thanks']);
 });
 test('data-json-name posts json', async ({ page }) => {
     let sent;
@@ -65,7 +65,6 @@ test('data-click links open it', async ({ page }) => {
         link.dataset.click = 'feedback';
         r.appendChild(link);
     });
-    await page.waitForTimeout(50);
     await root.locator('a').evaluate(a => a.click());
     await expect(dialog).toBeVisible();
 });
@@ -78,8 +77,15 @@ test('works as a button from the keyboard', async ({ page }) => {
     await el.evaluate(c => { window.__clicks = 0; c.addEventListener('click', () => window.__clicks++, true); });
     await el.focus();
     await page.keyboard.press('Enter');
-    expect(await page.evaluate(() => window.__clicks)).toBe(1);
+    await expect.poll(() => page.evaluate(() => window.__clicks)).toBe(1);
     // Enter opens a dialog, which takes focus, so Space is sent to the control directly.
     await el.evaluate(c => c.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true })));
-    expect(await page.evaluate(() => window.__clicks)).toBe(2);
+    await expect.poll(() => page.evaluate(() => window.__clicks)).toBe(2);
+});
+test('removing its theme removes the theme from its icon', async ({ page }) => {
+    const { el } = await feedback(page, 'theme="primary" data-post="/feedback"');
+    const icon = el.locator('webui-icon');
+    await expect(icon).toHaveAttribute('theme', 'primary');
+    await el.evaluate(c => c.removeAttribute('theme'));
+    await expect(icon).not.toHaveAttribute('theme');
 });

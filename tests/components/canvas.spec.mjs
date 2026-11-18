@@ -25,7 +25,8 @@ test('long lines wrap without losing text, and every line fits', async ({ page }
 });
 test('setFromText ignores unchanged text and does not change the input array', async ({ page }) => {
     const el = await canvas(page);
-    expect(await el.evaluate(c => {
+    // Every call here is synchronous, so the values are final when this returns.
+    const result = await el.evaluate(c => {
         c.setFromText('a\nb');
         const first = c._lines;
         c.setFromText('a\nb');
@@ -33,21 +34,25 @@ test('setFromText ignores unchanged text and does not change the input array', a
         const sameRender = c._lines === first;
         c.setLines(input);
         return [sameRender, input.length, c._textLines];
-    })).toEqual([true, 1, 'z']);
+    });
+    expect(result).toEqual([true, 1, 'z']);
 });
 test('setFromHTML uses the text content', async ({ page }) => {
     const el = await canvas(page);
-    expect(await el.evaluate(c => { c.setFromHTML('<b>bold</b>'); return c._textLines; })).toBe('bold');
+    await el.evaluate(c => c.setFromHTML('<b>bold</b>'));
+    await expect.poll(() => el.evaluate(c => c._textLines)).toBe('bold');
 });
 test('setScroll stays within the content', async ({ page }) => {
     const el = await canvas(page);
-    expect(await el.evaluate(c => {
+    // Every call here is synchronous, so the values are final when this returns.
+    const result = await el.evaluate(c => {
         c.setFromText(Array.from({ length: 100 }, (_, i) => `${i}`).join('\n'));
         c.setScroll(-5);
         const low = c.getScroll();
         c.setScroll(99999);
         return [low, c.getScroll() === c._contentHeight - c._canvas.height];
-    })).toEqual([0, true]);
+    });
+    expect(result).toEqual([0, true]);
 });
 test('keeps resizing after being moved', async ({ page }) => {
     const el = await canvas(page);

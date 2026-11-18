@@ -19,36 +19,34 @@ test('webui.dialog shows title and content, and confirm resolves', async ({ page
     await expect(el.locator('form p')).toHaveText('Body');
     await el.locator('#dlg-confirm').click();
     await expect(el.locator('dialog')).toBeHidden();
-    expect(await result(page)).toBe('confirmed');
+    await expect.poll(() => result(page)).toBe('confirmed');
 });
 test('a dialog opened before webui-dialogs is ready shows once it is, and one closed before then never shows', async ({ page }) => {
-    await ready(page);
-    // As if the page called webui.dialog while it was starting, before its webui-dialogs element connected.
-    await page.evaluate(() => {
-        document.querySelector('webui-dialogs').remove();
-        webuiDialog._handler = null;
-        webui.dialog({ content: '<p>Closed early</p>' }).close();
-    });
+    // The component's script is loaded with no webui-dialogs element on the page, as when a page calls
+    // webui.dialog while it is starting.
+    await page.addScriptTag({ url: '/webui/dialogs.min.js' });
+    await page.evaluate(() => customElements.whenDefined('webui-dialogs'));
+    await page.evaluate(() => { webui.dialog({ content: '<p>Closed early</p>' }).close(); });
     await open(page, { content: '<p>Waited</p>' });
-    expect(await result(page)).toBe('open');
+    await expect.poll(() => result(page)).toBe('open');
     const el = await ready(page);
     await expect(el.locator('form p')).toHaveText('Waited');
     await el.locator('#dlg-confirm').click();
     await expect(el.locator('dialog')).toBeHidden();
-    expect(await result(page)).toBe('confirmed');
+    await expect.poll(() => result(page)).toBe('confirmed');
 });
 test('cancel, close, and Escape reject with canceled', async ({ page }) => {
     const el = await ready(page);
     await open(page, { content: 'x', cancel: 'No' });
     await el.locator('#dlg-cancel').click();
-    expect(await result(page)).toBe('canceled');
+    await expect.poll(() => result(page)).toBe('canceled');
     await open(page, { content: 'x' });
     await el.locator('#dlg-close').click();
-    expect(await result(page)).toBe('canceled');
+    await expect.poll(() => result(page)).toBe('canceled');
     await open(page, { content: 'x' });
     await page.keyboard.press('Escape');
     await expect(el.locator('dialog')).toBeHidden();
-    expect(await result(page)).toBe('canceled');
+    await expect.poll(() => result(page)).toBe('canceled');
 });
 test('clicking the backdrop closes it, but clicking inside does not', async ({ page }) => {
     const el = await ready(page);
@@ -57,7 +55,7 @@ test('clicking the backdrop closes it, but clicking inside does not', async ({ p
     await expect(el.locator('dialog')).toBeVisible();
     await page.mouse.click(5, 5);
     await expect(el.locator('dialog')).toBeHidden();
-    expect(await result(page)).toBe('canceled');
+    await expect.poll(() => result(page)).toBe('canceled');
 });
 test('keyboard activated buttons are not treated as backdrop clicks', async ({ page }) => {
     const el = await ready(page);
@@ -67,7 +65,7 @@ test('keyboard activated buttons are not treated as backdrop clicks', async ({ p
     });
     await el.locator('#dlg-confirm').evaluate(button => button.click());
     await expect(el.locator('dialog')).toBeVisible();
-    expect(await page.evaluate(() => window.__calls)).toBe(1);
+    await expect.poll(() => page.evaluate(() => window.__calls)).toBe(1);
 });
 test('onconfirm returning false keeps it open, and it receives the form data', async ({ page }) => {
     const el = await ready(page);
@@ -82,7 +80,7 @@ test('onconfirm returning false keeps it open, and it receives the form data', a
     await expect(el.locator('dialog')).toBeVisible();
     await el.locator('#dlg-confirm').click();
     await expect(el.locator('dialog')).toBeHidden();
-    expect(await page.evaluate(() => window.__values)).toEqual(['v', 'v']);
+    await expect.poll(() => page.evaluate(() => window.__values)).toEqual(['v', 'v']);
 });
 test('reopening does not stack up close handlers', async ({ page }) => {
     const el = await ready(page);
@@ -96,7 +94,7 @@ test('reopening does not stack up close handlers', async ({ page }) => {
     });
     await page.evaluate(() => { webui.dialog({ content: 'x', onclose: () => window.__closes++ }).catch(() => {}); });
     await el.locator('#dlg-close').click();
-    expect(await page.evaluate(() => window.__closes)).toBe(3);
+    await expect.poll(() => page.evaluate(() => window.__closes)).toBe(3);
 });
 test('webui.dialog.confirm closes unless the callback returns false', async ({ page }) => {
     const el = await ready(page);
@@ -106,7 +104,7 @@ test('webui.dialog.confirm closes unless the callback returns false', async ({ p
     });
     await el.locator('#dlg-confirm').click();
     await expect(el.locator('dialog')).toBeHidden();
-    expect(await result(page)).toEqual(['yes']);
+    await expect.poll(() => result(page)).toEqual(['yes']);
     await page.evaluate(() => { webui.dialog.confirm('Sure?', () => false).catch(() => {}); });
     await el.locator('#dlg-confirm').click();
     await expect(el.locator('dialog')).toBeVisible();
@@ -126,7 +124,7 @@ test('webui.dialog.prompt escapes the default and returns the input', async ({ p
     await input.fill('typed');
     await el.locator('#dlg-confirm').click();
     await expect(el.locator('dialog')).toBeHidden();
-    expect(await page.evaluate(() => window.__value)).toBe('typed');
+    await expect.poll(() => page.evaluate(() => window.__value)).toBe('typed');
 });
 test('webui.dialog.wait shows until the task ends and cannot be dismissed', async ({ page }) => {
     const el = await ready(page);
@@ -138,7 +136,8 @@ test('webui.dialog.wait shows until the task ends and cannot be dismissed', asyn
     await expect(el.locator('form')).toHaveText('Working');
     await page.keyboard.press('Escape');
     await expect(el.locator('dialog')).toBeVisible();
-    expect(await page.evaluate(async () => { window.__finish('done'); return window.__waited; })).toBe('done');
+    await page.evaluate(() => window.__finish('done'));
+    await expect.poll(() => page.evaluate(() => window.__waited)).toBe('done');
     await expect(el.locator('dialog')).toBeHidden();
 });
 test('dialog alerts show inside the content and clear on submit', async ({ page }) => {
@@ -191,19 +190,24 @@ test.describe('focus on open', () => {
         await expect.poll(() => focused(page)).toBe('input[name=wanted]');
     });
     test('a dialog with no inputs leaves focus alone', async ({ page }) => {
+        await page.clock.install();
         const el = await ready(page);
         await open(page, { content: '<p>Just text</p>', cancel: 'No' });
-        await page.waitForTimeout(200);
-        expect(await focused(page)).not.toMatch(/^(input|textarea|select)/);
+        await expect(el.locator('dialog')).toBeVisible();
+        // The dialog looks for an input for three seconds, so move the clock past all of its attempts.
+        await page.clock.runFor(4000);
+        await expect.poll(() => focused(page)).not.toMatch(/^(input|textarea|select)/);
         await expect(el.locator('dialog')).toBeVisible();
     });
     test('an input that appears later is not focused after the user moves focus', async ({ page }) => {
+        await page.clock.install();
         const el = await ready(page);
         await open(page, { content: '<div id="later"></div>', cancel: 'No' });
         await el.locator('#dlg-cancel').focus();
         await el.locator('form #later').evaluate(div => { div.innerHTML = '<input name="late" />'; });
-        await page.waitForTimeout(200);
-        expect(await focused(page)).toBe('button');
+        // The dialog looks for an input for three seconds, so move the clock past all of its attempts.
+        await page.clock.runFor(4000);
+        await expect.poll(() => focused(page)).toBe('button');
     });
 });
 test('the close button has a name', async ({ page }) => {
@@ -222,7 +226,7 @@ test('dialog content is in the page itself, so page styles reach it, and its fie
     });
     const content = el.locator('form p.page-styled');
     // In the page, not a shadow root, which is what lets page styles reach it. How it then looks is checked by eye.
-    expect(await content.evaluate(p => p.getRootNode() === document)).toBe(true);
+    await expect.poll(() => content.evaluate(p => p.getRootNode() === document)).toBe(true);
     await el.locator('#dlg-confirm').click();
     await expect.poll(() => page.evaluate(() => window.__submitted)).toBe('42');
     await expect(el.locator('form')).toHaveCount(1);

@@ -74,7 +74,7 @@ const ops = el => el.locator('details.op > summary');
 test('lists each endpoint and server', async ({ page }) => {
     const el = await open(page);
     await expect(ops(el)).toHaveText([/GET\s*\/things\/\{id\}\s*Get thing/, /POST\s*\/things\/\{id\}\s*Add thing/]);
-    expect(await el.evaluate(c => c.baseUrl)).toBe('https://one.test');
+    await expect.poll(() => el.evaluate(c => c.baseUrl)).toBe('https://one.test');
 });
 
 test('shows the title, version, description, and license as text', async ({ page }) => {
@@ -89,7 +89,7 @@ test('shows the server list, and Send uses the chosen server', async ({ page }) 
     const el = await open(page);
     await expect(el.locator('select option')).toHaveText(['https://one.test', 'https://two.test']);
     await el.locator('select').selectOption('https://two.test');
-    expect(await el.evaluate(c => c.baseUrl)).toBe('https://two.test');
+    await expect.poll(() => el.evaluate(c => c.baseUrl)).toBe('https://two.test');
 });
 
 test('hash builds readable endpoint links, and a link opens its endpoint', async ({ page }) => {
@@ -97,7 +97,7 @@ test('hash builds readable endpoint links, and a link opens its endpoint', async
     // The same format earlier versions gave their tabs, so existing links keep working.
     await expect(el.locator('details.op').first()).toHaveAttribute('data-hash', 'api-get-things-{id}');
     await el.locator('details.op').nth(1).locator('summary').click();
-    expect(await page.evaluate(() => decodeURIComponent(location.hash))).toBe('#api-post-things-{id}');
+    await expect.poll(() => page.evaluate(() => decodeURIComponent(location.hash))).toBe('#api-post-things-{id}');
     // Load again with the link in the address bar.
     await page.evaluate(() => { location.hash = '#api-get-things-{id}'; });
     await el.evaluate(c => c.setDoc(c.doc));
@@ -133,7 +133,7 @@ test('setDoc shows a parsed document, and resolves relative servers against its 
     const el = root.locator('webui-openapi');
     await el.evaluate((c, doc) => c.setDoc(doc, { baseUrl: 'https://shop.test/docs/openapi.yaml' }), shop);
     await expect(el.locator('.title')).toHaveText('Shop');
-    expect(await el.evaluate(c => c.baseUrl)).toBe('https://shop.test/api/v2');
+    await expect.poll(() => el.evaluate(c => c.baseUrl)).toBe('https://shop.test/api/v2');
 });
 
 test('groups endpoints by tag in the document order, and path-level keys are not endpoints', async ({ page }) => {
@@ -265,7 +265,7 @@ test('text from the document is never run as HTML', async ({ page }) => {
     await el.locator('details.schema > summary').click();
     await expect(el.locator('img')).toHaveCount(0);
     await expect(el.locator('.links a')).toHaveCount(0);
-    expect(await page.evaluate(() => window.__attacked)).toBeUndefined();
+    await expect.poll(() => page.evaluate(() => window.__attacked)).toBeUndefined();
 });
 
 test('Swagger 2.0 documents show their endpoints and definitions', async ({ page }) => {
@@ -275,7 +275,7 @@ test('Swagger 2.0 documents show their endpoints and definitions', async ({ page
         definitions: { Pet: { type: 'object', properties: { name: { type: 'string' } } } },
     };
     const el = await open(page, doc);
-    expect(await el.evaluate(c => c.baseUrl)).toBe('https://old.test/v1');
+    await expect.poll(() => el.evaluate(c => c.baseUrl)).toBe('https://old.test/v1');
     await el.locator('details.op > summary').click();
     await expect(el.locator('table.params')).toContainText('integer');
     await expect(el.locator('.response[data-status="200"]')).toContainText('array of Pet');

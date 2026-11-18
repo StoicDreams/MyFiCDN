@@ -41,5 +41,5 @@ test('the side stays in view while the main column scrolls', async ({ page }) =>
 test('side-width and gap set their values', async ({ page }) => {
     const root = await mount(page, '<webui-pinned-side side-width="400" gap="12"></webui-pinned-side>');
     const el = root.locator('webui-pinned-side');
-    expect(await el.evaluate(c => [c.style.getPropertyValue('--side-width'), c.style.getPropertyValue('--gap')])).toEqual(['400px', '12px']);
+    await expect.poll(() => el.evaluate(c => [c.style.getPropertyValue('--side-width'), c.style.getPropertyValue('--gap')])).toEqual(['400px', '12px']);
 });

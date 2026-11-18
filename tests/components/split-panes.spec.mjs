@@ -23,7 +23,7 @@ test('the panes start even, and the start pane scrolls content wider than it', a
     const split = root.locator('webui-split-panes');
     await expect(split.locator('.bar')).toHaveAttribute('aria-valuenow', '50');
     // Content wider than the pane scrolls inside it, sideways.
-    expect(await scrolls(page, startPane, 'x')).toBe(true);
+    await expect.poll(() => scrolls(page, startPane, 'x')).toBe(true);
 });
 
 test('dragging the bar resizes the panes, keeps each at its minimum, and sends the ratio once', async ({ page }) => {
@@ -43,7 +43,7 @@ test('dragging the bar resizes the panes, keeps each at its minimum, and sends t
     await page.mouse.up();
     // Dragged past the start pane's 400px minimum, the split stops there (400 of the 992px the panes share), and
     // reports that once.
-    expect(await page.evaluate(() => window.__changes)).toEqual([0.403]);
+    await expect.poll(() => page.evaluate(() => window.__changes)).toEqual([0.403]);
     await expect(split).toHaveAttribute('ratio', '0.403');
 });
 
@@ -126,7 +126,7 @@ test('fill keeps the panes inside the visible part of what scrolls them, so only
     const box = "document.getElementById('box')";
     // The panes fit the box, so the box has nothing to scroll, and the tall pane scrolls on its own.
     await expect.poll(() => scrolls(page, box, 'y')).toBe(false);
-    expect(await scrolls(page, startPane, 'y')).toBe(true);
+    await expect.poll(() => scrolls(page, startPane, 'y')).toBe(true);
     // They fit again when the box grows.
     await page.evaluate(() => { document.getElementById('box').style.height = '600px'; });
     await expect.poll(() => scrolls(page, box, 'y')).toBe(false);

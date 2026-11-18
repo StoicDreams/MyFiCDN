@@ -15,7 +15,7 @@ test('lays out the site and loads the page', async ({ page }) => {
 });
 test('dialogs are added to the page body, outside the app shadow root', async ({ page }) => {
     await expect(page.locator('body > webui-dialogs')).toHaveCount(1);
-    expect(await page.evaluate(() => document.querySelector('webui-app').shadowRoot.querySelector('webui-dialogs'))).toBe(null);
+    await expect.poll(() => page.evaluate(() => document.querySelector('webui-app').shadowRoot.querySelector('webui-dialogs'))).toBe(null);
 });
 test('applyDynamicStyles publishes layout sizes and a width class', async ({ page }) => {
     await page.evaluate(() => webui.applyDynamicStyles());
@@ -36,13 +36,18 @@ test('setPageContent replaces only the page content', async ({ page }) => {
     await expect(page.locator('webui-app > #one')).toHaveCount(0);
 });
 test('the footer still shows when the page loads before the footer component', async ({ page }) => {
+    // The footer component is held back until the page has loaded.
+    let release;
+    const held = new Promise(resolve => { release = resolve; });
     await page.route('**/webui/page-footer.*', async route => {
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await held;
         await route.fallback();
     });
     await page.goto('/about');
     await expect(page.locator('webui-app > webui-page-segment').first()).toBeVisible();
-    await expect(page.locator('webui-app > footer[slot="footer"] webui-poweredby')).toBeAttached({ timeout: 10000 });
+    await expect(page.locator('webui-app main')).not.toHaveClass(/transition/);
+    release();
+    await expect(page.locator('webui-app > footer[slot="footer"] webui-poweredby')).toBeAttached();
 });
 test('page title comes from page data', async ({ page }) => {
     await page.evaluate(() => { webui.setData('page-title', 'Hello'); webui.setData('page-subtitle', 'There'); });
@@ -74,7 +79,7 @@ for (const width of [360, 375]) {
         await expect.poll(() => page.evaluate(() => { window.scrollTo(400, window.scrollY); return window.scrollX; })).toBe(0);
         // Text that can wrap shows whole; only content that cannot shrink scrolls, inside main.
         await expect(page.locator('#narrow')).toBeInViewport({ ratio: 1 });
-        expect(await page.evaluate(() => {
+        await expect.poll(() => page.evaluate(() => {
             const main = document.querySelector('webui-app').shadowRoot.querySelector('main');
             main.scrollLeft = 100000;
             return main.scrollLeft > 0;

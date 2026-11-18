@@ -12,21 +12,22 @@ test('avatar, link, and width are applied', async ({ page }) => {
     const card = root.locator('webui-card');
     await expect(card.locator('header webui-avatar')).toHaveAttribute('src', 'person');
     await expect(card.locator('header a')).toHaveAttribute('href', '/x');
-    expect(await card.evaluate(el => el.style.maxWidth)).toBe('100px');
+    await expect.poll(() => card.evaluate(el => el.style.maxWidth)).toBe('100px');
 });
 test('only builds its header once per burst of attributes', async ({ page }) => {
     const root = await mount(page, '<webui-card></webui-card>');
     const card = root.locator('webui-card');
-    expect(await card.evaluate(async el => {
-        let builds = 0;
+    await card.evaluate(el => {
+        window.__builds = 0;
         const original = el.buildHeader;
-        el.buildHeader = () => { builds++; original(); };
+        el.buildHeader = () => { window.__builds++; original(); };
         el.setAttribute('name', 'a');
         el.setAttribute('theme', 'info');
         el.setAttribute('width', '100');
-        await webui.wait(10);
-        return builds;
-    })).toBe(1);
+    });
+    // The header showing the last attribute proves the burst was handled.
+    await expect(card.locator('header.theme-info')).toContainText('a');
+    await expect.poll(() => page.evaluate(() => window.__builds)).toBe(1);
 });
 test('keeps its content when moved', async ({ page }) => {
     const root = await mount(page, '<webui-card name="N"><p>BODY</p></webui-card>');

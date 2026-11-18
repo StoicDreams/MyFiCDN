@@ -5,24 +5,24 @@ test('displays its name and icon and starts closed', async ({ page }) => {
     const el = root.locator('webui-nav-group');
     await expect(el.locator('button.navlink span')).toHaveText('Tests');
     await expect(el.locator('button.navlink > webui-icon').first()).toHaveAttribute('icon', 'xmark');
-    expect(await el.evaluate(c => c.isOpen)).toBe(false);
+    await expect.poll(() => el.evaluate(c => c.isOpen)).toBe(false);
 });
 test('clicking toggles it and fires change', async ({ page }) => {
     const root = await mount(page, '<webui-nav-group name="Tests"></webui-nav-group>');
     const el = root.locator('webui-nav-group');
     await el.evaluate(c => { window.__changes = 0; c.addEventListener('change', () => window.__changes++); });
     await el.locator('button.navlink').click();
-    expect(await el.evaluate(c => c.isOpen)).toBe(true);
+    await expect.poll(() => el.evaluate(c => c.isOpen)).toBe(true);
     await el.locator('button.navlink').click();
-    expect(await el.evaluate(c => c.isOpen)).toBe(false);
-    expect(await page.evaluate(() => window.__changes)).toBe(2);
+    await expect.poll(() => el.evaluate(c => c.isOpen)).toBe(false);
+    await expect.poll(() => page.evaluate(() => window.__changes)).toBe(2);
 });
 test('the show flag opens it, and disabled blocks clicks', async ({ page }) => {
     const root = await mount(page, '<webui-nav-group show name="A"></webui-nav-group><webui-nav-group class="disabled" name="B"></webui-nav-group>');
-    expect(await root.locator('webui-nav-group').first().evaluate(c => c.isOpen)).toBe(true);
+    await expect.poll(() => root.locator('webui-nav-group').first().evaluate(c => c.isOpen)).toBe(true);
     const disabled = root.locator('webui-nav-group').nth(1);
     await disabled.locator('button.navlink').click();
-    expect(await disabled.evaluate(c => c.isOpen)).toBe(false);
+    await expect.poll(() => disabled.evaluate(c => c.isOpen)).toBe(false);
 });
 test('opens when the page shown is one of its links, and stays open when the page changes', async ({ page }) => {
     const root = await mount(page, '<webui-nav-group name="Help"><webui-nav-link url="/help/a" name="A"></webui-nav-link></webui-nav-group><webui-nav-group name="Other"><webui-nav-link url="/other" name="O"></webui-nav-link></webui-nav-group>');
@@ -30,9 +30,9 @@ test('opens when the page shown is one of its links, and stays open when the pag
     const other = root.locator('webui-nav-group').nth(1);
     await page.evaluate(() => webui.setData('page-path', '/help/a'));
     await expect.poll(() => help.evaluate(c => c.isOpen)).toBe(true);
-    expect(await other.evaluate(c => c.isOpen)).toBe(false);
+    await expect.poll(() => other.evaluate(c => c.isOpen)).toBe(false);
     await page.evaluate(() => webui.setData('page-path', '/elsewhere'));
-    expect(await help.evaluate(c => c.isOpen)).toBe(true);
+    await expect.poll(() => help.evaluate(c => c.isOpen)).toBe(true);
 });
 test('changing the icon clears old flags', async ({ page }) => {
     const root = await mount(page, '<webui-nav-group name="A" icon="xmark|fill"></webui-nav-group>');

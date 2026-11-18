@@ -17,7 +17,7 @@ test('include adds optional rows and exclude leaves rows out', async ({ page }) 
     await expect(guide.locator('tr[data-key="strikethrough"] code')).toHaveText('~~struck~~');
     await expect(guide.locator('tr[data-key="task-list"]')).toHaveCount(1);
     await expect(guide.locator('tr[data-key="table"], tr[data-key="quote"], tr[data-key="image"]')).toHaveCount(0);
-    expect(await guide.evaluate(el => el.rowKeys())).toContain('strikethrough');
+    await expect.poll(() => guide.evaluate(el => el.rowKeys())).toContain('strikethrough');
 });
 test('include="all" shows every row, and changing attributes renders again', async ({ page }) => {
     const root = await mount(page, '<webui-markdown-guide include="all" theme="success" result-label="For" type-label="Write"></webui-markdown-guide>');

@@ -623,8 +623,10 @@
         },
         async editIcon(el) {
             const t = this;
+            // Only the icon asked for last is loaded, so one that is slower to arrive cannot replace it.
+            t._editing = el;
             await webui.wait(() => !!el._definition);
-            if (!el._definition) return;
+            if (t._editing !== el || !el._definition) return;
             t._inputFull.value = el._definition;
             // Setting a value in code fires no event, and the input event is what redraws the editor.
             t._inputFull.triggerChange(true);

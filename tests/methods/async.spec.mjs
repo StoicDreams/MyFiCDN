@@ -95,8 +95,13 @@ test('webui.try reports errors from sync, async, and promise returning handlers'
 test('webui.trySoloProcess skips calls while one is running', async ({ page }) => {
     expect(await page.evaluate(async () => {
         let runs = 0;
-        const slow = () => new Promise(r => setTimeout(() => { runs++; r('done'); }, 30));
-        const [first, second] = await Promise.all([webui.trySoloProcess(slow), webui.trySoloProcess(slow)]);
+        // The first call stays running until the test finishes it, after the second call has been answered.
+        let finish;
+        const slow = () => new Promise(r => { runs++; finish = () => r('done'); });
+        const running = webui.trySoloProcess(slow);
+        const second = await webui.trySoloProcess(slow);
+        finish();
+        const first = await running;
         const after = await webui.trySoloProcess(() => 'again');
         return [first, second === undefined, runs, after];
     })).toEqual(['done', true, 1, 'again']);
@@ -104,20 +109,36 @@ test('webui.trySoloProcess skips calls while one is running', async ({ page }) =
 test('webui.eventSoloProcess wraps a handler with the same lock', async ({ page }) => {
     expect(await page.evaluate(async () => {
         let runs = 0;
-        const handler = webui.eventSoloProcess(() => new Promise(r => setTimeout(() => { runs++; r(); }, 30)));
-        await Promise.all([handler(), handler()]);
+        // The first call stays running until the test finishes it, after the second call has been answered.
+        let finish;
+        const handler = webui.eventSoloProcess(() => new Promise(r => { runs++; finish = r; }));
+        const running = handler();
+        await handler();
+        finish();
+        await running;
         return runs;
     })).toBe(1);
 });
 test('webui.wait waits for time or a condition', async ({ page }) => {
-    expect(await page.evaluate(async () => {
-        const start = Date.now();
-        await webui.wait(30);
-        const elapsed = Date.now() - start;
-        let n = 0;
-        await webui.wait(() => ++n > 1);
-        return [elapsed >= 25, n];
-    })).toEqual([true, 2]);
+    // The test moves the clock, so nothing here waits for, or measures, real time.
+    await page.clock.install();
+    await page.clock.pauseAt(Date.now() + 60 * 60 * 1000);
+    const state = () => page.evaluate(() => [window.__timeDone, window.__checks, window.__conditionDone]);
+    await page.evaluate(() => {
+        window.__timeDone = false;
+        window.__checks = 0;
+        window.__conditionDone = false;
+        webui.wait(30).then(() => { window.__timeDone = true; });
+        webui.wait(() => ++window.__checks > 1).then(() => { window.__conditionDone = true; });
+    });
+    // The clock is stopped, so each read is of a state that only the next step can change.
+    await page.clock.runFor(29);
+    expect(await state()).toEqual([false, 1, false]);
+    await page.clock.runFor(1);
+    await expect.poll(state).toEqual([true, 1, false]);
+    // A condition is checked again every 100 ms until it is true.
+    await page.clock.runFor(70);
+    await expect.poll(state).toEqual([true, 2, true]);
 });
 test('webui.openSharedDrawer and webui.closeSharedDrawer control the shared drawer', async ({ page }) => {
     const root = await mount(page, '<webui-drawer class="shared"></webui-drawer>');
@@ -131,9 +152,9 @@ test('webui.openSharedDrawer and webui.closeSharedDrawer control the shared draw
 });
 test('webui.openSharedDrawer falls back to a dialog and returns the content', async ({ page }) => {
     await mount(page, '<webui-dialogs></webui-dialogs>');
-    expect(await page.evaluate(async () => {
-        const content = await webui.openSharedDrawer('Title', '<p>Body</p>');
-        return content.innerText;
-    })).toBe('Body');
+    await page.evaluate(async () => {
+        window.__drawerContent = await webui.openSharedDrawer('Title', '<p>Body</p>');
+    });
     await expect(page.locator('webui-dialogs dialog')).toBeVisible();
+    await expect.poll(() => page.evaluate(() => window.__drawerContent.innerText)).toBe('Body');
 });

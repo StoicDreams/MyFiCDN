@@ -14,33 +14,37 @@ test('setDiff marks equal, replaced, deleted, and inserted lines', async ({ page
 });
 test('identical content has no changes', async ({ page }) => {
     const el = await compare(page);
-    expect(await el.evaluate((c, a) => { c.setDiff(a, a); return c._diffTypes.every(t => t === 'equal'); }, lines('a', 'b'))).toBe(true);
+    // setDiff is synchronous, here and in the tests below, so its result is final when the call returns.
+    const equal = await el.evaluate((c, a) => { c.setDiff(a, a); return c._diffTypes.every(t => t === 'equal'); }, lines('a', 'b'));
+    expect(equal).toBe(true);
 });
 test('empty sides are all inserts or all deletes', async ({ page }) => {
     const el = await compare(page);
-    expect(await el.evaluate((c, a) => {
+    const types = await el.evaluate((c, a) => {
         c.setDiff([], a);
         const inserts = [...c._diffTypes];
         c.setDiff(a, null);
         return [inserts, [...c._diffTypes]];
-    }, lines('a', 'b'))).toEqual([['insert', 'insert'], ['delete', 'delete']]);
+    }, lines('a', 'b'));
+    expect(types).toEqual([['insert', 'insert'], ['delete', 'delete']]);
 });
 test('clear empties the view', async ({ page }) => {
     const el = await compare(page);
-    expect(await el.evaluate((c, a) => {
+    const cleared = await el.evaluate((c, a) => {
         c.setDiff(a, lines2(a));
         function lines2(x) { return x.map(l => ({ line: `${l.line}!` })); }
         c.clear();
         return [c._diffTypes.length, c._scrollContainer.innerHTML];
-    }, lines('a'))).toEqual([0, '']);
+    }, lines('a'));
+    expect(cleared).toEqual([0, '']);
 });
 test('the toggle switches between changes and full view', async ({ page }) => {
     const el = await compare(page);
     const toggle = el.locator('.toggle-mode');
     await el.evaluate((c, [a, b]) => c.setDiff(a, b), [lines('a', 'b'), lines('a', 'c')]);
-    expect(await el.evaluate(c => c._viewMode)).toBe('changes');
+    await expect.poll(() => el.evaluate(c => c._viewMode)).toBe('changes');
     await toggle.evaluate(t => { t.checked = true; t.dispatchEvent(new Event('change')); });
-    expect(await el.evaluate(c => c._viewMode)).toBe('full');
+    await expect.poll(() => el.evaluate(c => c._viewMode)).toBe('full');
 });
 test('shows its lines without a set height', async ({ page }) => {
     const root = await mount(page, '<div><webui-content-compare></webui-content-compare></div>');

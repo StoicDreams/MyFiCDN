@@ -13,6 +13,21 @@ const loop = (src = '/test-media/loop.webm') =>
     `<webui-loop-video src="${src}" poster="/test-media/loop.png" alt="Committing a change"></webui-loop-video>`;
 const video = root => root.locator('webui-loop-video video');
 const isPlaying = root => video(root).evaluate(el => !el.paused);
+// Resolves once the component has been told whether it is on screen, which is when it plays or pauses. Observers
+// report in the order they were made, and this one is made after the component's own, so the component has heard
+// by the time this one does.
+const told = async (root, onScreen) => {
+    const el = root.locator('webui-loop-video');
+    await expect.poll(() => el.evaluate(c => !!c._observer)).toBe(true);
+    await el.evaluate((c, onScreen) => new Promise(resolve => {
+        const observer = new IntersectionObserver(entries => {
+            if (entries.some(entry => entry.isIntersecting) !== onScreen) return;
+            observer.disconnect();
+            resolve();
+        }, { threshold: 0.25 });
+        observer.observe(c);
+    }), onScreen);
+};
 
 test('plays muted, on a loop and inline, once it is on screen', async ({ page }) => {
     await serveClip(page);
@@ -25,8 +40,8 @@ test('plays muted, on a loop and inline, once it is on screen', async ({ page })
 test('pauses while scrolled out of view, and plays again when back', async ({ page }) => {
     await serveClip(page);
     const root = await mount(page, `<div id="top" style="height:3000px"></div>${loop()}`);
-    await page.waitForTimeout(300);
-    expect(await isPlaying(root)).toBe(false);
+    await told(root, false);
+    await expect.poll(() => isPlaying(root)).toBe(false);
     await root.locator('webui-loop-video').scrollIntoViewIfNeeded();
     await expect.poll(() => isPlaying(root)).toBe(true);
     await root.locator('#top').evaluate(el => el.scrollIntoView());
@@ -42,9 +57,10 @@ test('the viewer can pause it, and it stays paused when it scrolls back into vie
     await expect.poll(() => isPlaying(root)).toBe(false);
     await expect(root.getByRole('button', { name: 'Play Committing a change' })).toHaveAttribute('aria-pressed', 'false');
     await root.locator('#bottom').scrollIntoViewIfNeeded();
+    await told(root, false);
     await root.locator('webui-loop-video').scrollIntoViewIfNeeded();
-    await page.waitForTimeout(300);
-    expect(await isPlaying(root)).toBe(false);
+    await told(root, true);
+    await expect.poll(() => isPlaying(root)).toBe(false);
     await root.getByRole('button', { name: 'Play Committing a change' }).click();
     await expect.poll(() => isPlaying(root)).toBe(true);
 });
@@ -53,8 +69,8 @@ test('with reduced motion it shows the poster until the viewer presses Play', as
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await serveClip(page);
     const root = await mount(page, loop());
-    await page.waitForTimeout(400);
-    expect(await isPlaying(root)).toBe(false);
+    await told(root, true);
+    await expect.poll(() => isPlaying(root)).toBe(false);
     await expect(video(root)).toHaveAttribute('poster', '/test-media/loop.png');
     await root.getByRole('button', { name: 'Play Committing a change' }).click();
     // A viewer's own choice to play is honored.

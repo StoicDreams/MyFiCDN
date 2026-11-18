@@ -146,13 +146,13 @@ test('webui.storage only writes to the storage the user chose', async ({ page })
         webui.storage.acceptLocalStorage();
         webui.storage.setItem('choice-test', 'long');
     });
-    expect(await stored()).toEqual(['long', null]);
+    await expect.poll(stored).toEqual(['long', null]);
     await page.evaluate(() => {
         webui.storage.acceptSessionStorage();
         webui.storage.setItem('choice-test', 'short');
     });
-    expect(await stored()).toEqual([null, 'short']);
-    expect(await page.evaluate(() => Object.keys(localStorage))).toEqual([]);
+    await expect.poll(stored).toEqual([null, 'short']);
+    await expect.poll(() => page.evaluate(() => Object.keys(localStorage))).toEqual([]);
 });
 test('webui.storage keeps the choice after a reload', async ({ page }) => {
     await page.evaluate(() => {
@@ -161,11 +161,11 @@ test('webui.storage keeps the choice after a reload', async ({ page }) => {
     });
     await page.reload();
     await page.waitForFunction(() => typeof webui === 'object' && webui.loaded);
-    expect(await page.evaluate(() => [webui.storage.getItem('choice-test'), localStorage.getItem('choice-test')])).toEqual(['long', 'long']);
+    await expect.poll(() => page.evaluate(() => [webui.storage.getItem('choice-test'), localStorage.getItem('choice-test')])).toEqual(['long', 'long']);
     await page.evaluate(() => webui.storage.acceptSessionStorage());
     await page.reload();
     await page.waitForFunction(() => typeof webui === 'object' && webui.loaded);
-    expect(await page.evaluate(() => [webui.storage.getItem('choice-test'), localStorage.getItem('choice-test')])).toEqual(['long', null]);
+    await expect.poll(() => page.evaluate(() => [webui.storage.getItem('choice-test'), localStorage.getItem('choice-test')])).toEqual(['long', null]);
 });
 test('webui.storage.clear empties the chosen storage', async ({ page }) => {
     expect(await page.evaluate(() => {
@@ -249,11 +249,11 @@ test('webui.loadRoles first exchanges a sign-in code from the address', async ({
             headers: { 'access-control-allow-origin': 'http://localhost:3199', 'access-control-allow-credentials': 'true' },
         });
     });
-    const rolesLoaded = page.waitForResponse('https://api.myfi.ws/user/roles');
     await page.goto('/__blank?signin=1#myfi-signin=abc%20123');
-    await rolesLoaded;
+    await page.waitForFunction(() => typeof webui === 'object' && webui.loaded);
+    await expect.poll(() => page.evaluate(() => [location.hash, location.search, webui.getData('session-user-role')])).toEqual(['', '?signin=1', 1]);
+    // The role is only set once both requests were answered, so the list is complete.
     expect(calls).toEqual([['code', { code: 'abc 123' }], ['roles']]);
-    expect(await page.evaluate(() => [location.hash, location.search, webui.getData('session-user-role')])).toEqual(['', '?signin=1', 1]);
     // The code is used once. Later role refreshes go straight to the roles API.
     await page.evaluate(() => webui.loadRoles());
     expect(calls.map(call => call[0])).toEqual(['code', 'roles', 'roles']);

@@ -16,8 +16,9 @@ test('shows the first image and switches when a card is clicked', async ({ page 
 });
 test('an empty or failed source shows nothing', async ({ page }) => {
     await page.route('**/gallery-empty.json', route => route.fulfill({ contentType: 'application/json', body: '[]' }));
-    const root = await mount(page, '<webui-gallery src="/gallery-empty.json"></webui-gallery><webui-gallery src="/missing.json"></webui-gallery>');
-    await page.waitForTimeout(150);
+    const root = await mount(page, '<webui-gallery src="/gallery-empty.json"><i></i></webui-gallery><webui-gallery src="/missing.json"><i></i></webui-gallery>');
+    // A gallery with nothing to show empties itself once its source has answered, which removes the markers.
+    await expect(root.locator('webui-gallery i')).toHaveCount(0);
     await expect(root.locator('webui-cards')).toHaveCount(0);
 });
 test('the shown image is described by its name', async ({ page }) => {

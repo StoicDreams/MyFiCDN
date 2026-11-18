@@ -37,33 +37,34 @@ test('the buttons move between pages and stop at the ends', async ({ page }) => 
         await el.locator(selector).evaluate(b => b.click());
     };
     await go('webui-button.next');
-    expect(await el.evaluate(c => c.page)).toBe(2);
+    await expect.poll(() => el.evaluate(c => c.page)).toBe(2);
     await go('webui-button.last');
-    expect(await el.evaluate(c => c.page)).toBe(3);
+    await expect.poll(() => el.evaluate(c => c.page)).toBe(3);
+    // A click is handled before the call returns, so at an end the page is read straight after it.
     await el.locator('webui-button.next').evaluate(b => b.click());
-    expect(await el.evaluate(c => c.page)).toBe(3);
+    await expect.poll(() => el.evaluate(c => c.page)).toBe(3);
     await go('webui-button.prev');
-    expect(await el.evaluate(c => c.page)).toBe(2);
+    await expect.poll(() => el.evaluate(c => c.page)).toBe(2);
     await go('webui-button.first');
-    expect(await el.evaluate(c => c.page)).toBe(1);
+    await expect.poll(() => el.evaluate(c => c.page)).toBe(1);
     await el.locator('webui-button.prev').evaluate(b => b.click());
-    expect(await el.evaluate(c => c.page)).toBe(1);
+    await expect.poll(() => el.evaluate(c => c.page)).toBe(1);
 });
 test('loop wraps around', async ({ page }) => {
     const el = await pager(page, 'per-page="10" loop');
     await el.evaluate((c, data) => c.setData(data), rows(30));
     await expect(el).toHaveAttribute('page-count', '3');
     await el.locator('webui-button.prev').evaluate(b => b.click());
-    expect(await el.evaluate(c => c.page)).toBe(3);
+    await expect.poll(() => el.evaluate(c => c.page)).toBe(3);
     await el.locator('webui-button.next').evaluate(b => b.click());
-    expect(await el.evaluate(c => c.page)).toBe(1);
+    await expect.poll(() => el.evaluate(c => c.page)).toBe(1);
 });
 test('typing a page number goes there', async ({ page }) => {
     const el = await pager(page, 'per-page="10"');
     await el.evaluate((c, data) => c.setData(data), rows(30));
     await expect(el).toHaveAttribute('page-count', '3');
     await el.locator('input').fill('2');
-    expect(await el.evaluate(c => c.page)).toBe(2);
+    await expect.poll(() => el.evaluate(c => c.page)).toBe(2);
 });
 test('page numbers display around the current page', async ({ page }) => {
     const el = await pager(page, 'per-page="10" max-pages="3"');
@@ -133,10 +134,10 @@ test('the chosen page size is shared by every pagination, saved, and fires per-p
     await a.locator('select').selectOption('50');
     await expect.poll(() => b.evaluate(el => el.perPage)).toBe(50);
     await expect(b.locator('select')).toHaveValue('50');
-    expect(await page.evaluate(() => window.perPageEvents)).toEqual([50]);
+    await expect.poll(() => page.evaluate(() => window.perPageEvents)).toEqual([50]);
     // One item at a time keeps its own size.
-    expect(await c.evaluate(el => el.perPage)).toBe(1);
-    expect(await page.evaluate(() => webui.getData('session-pagination-per-page'))).toBe(50);
+    await expect.poll(() => c.evaluate(el => el.perPage)).toBe(1);
+    await expect.poll(() => page.evaluate(() => webui.getData('session-pagination-per-page'))).toBe(50);
     // A new pagination starts with the saved size.
     const later = await mount(page, '<webui-pagination></webui-pagination>');
     await expect.poll(() => later.locator('webui-pagination').evaluate(el => el.perPage)).toBe(50);

@@ -57,7 +57,7 @@ test('HTML is limited the way mail apps limit it, and the preview says what was 
     await expect(el.locator('.notices')).toContainText('<script>');
     await expect(el.locator('.notices')).toContainText('<form>');
     await expect(el.locator('.notices')).toContainText('event handlers');
-    expect(await page.evaluate(() => window.__ran)).toBeUndefined();
+    await expect.poll(() => page.evaluate(() => window.__ran)).toBeUndefined();
     // The frame runs no script at all, even if something got past the filter.
     await expect(el.locator('iframe')).toHaveAttribute('sandbox', /^(?!.*allow-scripts)/);
 });
@@ -89,20 +89,29 @@ test('with api, the fields and the data-api object are sent, and the email it re
 });
 
 test('typing in a burst asks the api once', async ({ page }) => {
-    let count = 0;
+    const subjects = [];
     await page.route('**/preview-api', route => {
-        count++;
-        return route.fulfill({ contentType: 'application/json', body: JSON.stringify({ subject: 's', html: '<p>x</p>', text: 'x' }) });
+        const subject = JSON.parse(route.request().postData()).subject;
+        subjects.push(subject);
+        return route.fulfill({ contentType: 'application/json', body: JSON.stringify({ subject: `Preview of ${subject || 'nothing'}`, html: '<p>x</p>', text: 'x' }) });
     });
     const el = await preview(page, 'api="post|http://localhost:3199/preview-api" data-subscribe="ep-burst"');
-    await page.evaluate(async () => {
-        for (const text of ['H', 'He', 'Hel', 'Hell', 'Hello']) {
-            webui.setData('ep-burst.subject', text);
-            await new Promise(r => setTimeout(r, 30));
-        }
-    });
-    await expect(el.locator('.subject-value')).toHaveText('s');
-    expect(count).toBe(1);
+    // The preview asks once as it starts, before anything is typed. Waiting for that answer leaves no request
+    // of its own still to come.
+    await expect(el.locator('.subject-value')).toHaveText('Preview of nothing');
+    // The test moves the clock, so each key is 30ms after the last, well inside the pause the preview waits for.
+    await page.clock.install();
+    await page.clock.pauseAt(Date.now() + 60000);
+    for (const text of ['H', 'He', 'Hel', 'Hell', 'Hello']) {
+        await page.evaluate(text => webui.setData('ep-burst.subject', text), text);
+        await page.clock.runFor(30);
+        // The preview has the key before the next one is typed, so every key restarts its pause.
+        await expect.poll(() => el.evaluate(c => c._fields.subject)).toBe(text);
+    }
+    await page.clock.runFor(2000);
+    await expect(el.locator('.subject-value')).toHaveText('Preview of Hello');
+    // Every timer the burst started has run, and its answer is shown, so no request is still to come.
+    expect(subjects).toEqual(['', 'Hello']);
 });
 
 test('an api error is shown, as text', async ({ page }) => {
@@ -115,5 +124,5 @@ test('an api error is shown, as text', async ({ page }) => {
 test('height sets the size of both views', async ({ page }) => {
     const el = await preview(page, 'height="300"');
     // Applied as the setting both views use. How tall they look is checked by eye.
-    expect(await el.evaluate(c => c.style.getPropertyValue('--email-preview-height'))).toBe('300px');
+    await expect.poll(() => el.evaluate(c => c.style.getPropertyValue('--email-preview-height'))).toBe('300px');
 });

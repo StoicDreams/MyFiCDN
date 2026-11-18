@@ -24,7 +24,7 @@ test('src loads cards', async ({ page }) => {
 test('card-width sets the grid and existing cards', async ({ page }) => {
     const root = await mount(page, '<webui-cards card-width="200"><webui-card></webui-card></webui-cards>');
     const cards = root.locator('webui-cards');
-    expect(await cards.evaluate(el => el.style.gridTemplateColumns)).toContain('200px');
+    await expect.poll(() => cards.evaluate(el => el.style.gridTemplateColumns)).toContain('200px');
     await cards.evaluate(el => el.setAttribute('card-width', '300'));
     await expect(cards.locator('webui-card')).toHaveAttribute('width', '300');
 });

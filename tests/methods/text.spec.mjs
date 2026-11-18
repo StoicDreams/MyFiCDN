@@ -46,6 +46,12 @@ test('webui.fromBase64 decodes standard and url safe text', async ({ page }) => 
     expect(await call(page, 'fromBase64', 'SGVsbG8')).toBe('Hello');
     expect(await call(page, 'fromBase64', 'Pz8_')).toBe('??' + '?');
 });
+test('webui.fromBase64 reads text as UTF-8, and leaves other data one character per byte', async ({ page }) => {
+    // "José 日本" as UTF-8.
+    expect(await call(page, 'fromBase64', 'Sm9zw6kg5pel5pys')).toBe('José 日本');
+    // The bytes FF FE 00 are not UTF-8.
+    expect(await call(page, 'fromBase64', '//4A')).toBe('\u00ff\u00fe\u0000');
+});
 test('webui.getBase64Size calculates the decoded size', async ({ page }) => {
     expect(await call(page, 'getBase64Size', 'SGVsbG8gV29ybGQ=')).toBe(11);
     expect(await call(page, 'getBase64Size', 'data:text/plain;base64,SGVsbG8gV29ybGQ=')).toBe(11);

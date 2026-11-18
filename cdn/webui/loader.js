@@ -927,14 +927,7 @@ const webui = (() => {
                     return this[name] !== undefined && this[name] !== false;
                 }
                 setTheme(value) {
-                    this.style.setProperty(
-                        "--theme-color",
-                        `var(--color-${value})`,
-                    );
-                    this.style.setProperty(
-                        "--theme-color-offset",
-                        `var(--color-${value}-offset)`,
-                    );
+                    webui.setTheme(this, value);
                 }
                 setHeight(value) {
                     let num = webui.pxIfNumber(value);
@@ -1147,7 +1140,7 @@ const webui = (() => {
             return request;
         }
         /**
-         * Decode base64 string to decoded value.
+         * Decode base64 string to decoded value. Text is read as UTF-8, and data that is not UTF-8 is returned one character per byte.
          *
          * @param {string} encoded
          * @returns {string}
@@ -1157,7 +1150,14 @@ const webui = (() => {
             while (encoded.length % 4 !== 0) {
                 encoded = `${encoded}=`;
             }
-            return atob(encoded);
+            const binary = atob(encoded);
+            try {
+                return new TextDecoder("utf-8", { fatal: true }).decode(
+                    Uint8Array.from(binary, (c) => c.charCodeAt(0)),
+                );
+            } catch {
+                return binary;
+            }
         }
         /**
          * Helper to format bytes into KB/MB.
@@ -2185,10 +2185,16 @@ const webui = (() => {
          * Set the theme color for an element.
          *
          * @param {Node} el - The target element.
-         * @param {string} value - primary | secondary | etc
+         * @param {string} value - primary | secondary | etc, or empty to clear the theme
          * @returns {undefined}
          */
         setTheme(el, value) {
+            // A removed theme arrives as null, which clears the colors rather than naming a color "null".
+            if (!value) {
+                el.style.removeProperty("--theme-color");
+                el.style.removeProperty("--theme-color-offset");
+                return;
+            }
             el.style.setProperty("--theme-color", `var(--color-${value})`);
             el.style.setProperty(
                 "--theme-color-offset",

@@ -9,7 +9,7 @@ test('loads and draws the named icon', async ({ page }) => {
     const root = await mount(page, '<webui-icon icon="xmark"></webui-icon>');
     const el = root.locator('webui-icon');
     await expect(path(el, 1)).toHaveAttribute('d', /^M/);
-    expect(await el.evaluate(c => c._definition)).toContain('WEBUI-ICON-');
+    await expect.poll(() => el.evaluate(c => c._definition)).toContain('WEBUI-ICON-');
 });
 test('shares one request between identical icons', async ({ page }) => {
     let requests = 0;
@@ -22,19 +22,26 @@ test('an unknown icon shows the not found shape and warns once', async ({ page }
     const warning = page.waitForEvent('console', m => m.text().includes('missing icon'));
     const root = await mount(page, '<webui-icon icon="no-such-icon"></webui-icon>');
     await warning;
-    expect(await root.locator('webui-icon').evaluate(async c => { await webui.wait(() => c._definition); return c._definition; })).toContain('WEBUI-ICON-NOT-FOUND');
+    await expect.poll(() => root.locator('webui-icon').evaluate(c => c._definition || '')).toContain('WEBUI-ICON-NOT-FOUND');
 });
 test('the latest icon wins when icons load out of order', async ({ page }) => {
+    // The bell is held until the newer icon has drawn, so it arrives last.
+    let release;
+    const held = new Promise(resolve => { release = resolve; });
     await page.route('**/icons/bell.webui', async route => {
-        await new Promise(r => setTimeout(r, 300));
+        await held;
         await route.fallback();
     });
     const root = await mount(page, '<webui-icon icon="bell"></webui-icon>');
-    const el = root.locator('webui-icon');
+    const el = root.locator('webui-icon').first();
     await el.evaluate(c => c.setAttribute('icon', 'xmark'));
     await expect.poll(() => el.evaluate(c => c._definition || '')).toContain('XMARK');
-    await page.waitForTimeout(400);
-    expect(await el.evaluate(c => c._definition)).toContain('XMARK');
+    // A second icon waits on the same bell request, after the first, so once it draws the bell the first has
+    // been given it too.
+    await root.evaluate(r => r.insertAdjacentHTML('beforeend', '<webui-icon id="second" icon="bell"></webui-icon>'));
+    release();
+    await expect.poll(() => root.locator('#second').evaluate(c => c._definition || '')).toContain('BELL');
+    await expect.poll(() => el.evaluate(c => c._definition)).toContain('XMARK');
 });
 test('pipe delimited flags set and remove attributes', async ({ page }) => {
     const root = await mount(page, '<webui-icon icon="xmark|fill|shade:tri|shape:circle|-backing" backing></webui-icon>');
@@ -66,25 +73,25 @@ for (const shape of ['octo', 'octogon', 'tri', 'triangle', 'badge', 'circle', 'c
 test('rotate turns each path and can be cleared', async ({ page }) => {
     const root = await mount(page, '<webui-icon icon="xmark" rotate="90"></webui-icon>');
     const el = root.locator('webui-icon');
-    expect(await path(el, 1).evaluate(p => p.style.transform)).toBe('rotate(90deg)');
+    await expect.poll(() => path(el, 1).evaluate(p => p.style.transform)).toBe('rotate(90deg)');
     await el.evaluate(c => c.setAttribute('rotate', '0'));
-    expect(await path(el, 1).evaluate(p => p.style.transform)).toBe('');
+    await expect.poll(() => path(el, 1).evaluate(p => p.style.transform)).toBe('');
 });
 test('stroke sets a width and can be cleared', async ({ page }) => {
     const root = await mount(page, '<webui-icon stroke="thin"></webui-icon>');
     const el = root.locator('webui-icon');
     const stroke = () => el.evaluate(c => c._svg.style.getPropertyValue('--ico-stroke-width'));
-    expect(await stroke()).toBe('5');
+    await expect.poll(() => stroke()).toBe('5');
     await el.evaluate(c => c.setAttribute('stroke', 'thick'));
-    expect(await stroke()).toBe('15');
+    await expect.poll(() => stroke()).toBe('15');
     await el.evaluate(c => c.setAttribute('stroke', '7'));
-    expect(await stroke()).toBe('7');
+    await expect.poll(() => stroke()).toBe('7');
     await el.evaluate(c => c.removeAttribute('stroke'));
-    expect(await stroke()).toBe('');
+    await expect.poll(() => stroke()).toBe('');
 });
 test('shadow only sets the shadow, and width and height set size', async ({ page }) => {
     const root = await mount(page, '<webui-icon shadow="1px 1px 2px red" width="20" height="30"></webui-icon>');
-    expect(await root.locator('webui-icon').evaluate(c => [c._svg.style.filter, c.style.width, c.style.height])).toEqual(['drop-shadow(red 1px 1px 2px)', '20px', '30px']);
+    await expect.poll(() => root.locator('webui-icon').evaluate(c => [c._svg.style.filter, c.style.width, c.style.height])).toEqual(['drop-shadow(red 1px 1px 2px)', '20px', '30px']);
 });
 test('count displays', async ({ page }) => {
     const root = await mount(page, '<webui-icon count="1200"></webui-icon>');
@@ -94,9 +101,9 @@ test('theme swaps the color pair, and clearing removes it', async ({ page }) => 
     const root = await mount(page, '<webui-icon theme="info"></webui-icon>');
     const el = root.locator('webui-icon');
     const color = () => el.evaluate(c => c.style.getPropertyValue('--theme-color'));
-    expect(await color()).toBe('var(--color-info-offset)');
+    await expect.poll(() => color()).toBe('var(--color-info-offset)');
     await el.evaluate(c => c.setTheme(''));
-    expect(await color()).toBe('');
+    await expect.poll(() => color()).toBe('');
 });
 test('setIconDefinition applies shades and clears unused paths', async ({ page }) => {
     const root = await mount(page, '<webui-icon></webui-icon>');
@@ -105,7 +112,7 @@ test('setIconDefinition applies shades and clears unused paths', async ({ page }
     await expect(path(el, 1)).toHaveClass(/duo/);
     await expect(path(el, 1)).toHaveAttribute('d', 'M1 1z');
     await expect(path(el, 2)).toHaveClass(/tri/);
-    expect(await path(el, 3).evaluate(p => parseFloat(getComputedStyle(p).strokeWidth.replace(/[^\d.]/g, '')))).toBe(5);
+    await expect.poll(() => path(el, 3).evaluate(p => parseFloat(getComputedStyle(p).strokeWidth.replace(/[^\d.]/g, '')))).toBe(5);
     await expect(path(el, 4)).toHaveAttribute('d', 'M4 4z');
     await expect(path(el, 5)).toHaveAttribute('d', /^M0 0Q0 0/);
     await el.evaluate(c => c.clearPaths());
@@ -125,7 +132,7 @@ test('emoji icons display, keep their rotation, and can switch back', async ({ p
     const emoji = el.locator('webui-emoji');
     await expect(emoji).toHaveAttribute('emoji', 'grinning');
     await expect(emoji).not.toHaveText('');
-    expect(await emoji.evaluate(e => e.style.transform)).toBe('rotate(45deg)');
+    await expect.poll(() => emoji.evaluate(e => e.style.transform)).toBe('rotate(45deg)');
     await expect(el.locator('svg.main')).toHaveClass(/emoji/);
     await el.evaluate(c => c.setAttribute('icon', 'xmark'));
     await expect(el.locator('svg.main')).not.toHaveClass(/emoji/);
@@ -143,25 +150,25 @@ test('a path line can set a shade and a stroke width, and morphing resets both',
     const el = root.locator('webui-icon');
     await el.evaluate(c => c.setIconDefinition('WEBUI-ICON-A\nbi|20|M0 0Q1 1 2 2z\n30|M0 0Q1 1 2 2z'));
     // Widths are drawn as given; the inline style also divides by the shape scale, which is 1 here.
-    expect(await path(el, 1).evaluate(p => [p.classList.contains('duo'), parseFloat(getComputedStyle(p).strokeWidth.replace(/[^\d.]/g, ''))])).toEqual([true, 20]);
-    expect(await path(el, 2).evaluate(p => [p.classList.contains('duo'), parseFloat(getComputedStyle(p).strokeWidth.replace(/[^\d.]/g, ''))])).toEqual([false, 30]);
+    await expect.poll(() => path(el, 1).evaluate(p => [p.classList.contains('duo'), parseFloat(getComputedStyle(p).strokeWidth.replace(/[^\d.]/g, ''))])).toEqual([true, 20]);
+    await expect.poll(() => path(el, 2).evaluate(p => [p.classList.contains('duo'), parseFloat(getComputedStyle(p).strokeWidth.replace(/[^\d.]/g, ''))])).toEqual([false, 30]);
     await el.evaluate(c => c.setIconDefinition('WEBUI-ICON-B\nM0 0Q1 1 2 2z\ntri|M0 0Q1 1 2 2z'));
     // A path that changes icon keeps neither the old shade nor the old width.
-    expect(await path(el, 1).evaluate(p => [p.classList.contains('duo'), p.style.strokeWidth])).toEqual([false, '']);
-    expect(await path(el, 2).evaluate(p => [p.classList.contains('tri'), p.style.strokeWidth])).toEqual([true, '']);
+    await expect.poll(() => path(el, 1).evaluate(p => [p.classList.contains('duo'), p.style.strokeWidth])).toEqual([false, '']);
+    await expect.poll(() => path(el, 2).evaluate(p => [p.classList.contains('tri'), p.style.strokeWidth])).toEqual([true, '']);
 });
 test('filled icons fill with the icon color', async ({ page }) => {
     const root = await mount(page, '<webui-icon icon="circle" fill style="--theme-color-offset: rgb(200, 10, 10)"></webui-icon>');
     const el = root.locator('webui-icon');
     await expect(path(el, 1)).toHaveAttribute('d', /^M/);
-    expect(await path(el, 1).evaluate(p => [getComputedStyle(p).fill, getComputedStyle(p).stroke])).toEqual(['rgb(200, 10, 10)', 'rgb(200, 10, 10)']);
+    await expect.poll(() => path(el, 1).evaluate(p => [getComputedStyle(p).fill, getComputedStyle(p).stroke])).toEqual(['rgb(200, 10, 10)', 'rgb(200, 10, 10)']);
 });
 test('the backing only draws when it is filled or bordered', async ({ page }) => {
     const root = await mount(page, '<webui-icon id="plain" icon="xmark"></webui-icon><webui-icon id="backed" icon="xmark" backing></webui-icon><webui-icon id="bordered" icon="xmark" bordered></webui-icon>');
     const display = id => root.locator(`#${id} path.backing`).evaluate(p => getComputedStyle(p).display);
-    expect(await display('plain')).toBe('none');
-    expect(await display('backed')).not.toBe('none');
-    expect(await display('bordered')).not.toBe('none');
+    await expect.poll(() => display('plain')).toBe('none');
+    await expect.poll(() => display('backed')).not.toBe('none');
+    await expect.poll(() => display('bordered')).not.toBe('none');
 });
 test('icons morph: every path keeps the same commands when the icon changes', async ({ page }) => {
     const root = await mount(page, '<webui-icon icon="gear"></webui-icon>');
@@ -172,7 +179,7 @@ test('icons morph: every path keeps the same commands when the icon changes', as
     await el.evaluate(c => c.setAttribute('icon', 'xmark'));
     await expect.poll(() => el.evaluate(c => c._definition || '')).toContain('XMARK');
     // The same letters in the same order, so the browser can animate each path from one icon to the other.
-    expect(await shape()).toEqual(before);
+    await expect.poll(() => shape()).toEqual(before);
 });
 test('setIcon changes the icon, so data can drive it', async ({ page }) => {
     const root = await mount(page, '<webui-button data-trigger="icon-demo" data-value="gear">Settings</webui-button><webui-icon icon="hamburger" data-subscribe="icon-demo:setIcon"></webui-icon>');
@@ -218,13 +225,13 @@ test('flip mirrors the icon, and combines with rotate', async ({ page }) => {
     const el = root.locator('webui-icon');
     const transform = () => path(el, 1).evaluate(p => p.style.transform);
     await el.evaluate(c => c.setAttribute('flip', ''));
-    expect(await transform()).toBe('scale(-1, 1)');
+    await expect.poll(() => transform()).toBe('scale(-1, 1)');
     await el.evaluate(c => c.setAttribute('flip', 'y'));
-    expect(await transform()).toBe('scale(1, -1)');
+    await expect.poll(() => transform()).toBe('scale(1, -1)');
     await el.evaluate(c => c.setAttribute('rotate', '90'));
-    expect(await transform()).toBe('rotate(90deg) scale(1, -1)');
+    await expect.poll(() => transform()).toBe('rotate(90deg) scale(1, -1)');
     await el.evaluate(c => { c.removeAttribute('flip'); c.removeAttribute('rotate'); });
-    expect(await transform()).toBe('');
+    await expect.poll(() => transform()).toBe('');
     // The piped form works too, such as undo|flip for redo.
     await el.evaluate(c => c.setAttribute('icon', 'undo|flip'));
     await expect.poll(transform).toBe('scale(-1, 1)');
@@ -264,7 +271,7 @@ test('ban cuts a gap through the icon either side of the slash, leaving the shap
     expect(cut).toEqual({ mask: 'url(#ban-cut)', glyphMasked: true, backingMasked: false, cutColor: ['rgb(0, 0, 0)', 'rgb(0, 0, 0)'], wider: true });
     await el.evaluate(c => c.setAttribute('icon', 'circle_users|bordered'));
     await expect(el).not.toHaveAttribute('ban');
-    expect(await el.evaluate(c => c.shadowRoot.querySelector('g.cut').hasAttribute('mask'))).toBe(false);
+    await expect.poll(() => el.evaluate(c => c.shadowRoot.querySelector('g.cut').hasAttribute('mask'))).toBe(false);
 });
 test('every shape with room inside keeps the shrunken icon clear of its outline', async ({ page }) => {
     const shapes = ['file', 'cloud', 'book', 'gear', 'calendar', 'heart', 'note', 'scroll', 'window', 'tv'];
