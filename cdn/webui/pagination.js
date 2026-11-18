@@ -362,12 +362,8 @@
             const t = this;
             if (typeof value === 'string') {
                 try {
-                    if (!value) {
-                        t._data = [];
-                        t.totalCount = 0;
-                    } else {
-                        value = JSON.parse(value);
-                    }
+                    // Empty text is an empty list, not a list holding one empty row.
+                    value = value ? JSON.parse(value) : [];
                 } catch (ex) {
                     return;
                 }

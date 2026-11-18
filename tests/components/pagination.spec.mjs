@@ -97,8 +97,11 @@ test('accepts json text, and no data hides it', async ({ page }) => {
     const el = await pager(page, 'per-page="1"');
     await el.evaluate(c => c.setData('[{"a":1},{"a":2}]'));
     await expect(el).toHaveAttribute('page-count', '2');
+    await expect(el).toBeVisible();
     await el.evaluate(c => c.setData(''));
-    await expect.poll(() => el.evaluate(c => c.totalCount)).toBe(0);
+    await expect(el).toHaveAttribute('page-count', '0');
+    await expect(el).toBeHidden();
+    expect(await el.evaluate(c => c.totalCount)).toBe(0);
 });
 test('every pagination offers page sizes, with its own per-page among them', async ({ page }) => {
     const el = await pager(page, 'per-page="25"');

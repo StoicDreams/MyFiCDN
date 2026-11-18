@@ -11,10 +11,11 @@ webui.define('webui-page-footer', {
         const t = this;
         t._footer = webui.create('footer', { slot: 'footer' });
         t.parentNode.appendChild(t._footer);
-        t._copyright = webui.create('webui-paper', { class: 'nowrap' });
-        t._footer.appendChild(webui.create('webui-flex', { grow: true }));
+        // The copyright fills the room beside Powered by, centered in it. Its flex basis is 0, so the footer only
+        // moves Powered by to its own line when even the copyright's longest part does not fit beside it; until
+        // then the copyright wraps between its two parts, beside Powered by.
+        t._copyright = webui.create('webui-paper', { style: 'flex:1 1 0;white-space:normal;text-align:center;' });
         t._footer.appendChild(t._copyright);
-        t._footer.appendChild(webui.create('webui-flex', { grow: true }));
         t._footer.appendChild(webui.create('webui-poweredby'));
         let cf = t.innerHTML;
         if (cf) {
@@ -52,10 +53,8 @@ webui.define('webui-page-footer', {
         if (!year) { year = currentYear; }
         if (year <= (currentYear - 2000)) { year += 2000; }
         if (year < 100) { year += 1900; }
-        if (year < currentYear) {
-            t._copyright.innerText = `© ${year}-${currentYear} ${company} All Rights Reserved`;
-        } else {
-            t._copyright.innerText = `© ${currentYear} ${company} All Rights Reserved`;
-        }
+        const years = year < currentYear ? `${year}-${currentYear}` : `${currentYear}`;
+        const part = text => webui.create('span', { text, style: 'white-space:nowrap;' });
+        t._copyright.replaceChildren(part(`© ${years} ${company}`.trim()), ' ', part('All Rights Reserved'));
     }
 });

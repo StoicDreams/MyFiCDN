@@ -199,6 +199,7 @@ max-height:min-content;
 grid-row: 4;
 grid-column: 2;
 display: flex!important;
+flex-wrap: wrap;
 font-size: max(var(--min-font-size), 0.8rem);
 align-items:center;
 padding:var(--padding, 1em);

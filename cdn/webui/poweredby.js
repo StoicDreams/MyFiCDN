@@ -26,22 +26,27 @@ webui.define('webui-poweredby', {
     connected() {
         const t = this;
         if (!t.version) {
-            t.setAttribute("version", "0.11.111");
+            t.setAttribute("version", "0.11.112");
             webui.setData('webui-version', t.getAttribute('version'));
         }
     },
     shadowTemplate: `
 <style type="text/css">
 :host {
+display:inline-grid;
+margin-inline-start:auto;
+justify-items:end;
+line-height:1.1;
 white-space:nowrap;
+}
+.by {
+font-size:0.7em;
 }
 a[href] {
 color:inherit;
 }
 </style>
-<div>
-<sup>Powered by </sup>
+<span class="by">Powered by</span>
 <slot></slot>
-</div>
 `
 });
