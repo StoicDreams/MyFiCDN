@@ -39,5 +39,9 @@ content: "— ";
 color: var(--theme-color);
 }
 cite:empty {display:none;}
+cite a[href] {
+color: var(--color-link);
+text-underline-offset:0.18em;
+}
 </style>`
 });
