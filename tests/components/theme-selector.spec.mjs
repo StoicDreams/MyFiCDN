@@ -101,3 +101,115 @@ test('updates the browser theme-color to the theme background', async ({ page })
     await page.locator('webui-theme-selector[panel]').getByRole('button', { name: 'Stone' }).click();
     await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute('content', 'rgb(34, 34, 34)');
 });
+
+const schemed = `
+    <option value="" data-scheme="dark">Default</option>
+    <option value="paper" data-scheme="light">Paper</option>
+    <option value="stone" data-scheme="dark">Stone</option>
+    <option value="sky" data-scheme="light">Sky</option>`;
+const editor = (page, options = schemed) => mount(page, `${styles}<div data-stopclick><webui-theme-selector panel editable>${options}</webui-theme-selector></div>`);
+const rootStyle = (page, property) => page.evaluate(property => document.documentElement.style.getPropertyValue(property), property);
+const colorInput = (root, label) => root.getByLabel(label, { exact: true });
+
+test('themes marked light or dark are listed in those groups', async ({ page }) => {
+    const root = await mount(page, `<webui-theme-selector panel>${schemed}</webui-theme-selector>`);
+    const panel = root.locator('webui-theme-selector');
+    await expect(panel.getByRole('group', { name: 'Light themes' }).getByRole('button')).toHaveText(['Paper', 'Sky']);
+    await expect(panel.getByRole('group', { name: 'Dark themes' }).getByRole('button')).toHaveText(['Default', 'Stone']);
+});
+
+test('without the editable flag there are no color inputs', async ({ page }) => {
+    const root = await mount(page, `<webui-theme-selector panel>${schemed}</webui-theme-selector>`);
+    await expect(root.locator('webui-theme-selector').getByRole('button', { name: 'Stone' })).toBeVisible();
+    await expect(root.locator('input[type="color"]')).toHaveCount(0);
+});
+
+test('an editable selector has an input for each base color, showing the color the page uses', async ({ page }) => {
+    const root = await editor(page);
+    await root.getByRole('button', { name: 'Stone' }).click();
+    const labels = ['Background', 'Title', 'Primary', 'Secondary', 'Tertiary', 'Active', 'Button'];
+    for (const label of labels) await expect(colorInput(root, label)).toBeVisible();
+    // The stone theme's background, from its stylesheet.
+    await expect(colorInput(root, 'Background')).toHaveValue('#222222');
+});
+
+test('a color changes on the page at once, and its text switches to white or black for contrast', async ({ page }) => {
+    const root = await editor(page);
+    // The offset is the tool's output: which of white and black reads better on the chosen color.
+    await colorInput(root, 'Primary').fill('#f5f0d0');
+    await expect.poll(() => rootStyle(page, '--color-primary')).toBe('#f5f0d0');
+    await expect.poll(() => rootStyle(page, '--color-primary-offset')).toBe('var(--color-black)');
+    await colorInput(root, 'Primary').fill('#1a237e');
+    await expect.poll(() => rootStyle(page, '--color-primary')).toBe('#1a237e');
+    await expect.poll(() => rootStyle(page, '--color-primary-offset')).toBe('var(--color-white)');
+    await expect.poll(() => page.evaluate(() => webui.getData('session-theme-colors'))).toEqual({
+        '': { '--color-primary': '#1a237e', '--color-primary-offset': 'var(--color-white)' },
+    });
+});
+
+test('each theme keeps its own adjusted colors, and Reset puts the theme back', async ({ page }) => {
+    const root = await editor(page);
+    const reset = root.getByRole('button', { name: /^Reset/ });
+    await root.getByRole('button', { name: 'Stone' }).click();
+    await expect(reset).toBeHidden();
+    await colorInput(root, 'Title').fill('#ff8800');
+    await expect.poll(() => rootStyle(page, '--color-title')).toBe('#ff8800');
+    await expect(root.getByRole('button', { name: 'Reset Stone colors' })).toBeVisible();
+    // Another theme has none of stone's changes.
+    await root.getByRole('button', { name: 'Paper' }).click();
+    await expect.poll(() => rootStyle(page, '--color-title')).toBe('');
+    await expect(reset).toBeHidden();
+    // Back on stone, its changes return.
+    await root.getByRole('button', { name: 'Stone' }).click();
+    await expect.poll(() => rootStyle(page, '--color-title')).toBe('#ff8800');
+    await root.getByRole('button', { name: 'Reset Stone colors' }).click();
+    await expect.poll(() => rootStyle(page, '--color-title')).toBe('');
+    await expect(reset).toBeHidden();
+    await expect.poll(() => page.evaluate(() => webui.getData('session-theme-colors'))).toEqual({});
+});
+
+test('quick changes to two colors are both kept', async ({ page }) => {
+    const root = await editor(page);
+    await colorInput(root, 'Primary').fill('#112233');
+    await colorInput(root, 'Secondary').fill('#445566');
+    await expect.poll(() => page.evaluate(() => webui.getData('session-theme-colors')?.['']))
+        .toMatchObject({ '--color-primary': '#112233', '--color-secondary': '#445566' });
+});
+
+test('a color input inside a drawer that cancels clicks still opens its picker', async ({ page }) => {
+    const root = await editor(page);
+    // The editor sits in a data-stopclick container, as in a Web UI drawer, which cancels the clicks that reach it.
+    const cancelled = await colorInput(root, 'Background').evaluate(input => {
+        const click = new MouseEvent('click', { bubbles: true, composed: true, cancelable: true });
+        input.dispatchEvent(click);
+        return click.defaultPrevented;
+    });
+    expect(cancelled).toBe(false);
+});
+
+test('adjusted colors are applied by the loader before the page draws', async ({ page }) => {
+    await page.evaluate(() => {
+        webui.setData('session-theme', 'stone');
+        webui.setData('session-theme-colors', { stone: { '--color-primary': '#123456', '--color-primary-offset': 'var(--color-white)' }, paper: { '--color-primary': '#abcdef' } });
+    });
+    await expect.poll(() => page.evaluate(() => `${webui.storage.getItem('session-data') || ''}`)).toContain('#123456');
+    await page.reload();
+    await page.waitForFunction(() => typeof webui === 'object');
+    // As with the theme, one read as soon as the loader exists is final.
+    const applied = await page.evaluate(() => [
+        document.documentElement.style.getPropertyValue('--color-primary'),
+        document.documentElement.style.getPropertyValue('--color-primary-offset'),
+    ]);
+    expect(applied).toEqual(['#123456', 'var(--color-white)']);
+});
+
+test('a theme and colors saved after the page starts are applied, as an app restores them', async ({ page }) => {
+    await mount(page, `${styles}<webui-theme-selector>${themes}</webui-theme-selector>`);
+    await expect(page.locator('webui-theme-selector')).toHaveAttribute('role', 'button');
+    await page.evaluate(() => {
+        webui.setData('session-theme-colors', { stone: { '--color-title': '#00ff00', '--color-title-offset': 'var(--color-black)' } });
+        webui.setData('session-theme', 'stone');
+    });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'stone');
+    await expect.poll(() => rootStyle(page, '--color-title')).toBe('#00ff00');
+});

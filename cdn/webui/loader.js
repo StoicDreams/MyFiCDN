@@ -367,6 +367,15 @@ const webui = (() => {
             if (typeof theme === "string" && theme) {
                 document.documentElement.dataset.theme = theme;
             }
+            // So are the colors adjusted for it: { [theme]: { "--color-primary": "#5e0592", ... } }.
+            const adjusted = watchedSessionData["session-theme-colors"]?.[typeof theme === "string" ? theme : ""];
+            if (adjusted && typeof adjusted === "object") {
+                Object.entries(adjusted).forEach(([property, value]) => {
+                    if (/^--color-[a-z]+(-offset)?$/.test(property) && typeof value === "string") {
+                        document.documentElement.style.setProperty(property, value);
+                    }
+                });
+            }
         }
         /**
          * Alert system for displaying alerts to user
