@@ -231,3 +231,15 @@ test('dialog content is in the page itself, so page styles reach it, and its fie
     await expect.poll(() => page.evaluate(() => window.__submitted)).toBe('42');
     await expect(el.locator('form')).toHaveCount(1);
 });
+test('confirm: false leaves out the confirm button, for content that closes the dialog itself', async ({ page }) => {
+    const el = await ready(page);
+    await open(page, { title: 'Pick', content: '<p>Tiles</p>', confirm: false, cancel: 'Cancel' });
+    await expect(el.locator('dialog')).toBeVisible();
+    await expect(el.locator('#dlg-confirm')).toBeHidden();
+    await expect(el.locator('#dlg-cancel')).toBeVisible();
+    // Another dialog with no confirm given still gets Ok.
+    await el.locator('#dlg-cancel').click();
+    await expect(el.locator('dialog')).toBeHidden();
+    await open(page, { content: '<p>Plain</p>' });
+    await expect(el.locator('#dlg-confirm')).toHaveText('Ok');
+});

@@ -209,7 +209,8 @@ webuiDialog._pending = [];
                         t.dialog.style.minWidth = data.minWidth || '';
                         setContent(t.content, data.content || defaultSet.content);
                         setContent(t.btnCancel, data.cancel || defaultSet.cancel);
-                        setContent(t.btnConfirm, data.confirm || defaultSet.confirm);
+                        // confirm: false leaves the button out, for a dialog whose content closes it.
+                        setContent(t.btnConfirm, data.confirm === false ? '' : data.confirm || defaultSet.confirm);
                         setContent(t.header, data.title || '');
                         if (data.isLoading) {
                             t.dialog.classList.add('isloading');
