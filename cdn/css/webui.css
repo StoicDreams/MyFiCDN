@@ -671,7 +671,9 @@ svg path {
     transition: all 200ms;
 }
 
-img:not(:only-child) {
+/* A picture inline with text, such as an icon in a link or a paragraph, is the text's height. A picture among blocks,
+   such as a QR code or a screenshot beside paragraphs, keeps its own size. */
+:is(p, a, span, label, button, li, dt, dd, td, th, h1, h2, h3, h4, h5, h6, small, strong, em, code, summary, figcaption) > img:not(:only-child) {
     height: 1em;
 }
 
