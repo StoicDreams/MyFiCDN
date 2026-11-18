@@ -249,3 +249,17 @@ test('the panel fits its tiles, without scrolling when they fit in the window', 
     await expect.poll(() => panel(page).locator('.grid').evaluate(grid => grid.scrollHeight <= grid.clientHeight)).toBe(true);
     for (const item of await tiles(page).all()) await expect(item).toBeInViewport({ ratio: 1 });
 });
+
+test('icon-only shows just the chosen picture in the field, and every name in the tiles', async ({ page }) => {
+    const el = await select(page, 'icon-only value="docs"');
+    await expect(el.locator('.pick-picture webui-icon')).toHaveAttribute('icon', 'book-open');
+    await expect(el.locator('.pick-name')).toHaveCount(0);
+    // The name stays for screen readers and as a tip.
+    await expect(el.getByRole('img', { name: 'Docs' })).toHaveCount(1);
+    await expect(el.locator('.pick')).toHaveAttribute('title', 'Docs');
+    await field(el).click();
+    await expect(names(page)).toHaveText(['Acme Storefront', 'Docs', 'Payments API']);
+    await tile(page, 'Payments API').click();
+    await expect(el.locator('.pick')).toHaveAttribute('title', 'Payments API');
+    await expect(el.locator('.pick-picture svg.fallback text')).toHaveText('PA');
+});

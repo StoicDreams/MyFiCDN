@@ -372,7 +372,7 @@ transform:none;
                 });
             };
         },
-        flags: ['multiple', 'disabled'],
+        flags: ['multiple', 'disabled', 'icon-only'],
         attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'options', 'title', 'item-size', 'placeholder'],
         attrChanged(property, value) {
             const t = this;
@@ -411,6 +411,9 @@ transform:none;
                     t._picker.disabled = !!value;
                     if (value) t.setAttribute('aria-disabled', 'true');
                     else t.removeAttribute('aria-disabled');
+                    break;
+                case 'iconOnly':
+                    t.renderPicked();
                     break;
                 case 'multiple':
                     t.setValue(t._selected);
@@ -535,7 +538,15 @@ transform:none;
                 picture.append(iconFor(option));
                 const name = webui.create('span', { class: 'pick-name' });
                 name.textContent = option.display;
-                pick.append(picture, name);
+                if (t.iconOnly) {
+                    // Just the picture, which carries the name for screen readers and as a tip.
+                    picture.setAttribute('role', 'img');
+                    picture.setAttribute('aria-label', option.display);
+                    pick.title = option.display;
+                    pick.append(picture);
+                } else {
+                    pick.append(picture, name);
+                }
                 if (option.badge) pick.append(badgeFor(option));
                 return pick;
             }));
@@ -741,6 +752,17 @@ color:var(--theme-color-offset);
 :host(:not([theme])) {
 background-color:transparent;
 color:inherit;
+}
+:host([icon-only]) {
+width:auto;
+}
+:host([icon-only]) .field,
+:host([icon-only]) button {
+flex-grow:0;
+}
+:host([icon-only]) .pick-picture {
+width:2em;
+height:2em;
 }
 :host([stack]) {
 display:grid;
