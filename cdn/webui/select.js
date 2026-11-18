@@ -1,6 +1,6 @@
 /*!
  * Web UI Select - https://webui.stoicdreams.com/components#webui-select
- * A field like webui-dropdown that opens its options as a grid of square tiles in a dialog, each with an icon.
+ * A field like webui-dropdown that opens its options as a grid of square tiles in a panel by the field, each with an icon.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2026 Stoic Dreams - https://www.stoicdreams.com
  * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
@@ -8,7 +8,7 @@
 "use strict"
 {
     const SVG = 'http://www.w3.org/2000/svg';
-    /** Options at which the dialog adds a field to filter them. */
+    /** Options at which the panel adds a field to filter them. */
     const FILTER_FROM = 13;
     /** The theme colors a tile without an icon is drawn in. Each name picks a pair, so tiles tell apart. */
     const MONOGRAM_COLORS = ['primary', 'secondary', 'tertiary', 'info', 'success', 'title', 'active'];
@@ -156,9 +156,25 @@
         return fallbackIcon(option.display);
     }
 
-    const tileStyles = `
-:host {
-display:block;
+    const panelStyles = `
+.panel {
+display:none;
+position:fixed;
+inset:auto;
+margin:0;
+padding:var(--select-gap);
+box-sizing:border-box;
+max-width:calc(100vw - 16px);
+overflow:hidden;
+flex-direction:column;
+gap:var(--select-gap);
+border:1px solid var(--tile-border);
+border-radius:calc(var(--corners, 6px) * 2);
+box-shadow:var(--shadow-popup, 0 8px 28px rgb(0 0 0 / 35%));
+background-color:var(--color-background, #222);
+color:var(--tile-text);
+z-index:1000;
+--select-gap:0.6em;
 --select-item-size:var(--webui-select-item-size, 7.5em);
 --tile-surface:color-mix(in srgb, var(--color-background-offset, #fff) 6%, var(--color-background, #222));
 --tile-border:color-mix(in srgb, var(--color-background-offset, #fff) 14%, transparent);
@@ -166,11 +182,14 @@ display:block;
 --tile-accent:var(--color-active, #2f7);
 --tile-accent-offset:var(--color-active-offset, #000);
 }
+.panel.open {
+display:flex;
+}
 .filter {
 display:block;
+flex:0 0 auto;
 box-sizing:border-box;
 width:100%;
-margin-bottom:calc(var(--padding, 0.5em) * 1.25);
 padding:0.55em 0.85em;
 font:inherit;
 color:var(--color-field-offset, black);
@@ -184,11 +203,14 @@ outline-offset:var(--focus-offset, 2px);
 }
 .grid {
 display:grid;
-grid-template-columns:repeat(auto-fill, minmax(var(--select-item-size), 1fr));
-gap:0.75em;
-max-height:min(70vh, 42em);
+grid-template-columns:repeat(var(--select-columns, 4), var(--select-item-size));
+gap:var(--select-gap);
+min-height:0;
 overflow:auto;
-padding:6px;
+overscroll-behavior:contain;
+/* Room for a tile's focus ring and lift, so they are never cut off. */
+padding:4px;
+margin:-4px;
 }
 .tile {
 position:relative;
@@ -305,7 +327,7 @@ transform:none;
 `;
 
     webui.define('webui-select', {
-        preload: 'icon dialogs',
+        preload: 'icon',
         isInput: true,
         constructor() {
             const t = this;
@@ -319,13 +341,36 @@ transform:none;
             t._startIcon = t.template.querySelector('webui-icon.start');
             t._midIcon = t.template.querySelector('webui-icon.mid');
             t._endIcon = t.template.querySelector('webui-icon.end');
-            t._picker.addEventListener('click', () => t.open());
+            t._panel = t.template.querySelector('.panel');
+            t._grid = t._panel.querySelector('.grid');
+            t._picker.addEventListener('click', () => (t.isOpen() ? t.close() : t.open()));
             t._picker.addEventListener('keydown', ev => {
                 if (['ArrowDown', 'ArrowUp'].includes(ev.key)) {
                     ev.preventDefault();
                     t.open();
                 }
             });
+            t._grid.addEventListener('keydown', ev => t.onGridKey(ev, t._tiles, t._grid));
+            t._panel.addEventListener('keydown', ev => {
+                if (ev.key !== 'Escape') return;
+                ev.preventDefault();
+                ev.stopPropagation();
+                t.close(true);
+            });
+            // Focus leaving the panel and the field, such as with Tab, closes it as a click elsewhere does.
+            t._panel.addEventListener('focusout', ev => {
+                if (ev.relatedTarget && !ev.composedPath().includes(t) && !t.contains(ev.relatedTarget) && !t.shadowRoot.contains(ev.relatedTarget)) t.close();
+            });
+            t._onOutside = ev => {
+                if (!ev.composedPath().includes(t)) t.close();
+            };
+            t._onMove = () => {
+                if (t._moveFrame) return;
+                t._moveFrame = requestAnimationFrame(() => {
+                    t._moveFrame = 0;
+                    t.place();
+                });
+            };
         },
         flags: ['multiple', 'disabled'],
         attr: ['icon', 'start-icon', 'mid-icon', 'end-icon', 'label', 'stack', 'value', 'options', 'title', 'item-size', 'placeholder'],
@@ -382,7 +427,7 @@ transform:none;
             else t.renderPicked();
         },
         disconnected() {
-            this._dialog?.close?.();
+            this.close();
         },
         /** The field's name for screen readers: its label, or without one the host's aria-label or title. */
         nameField() {
@@ -495,62 +540,97 @@ transform:none;
                 return pick;
             }));
         },
-        /** Opens the options as a grid of tiles in a dialog. */
+        isOpen() {
+            return this._panel.classList.contains('open');
+        },
+        /** Opens the options as a grid of tiles in a panel by the field, as webui-dropdown opens its list. */
         open() {
             const t = this;
-            if (t.disabled || t._dialog || !t._options.length) return;
-            const host = webui.create('div', { class: 'webui-select-dialog' });
-            const root = host.attachShadow({ mode: 'open' });
-            const style = document.createElement('style');
-            style.textContent = tileStyles;
-            const size = getComputedStyle(t).getPropertyValue('--webui-select-item-size').trim();
-            if (size) host.style.setProperty('--webui-select-item-size', size);
-            const grid = webui.create('div', { class: 'grid', role: 'listbox', 'aria-label': t.dialogTitle() });
-            grid.setAttribute('aria-multiselectable', t.multiple ? 'true' : 'false');
-            grid.addEventListener('keydown', ev => t.onGridKey(ev, t._tiles, grid));
-            root.append(style);
-            t._grid = grid;
+            if (t.disabled || t.isOpen() || !t._options.length) return;
+            t._grid.setAttribute('aria-label', t.listName());
+            t._grid.setAttribute('aria-multiselectable', t.multiple ? 'true' : 'false');
+            t._filter?.remove();
             t._filter = null;
             if (t._options.length >= FILTER_FROM) {
                 const filter = webui.create('input', { type: 'search', class: 'filter', placeholder: 'Filter', 'aria-label': 'Filter the options' });
-                filter.addEventListener('input', () => t.applyFilter());
+                filter.addEventListener('input', () => {
+                    t.applyFilter();
+                    t.place();
+                });
                 filter.addEventListener('keydown', ev => {
                     if (ev.key === 'ArrowDown' || ev.key === 'Enter') {
                         ev.preventDefault();
                         t.focusTile(t._tiles.find(tile => !tile.hidden), t._tiles);
                     }
                 });
-                root.append(filter);
+                t._panel.prepend(filter);
                 t._filter = filter;
             }
-            root.append(grid);
+            t._panel.classList.add('open');
+            if (t._panel.showPopover) t._panel.showPopover();
+            t._picker.setAttribute('aria-expanded', 'true');
             t.fillGrid();
-            t._dialog = webui.dialog({
-                title: t.dialogTitle(),
-                content: host,
-                minWidth: 'min(90vw, 40em)',
-                // A single select closes when a tile is picked, so it needs no confirm button.
-                confirm: t.multiple ? 'Done' : false,
-                cancel: t.multiple ? undefined : 'Cancel',
-            });
-            Promise.resolve(t._dialog).catch(() => { }).finally(() => {
-                t._dialog = null;
-                t._grid = null;
-                t._tiles = [];
-                t._picker.focus();
-            });
-            // Focus moves to the chosen tile once the dialog shows it.
-            webui.wait(() => host.isConnected, 2000).then(() => {
-                const start = t._tiles.find(tile => tile.getAttribute('aria-selected') === 'true') || t._tiles[0];
-                t.focusTile(start, t._tiles);
-            }).catch(() => { });
+            document.addEventListener('pointerdown', t._onOutside, true);
+            document.addEventListener('scroll', t._onMove, true);
+            window.addEventListener('resize', t._onMove);
+            const start = t._tiles.find(tile => tile.getAttribute('aria-selected') === 'true') || t._tiles[0];
+            if (t._filter) t._filter.focus();
+            else t.focusTile(start, t._tiles);
+            start?.scrollIntoView?.({ block: 'nearest' });
         },
-        /** Draws a tile for each option in the open dialog, keeping focus on the same option when it is drawn again. */
+        /** Closes the panel, putting focus back on the field when it was in the panel or when asked to. */
+        close(refocus = false) {
+            const t = this;
+            if (!t.isOpen()) return;
+            const hadFocus = t.shadowRoot.activeElement && t._panel.contains(t.shadowRoot.activeElement);
+            t._panel.classList.remove('open');
+            if (t._panel.hidePopover && t._panel.matches(':popover-open')) t._panel.hidePopover();
+            t._picker.setAttribute('aria-expanded', 'false');
+            t._grid.replaceChildren();
+            t._tiles = [];
+            document.removeEventListener('pointerdown', t._onOutside, true);
+            document.removeEventListener('scroll', t._onMove, true);
+            window.removeEventListener('resize', t._onMove);
+            if (refocus || hadFocus) t._picker.focus();
+        },
+        /**
+         * Sizes the panel to its tiles, in columns that keep it wider than tall, then places it under the field, or above
+         * it when there is more room there. The tiles scroll only when they don't fit in the window.
+         */
+        place() {
+            const t = this;
+            if (!t.isOpen()) return;
+            const margin = 8;
+            const panel = t._panel;
+            const style = panel.style;
+            const tile = t._tiles.find(item => !item.hidden) || t._tiles[0];
+            const gap = parseFloat(getComputedStyle(t._grid).columnGap) || 0;
+            const padding = parseFloat(getComputedStyle(panel).paddingLeft) || 0;
+            const tileWidth = tile ? tile.getBoundingClientRect().width : 0;
+            const fit = tileWidth ? Math.max(1, Math.floor((window.innerWidth - 2 * margin - 2 * padding + gap) / (tileWidth + gap))) : 4;
+            const columns = Math.max(1, Math.min(t._tiles.length, fit, Math.max(3, Math.ceil(Math.sqrt(t._tiles.length * 2)))));
+            t._grid.style.setProperty('--select-columns', `${columns}`);
+            style.maxHeight = '';
+            style.top = '0px';
+            style.left = '0px';
+            const rect = t._picker.getBoundingClientRect();
+            const width = panel.offsetWidth;
+            const height = panel.offsetHeight;
+            const below = window.innerHeight - rect.bottom - margin;
+            const above = rect.top - margin;
+            const showAbove = height > below && above > below;
+            const room = Math.max(showAbove ? above : below, 0) - 4;
+            const shownHeight = Math.min(height, room);
+            style.maxHeight = `${room}px`;
+            style.left = `${Math.max(margin, Math.min(rect.left, window.innerWidth - width - margin))}px`;
+            style.top = showAbove ? `${Math.max(margin, rect.top - 4 - shownHeight)}px` : `${rect.bottom + 4}px`;
+        },
+        /** Draws a tile for each option in the open panel, keeping focus on the same option when it is drawn again. */
         fillGrid() {
             const t = this;
             const grid = t._grid;
-            if (!grid) return;
-            const focused = grid.getRootNode().activeElement?.closest?.('.tile')?.dataset.value;
+            if (!t.isOpen()) return;
+            const focused = t.shadowRoot.activeElement?.closest?.('.tile')?.dataset.value;
             t._tiles = t._options.map((option, index) => {
                 const tile = webui.create('button', { type: 'button', class: 'tile', role: 'option', 'data-value': option.id });
                 tile.setAttribute('aria-selected', t._selected.includes(option.id) ? 'true' : 'false');
@@ -573,6 +653,7 @@ transform:none;
             });
             grid.replaceChildren(...t._tiles);
             t.applyFilter();
+            t.place();
             const again = t._tiles.find(tile => tile.dataset.value === focused);
             if (again) t.focusTile(again, t._tiles);
         },
@@ -582,7 +663,7 @@ transform:none;
             const words = (t._filter?.value || '').trim().toLowerCase();
             t._tiles.forEach((tile, index) => { tile.hidden = !!words && !t._options[index].display.toLowerCase().includes(words); });
         },
-        dialogTitle() {
+        listName() {
             return this.getAttribute('title') || (this._label.textContent || '').trim() || 'Choose';
         },
         focusTile(tile, tiles) {
@@ -601,7 +682,7 @@ transform:none;
                 tiles.forEach(tile => tile.setAttribute('aria-selected', t._selected.includes(tile.dataset.value) ? 'true' : 'false'));
             } else {
                 t.setValue(id);
-                t._dialog?.close?.();
+                t.close(true);
             }
             if (t._selected.join('\n') !== before) t.triggerChange(true);
         },
@@ -638,9 +719,10 @@ transform:none;
 <webui-icon class="mid"></webui-icon>
 </label>
 <div class="field">
-<button type="button" aria-haspopup="dialog"><span class="picked"></span></button>
+<button type="button" aria-haspopup="listbox" aria-expanded="false"><span class="picked"></span></button>
 <webui-icon class="end"></webui-icon>
 </div>
+<div class="panel" popover="manual" part="panel"><div class="grid" role="listbox"></div></div>
 <style type="text/css">
 :host {
 display:flex;
@@ -739,6 +821,7 @@ opacity:0.6;
 cursor:not-allowed;
 }
 label.hide {display:none;}
+${panelStyles}
 label {
 display:flex;
 align-items:center;

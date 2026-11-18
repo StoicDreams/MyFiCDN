@@ -1,6 +1,6 @@
 import { test, expect, mount } from '../support/webui.mjs';
 
-// webui-select: a field like webui-dropdown that opens its options as a grid of tiles in a dialog.
+// webui-select: a field like webui-dropdown that opens its options as a grid of tiles in a panel by the field, as the dropdown opens its list.
 const OPTIONS = [
     { id: 'storefront', display: 'Acme Storefront' },
     { id: 'docs', display: 'Docs', icon: 'book-open' },
@@ -15,11 +15,11 @@ const select = async (page, attrs = '', options = OPTIONS) => {
     return el;
 };
 const field = el => el.getByRole('button');
-const dialog = page => page.locator('webui-dialogs dialog');
-const tile = (page, name) => page.locator('.webui-select-dialog').getByRole('option', { name });
-const tiles = page => page.locator('.webui-select-dialog').getByRole('option');
+const panel = page => page.locator('webui-select .panel');
+const tile = (page, name) => panel(page).getByRole('option', { name });
+const tiles = page => panel(page).getByRole('option');
 // A tile's name, without the initials its picture draws.
-const names = page => page.locator('.webui-select-dialog .tile:not([hidden]) .name');
+const names = page => panel(page).locator('.tile:not([hidden]) .name');
 const value = el => el.evaluate(e => e.value);
 
 test('the field shows the chosen option, and a single select starts on the first one', async ({ page }) => {
@@ -31,15 +31,17 @@ test('the field shows the chosen option, and a single select starts on the first
     await expect(page.getByRole('button', { name: 'Project' })).toHaveCount(1);
 });
 
-test('the field opens the options as tiles in a dialog, each with its name, the chosen one marked', async ({ page }) => {
+test('the field opens the options as tiles beside it, each with its name, the chosen one marked', async ({ page }) => {
     const el = await select(page, 'value="docs"');
     await field(el).click();
-    await expect(dialog(page)).toBeVisible();
+    await expect(panel(page)).toBeVisible();
     await expect(names(page)).toHaveText(['Acme Storefront', 'Docs', 'Payments API']);
     await expect(tile(page, 'Docs')).toHaveAttribute('aria-selected', 'true');
     await expect(tile(page, 'Payments API')).toHaveAttribute('aria-selected', 'false');
-    // A single select closes on a pick, so the dialog has no confirm button.
-    await expect(page.locator('webui-dialogs #dlg-confirm')).toBeHidden();
+    // A panel by the field, as a dropdown's list, not a dialog with a title and buttons.
+    await expect(page.locator('webui-dialogs dialog')).toBeHidden();
+    await expect(panel(page).getByRole('button')).toHaveCount(0);
+    await expect(field(el)).toHaveAttribute('aria-expanded', 'true');
 });
 
 test('an option with an icon shows it, and one without shows its initials', async ({ page }) => {
@@ -50,12 +52,12 @@ test('an option with an icon shows it, and one without shows its initials', asyn
     await expect(tile(page, 'Payments API').locator('svg.fallback text')).toHaveText('PA');
 });
 
-test('picking a tile chooses it, closes the dialog, and tells listeners and bound data', async ({ page }) => {
+test('picking a tile chooses it, closes the panel, and tells listeners and bound data', async ({ page }) => {
     const el = await select(page, 'data-bind="chosen-project" data-name="chosen-item"');
     await el.evaluate(e => { window.__changes = []; e.addEventListener('change', () => window.__changes.push(e.value)); });
     await field(el).click();
     await tile(page, 'Payments API').click();
-    await expect(dialog(page)).toBeHidden();
+    await expect(panel(page)).toBeHidden();
     await expect.poll(() => value(el)).toBe('api');
     await expect(el.locator('.pick-name')).toHaveText(['Payments API']);
     await expect.poll(() => page.evaluate(() => window.__changes)).toEqual(['api']);
@@ -68,11 +70,11 @@ test('picking the option already chosen changes nothing', async ({ page }) => {
     await el.evaluate(e => { window.__changes = 0; e.addEventListener('change', () => window.__changes++); });
     await field(el).click();
     await tile(page, 'Acme Storefront').click();
-    await expect(dialog(page)).toBeHidden();
+    await expect(panel(page)).toBeHidden();
     expect(await page.evaluate(() => window.__changes)).toBe(0);
 });
 
-test('a multiple select toggles tiles, keeps the dialog open, and closes with Done', async ({ page }) => {
+test('a multiple select toggles tiles, keeps the panel open, and closes on a click elsewhere', async ({ page }) => {
     const el = await select(page, 'multiple');
     await field(el).click();
     await tile(page, 'Payments API').click();
@@ -83,8 +85,8 @@ test('a multiple select toggles tiles, keeps the dialog open, and closes with Do
     await expect.poll(() => el.evaluate(e => e.values)).toEqual(['storefront', 'api']);
     await tile(page, 'Payments API').click();
     await expect.poll(() => el.evaluate(e => e.values)).toEqual(['storefront']);
-    await page.locator('webui-dialogs #dlg-confirm').click();
-    await expect(dialog(page)).toBeHidden();
+    await page.mouse.click(1, 1);
+    await expect(panel(page)).toBeHidden();
     await expect(el.locator('.pick-name')).toHaveText(['Acme Storefront']);
     await expect.poll(() => value(el)).toBe('storefront');
 });
@@ -106,7 +108,7 @@ test('the keyboard moves through the grid, and Enter picks', async ({ page }) =>
     await page.keyboard.press('ArrowDown');
     await expect(tile(page, `Project ${Math.min(across, 7)}`)).toBeFocused();
     await page.keyboard.press('Enter');
-    await expect(dialog(page)).toBeHidden();
+    await expect(panel(page)).toBeHidden();
     await expect.poll(() => value(el)).toBe(`p${Math.min(across, 7)}`);
 });
 
@@ -114,7 +116,7 @@ test('many options add a filter that narrows the tiles', async ({ page }) => {
     const options = Array.from({ length: 14 }, (_, i) => ({ id: `p${i}`, display: i % 2 ? `Website ${i}` : `Service ${i}` }));
     const el = await select(page, '', options);
     await field(el).click();
-    const filter = page.locator('.webui-select-dialog').getByRole('searchbox', { name: 'Filter the options' });
+    const filter = panel(page).getByRole('searchbox', { name: 'Filter the options' });
     await filter.fill('website');
     await expect(names(page)).toHaveText(options.filter((_, i) => i % 2).map(o => o.display));
 });
@@ -123,7 +125,7 @@ test('a few options have no filter', async ({ page }) => {
     const el = await select(page);
     await field(el).click();
     await expect(tiles(page)).toHaveCount(3);
-    await expect(page.locator('.webui-select-dialog').getByRole('searchbox')).toHaveCount(0);
+    await expect(panel(page).getByRole('searchbox')).toHaveCount(0);
 });
 
 test('names from data are shown as text, never markup', async ({ page }) => {
@@ -155,7 +157,7 @@ test('a disabled select does not open', async ({ page }) => {
     await expect(field(el)).toBeDisabled();
     await expect(el).toHaveAttribute('aria-disabled', 'true');
     await field(el).click({ force: true });
-    await expect(dialog(page)).toBeHidden();
+    await expect(panel(page)).toBeHidden();
 });
 
 test('setting the value from code chooses that option, and an unknown one falls back to the first', async ({ page }) => {
@@ -191,7 +193,7 @@ test('an option with a badge shows it beside its name, in its tile and in the fi
     await expect(tile(page, 'Two').locator('.badge')).toHaveCount(0);
 });
 
-test('options that change while the dialog is open redraw its tiles, keeping the choice', async ({ page }) => {
+test('options that change while the panel is open redraw its tiles, keeping the choice', async ({ page }) => {
     const el = await select(page, 'value="docs"');
     await field(el).click();
     await expect(names(page)).toHaveText(['Acme Storefront', 'Docs', 'Payments API']);
@@ -204,6 +206,46 @@ test('options that change while the dialog is open redraw its tiles, keeping the
     await expect(tile(page, 'Docs').locator('.badge .count')).toHaveText('2');
     // A tile drawn again still picks.
     await tile(page, 'Payments API').click();
-    await expect(dialog(page)).toBeHidden();
+    await expect(panel(page)).toBeHidden();
     await expect.poll(() => value(el)).toBe('api');
+});
+
+test('the panel opens again after a pick, as often as needed', async ({ page }) => {
+    const el = await select(page);
+    for (const name of ['Docs', 'Payments API', 'Acme Storefront']) {
+        await field(el).click();
+        await tile(page, name).click();
+        await expect(panel(page)).toBeHidden();
+        await expect(el.locator('.pick-name')).toHaveText([name]);
+    }
+    await expect(field(el)).toBeFocused();
+});
+
+test('a click elsewhere, Escape, or the field again closes the panel without choosing', async ({ page }) => {
+    const el = await select(page, 'value="docs"');
+    await field(el).click();
+    await expect(panel(page)).toBeVisible();
+    await page.mouse.click(1, 1);
+    await expect(panel(page)).toBeHidden();
+    await field(el).click();
+    await expect(tile(page, 'Docs')).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(panel(page)).toBeHidden();
+    await expect(field(el)).toBeFocused();
+    await expect(field(el)).toHaveAttribute('aria-expanded', 'false');
+    await field(el).click();
+    await expect(panel(page)).toBeVisible();
+    await field(el).click();
+    await expect(panel(page)).toBeHidden();
+    await expect.poll(() => value(el)).toBe('docs');
+});
+
+test('the panel fits its tiles, without scrolling when they fit in the window', async ({ page }) => {
+    const options = Array.from({ length: 10 }, (_, i) => ({ id: `p${i}`, display: `Project ${i}` }));
+    const el = await select(page, '', options);
+    await field(el).click();
+    await expect(tiles(page)).toHaveCount(10);
+    // Every tile shows whole, with nothing to scroll to.
+    await expect.poll(() => panel(page).locator('.grid').evaluate(grid => grid.scrollHeight <= grid.clientHeight)).toBe(true);
+    for (const item of await tiles(page).all()) await expect(item).toBeInViewport({ ratio: 1 });
 });

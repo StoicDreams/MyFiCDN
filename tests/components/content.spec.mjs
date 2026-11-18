@@ -84,3 +84,10 @@ test('nodetach keeps children while hidden', async ({ page }) => {
     await el.evaluate(c => c.removeAttribute('visible'));
     await expect(el.locator('p')).toHaveCount(1);
 });
+test('content that fits does not scroll, whatever margins its children have', async ({ page }) => {
+    // In a grid, as a page section holds it, the content's own height is set, which the margins once overflowed.
+    const root = await mount(page, '<div style="display:grid"><webui-content><h1 style="margin:8px 0 16px">Title</h1><p style="margin:8px 0">Text</p></webui-content></div>');
+    const content = root.locator('webui-content');
+    await expect(content).toHaveClass(/loaded/);
+    await expect.poll(() => content.evaluate(el => el.scrollHeight - el.clientHeight)).toBe(0);
+});
