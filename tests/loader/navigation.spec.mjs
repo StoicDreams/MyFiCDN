@@ -359,3 +359,58 @@ test('navigating fades the old page out before showing the new one', async ({ pa
     await page.clock.resume();
     await expect(main).not.toHaveClass(/transition/);
 });
+test.describe('a new page starts at the top', () => {
+    // Makes the current page tall enough to scroll, and scrolls it down.
+    const scrollDown = page => page.evaluate(() => {
+        const tall = document.createElement('div');
+        tall.style.height = '5000px';
+        document.querySelector('webui-app').append(tall);
+        const main = document.querySelector('webui-app').main;
+        main.scrollTop = 2000;
+        return main.scrollTop;
+    });
+    // The about page has loaded and finished fading in, so nothing replaces the added content afterwards.
+    const aboutShown = async page => {
+        await expect(page.locator('webui-app')).toContainText('More information coming soon');
+        await expect(page.locator('webui-app main')).not.toHaveClass(/transition/);
+    };
+    const mainScroll = page => page.evaluate(() => document.querySelector('webui-app').main.scrollTop);
+
+    test('navigating scrolls the page back to the top over 200 ms', async ({ page }) => {
+        await aboutShown(page);
+        // The test moves the clock, so the 200 ms scroll is checked without waiting for real time.
+        await page.clock.install();
+        await page.clock.pauseAt(Date.now() + 60 * 60 * 1000);
+        expect(await scrollDown(page)).toBeGreaterThan(0);
+        await page.evaluate(() => webui.navigateTo('/contact'));
+        // Partway through, it is moving up but not there yet: it animates rather than jumping.
+        await page.clock.runFor(100);
+        const halfway = await mainScroll(page);
+        expect(halfway).toBeGreaterThan(0);
+        expect(halfway).toBeLessThan(2000);
+        await page.clock.runFor(150);
+        expect(await mainScroll(page)).toBe(0);
+        await page.clock.resume();
+        await expect(page.locator('webui-app')).toContainText('feedback form');
+        expect(await mainScroll(page)).toBe(0);
+    });
+    test('with reduced motion, navigating jumps straight to the top', async ({ page }) => {
+        await page.emulateMedia({ reducedMotion: 'reduce' });
+        await aboutShown(page);
+        expect(await scrollDown(page)).toBeGreaterThan(0);
+        await page.evaluate(() => webui.navigateTo('/contact'));
+        // The jump happens as navigateTo runs, before the new page has loaded.
+        expect(await mainScroll(page)).toBe(0);
+        await expect(page.locator('webui-app')).toContainText('feedback form');
+    });
+    test('a #part link on the same page keeps its place', async ({ page }) => {
+        await aboutShown(page);
+        await scrollDown(page);
+        await page.evaluate(() => webui.updateHash('nothing-here'));
+        await expect(page).toHaveURL(/#nothing-here$/);
+        // A second change goes through the same path; once it is handled, the scroll is still where it was.
+        await page.evaluate(() => webui.updateHash('still-nothing'));
+        await expect(page).toHaveURL(/#still-nothing$/);
+        expect(await mainScroll(page)).toBe(2000);
+    });
+});

@@ -3279,6 +3279,30 @@ const webui = (() => {
             }
         }, 100);
     }
+    let scrollTopFrame = 0;
+    // A new page starts at the top, so scroll the page area back up over 200 ms while the old page fades out. With
+    // reduced motion it jumps there instead.
+    function scrollPageToTop() {
+        cancelAnimationFrame(scrollTopFrame);
+        const scrollers = [appSettings.app?.main, document.scrollingElement]
+            .filter((el) => el && el.scrollTop > 0)
+            .map((el) => [el, el.scrollTop]);
+        if (!scrollers.length) return;
+        if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+            scrollers.forEach(([el]) => { el.scrollTop = 0; });
+            return;
+        }
+        let start;
+        const step = (now) => {
+            start ??= now;
+            const progress = Math.min(1, (now - start) / 200);
+            // Ease out, so the scroll slows as it reaches the top.
+            const remaining = Math.pow(1 - progress, 3);
+            scrollers.forEach(([el, from]) => { el.scrollTop = from * remaining; });
+            if (progress < 1) scrollTopFrame = requestAnimationFrame(step);
+        };
+        scrollTopFrame = requestAnimationFrame(step);
+    }
     let loadPageWaits = 0;
     let loadPageWaiting = false;
     // The first page has no earlier page to fade out, so it shows as soon as it is ready.
@@ -3347,6 +3371,9 @@ const webui = (() => {
         const hasPrerendered = firstLoad && !!appSettings.app.querySelector("[data-prerendered]");
         if (!hasPrerendered) {
             appSettings.app.main.classList.add("transition");
+        }
+        if (!firstLoad) {
+            scrollPageToTop();
         }
         webui.setData("page-path", page);
         let timerStart = Date.now();
