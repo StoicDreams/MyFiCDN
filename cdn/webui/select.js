@@ -518,7 +518,9 @@ transform:none;
                 return;
             }
             t._pendingValue = undefined;
-            let ids = Array.isArray(value) ? value.map(v => `${v}`) : value === undefined || value === null || value === '' ? [] : `${value}`.split(t.multiple ? ',' : /$^/).map(v => v.trim());
+            // An empty value is no choice, unless a single select has an option whose id is empty, such as "Nothing".
+            const emptyChoice = !t.multiple && value === '' && t._options.some(option => option.id === '');
+            let ids = Array.isArray(value) ? value.map(v => `${v}`) : emptyChoice ? [''] : value === undefined || value === null || value === '' ? [] : `${value}`.split(t.multiple ? ',' : /$^/).map(v => v.trim());
             ids = ids.filter(id => t._options.some(option => option.id === id));
             if (!t.multiple) {
                 // As webui-dropdown does, a single select shows its first option when given none that it has.
@@ -663,7 +665,8 @@ transform:none;
                 tile.tabIndex = -1;
                 const picture = webui.create('span', { class: 'picture' });
                 picture.append(iconFor(option));
-                const name = webui.create('span', { class: 'name' });
+                // The title shows the whole name as a tooltip when two lines cut it off, such as a long file path.
+                const name = webui.create('span', { class: 'name', title: option.display });
                 name.textContent = option.display;
                 const check = webui.create('span', { class: 'check', 'aria-hidden': 'true' });
                 check.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6.5 12.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';

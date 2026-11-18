@@ -50,8 +50,13 @@ test('webui.getHtmlFromTemplate renders assigned templates', async ({ page }) =>
 test('webui.hasSetter finds setters on the prototype chain', async ({ page }) => {
     expect(await page.evaluate(() => [webui.hasSetter(document.createElement('input'), 'value'), webui.hasSetter(document.createElement('div'), 'value'), webui.hasSetter(null, 'x')])).toEqual([true, false, false]);
 });
-test('webui.isTextOverflowing compares scroll and client width', async ({ page }) => {
+test('webui.isTextOverflowing compares scroll and client width and height', async ({ page }) => {
     expect(await page.evaluate(() => [webui.isTextOverflowing({ scrollWidth: 20, clientWidth: 10 }), webui.isTextOverflowing({ scrollWidth: 11, clientWidth: 10 })])).toEqual([true, false]);
+    // Text clamped to a number of lines is cut off down, not across.
+    expect(await page.evaluate(() => [
+        webui.isTextOverflowing({ scrollWidth: 10, clientWidth: 10, scrollHeight: 40, clientHeight: 20 }),
+        webui.isTextOverflowing({ scrollWidth: 10, clientWidth: 10, scrollHeight: 21, clientHeight: 20 }),
+    ])).toEqual([true, false]);
 });
 test('webui.removeFromParentPTag lifts an element out of a paragraph', async ({ page }) => {
     expect(await page.evaluate(() => {

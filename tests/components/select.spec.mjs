@@ -282,3 +282,28 @@ test('the list is named by the select, and hovering between tiles shows no toolt
     await page.evaluate(() => window.__moveHandled);
     await expect(page.locator('body > .tooltip')).toHaveClass(/closed/);
 });
+
+test('an option whose id is empty can be chosen, wherever it is in the list', async ({ page }) => {
+    const el = await select(page, 'value="b"', [{ id: 'a', display: 'Alpha' }, { id: '', display: 'Nothing' }, { id: 'b', display: 'Beta' }]);
+    await expect(el.locator('.pick-name')).toHaveText(['Beta']);
+    await field(el).click();
+    await tile(page, 'Nothing').click();
+    await expect(el.locator('.pick-name')).toHaveText(['Nothing']);
+    await expect.poll(() => value(el)).toBe('');
+    await el.evaluate(e => { e.value = 'b'; });
+    await el.evaluate(e => { e.value = ''; });
+    await expect(el.locator('.pick-name')).toHaveText(['Nothing']);
+});
+
+test('a name cut off by its tile shows in full as a tooltip', async ({ page }) => {
+    const long = 'PowerShell/Release/Publish-Every-Website-And-Then-Record-Media.ps1';
+    const el = await select(page, 'item-size="6em"', [{ id: 'long', display: long }, { id: 'short', display: 'Hi' }]);
+    await field(el).click();
+    const tooltip = page.locator('body > .tooltip');
+    await tile(page, long).locator('.name').hover();
+    await expect(tooltip).toHaveText(long);
+    await expect(tooltip).toHaveClass(/open/);
+    // A name that fits shows no tooltip, since it is already all there.
+    await tile(page, 'Hi').locator('.name').hover();
+    await expect(tooltip).toHaveClass(/closed/);
+});

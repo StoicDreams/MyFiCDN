@@ -1438,7 +1438,8 @@ const webui = (() => {
          * @returns {boolean}
          */
         isTextOverflowing(el) {
-            return el.scrollWidth > el.clientWidth + 1;
+            // Cut off across, or down, as text clamped to a number of lines is.
+            return el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1;
         }
         /**
          * Is true if the user is signed in (i.e. role bit matches 1 signalling they are a user).
