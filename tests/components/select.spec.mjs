@@ -179,3 +179,31 @@ test('an option with an image shows it, and one whose image cannot load shows it
     await expect(tile(page, 'Broken Image').locator('svg.fallback text')).toHaveText('BI');
     await expect(tile(page, 'Broken Image').locator('img')).toHaveCount(0);
 });
+
+test('an option with a badge shows it beside its name, in its tile and in the field', async ({ page }) => {
+    const el = await select(page, '', [
+        { id: 'one', display: 'One', badge: '<span class="count">3</span>' },
+        { id: 'two', display: 'Two' },
+    ]);
+    await expect(el.locator('.pick .badge .count')).toHaveText('3');
+    await field(el).click();
+    await expect(tile(page, 'One').locator('.badge .count')).toHaveText('3');
+    await expect(tile(page, 'Two').locator('.badge')).toHaveCount(0);
+});
+
+test('options that change while the dialog is open redraw its tiles, keeping the choice', async ({ page }) => {
+    const el = await select(page, 'value="docs"');
+    await field(el).click();
+    await expect(names(page)).toHaveText(['Acme Storefront', 'Docs', 'Payments API']);
+    await el.evaluate(e => e.setOptions([
+        { id: 'docs', display: 'Docs', badge: '<span class="count">2</span>' },
+        { id: 'api', display: 'Payments API' },
+    ]));
+    await expect(names(page)).toHaveText(['Docs', 'Payments API']);
+    await expect(tile(page, 'Docs')).toHaveAttribute('aria-selected', 'true');
+    await expect(tile(page, 'Docs').locator('.badge .count')).toHaveText('2');
+    // A tile drawn again still picks.
+    await tile(page, 'Payments API').click();
+    await expect(dialog(page)).toBeHidden();
+    await expect.poll(() => value(el)).toBe('api');
+});

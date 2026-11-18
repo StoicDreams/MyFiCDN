@@ -125,6 +125,14 @@
         return svg;
     }
 
+    /** An option's badge: markup the page supplies, such as counts, shown beside its name. */
+    function badgeFor(option) {
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.innerHTML = option.badge;
+        return badge;
+    }
+
     /** An option's picture: its image, its icon, or else the drawn monogram. */
     function iconFor(option, size) {
         if (option.image) {
@@ -266,6 +274,15 @@ filter:drop-shadow(0 2px 4px rgb(0 0 0 / 22%));
 font-size:2.8em;
 color:var(--color-title, currentColor);
 }
+.badge {
+display:inline-flex;
+flex-wrap:wrap;
+align-items:center;
+justify-content:center;
+gap:0.2em;
+max-width:100%;
+font-size:0.85em;
+}
 .name {
 display:-webkit-box;
 -webkit-line-clamp:2;
@@ -294,6 +311,7 @@ transform:none;
             const t = this;
             t._options = [];
             t._selected = [];
+            t._tiles = [];
             t._forLabel = t.template.querySelector('label');
             t._label = t.template.querySelector('slot[name="label"]');
             t._picker = t.template.querySelector('button');
@@ -387,6 +405,7 @@ transform:none;
             const displayKey = t.dataset.display;
             const iconKey = t.dataset.icon;
             const imageKey = t.dataset.image;
+            const badgeKey = t.dataset.badge;
             t._options = extractOptions(options).map(item => {
                 if (typeof item !== 'object' || item === null) item = { id: `${item}`, display: `${item}` };
                 const id = webui.getDefined(idKey ? item[idKey] : undefined, item.id, item.value);
@@ -394,7 +413,9 @@ transform:none;
                 const display = `${webui.getDefined(displayKey ? item[displayKey] : undefined, item.display, item.name, id)}`;
                 const icon = webui.getDefined(iconKey ? item[iconKey] : undefined, item.icon) || '';
                 const image = webui.getDefined(imageKey ? item[imageKey] : undefined, item.image) || '';
-                return { id: `${id}`, display, icon: `${icon}`, image: `${image}`, data: item };
+                // Markup the page itself supplies, such as status icons, never text from data, as with webui-dropdown's html.
+                const badge = webui.getDefined(badgeKey ? item[badgeKey] : undefined, item.badge) || '';
+                return { id: `${id}`, display, icon: `${icon}`, image: `${image}`, badge: `${badge}`, data: item };
             }).filter(Boolean);
             t._optionsSet = true;
             let value = t._pendingValue !== undefined ? t._pendingValue : t._selected;
@@ -405,6 +426,7 @@ transform:none;
                 else if (saved && typeof saved === 'object') value = webui.getDefined(saved[idKey], saved.id, saved.value) ?? value;
             }
             t.setValue(value, true);
+            t.fillGrid();
         },
         props: {
             value: {
@@ -469,6 +491,7 @@ transform:none;
                 const name = webui.create('span', { class: 'pick-name' });
                 name.textContent = option.display;
                 pick.append(picture, name);
+                if (option.badge) pick.append(badgeFor(option));
                 return pick;
             }));
         },
@@ -484,43 +507,24 @@ transform:none;
             if (size) host.style.setProperty('--webui-select-item-size', size);
             const grid = webui.create('div', { class: 'grid', role: 'listbox', 'aria-label': t.dialogTitle() });
             grid.setAttribute('aria-multiselectable', t.multiple ? 'true' : 'false');
-            const tiles = t._options.map((option, index) => {
-                const tile = webui.create('button', { type: 'button', class: 'tile', role: 'option', 'data-value': option.id });
-                tile.setAttribute('aria-selected', t._selected.includes(option.id) ? 'true' : 'false');
-                tile.tabIndex = -1;
-                const picture = webui.create('span', { class: 'picture' });
-                picture.append(iconFor(option));
-                const name = webui.create('span', { class: 'name' });
-                name.textContent = option.display;
-                const check = webui.create('span', { class: 'check', 'aria-hidden': 'true' });
-                check.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6.5 12.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-                tile.append(check, picture, name);
-                tile.addEventListener('click', ev => {
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                    t.choose(option.id, tiles);
-                });
-                tile.dataset.index = index;
-                return tile;
-            });
-            grid.append(...tiles);
-            grid.addEventListener('keydown', ev => t.onGridKey(ev, tiles, grid));
+            grid.addEventListener('keydown', ev => t.onGridKey(ev, t._tiles, grid));
             root.append(style);
+            t._grid = grid;
+            t._filter = null;
             if (t._options.length >= FILTER_FROM) {
                 const filter = webui.create('input', { type: 'search', class: 'filter', placeholder: 'Filter', 'aria-label': 'Filter the options' });
-                filter.addEventListener('input', () => {
-                    const words = filter.value.trim().toLowerCase();
-                    tiles.forEach((tile, index) => { tile.hidden = !!words && !t._options[index].display.toLowerCase().includes(words); });
-                });
+                filter.addEventListener('input', () => t.applyFilter());
                 filter.addEventListener('keydown', ev => {
                     if (ev.key === 'ArrowDown' || ev.key === 'Enter') {
                         ev.preventDefault();
-                        t.focusTile(tiles.find(tile => !tile.hidden), tiles);
+                        t.focusTile(t._tiles.find(tile => !tile.hidden), t._tiles);
                     }
                 });
                 root.append(filter);
+                t._filter = filter;
             }
             root.append(grid);
+            t.fillGrid();
             t._dialog = webui.dialog({
                 title: t.dialogTitle(),
                 content: host,
@@ -531,13 +535,52 @@ transform:none;
             });
             Promise.resolve(t._dialog).catch(() => { }).finally(() => {
                 t._dialog = null;
+                t._grid = null;
+                t._tiles = [];
                 t._picker.focus();
             });
             // Focus moves to the chosen tile once the dialog shows it.
             webui.wait(() => host.isConnected, 2000).then(() => {
-                const start = tiles.find(tile => tile.getAttribute('aria-selected') === 'true') || tiles[0];
-                t.focusTile(start, tiles);
+                const start = t._tiles.find(tile => tile.getAttribute('aria-selected') === 'true') || t._tiles[0];
+                t.focusTile(start, t._tiles);
             }).catch(() => { });
+        },
+        /** Draws a tile for each option in the open dialog, keeping focus on the same option when it is drawn again. */
+        fillGrid() {
+            const t = this;
+            const grid = t._grid;
+            if (!grid) return;
+            const focused = grid.getRootNode().activeElement?.closest?.('.tile')?.dataset.value;
+            t._tiles = t._options.map((option, index) => {
+                const tile = webui.create('button', { type: 'button', class: 'tile', role: 'option', 'data-value': option.id });
+                tile.setAttribute('aria-selected', t._selected.includes(option.id) ? 'true' : 'false');
+                tile.tabIndex = -1;
+                const picture = webui.create('span', { class: 'picture' });
+                picture.append(iconFor(option));
+                const name = webui.create('span', { class: 'name' });
+                name.textContent = option.display;
+                const check = webui.create('span', { class: 'check', 'aria-hidden': 'true' });
+                check.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6.5 12.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                tile.append(check, picture, name);
+                if (option.badge) tile.append(badgeFor(option));
+                tile.addEventListener('click', ev => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    t.choose(option.id, t._tiles);
+                });
+                tile.dataset.index = index;
+                return tile;
+            });
+            grid.replaceChildren(...t._tiles);
+            t.applyFilter();
+            const again = t._tiles.find(tile => tile.dataset.value === focused);
+            if (again) t.focusTile(again, t._tiles);
+        },
+        /** Hides the tiles whose names don't hold what the filter has typed in it. */
+        applyFilter() {
+            const t = this;
+            const words = (t._filter?.value || '').trim().toLowerCase();
+            t._tiles.forEach((tile, index) => { tile.hidden = !!words && !t._options[index].display.toLowerCase().includes(words); });
         },
         dialogTitle() {
             return this.getAttribute('title') || (this._label.textContent || '').trim() || 'Choose';
@@ -674,6 +717,12 @@ object-fit:contain;
 .pick-picture webui-icon {
 width:100%;
 height:100%;
+}
+.pick .badge {
+display:inline-flex;
+align-items:center;
+gap:0.2em;
+margin-left:auto;
 }
 .pick-name {
 overflow:hidden;
