@@ -114,3 +114,24 @@ test('alerts added after webui.clearAlerts show again', async ({ page }) => {
     await expect(popup(page).locator('.counter')).toHaveCount(0);
     await expect(root.locator('webui-alerts webui-icon')).toHaveAttribute('count', '1');
 });
+test('with panel it lists the alerts in place, and follows them as they come and go', async ({ page }) => {
+    const root = await mount(page, '<webui-alerts hidden></webui-alerts><webui-alerts id="p" panel></webui-alerts>');
+    const panel = root.locator('#p');
+    await expect(panel).toContainText('You have no alerts at this time.');
+    await page.evaluate(() => webui.addAlert('In the panel', 'info', { popup: false }));
+    await expect(panel.locator('webui-alert')).toHaveText('In the panel');
+    await page.evaluate(() => webui.clearAlerts());
+    await expect(panel).toContainText('You have no alerts at this time.');
+    // A panel is not a button.
+    await expect(panel).not.toHaveAttribute('role');
+});
+test('the document hears each change in how many alerts there are', async ({ page }) => {
+    await ready(page);
+    await page.evaluate(() => {
+        window.__counts = [];
+        document.addEventListener('webui-alerts-count', ev => window.__counts.push(ev.detail.count));
+    });
+    await page.evaluate(async () => { await webui.alert('One', 'info'); await webui.alert('Two', 'info'); });
+    await page.evaluate(() => webui.clearAlerts());
+    await expect.poll(() => page.evaluate(() => window.__counts)).toEqual([1, 2, 0]);
+});

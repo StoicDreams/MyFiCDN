@@ -8,6 +8,8 @@
 <webui-page-segment elevation="10">
     The `<webui-alerts>` component can be added to any HTML page. It is typically placed in a header or navigation area, but it can be placed anywhere on the page.
     The component can be configured using attributes and data attributes to customize its behavior and appearance.
+
+    With the `panel` flag, the component shows the list of alerts in place, such as in a tab, rather than a bell that opens it, and keeps it current as alerts come and go. Keep one `<webui-alerts>` without `panel` on the page, hidden if you like, since it is what shows the popups. Whenever the number of alerts not yet closed changes, the document gets a `webui-alerts-count` event with `count` in its `detail`, so a button can show it.
 </webui-page-segment>
 
 <webui-side-by-side>

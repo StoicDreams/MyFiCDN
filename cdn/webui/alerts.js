@@ -2,6 +2,8 @@
  * Web UI Alerts - https://webui.stoicdreams.com/components#webui-alerts
  * Displays Alert icon and enables webui.alert(message:string|html, variant:string[success|warning|danger|info]) for displaying popup alerts,
  * webui.addAlert(message, variant, { popup }) which resolves to the alert, and webui.clearAlerts({ close }) which removes them all.
+ * With the panel flag it shows the list of alerts in place, such as in a tab, rather than a bell. Whenever the number of
+ * alerts not closed changes, the document gets a webui-alerts-count event with { count } in its detail.
  * Authored by Erik Gassler - Stoic Dreams
  * Copyright © 2024-2025 Stoic Dreams - https://www.stoicdreams.com
  * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
@@ -157,6 +159,7 @@
                 window.webuiAlert = webui.alert;
             }
             t.addEventListener('click', _ev => {
+                if (t.hasAttribute('panel')) return true;
                 if (!t.drawer) {
                     showAlertsInDialog.bind(t)();
                 } else {
@@ -168,6 +171,7 @@
             setTimeout(() => t.checkCounts(), 1000);
         },
         attr: ['data-toggleclass', 'data-title', 'data-popup'],
+        flags: ['panel'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
@@ -187,7 +191,9 @@
         },
         setCount(value) {
             const t = this;
+            const changed = t.count !== value;
             t.count = value;
+            if (changed) document.dispatchEvent(new CustomEvent('webui-alerts-count', { detail: { count: value } }));
             t.icon.setAttribute('count', value === 0 ? '' : value.toLocaleString());
             if (t.count === 0) {
                 t.icon.setAttribute('theme', 'info');
@@ -242,8 +248,20 @@
                 t._lastTrigger = undefined;
             }, 100);
         },
+        /** Shows the alerts in place, for the panel flag, and again whenever how many there are changes. */
+        renderPanel() {
+            const t = this;
+            if (!t.hasAttribute('panel')) return;
+            t.replaceChildren(getAlertContent());
+        },
         connected() {
             const t = this;
+            if (t.hasAttribute('panel')) {
+                t._panelListener ??= () => t.renderPanel();
+                document.addEventListener('webui-alerts-count', t._panelListener);
+                t.renderPanel();
+                return;
+            }
             // These open a dialog or panel when clicked, so keyboard users need them to work as buttons too.
             if (!t.hasAttribute('role')) t.setAttribute('role', 'button');
             if (!t.hasAttribute('tabindex')) t.setAttribute('tabindex', '0');
@@ -261,14 +279,23 @@
             };
             t.dataset.subscribe = `${alertTrigger}:triggerAlert`;
         },
+        disconnected() {
+            if (this._panelListener) document.removeEventListener('webui-alerts-count', this._panelListener);
+        },
         reconnected() {
             const t = this;
+            if (t.hasAttribute('panel')) {
+                document.addEventListener('webui-alerts-count', t._panelListener);
+                t.renderPanel();
+                return;
+            }
             if (t._isCheckingCounts) return;
             t._isCheckingCounts = true;
             t.checkCounts();
         },
         shadowTemplate: `
 <webui-icon icon="circle_bell|fill|backing|bordered|shade:tri|theme:info"></webui-icon>
+<slot></slot>
 <style type="text/css">
 :host {
 display:inline-flex;
@@ -276,6 +303,14 @@ cursor:pointer;
 padding:1px;
 align-items:center;
 justify-content:center;
+}
+:host([panel]) {
+display:block;
+cursor:auto;
+padding:0;
+}
+:host([panel]) webui-icon {
+display:none;
 }
 </style>
 `

@@ -1,5 +1,5 @@
 <webui-page-segment elevation="10">
-    The `<webui-drawer>` component provides a slide-out panel often used for navigation menus or contextual tools. It can be docked to remain continuously visible or set to overlay the page. Users can manipulate its position if the `data-moveable` attribute is present, and toggle its docked state if `data-dockable` is applied.
+    The `<webui-drawer>` component provides a slide-out panel often used for navigation menus or contextual tools. It can be docked to remain continuously visible or set to overlay the page. Users can manipulate its position if the `data-moveable` attribute is present, and toggle its docked state if `data-dockable` is applied. `data-moveable` can list the slots the drawer may move to, such as `data-moveable="left|right"`, and a drawer in a slot it may not use, such as one saved there before, moves to the first one listed.
 </webui-page-segment>
 
 <webui-side-by-side>

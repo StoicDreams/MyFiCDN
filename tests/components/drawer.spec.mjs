@@ -14,6 +14,22 @@ test('move buttons change the slot', async ({ page }) => {
     await drawer.locator('.toggle-pos-right').evaluate(el => el.click());
     await expect(drawer).toHaveAttribute('slot', 'right');
 });
+test('with no slots listed it offers all four, and a list such as left|right offers only those', async ({ page }) => {
+    const root = await mount(page, '<webui-drawer class="all" slot="left" data-moveable></webui-drawer><webui-drawer class="sides" slot="left" data-moveable="left|right"></webui-drawer>');
+    // A drawer gives itself its own id, so these are found by class.
+    const buttons = name => root.locator(`webui-drawer.${name} [slot="footer"] button[data-setattr]`);
+    await expect.poll(() => buttons('all').evaluateAll(list => list.map(b => b.className))).toEqual(['toggle-pos-left', 'toggle-pos-right', 'toggle-pos-top', 'toggle-pos-bottom']);
+    await expect.poll(() => buttons('sides').evaluateAll(list => list.map(b => b.className))).toEqual(['toggle-pos-left', 'toggle-pos-right']);
+});
+test('a drawer limited to some slots moves out of one it may not use, such as a saved top', async ({ page }) => {
+    const root = await mount(page, '<webui-drawer class="d" slot="top" data-moveable="left|right"></webui-drawer>');
+    const drawer = root.locator('webui-drawer.d');
+    await expect(drawer).toHaveAttribute('slot', 'left');
+    await drawer.evaluate(el => el.setAttribute('slot', 'bottom'));
+    await expect(drawer).toHaveAttribute('slot', 'left');
+    await drawer.evaluate(el => el.setAttribute('slot', 'right'));
+    await expect(drawer).toHaveAttribute('slot', 'right');
+});
 test('the footer is rebuilt when content replaces it', async ({ page }) => {
     const root = await mount(page, '<webui-drawer data-moveable></webui-drawer>');
     const drawer = root.locator('webui-drawer');

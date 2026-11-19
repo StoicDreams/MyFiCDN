@@ -25,19 +25,23 @@
         const unit = (match[2] || 'px').toLowerCase();
         return unit === 'px' ? amount : window.innerWidth * amount / 100;
     }
-    const moveableTemplate = `
-<button data-setattr="[ID]|slot|left" aria-label="Set [name] to left" class="toggle-pos-left">
-<webui-icon icon="drawer|rotate:90"></webui-icon>
-</button>
-<button data-setattr="[ID]|slot|right" aria-label="Set [name] to right" class="toggle-pos-right">
-<webui-icon icon="drawer|rotate:-90"></webui-icon>
-</button>
-<button data-setattr="[ID]|slot|top" aria-label="Set [name] to top" class="toggle-pos-top">
-<webui-icon icon="drawer|rotate:180"></webui-icon>
-</button>
-<button data-setattr="[ID]|slot|bottom" aria-label="Set [name] to bottom" class="toggle-pos-bottom">
-<webui-icon icon="drawer"></webui-icon>
-</button>`;
+    const MOVE_SLOTS = {
+        left: 'drawer|rotate:90',
+        right: 'drawer|rotate:-90',
+        top: 'drawer|rotate:180',
+        bottom: 'drawer',
+    };
+    /** The slots a moveable drawer can move to: those `data-moveable` lists, such as `left|right`, or all four. */
+    function moveSlots(value) {
+        const listed = `${value ?? ''}`.split(/[|,\s]+/).filter(slot => MOVE_SLOTS[slot]);
+        return listed.length ? listed : Object.keys(MOVE_SLOTS);
+    }
+    function moveableTemplate(slots) {
+        return slots.map(slot => `
+<button data-setattr="[ID]|slot|${slot}" aria-label="Set [name] to ${slot}" class="toggle-pos-${slot}">
+<webui-icon icon="${MOVE_SLOTS[slot]}"></webui-icon>
+</button>`).join('');
+    }
     // The site menu is called navigation, and any other drawer a panel, in its labels and tooltips.
     const isNavigation = el => !!el.querySelector('webui-nav') || el.classList.contains('nav');
     webui.define("webui-drawer", {
@@ -184,11 +188,16 @@
                     break;
                 case 'dataMoveable':
                     t.dataMoveable = true;
+                    t.keepToMoveSlots();
                     t.buildFooterContent();
+                    break;
+                case 'slot':
+                    // A slot saved before the drawer was limited, such as top, moves it back to one it may use.
+                    if (t.keepToMoveSlots()) break;
+                    t.applyWidth(parseFloat(t.getAttribute('width')));
                     break;
                 case 'resizable':
                 case 'width':
-                case 'slot':
                 case 'dockedMinWidth':
                 case 'dockedMaxWidth':
                 case 'undockedMinWidth':
@@ -201,7 +210,7 @@
             const t = this;
             let fb = t.querySelectorAll('[slot="footer"]');
             let content = '';
-            if (this.dataMoveable) { content += moveableTemplate; }
+            if (this.dataMoveable) { content += moveableTemplate(moveSlots(t.getAttribute('data-moveable'))); }
             if (this.dataDockable && !this._forceUndocked) { content += dockableTemplate; }
             if (this.dataDockable) { content += closeTemplate; }
             const name = isNavigation(t) ? 'Navigation' : 'Panel';
@@ -214,6 +223,16 @@
             fb.setAttribute('slot', 'footer');
             fb.innerHTML = content;
             this.appendChild(fb);
+        },
+        /** Moves a drawer limited by data-moveable out of a slot it may not use. Says whether it moved. */
+        keepToMoveSlots() {
+            const t = this;
+            const slot = t.getAttribute('slot');
+            if (!t.hasAttribute('data-moveable') || !slot) return false;
+            const slots = moveSlots(t.getAttribute('data-moveable'));
+            if (slots.includes(slot)) return false;
+            t.setAttribute('slot', slots[0]);
+            return true;
         },
         checkResponsiveDocking() {
             const isNarrow = window.innerWidth < 900;
