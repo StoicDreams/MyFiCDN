@@ -70,6 +70,19 @@ test('signing out from the panel clears the role', async ({ page }) => {
     await signout.evaluate(b => b.click());
     await expect.poll(() => page.evaluate(() => webui.isSignedIn)).toBe(false);
 });
+test('the panel ends with a link to the Stoic Dreams account page, and no Coming Soon notice', async ({ page }) => {
+    const root = await mount(page, '<webui-dialogs></webui-dialogs><webui-drawer class="shared"></webui-drawer><webui-myfi-info></webui-myfi-info>');
+    await page.evaluate(() => webui.setData('session-user-role', 1));
+    await root.locator('webui-myfi-info').evaluate(c => c.click());
+    const drawer = root.locator('webui-drawer.shared');
+    const link = drawer.locator('webui-link');
+    await expect(link).toHaveAttribute('href', 'https://www.stoicdreams.com/account');
+    await expect(link).toHaveText('Manage your Stoic Dreams Account');
+    await expect(drawer).not.toContainText('Coming Soon');
+    // Below the panel's own buttons.
+    await expect.poll(() => link.evaluate(a => a.previousElementSibling?.getAttribute('name'))).toBe('dev');
+    await expect.poll(() => link.evaluate(a => !a.nextElementSibling)).toBe(true);
+});
 test('exclude hides panel buttons', async ({ page }) => {
     const root = await mount(page, '<webui-drawer class="shared"></webui-drawer><webui-myfi-info exclude="signout|grow"></webui-myfi-info>');
     await page.evaluate(() => webui.setData('session-user-role', 1));
@@ -77,6 +90,15 @@ test('exclude hides panel buttons', async ({ page }) => {
     const drawer = root.locator('webui-drawer.shared');
     await expect(drawer.locator('webui-button[name="site-settings"]')).toBeAttached();
     await expect(drawer.locator('webui-button[name="signout"]')).toHaveCount(0);
+    await expect(drawer.locator('webui-link')).toHaveCount(1);
+});
+test('exclude account leaves out the account page link', async ({ page }) => {
+    const root = await mount(page, '<webui-drawer class="shared"></webui-drawer><webui-myfi-info exclude="account"></webui-myfi-info>');
+    await page.evaluate(() => webui.setData('session-user-role', 1));
+    await root.locator('webui-myfi-info').evaluate(c => c.click());
+    const drawer = root.locator('webui-drawer.shared');
+    await expect(drawer.locator('webui-button[name="signout"]')).toBeAttached();
+    await expect(drawer.locator('webui-link')).toHaveCount(0);
 });
 test('without a shared drawer it uses a dialog and does not throw', async ({ page }) => {
     const root = await mount(page, '<webui-dialogs></webui-dialogs><webui-myfi-info></webui-myfi-info>');

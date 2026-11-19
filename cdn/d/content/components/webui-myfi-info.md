@@ -1,5 +1,5 @@
 <webui-page-segment elevation="10">
-    The `<webui-myfi-info>` component provides a user account button that toggles a shared side-panel drawer. It automatically adjusts its appearance and behavior based on the user's authentication state (`session-user-role`). When authenticated, it opens a customizable account panel equipped with default links for Site Settings and Sign-Out.
+    The `<webui-myfi-info>` component provides a user account button that toggles a shared side-panel drawer. It automatically adjusts its appearance and behavior based on the user's authentication state (`session-user-role`). When authenticated, it opens a customizable account panel equipped with default buttons for Site Settings and Sign-Out, and ends with a link to the visitor's Stoic Dreams account page (`https://www.stoicdreams.com/account`), where they manage their subscriptions and the sites they sign in to.
 </webui-page-segment>
 
 <webui-side-by-side>
@@ -29,6 +29,14 @@ Set `sign-in-label` to show a labeled button while the visitor is signed out, su
 
 ```html:Code Snippet
 <webui-myfi-info sign-in-label="Sign in"></webui-myfi-info>
+```
+
+### Leaving out panel items
+
+Set `exclude` to a `|` separated list of the items to leave out of the panel: `site-settings`, `signout`, `account` (the account page link), and `grow` (the space that pushes the buttons to the bottom).
+
+```html:Code Snippet
+<webui-myfi-info exclude="site-settings|account"></webui-myfi-info>
 ```
 
 ### Source Code

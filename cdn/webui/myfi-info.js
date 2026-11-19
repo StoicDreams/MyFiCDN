@@ -10,6 +10,7 @@
     const domain = location.hostname;
     const flowGrow = `
 <webui-flex grow></webui-flex>`;
+    const accountUrl = 'https://www.stoicdreams.com/account';
     const panelBottomButtons = [
         {
             name: 'site-settings', theme: 'info', display: 'Site Settings', click: _ => {
@@ -61,7 +62,7 @@
                 ev.preventDefault();
                 if (webui.isSignedIn) {
                     let template = t._slotContent.assignedElements()[0];
-                    let content = template ? template.innerHTML : `<webui-alert variant="info" show>Coming Soon!</webui-alert>`;
+                    let content = template ? template.innerHTML : '';
                     let excludes = (t.exclude || '').split('|').map(e => e.trim());
                     if (excludes.indexOf('grow') === -1) {
                         content = `${content}${flowGrow}`;
@@ -79,6 +80,10 @@
                             content.appendChild(btn);
                         }
                     });
+                    if (excludes.indexOf('account') === -1) {
+                        // Last in the panel: the account page on the sign-in hub, for subscriptions and sign-in permissions on every site.
+                        content.appendChild(webui.create('webui-link', { href: accountUrl, icon: 'user-gear', text: 'Manage your Stoic Dreams Account' }));
+                    }
                 } else {
                     if (webui.isLocalhost) {
                         webui.setData('session-user-role', 1);
