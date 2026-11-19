@@ -7,31 +7,32 @@
     - The `reverse` flag puts the media on the right. When the component is narrower than 720 pixels, the media stacks above the text.
 </webui-page-segment>
 
-```html:Code Snippet
-<webui-feature src="https://cdn.myfi.ws/v/webui/loop-video-demo.webp"
-    video="https://cdn.myfi.ws/v/webui/loop-video-demo.mp4"
-    alt="Writing a commit message in the Task Proxy Git Controller, with one file excluded">
-    <h3>Commit and sync</h3>
-    <p>Write a commit message, leave out the files you aren't ready to share, and sync in one step.</p>
-</webui-feature>
-<webui-feature src="https://cdn.myfi.ws/v/webui/loop-video-demo.webp" alt="The Task Proxy Git Controller" reverse>
-    <h3>A screenshot instead</h3>
-    <p>Without <code>video</code>, the screenshot shows, linked to its full size.</p>
-</webui-feature>
-```
-
-<webui-page-segment elevation="10">
-    <webui-feature src="https://cdn.myfi.ws/v/webui/loop-video-demo.webp"
-        video="https://cdn.myfi.ws/v/webui/loop-video-demo.mp4"
-        alt="Writing a commit message in the Task Proxy Git Controller, with one file excluded">
-        <h3>Commit and sync</h3>
-        <p>Write a commit message, leave out the files you aren't ready to share, and sync in one step.</p>
-    </webui-feature>
-    <webui-feature src="https://cdn.myfi.ws/v/webui/loop-video-demo.webp" alt="The Task Proxy Git Controller" reverse>
-        <h3>A screenshot instead</h3>
-        <p>Without <code>video</code>, the screenshot shows, linked to its full size.</p>
-    </webui-feature>
-</webui-page-segment>
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-feature src="https://cdn.myfi.ws/v/webui/loop-video-demo.webp"
+            video="https://cdn.myfi.ws/v/webui/loop-video-demo.mp4"
+            alt="Writing a commit message in the Task Proxy Git Controller, with one file excluded">
+            <h3>Commit and sync</h3>
+            <p>Write a commit message, leave out the files you aren't ready to share, and sync in one step.</p>
+        </webui-feature>
+        <webui-feature src="https://cdn.myfi.ws/v/webui/loop-video-demo.webp" alt="The Task Proxy Git Controller" reverse>
+            <h3>A screenshot instead</h3>
+            <p>Without <code>video</code>, the screenshot shows, linked to its full size.</p>
+        </webui-feature>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-feature src="https://cdn.myfi.ws/v/webui/loop-video-demo.webp"
+            video="https://cdn.myfi.ws/v/webui/loop-video-demo.mp4"
+            alt="Writing a commit message in the Task Proxy Git Controller, with one file excluded">
+            <h3>Commit and sync</h3>
+            <p>Write a commit message, leave out the files you aren't ready to share, and sync in one step.</p>
+        </webui-feature>
+        <webui-feature src="https://cdn.myfi.ws/v/webui/loop-video-demo.webp" alt="The Task Proxy Git Controller" reverse>
+            <h3>A screenshot instead</h3>
+            <p>Without <code>video</code>, the screenshot shows, linked to its full size.</p>
+        </webui-feature>
+    </webui-page-segment>
+</webui-side-by-side>
 
 ### Source Code
 
