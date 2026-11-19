@@ -1,0 +1,63 @@
+/*!
+ * Web UI Badge - https://webui.stoicdreams.com/components#webui-badge
+ * A small rounded label for a state or a count, such as Signed, Turned off, or 3.
+ * Authored by Erik Gassler - Stoic Dreams
+ * Copyright © 2026 Stoic Dreams - https://www.stoicdreams.com
+ * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
+ */
+"use strict"
+{
+    webui.define('webui-badge', {
+        preload: 'icon',
+        attr: ['theme', 'icon'],
+        constructor() {
+            const t = this;
+            t._icon = t.template.querySelector('webui-icon');
+        },
+        attrChanged(property, value) {
+            const t = this;
+            switch (property) {
+                case 'theme':
+                    t.setTheme(value);
+                    break;
+                case 'icon':
+                    if (value) t._icon.setAttribute('icon', value);
+                    else t._icon.removeAttribute('icon');
+                    t._icon.hidden = !value;
+                    break;
+            }
+        },
+        connected() {
+            const t = this;
+            t._icon.hidden = !t.getAttribute('icon');
+        },
+        shadowTemplate: `
+<webui-icon part="icon" aria-hidden="true" hidden></webui-icon><slot></slot>
+<style type="text/css">
+:host {
+display: inline-flex;
+align-items: center;
+gap: 0.3em;
+padding: 0.1em 0.6em;
+border-radius: 1em;
+font-size: 0.85em;
+font-weight: bold;
+line-height: 1.4;
+white-space: nowrap;
+vertical-align: middle;
+background-color: color-mix(in srgb, currentColor 15%, transparent);
+}
+:host([theme]) {
+background-color: var(--theme-color);
+color: var(--theme-color-offset);
+}
+[hidden] {
+display: none !important;
+}
+webui-icon {
+font-size: 1.1em;
+}
+</style>
+`,
+    });
+}
