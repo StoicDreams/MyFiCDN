@@ -24,7 +24,7 @@ test('applyDynamicStyles publishes layout sizes and a width class', async ({ pag
         return [style.getPropertyValue('--window-width'), style.getPropertyValue('--main-height'), document.body.className];
     });
     expect(width).toBe(`${page.viewportSize().width}px`);
-    expect(height).toMatch(/^\d+px$/);
+    expect(height).toMatch(/^\d+(\.\d+)?px$/);
     expect(body).toMatch(/w-(hd|tab|mob|hdp|fhd|qhd|wqhd|4k)/);
 });
 test('setPageContent replaces only the page content', async ({ page }) => {
@@ -56,19 +56,32 @@ test('page title comes from page data', async ({ page }) => {
 });
 test('layout size variables follow the header and the window', async ({ page }) => {
     const variable = name => page.evaluate(n => document.documentElement.style.getPropertyValue(n), name);
-    const before = parseInt(await variable('--header-height'));
+    const before = parseFloat(await variable('--header-height'));
     await page.evaluate(() => {
         const block = document.createElement('div');
         block.id = 'tall';
         block.style.height = '120px';
         document.querySelector('webui-app > header').appendChild(block);
     });
-    await expect.poll(async () => parseInt(await variable('--header-height'))).toBeGreaterThanOrEqual(Math.max(before, 120));
+    await expect.poll(async () => parseFloat(await variable('--header-height'))).toBeGreaterThanOrEqual(Math.max(before, 120));
     await page.setViewportSize({ width: 900, height: 500 });
     await expect.poll(() => variable('--window-height')).toBe('500px');
-    const header = parseInt(await variable('--header-height'));
-    const footer = parseInt(await variable('--footer-height'));
-    await expect.poll(async () => parseInt(await variable('--main-height'))).toBe(500 - header - footer);
+    const header = parseFloat(await variable('--header-height'));
+    const footer = parseFloat(await variable('--footer-height'));
+    await expect.poll(async () => parseFloat(await variable('--main-height'))).toBeCloseTo(500 - header - footer, 3);
+});
+test('a header with a border, or a height that is not a whole number of pixels, leaves the app fitting the window, with nothing to scroll', async ({ page }) => {
+    await page.evaluate(() => {
+        const block = document.createElement('div');
+        block.style.height = '49.9px';
+        const header = document.querySelector('webui-app > header');
+        header.style.borderBottom = '1px solid';
+        header.replaceChildren(block);
+    });
+    const app = page.locator('webui-app');
+    await expect.poll(() => app.evaluate(el => el.scrollHeight - el.clientHeight)).toBe(0);
+    // Asked to scroll, it stays where it is, so the header never shifts by a pixel.
+    await expect.poll(() => app.evaluate(el => { el.scrollTop = 5; return el.scrollTop; })).toBe(0);
 });
 for (const width of [360, 375]) {
     test(`on a ${width}px phone, wide page content scrolls inside main and the page does not scroll sideways`, async ({ page }) => {

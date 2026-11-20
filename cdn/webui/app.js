@@ -133,8 +133,10 @@ webui.define("webui-app", {
     measure() {
         const t = this;
         t._measured = true;
-        const height = name => t.getSlot(name)?.clientHeight || 0;
-        const width = name => t.getSlot(name)?.clientWidth || 0;
+        // Each slot's whole size, borders included and not rounded, as clientHeight does neither: a header 50.9px tall
+        // with a 1px border counted as 50 would leave main too tall, and the app would scroll by a pixel.
+        const height = name => t.getSlot(name)?.getBoundingClientRect().height || 0;
+        const width = name => t.getSlot(name)?.getBoundingClientRect().width || 0;
         const wh = window.innerHeight || document.body.clientHeight;
         const values = {
             '--window-width': window.innerWidth || document.body.clientWidth,
