@@ -135,3 +135,40 @@ test('the document hears each change in how many alerts there are', async ({ pag
     await page.evaluate(() => webui.clearAlerts());
     await expect.poll(() => page.evaluate(() => window.__counts)).toEqual([1, 2, 0]);
 });
+test('a panel lists the newest alert first, and Clear All closes them all', async ({ page }) => {
+    const root = await mount(page, '<webui-alerts hidden></webui-alerts><webui-alerts id="p" panel></webui-alerts>');
+    const panel = root.locator('#p');
+    const clearAll = panel.locator('webui-button', { hasText: 'Clear All' });
+    await expect(clearAll).toBeHidden();
+    await page.evaluate(async () => {
+        window.__closed = [];
+        for (const text of ['Older', 'Newer']) {
+            const alert = await webui.addAlert(text, 'info', { popup: false });
+            alert.addEventListener('close', () => window.__closed.push(text));
+        }
+    });
+    await expect(panel.locator('.alerts-list > webui-alert')).toHaveText(['Newer', 'Older']);
+    await clearAll.click();
+    await expect.poll(() => page.evaluate(() => window.__closed)).toEqual(['Older', 'Newer']);
+    await expect(panel.locator('.alerts-list > webui-alert')).toHaveText(['You have no alerts at this time.']);
+    await expect(clearAll).toBeHidden();
+    await expect(root.locator('webui-alerts[hidden] webui-icon')).toHaveAttribute('count', '');
+});
+test('closing an alert in a panel removes only that one, leaving the others in place', async ({ page }) => {
+    const root = await mount(page, '<webui-alerts hidden></webui-alerts><webui-alerts id="p" panel></webui-alerts>');
+    const panel = root.locator('#p');
+    await page.evaluate(async () => {
+        for (const text of ['One', 'Two', 'Three']) await webui.addAlert(text, 'info', { popup: false });
+    });
+    await expect(panel.locator('.alerts-list > webui-alert')).toHaveText(['Three', 'Two', 'One']);
+    // The others are never taken out and put back, which replays their entrance and makes them flash.
+    await page.evaluate(() => {
+        window.__moved = [];
+        new MutationObserver(records => records.forEach(record => record.removedNodes.forEach(node => window.__moved.push(node.textContent.trim()))))
+            .observe(document.querySelector('#p .alerts-list'), { childList: true });
+    });
+    await panel.locator('webui-alert', { hasText: 'Two' }).locator('#close').click();
+    await expect(panel.locator('.alerts-list > webui-alert')).toHaveText(['Three', 'One']);
+    expect(await page.evaluate(() => window.__moved)).toEqual(['Two']);
+    await expect(root.locator('webui-alerts[hidden] webui-icon')).toHaveAttribute('count', '2');
+});

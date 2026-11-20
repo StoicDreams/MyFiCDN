@@ -20,6 +20,17 @@ test('a bound native field has the new value at once, so a form sent right after
     expect(values).toEqual(['', '61', '']);
     await expect(root.locator('input[name="pick"]')).toHaveValue('');
 });
+test('elements added inside data-unobserved are left alone, as a terminal redrawing its rows is', async ({ page }) => {
+    const root = await mount(page, '<div id="outside"></div><div id="inside" data-unobserved></div>');
+    await page.evaluate(() => {
+        document.querySelector('#inside').innerHTML = '<span data-subscribe="bind-skip:innerHTML">kept</span>';
+        document.querySelector('#outside').innerHTML = '<span data-subscribe="bind-skip:innerHTML">kept</span>';
+    });
+    // Data reaching the element outside shows the change has been seen; the one inside is never bound.
+    await page.evaluate(() => webui.setData('bind-skip', 'new'));
+    await expect(root.locator('#outside span')).toHaveText('new');
+    await expect(root.locator('#inside span')).toHaveText('kept');
+});
 test('data-subscribe matches camelCase keys', async ({ page }) => {
     const root = await mount(page, '<span data-subscribe="myThing:innerHTML"></span>');
     await page.evaluate(() => webui.setData('my-thing', 'hello'));

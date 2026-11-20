@@ -15,9 +15,9 @@ webui.define("webui-alert", {
         t.btnClose = t.template.querySelector('#close');
         t.btnClose.addEventListener('click', _ev => {
             t.userclosed = true;
-            t.removeAttribute('show');
-            // Lets whoever added the alert know the user closed it, such as to mark a notification read.
-            t.dispatchEvent(new CustomEvent('close', { bubbles: true }));
+            // Lets whoever added the alert know the user closed it, such as to mark a notification read. A list
+            // showing it, such as the alerts panel, can cancel the event to take the alert away itself.
+            if (t.dispatchEvent(new CustomEvent('close', { bubbles: true, cancelable: true }))) t.removeAttribute('show');
         });
     },
     attr: ['variant', 'show'],

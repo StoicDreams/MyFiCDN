@@ -2647,9 +2647,12 @@ const webui = (() => {
         let key = getNodeKey(node);
         let state = {};
         node.dataset.state.split("|").forEach((attr) => {
-            let val = node.attributes[attr];
-            if (val && val.value && val.value !== "undefined") {
-                state[attr] = val.value;
+            // A component can say what to save in place of what the attribute holds now, such as a drawer undocked
+            // only while the window is narrow, which is saved docked. null saves nothing.
+            const own = typeof node.stateValue === "function" ? node.stateValue(attr) : undefined;
+            const val = own !== undefined ? own : node.attributes[attr]?.value;
+            if (val && val !== "undefined") {
+                state[attr] = val;
             }
         });
         storage.setItem(key, JSON.stringify(state));
@@ -3575,11 +3578,19 @@ const webui = (() => {
         if (!pl || typeof pl.replace !== "function") return;
         await Promise.all(parsePreloadList(pl).map(preloadFromAttribute));
     }
+    /**
+     * Inside an element with data-unobserved, such as a terminal that redraws its rows many times a second, changes
+     * are left alone: it holds no Web UI components or data bindings, and checking each change would slow the page.
+     */
+    function isUnobserved(node) {
+        return !!node?.closest?.("[data-unobserved]");
+    }
     function processMutations(mutations) {
         updateActivity();
         let needsCleanup = false;
         mutations.forEach((mutation) => {
             const target = mutation.target;
+            if (isUnobserved(target)) return;
             if (mutation.type === "attributes") {
                 const attr = mutation.attributeName;
                 if (target.dataset?.state?.split("|").includes(attr)) {

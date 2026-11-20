@@ -403,7 +403,8 @@
 <style type="text/css">
 :host {
 display:grid;
-grid-template-columns:auto max-content max-content max-content 0;
+/* The page buttons can wrap onto more rows, so the bar is never wider than a narrow drawer it sits in. */
+grid-template-columns:auto max-content minmax(0, max-content) max-content 0;
 gap:var(--padding);
 }
 :host([page-count="2"]) .first,
@@ -424,8 +425,14 @@ div.next {
 display:flex;
 gap:var(--padding);
 }
+div.pages {
+flex-wrap:wrap;
+justify-content:center;
+}
 div.total {
 display:flex;
+flex-wrap:wrap;
+row-gap:calc(var(--padding) / 2);
 grid-column:1/5;
 align-items: center;
 justify-content: right;

@@ -48,6 +48,38 @@ test('narrow windows undock it, and wide windows restore it', async ({ page }) =
     await page.setViewportSize({ width: 1300, height: 700 });
     await expect(drawer).toHaveAttribute('docked', 'true');
 });
+test('a drawer undocked by a narrow window is kept docked, so it docks again after a reload while narrow', async ({ page }) => {
+    const root = await mount(page, '<webui-drawer class="kept" data-dockable data-state="docked" docked="true"></webui-drawer>');
+    await expect(root.locator('webui-drawer.kept')).toHaveAttribute('docked', 'true');
+    await page.setViewportSize({ width: 600, height: 700 });
+    await expect(root.locator('webui-drawer.kept')).not.toHaveAttribute('docked');
+    // The page reloads while the window is narrow: a new drawer takes the saved state.
+    await root.evaluate(el => {
+        el.querySelector('webui-drawer.kept').remove();
+        el.insertAdjacentHTML('beforeend', '<webui-drawer class="kept again" data-dockable data-state="docked"></webui-drawer>');
+    });
+    const again = root.locator('webui-drawer.again');
+    await expect(again).toHaveAttribute('id', /./);
+    await expect(again).not.toHaveAttribute('docked');
+    await page.setViewportSize({ width: 1300, height: 700 });
+    await expect(again).toHaveAttribute('docked', 'true');
+});
+test('the docking is checked again when the window gets focus, and a window with no width is not narrow', async ({ page }) => {
+    const root = await mount(page, '<webui-drawer data-dockable docked="true"></webui-drawer>');
+    const drawer = root.locator('webui-drawer');
+    await expect(drawer).toHaveAttribute('id', /./);
+    // The window's width changes with no resize reaching the page, as after the screen was locked.
+    const widthOnFocus = width => page.evaluate(width => {
+        Object.defineProperty(window, 'innerWidth', { configurable: true, get: () => width });
+        window.dispatchEvent(new Event('focus'));
+    }, width);
+    await widthOnFocus(0);
+    await expect(drawer).toHaveAttribute('docked', 'true');
+    await widthOnFocus(600);
+    await expect(drawer).not.toHaveAttribute('docked');
+    await widthOnFocus(1300);
+    await expect(drawer).toHaveAttribute('docked', 'true');
+});
 test('the open class slides an undocked drawer into view', async ({ page }) => {
     const root = await mount(page, '<webui-drawer style="transition:none">Body</webui-drawer>');
     const drawer = root.locator('webui-drawer');

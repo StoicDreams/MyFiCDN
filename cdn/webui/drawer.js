@@ -164,6 +164,22 @@
             }, 100);
             t.checkResponsiveDocking();
             t.applyWidth(parseFloat(t.getAttribute('width')));
+            // The window can come back at its full size without a resize reaching the page, such as after the
+            // screen was locked, so the docking is checked again whenever it shows or gets focus.
+            if (!t._onShown) {
+                t._onShown = () => {
+                    if (document.visibilityState === 'visible') t.checkResponsiveDocking();
+                };
+                document.addEventListener('visibilitychange', t._onShown);
+                window.addEventListener('focus', t._onShown);
+            }
+        },
+        disconnected() {
+            const t = this;
+            if (!t._onShown) return;
+            document.removeEventListener('visibilitychange', t._onShown);
+            window.removeEventListener('focus', t._onShown);
+            t._onShown = null;
         },
         onResize() {
             this.checkResponsiveDocking();
@@ -236,8 +252,21 @@
             t.setAttribute('slot', slots[0]);
             return true;
         },
+        /**
+         * The value saved for an attribute in data-state, for the loader. A narrow window undocks the drawer only for
+         * as long as it is narrow, so the drawer is saved as the user left it, and comes back docked after a reload
+         * that happened while the window was narrow, such as while the screen was locked.
+         */
+        stateValue(attr) {
+            const t = this;
+            if (attr !== 'docked' || !t._forceUndocked) return undefined;
+            return t._cacheDocked ? 'true' : null;
+        },
         checkResponsiveDocking() {
-            const isNarrow = window.innerWidth < 900;
+            // A window being hidden, minimized, or changing screens can report no width at all for a moment: only a
+            // window with a width can be narrow.
+            const width = window.innerWidth;
+            const isNarrow = width > 0 && width < 900;
             const t = this;
             t._forceUndocked = isNarrow;
             if (isNarrow) {

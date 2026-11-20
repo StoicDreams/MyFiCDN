@@ -480,9 +480,9 @@ box-sizing:border-box;
 transition-duration:0;
 min-height:100%;
 }
-::slotted([slot="content"]) {
-min-height:100%;
-}
+/* The grid stretches the tab shown to fill the tabs' room, so it needs no min-height of its own. One of 100% kept
+   WebKit from shrinking a tab after it had grown, such as when a page fits its content to the window, leaving the
+   page to scroll by the difference. */
 ::slotted([slot="content"][tab-hidden]) {
 height:0;
 min-height:0;

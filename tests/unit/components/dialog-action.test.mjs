@@ -33,6 +33,21 @@ test('a failed request stays open and shows the error', async ({ page }) => {
     await expect(root.locator('webui-dialogs form webui-alert')).toContainText('Nope');
     await expect(dialog).toBeVisible();
 });
+test('a failed request brings its error into view, and says so when the answer is empty', async ({ page }) => {
+    await page.route('**/da-api', route => route.fulfill({ status: 400, body: '' }));
+    const root = await action(page);
+    // Under a long form the alert is below what the dialog shows, so the dialog must scroll to it.
+    await page.evaluate(() => {
+        window.daScrolled = [];
+        Element.prototype.scrollIntoView = function () { window.daScrolled.push(this.tagName.toLowerCase()); };
+    });
+    await page.evaluate(() => webui.setData('da-open', { id: 7 }));
+    const dialog = root.locator('webui-dialogs dialog');
+    await dialog.locator('#dlg-confirm').click();
+    await expect(root.locator('webui-dialogs form webui-alert')).toContainText('The request failed (400). Nothing was saved.');
+    expect(await page.evaluate(() => window.daScrolled)).toContain('webui-alert');
+    await expect(dialog).toBeVisible();
+});
 test('a network failure stays open and shows the error', async ({ page }) => {
     await page.route('**/da-api', route => route.abort());
     const root = await action(page);

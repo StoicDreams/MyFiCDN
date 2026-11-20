@@ -243,6 +243,20 @@ test.describe('categories', () => {
         await expect.poll(() => preview.evaluate(el => [el.style.background, el.querySelector('.bar').style.background, el.querySelectorAll('.pill').length])).toEqual(['rgb(250, 250, 250)', 'rgb(64, 120, 242)', 4]);
     });
 
+    test('each tile reads its colors without adding elements to the page, which a busy page is slow to restyle', async ({ page }) => {
+        await page.evaluate(() => {
+            window.__added = 0;
+            new MutationObserver(records => records.forEach(record => window.__added += record.addedNodes.length)).observe(document.body, { childList: true });
+        });
+        await mount(page, `<webui-theme-selector panel>${categorized}</webui-theme-selector>`);
+        const tile = value => panel(page).locator(`button.tile[data-theme-value="${value}"] .preview`);
+        // Text on a light tile is black, and on a dark one white.
+        await expect.poll(() => tile('porcelain').evaluate(el => el.style.color)).toBe('var(--color-black)');
+        await expect.poll(() => tile('moss').evaluate(el => el.style.color)).toBe('var(--color-white)');
+        // Only the page's own white and black, once each, and the test's container, are added to the page.
+        expect(await page.evaluate(() => window.__added)).toBeLessThanOrEqual(3);
+    });
+
     test("a tile shows its theme's heading font, texture and mark, from data-font, data-texture and data-mark", async ({ page }) => {
         const dot = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 4'%3E%3Ccircle cx='2' cy='2' r='1'/%3E%3C/svg%3E";
         await mount(page, `<webui-theme-selector panel>${categorized}

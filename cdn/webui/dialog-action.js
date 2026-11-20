@@ -75,6 +75,12 @@
                 minWidth: '80%',
                 onconfirm: (data, content) => {
                     let alert = content.querySelector('webui-alert');
+                    // The alert is the last thing in the dialog. Under a long form it is out of sight, where a
+                    // failed save looked as if nothing had happened, so it is brought into view.
+                    const showError = message => {
+                        alert.setValue(message, 'danger');
+                        if (typeof alert.scrollIntoView === 'function') alert.scrollIntoView({ block: 'nearest' });
+                    };
                     return new Promise((resolve) => {
                         let method = t.apiMethod;
                         if (url) {
@@ -120,13 +126,12 @@
                                         if (t.headerMessage) {
                                             message = webui.getResponseHeader(resp, ...t.headerMessage.split('|')) || message;
                                         }
-                                        if (message) {
-                                            alert.setValue(message, 'danger');
-                                        }
+                                        // A failure with nothing to say still has to say something.
+                                        showError(message || `The request failed (${resp.status}). Nothing was saved.`);
                                     }
                                 })
                                 .catch(ex => {
-                                    alert.setValue(`${ex}`, 'danger');
+                                    showError(`${ex}`);
                                     resolve(false);
                                 });
                         } else {

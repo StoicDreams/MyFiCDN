@@ -41,8 +41,45 @@
         return value && typeof value === 'object' ? value : {};
     }
 
+    /** Colors already worked out: literal colors for good, and the page's own colors until the theme changes. */
+    const literalColors = new Map();
+    const pageColors = new Map();
+    let colorContext;
+    /** A color with no var() in it, such as #1878af or rgb(0 0 0), as [red, green, blue], or undefined when unknown. */
+    function parseColor(css) {
+        colorContext ??= document.createElement('canvas').getContext?.('2d') || null;
+        if (!colorContext) return undefined;
+        // A canvas reads a color without the page working out its styles again, which a probe element needs.
+        colorContext.fillStyle = '#010203';
+        colorContext.fillStyle = css;
+        const value = `${colorContext.fillStyle}`;
+        if (value === '#010203' && css.replace(/\s/g, '').toLowerCase() !== '#010203') return undefined;
+        let match = value.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);
+        if (match) return match.slice(1, 4).map(part => parseInt(part, 16));
+        match = value.match(/rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/);
+        if (match) return match.slice(1, 4).map(Number);
+        return undefined;
+    }
     /** A CSS color as [red, green, blue], as the page draws it, or null. */
     function resolveColor(css) {
+        css = `${css ?? ''}`.trim();
+        const cache = css.includes('var(') ? pageColors : literalColors;
+        if (cache.has(css)) return cache.get(css);
+        let rgb;
+        // The page's own colors, such as var(--color-white), are read from where the theme sets them.
+        const own = css.match(/^var\(\s*(--[\w-]+)\s*\)$/);
+        if (own) {
+            const value = getComputedStyle(document.documentElement).getPropertyValue(own[1]).trim();
+            if (value && !value.includes('var(')) rgb = parseColor(value);
+        } else if (cache === literalColors) {
+            rgb = parseColor(css);
+        }
+        if (rgb === undefined) rgb = probeColor(css);
+        cache.set(css, rgb);
+        return rgb;
+    }
+    /** A color the canvas can't read, worked out by the page on an element of its own. */
+    function probeColor(css) {
         const probe = document.createElement('span');
         probe.style.display = 'none';
         probe.style.color = css;
@@ -85,6 +122,7 @@
 
     /** Puts a theme's adjusted colors on the page, in place of any another theme had. */
     function applyColors(theme) {
+        pageColors.clear();
         const style = document.documentElement.style;
         MANAGED.forEach(property => style.removeProperty(property));
         Object.entries(savedColors()[theme] || {}).forEach(([property, value]) => {
@@ -139,6 +177,7 @@
         adjusted[`--color-${name}`] = color;
         adjusted[`--color-${name}-offset`] = offsetFor(color);
         const style = document.documentElement.style;
+        pageColors.clear();
         style.setProperty(`--color-${name}`, color);
         style.setProperty(`--color-${name}-offset`, adjusted[`--color-${name}-offset`]);
         saveColors(colors, saveNow);
