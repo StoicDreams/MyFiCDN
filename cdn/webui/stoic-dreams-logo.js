@@ -24,54 +24,20 @@ webui.define('webui-stoic-dreams-logo', {
         }
         t._slot = t.template.querySelector('slot[name=logo]');
         let tempDiv = webui.create('div');
-        tempDiv.innerHTML = `<svg class="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 150 150" version="1.1" title="">
+        // The Stoic Dreams logo, a tilted ring threaded through four spheres, drawn in the site's theme colors. The art
+        // is in the 600 unit space of the original logo (cdn/img/sd/LogoT600.png), scaled into the 150 unit view box.
+        tempDiv.innerHTML = `<svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" version="1.1">
 <defs>
 <style type="text/css">
-g {
-fill-rule:nonzero;
-fill-opacity:1;
-}
-g.background,
-g.top-left,
-g.top-right,
-g.bottom-left,
-g.bottom-right {
-stroke-width:1;
-stroke-linecap:butt;
-stroke-linejoin:miter;
-stroke-miterlimit:10;
-}
-.background{fill:#000000;stroke:#000000;stroke-miterlimit:10;}
-.top-left{fill:var(--color-success);stroke:var(--color-success);stroke-miterlimit:10;}
-.top-right{fill:var(--color-tertiary);stroke:var(--color-tertiary);stroke-miterlimit:10;}
-.bottom-right{fill:var(--color-primary);stroke:var(--color-primary);stroke-miterlimit:10;}
-.bottom-left{fill:var(--color-secondary);stroke:var(--color-secondary);stroke-miterlimit:10;}
-.diamond{fill:var(--color-title);stroke:var(--color-title);stroke-miterlimit:10;}
-.text{fill:#FFFFFF;font-family:'Nunito', Arial, sans-serif;font-weight:700;letter-spacing:-1px;text-shadow:0 0 10px black;}
+.text{fill:#FFFFFF;font-family:'Nunito', Arial, sans-serif;font-weight:700;stroke:#000;stroke-width:5px;stroke-linejoin:round;paint-order:stroke;}
 </style>
+<linearGradient id="l-ring" gradientUnits="userSpaceOnUse" x1="120" y1="120" x2="520" y2="520"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient><linearGradient id="l-shine" gradientUnits="userSpaceOnUse" x1="120" y1="120" x2="480" y2="480"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient><g id="l-band"><path d="M524 100L534 109L543 119L550 131L557 143L562 156L566 170L569 184L571 199L571 215L570 230L568 246L565 263L561 279L556 296L550 312L543 328L535 345L526 361L516 377L506 393L495 409L483 424L470 439L457 453L443 467L429 480L414 492L399 504L384 515L369 526L353 535L337 544L321 552L304 559L288 565L272 569L256 573L240 576L224 577L209 578L194 577L179 575L165 571L152 567L139 561L128 553L117 545L108 536L99 525L92 514L86 502L81 490L78 477L75 464L74 450L73 436L74 421L75 407L78 392L81 376L86 361L91 346L97 330L104 314L112 299L121 283L130 268L140 253L151 238L163 223L175 209L187 195L201 182L214 169L228 157L243 146L257 135L272 125L287 115L303 107L318 99L333 92L349 86L364 81L379 77L394 74L408 72L423 70L437 70L451 71L464 73L477 76L490 80L502 86L513 92ZM485 129L479 123L472 118L464 114L455 111L445 108L434 107L423 106L411 106L399 107L386 109L373 112L359 116L345 121L331 127L317 134L303 142L289 150L275 160L261 170L248 180L234 192L222 204L209 216L197 229L186 242L175 256L165 270L156 284L147 299L139 313L132 327L126 342L121 356L116 370L113 384L111 397L109 410L108 423L109 435L110 446L112 456L115 466L119 475L124 483L129 490L134 496L141 501L147 505L154 509L162 512L170 514L179 516L188 517L198 517L208 517L219 516L230 514L242 512L255 508L267 504L280 499L293 493L307 486L320 479L333 471L346 462L360 452L372 442L385 431L397 419L409 407L421 395L432 382L442 369L452 356L461 342L469 328L477 315L484 301L490 287L495 274L500 261L503 248L506 236L508 224L509 212L510 201L510 191L509 181L507 172L505 163L503 155L499 148L495 141L491 135Z" style="fill:var(--color-title);stroke:#fff;stroke-opacity:.35;stroke-width:5" fill-rule="evenodd"/><path d="M524 100L534 109L543 119L550 131L557 143L562 156L566 170L569 184L571 199L571 215L570 230L568 246L565 263L561 279L556 296L550 312L543 328L535 345L526 361L516 377L506 393L495 409L483 424L470 439L457 453L443 467L429 480L414 492L399 504L384 515L369 526L353 535L337 544L321 552L304 559L288 565L272 569L256 573L240 576L224 577L209 578L194 577L179 575L165 571L152 567L139 561L128 553L117 545L108 536L99 525L92 514L86 502L81 490L78 477L75 464L74 450L73 436L74 421L75 407L78 392L81 376L86 361L91 346L97 330L104 314L112 299L121 283L130 268L140 253L151 238L163 223L175 209L187 195L201 182L214 169L228 157L243 146L257 135L272 125L287 115L303 107L318 99L333 92L349 86L364 81L379 77L394 74L408 72L423 70L437 70L451 71L464 73L477 76L490 80L502 86L513 92ZM485 129L479 123L472 118L464 114L455 111L445 108L434 107L423 106L411 106L399 107L386 109L373 112L359 116L345 121L331 127L317 134L303 142L289 150L275 160L261 170L248 180L234 192L222 204L209 216L197 229L186 242L175 256L165 270L156 284L147 299L139 313L132 327L126 342L121 356L116 370L113 384L111 397L109 410L108 423L109 435L110 446L112 456L115 466L119 475L124 483L129 490L134 496L141 501L147 505L154 509L162 512L170 514L179 516L188 517L198 517L208 517L219 516L230 514L242 512L255 508L267 504L280 499L293 493L307 486L320 479L333 471L346 462L360 452L372 442L385 431L397 419L409 407L421 395L432 382L442 369L452 356L461 342L469 328L477 315L484 301L490 287L495 274L500 261L503 248L506 236L508 224L509 212L510 201L510 191L509 181L507 172L505 163L503 155L499 148L495 141L491 135Z" fill="url(#l-ring)" fill-rule="evenodd"/><path d="M507 117L515 125L521 134L527 143L531 153L535 164L538 176L539 188L540 200L540 213L539 227L537 241L534 255L530 270L525 285L520 300L513 315L506 330L497 345L488 360L479 374L468 389L457 403L445 417L433 430L420 443L407 455L393 467L380 478L365 488L351 498L336 507L322 515L307 522L292 529L278 534L263 539L249 543L235 545L222 547L208 548L196 547L184 546L172 544L161 540L151 536L141 531L132 525L124 518L117 511L110 502L105 493L100 482L97 472L94 460L92 448L91 435L91 422L92 409L94 395L97 380L101 366L106 351L112 336L118 321L126 306L134 291L143 276L153 261L163 247L174 233L186 219L198 206L211 193L224 180L238 169L252 158L266 147L281 137L295 129L310 120L325 113L339 107L354 101L368 97L382 93L396 90L410 89L423 88L436 88L448 90L459 92L470 95L481 99L490 104L499 110L507 117" fill="none" stroke="url(#l-shine)" stroke-width="9" stroke-linecap="round"/></g><radialGradient id="l-success" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".22" style="stop-color:var(--color-success)"/><stop offset=".8" style="stop-color:var(--color-success)"/><stop offset="1" stop-color="#000"/></radialGradient><radialGradient id="l-tertiary" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".22" style="stop-color:var(--color-tertiary)"/><stop offset=".8" style="stop-color:var(--color-tertiary)"/><stop offset="1" stop-color="#000"/></radialGradient><clipPath id="l-front-tertiary"><path d="M431.0 209.4L541.4 228.4L579.4 7.6L469.0 -11.4Z"/></clipPath><radialGradient id="l-secondary" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".22" style="stop-color:var(--color-secondary)"/><stop offset=".8" style="stop-color:var(--color-secondary)"/><stop offset="1" stop-color="#000"/></radialGradient><clipPath id="l-front-secondary"><path d="M-9.4 485.2L14.8 595.6L235.6 547.2L211.4 436.8Z"/></clipPath><radialGradient id="l-primary" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".22" style="stop-color:var(--color-primary)"/><stop offset=".8" style="stop-color:var(--color-primary)"/><stop offset="1" stop-color="#000"/></radialGradient>
 </defs>
-<g class="background">
-<path d="M 2158.991216 2528.477009 L 416.929839 2528.477009 C 212.472576 2528.477009 46.822784 2362.788733 46.822784 2158.383846 L 46.822784 416.270769 C 46.822784 211.933098 212.472576 46.177605 416.929839 46.177605 L 2158.991216 46.177605 C 2363.381685 46.177605 2529.098271 211.933098 2529.098271 416.270769 L 2529.098271 2158.383846 C 2529.098271 2362.788733 2363.381685 2528.477009 2158.991216 2528.477009 Z M 2158.991216 2528.477009 " transform="matrix(0.0584818,0,0,0.0581146,0,0.00000113284)"/>
-</g>
-<g class="bottom-right">
-<path d="M 2047.711961 2355.529368 L 1657.967391 2355.529368 C 1481.430133 2355.529368 1338.223216 2212.29135 1338.223216 2035.714027 L 1338.223216 1645.993693 C 1338.223216 1469.41637 1481.430133 1326.178351 1657.967391 1326.178351 L 2047.711961 1326.178351 C 2224.316013 1326.178351 2367.52293 1469.41637 2367.52293 1645.993693 L 2367.52293 2035.714027 C 2367.389341 2212.425782 2224.316013 2355.529368 2047.711961 2355.529368 Z M 2047.711961 2355.529368 " transform="matrix(0.0584818,0,0,0.0581146,0,0.00000113284)"/>
-</g>
-<g class="bottom-left">
-<path d="M 939.194242 2355.529368 L 549.516466 2355.529368 C 372.912414 2355.529368 229.705497 2212.29135 229.705497 2035.714027 L 229.705497 1645.993693 C 229.705497 1469.41637 372.912414 1326.178351 549.516466 1326.178351 L 939.194242 1326.178351 C 1115.798294 1326.178351 1259.005211 1469.41637 1259.005211 1645.993693 L 1259.005211 2035.714027 C 1259.005211 2212.425782 1115.798294 2355.529368 939.194242 2355.529368 Z M 939.194242 2355.529368 " transform="matrix(0.0584818,0,0,0.0581146,0,0.00000113284)"/>
-</g>
-<g class="top-right">
-<path d="M 2027.406503 1232.882072 L 1637.728727 1232.882072 C 1461.124674 1232.882072 1317.917758 1089.71127 1317.917758 913.066731 L 1317.917758 523.480829 C 1317.917758 346.903507 1461.124674 203.732704 1637.728727 203.732704 L 2027.406503 203.732704 C 2204.010555 203.732704 2347.217471 346.903507 2347.217471 523.480829 L 2347.217471 913.201164 C 2347.083883 1089.778486 2204.010555 1232.882072 2027.406503 1232.882072 Z M 2027.406503 1232.882072 " transform="matrix(0.0584818,0,0,0.0581146,0,0.00000113284)"/>
-</g>
-<g class="top-left">
-<path d="M 939.194242 1258.491498 L 549.516466 1258.491498 C 372.912414 1258.491498 229.705497 1115.320695 229.705497 938.676156 L 229.705497 549.090255 C 229.705497 372.512932 372.912414 229.274913 549.516466 229.274913 L 939.194242 229.274913 C 1115.798294 229.274913 1259.005211 372.512932 1259.005211 549.090255 L 1259.005211 938.810589 C 1259.005211 1115.387912 1115.798294 1258.491498 939.194242 1258.491498 Z M 939.194242 1258.491498 " transform="matrix(0.0584818,0,0,0.0581146,0,0.00000113284)"/>
-</g>
-<g class="diamond">
-<path d="M 58.703125 141.28125 L 7.859375 90.757812 C -1.179688 81.773438 -1.179688 67.199219 7.859375 58.214844 L 58.703125 7.6875 C 67.746094 -1.296875 82.414062 -1.296875 91.453125 7.6875 L 142.296875 58.214844 C 151.339844 67.199219 151.339844 81.773438 142.296875 90.757812 L 91.453125 141.28125 C 82.414062 150.265625 67.75 150.265625 58.703125 141.28125 Z M 58.703125 141.28125 "/>
-</g>
-<svg x="0%" y="5%" width="100%" height="90%" viewBox="0 0 150 150" preserveAspectRatio="xMidYMid meet" class="text"></svg>
+<g transform="translate(9 9) scale(0.22)"><ellipse cx="315.7" cy="317.8" rx="277.3" ry="162.4" transform="rotate(-46.3 315.7 317.8)" fill="#000"/><use href="#l-band"/><circle cx="194" cy="200" r="54" fill="url(#l-success)"/><circle cx="450" cy="99" r="72" fill="url(#l-tertiary)"/><circle cx="101" cy="461" r="73" fill="url(#l-secondary)"/><circle cx="428" cy="430" r="102" fill="url(#l-primary)"/><use href="#l-band" clip-path="url(#l-front-tertiary)"/><use href="#l-band" clip-path="url(#l-front-secondary)"/></g>
+<g class="text"></g>
 </svg>`;
         t.svg = tempDiv.firstChild;
-        t._text = t.svg.querySelector('.text');
+        t._text = t.svg.querySelector('g.text');
         t._slot.appendChild(t.svg);
         t.render();
     },
@@ -82,25 +48,25 @@ stroke-miterlimit:10;
     },
     render() {
         const t = this;
-        let title = t.title || `${(`${t.text} ${t.text2}`.trim())} Logo`;
+        let title = t.title || `${(`${t.text || ''} ${t.text2 || ''}`.trim())} Logo`;
         t.svg.setAttribute('title', title);
-        t._text.innerHTML = t.getText();
-    },
-    getText() {
-        const t = this;
-        if (t.text2 && t.text) {
-            return `
-<text x="75" y="65" textLength="150" lengthAdjust="spacingAndGlyphs" text-anchor="middle" class="text-style" font-size="60">${t.text}</text>
-<text x="75" y="125" textLength="150" lengthAdjust="spacingAndGlyphs" text-anchor="middle" class="text-style" font-size="60">${t.text2}</text>
-`;
-        }
-        if (t.text2) {
-            return `<text x="75" y="95" textLength="150" lengthAdjust="spacingAndGlyphs" text-anchor="middle" class="text-style" font-size="60">${t.text2}</text>`;
-        }
-        if (t.text) {
-            return `<text x="75" y="95" textLength="150" lengthAdjust="spacingAndGlyphs" text-anchor="middle" class="text-style" font-size="60">${t.text}</text>`;
-        }
-        return '';
+        const lines = [t.text, t.text2].filter(line => line);
+        // Small words in the middle of the ring, so the logo stays in front: one line centered, or two stacked.
+        const baselines = lines.length > 1 ? [72, 100] : [86];
+        t._text.replaceChildren(...lines.map((line, index) => {
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', '75');
+            text.setAttribute('y', baselines[index]);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('font-size', '28');
+            // Nunito's letters average about 0.58em wide. A line that would run past 132 units is narrowed to fit.
+            if (line.length * 28 * 0.58 > 132) {
+                text.setAttribute('textLength', '132');
+                text.setAttribute('lengthAdjust', 'spacingAndGlyphs');
+            }
+            text.textContent = line;
+            return text;
+        }));
     },
     shadowTemplate: `
 <style type="text/css">

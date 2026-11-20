@@ -1,5 +1,5 @@
 <webui-page-segment elevation="10">
-    The `<webui-stoic-dreams-logo>` component renders the official Stoic Dreams scalable vector (SVG) logo. It allows dynamic text injection for customized internal branding utilizing the `text` and `text2` attributes while maintaining the core shape, colors, and layout of the emblem. 
+    The `<webui-stoic-dreams-logo>` component draws the Stoic Dreams logo, a tilted ring threaded through four spheres, as a scalable vector (SVG) in the site's theme colors: the ring in `--color-title`, and the spheres in `--color-success`, `--color-tertiary`, `--color-secondary`, and `--color-primary`. The `text` and `text2` attributes add one or two small lines of words in the middle of the ring. The background is transparent, and the inside of the ring is black, so the words stay readable on any page.
 </webui-page-segment>
 
 <webui-side-by-side>
