@@ -30,6 +30,16 @@ test('loads rows from the api', async ({ page }) => {
     await expect(el.locator('td')).toHaveText(['A', 'B']);
     expect(requests[0]).toEqual({ perPage: 10, page: 1, sortColumn: 'Name', sortOrder: 'asc' });
 });
+test('rows are cleared when a required filter is emptied, and load again when it is set', async ({ page }) => {
+    await page.evaluate(() => webui.setData('page-report-need', { ownerId: '1' }));
+    const { el, requests } = await report(page, 'filters="page-report-need" required-filters="ownerId"');
+    await expect(el.locator('td')).toHaveText(['A', 'B']);
+    await page.evaluate(() => webui.setData('page-report-need', { ownerId: '' }));
+    await expect(el.locator('td')).toHaveCount(0);
+    expect(requests.length).toBe(1);
+    await page.evaluate(() => webui.setData('page-report-need', { ownerId: '1' }));
+    await expect(el.locator('td')).toHaveText(['A', 'B']);
+});
 test('rows show when the data arrives before the table script has loaded', async ({ page }) => {
     // Hold the table and pagination scripts until the report has its data, as on a slow connection.
     let release;

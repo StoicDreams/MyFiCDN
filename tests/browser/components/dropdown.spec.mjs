@@ -126,6 +126,25 @@ test.describe('data-trigger when options load', () => {
         await expect.poll(() => page.evaluate(() => webui.getData('dd-trig-co-filter.companyId'))).toBe('2');
         await expect.poll(() => page.evaluate(() => webui.getData('session-dd-trig-co'))).toBe('2');
     });
+    test('when its options are gone, its bound data is cleared', async ({ page }) => {
+        // As a list filtered by another choice: the new choice has nothing, so what hung off the old pick must not stay.
+        const el = await dropdown(page, 'data-subscribe="session-dd-trig-gone" data-trigger="session-dd-trig-gone|dd-trig-gone-filter.id" options="One|1,Two|2"');
+        await expect.poll(() => page.evaluate(() => webui.getData('dd-trig-gone-filter.id'))).toBe('1');
+        await el.evaluate(d => d.setOptions([]));
+        await expect(el.locator('option')).toHaveCount(0);
+        await expect.poll(() => page.evaluate(() => [webui.getData('session-dd-trig-gone'), webui.getData('dd-trig-gone-filter.id')])).toEqual(['', '']);
+        await el.evaluate(d => d.setOptions('Three|3'));
+        await expect.poll(() => page.evaluate(() => webui.getData('dd-trig-gone-filter.id'))).toBe('3');
+    });
+    test('a saved value is kept while options have not loaded yet', async ({ page }) => {
+        await page.evaluate(() => webui.setData('session-dd-trig-wait', '2'));
+        const root = await mount(page, '<webui-dropdown data-subscribe="session-dd-trig-wait" data-trigger="session-dd-trig-wait"></webui-dropdown>');
+        const el = root.locator('webui-dropdown');
+        await el.evaluate(d => d.setOptions([]));
+        expect(await page.evaluate(() => webui.getData('session-dd-trig-wait'))).toBe('2');
+        await el.evaluate(d => d.setOptions('One|1,Two|2'));
+        await expect(el.locator('select')).toHaveValue('2');
+    });
     test('without data-trigger or data-bind, loading options fires no change', async ({ page }) => {
         const el = await dropdown(page, '');
         await el.evaluate(d => { window.__ddChanges = 0; d.addEventListener('change', () => ++window.__ddChanges); d.setOptions('a,b'); });

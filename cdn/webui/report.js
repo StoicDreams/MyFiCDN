@@ -129,11 +129,19 @@
             }
             let hasRequiredFilters = true;
             t.requiredFilters.forEach(key => {
-                if (request[key] === undefined) {
+                if (request[key] === undefined || request[key] === null || request[key] === '') {
                     hasRequiredFilters = false;
                 }
             });
             if (!hasRequiredFilters) {
+                // What it showed belonged to a filter that is no longer set, so it shows nothing until one is.
+                t._req = undefined;
+                t.__reqid = undefined;
+                if (typeof t._table?.setData === 'function') t._table.setData([]);
+                t._pag?.forEach(p => {
+                    p.page = 1;
+                    p.totalCount = 0;
+                });
                 return;
             }
             let json = JSON.stringify(request);

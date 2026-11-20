@@ -601,7 +601,20 @@
             if (!o) {
                 if (t.multiple) return;
                 o = t._select.querySelector('option');
-                if (!o) return;
+                if (!o) {
+                    // The options it had are gone, such as after the filter they load from changed, so nothing is
+                    // picked now. Bound data is told, or what depends on it would keep showing the old pick's data.
+                    if (t._value === undefined || t._value === '') {
+                        // Nothing was picked yet, so a saved value waits for the options still to come.
+                        if (value !== '' && value !== 'undefined' && value !== 'null') t._pendingValue = value;
+                        return;
+                    }
+                    t._value = '';
+                    t.applyDataChange();
+                    t.renderPicked();
+                    if (t.dataset.trigger || t.dataset.bind) t.triggerChange();
+                    return;
+                }
                 value = o.value;
                 fellBack = true;
             }
