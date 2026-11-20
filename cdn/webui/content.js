@@ -247,7 +247,9 @@ gap: var(--padding);
 align-items: center;
 justify-content: center;
 }
-:host(:not(.loaded)):before {
+/* The spinner only runs while it can be seen. Content waiting out of sight, such as in a tab not shown, would
+   otherwise keep the page redrawing for as long as it waits, which some browsers do even for what is out of view. */
+:host([visible]:not(.loaded)):before {
 content: " ";
 display:block;
 position: absolute;
@@ -260,7 +262,7 @@ margin-bottom: 10px;
 width: 50px;
 top:50px;
 }
-:host(:not(.loaded).loading):after {
+:host([visible]:not(.loaded).loading):after {
 content: 'Loading';
 animation: webui-content-load 2s linear infinite;
 }
