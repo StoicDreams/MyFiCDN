@@ -807,7 +807,10 @@ export class Page {
     async addScriptTag({ content, path, url } = {}) {
         const { readFileSync } = await import('node:fs');
         let code = content;
-        if (path) code = readFileSync(path, 'utf8');
+        if (path) {
+            this.env.record?.(path);
+            code = readFileSync(path, 'utf8');
+        }
         if (url) code = await (await this.window.fetch(url)).text();
         this.window.eval(code);
         await this.settle();
@@ -886,6 +889,7 @@ export class Page {
         else if (script?.content) source = `() => { ${script.content} }`;
         else if (script?.path) {
             const { readFileSync } = await import('node:fs');
+            this.env.record?.(script.path);
             source = `() => { ${readFileSync(script.path, 'utf8')} }`;
         }
         this.env.initScripts.push({ source, arg });

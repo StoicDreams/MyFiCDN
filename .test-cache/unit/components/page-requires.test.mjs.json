@@ -1,0 +1,4 @@
+{
+  "redirects home when required data is missing": {"hash":"1526b529f705a88b9bac19bcf18fb075715d11fc07ec126e9d9a2eef7a966af2","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/page-requires.min.js"]},
+  "stays put while the data has a value": {"hash":"1526b529f705a88b9bac19bcf18fb075715d11fc07ec126e9d9a2eef7a966af2","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/page-requires.min.js"]}
+}

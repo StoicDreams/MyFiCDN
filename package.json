@@ -10,6 +10,7 @@
     "icons": "node tools/icons/build.mjs",
     "icons:check": "node tools/icons/build.mjs --check",
     "test:unit": "vitest run",
+    "test:full": "vitest run --mode full && playwright test",
     "test:browser": "playwright test"
   },
   "devDependencies": {

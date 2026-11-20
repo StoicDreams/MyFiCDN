@@ -1,0 +1,5 @@
+{
+  "a video id that is not valid shows nothing": {"hash":"ef378404355dccfe76ba1b8fdc195a5efbe29ed813166a1d758710b96f3419e1","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/youtube.min.js"]},
+  "embeds the video in privacy-enhanced mode with a title": {"hash":"ef378404355dccfe76ba1b8fdc195a5efbe29ed813166a1d758710b96f3419e1","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/youtube.min.js"]},
+  "start adds a start time, and changing the video updates the frame": {"hash":"ef378404355dccfe76ba1b8fdc195a5efbe29ed813166a1d758710b96f3419e1","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/youtube.min.js"]}
+}

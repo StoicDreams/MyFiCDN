@@ -1,0 +1,4 @@
+{
+  "documents the webui methods from loader.js": {"hash":"d405c9472c0af568aa595323276934acd33c091f5a032808272aa06dc34663fa","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/button.min.js","cdn/webui/content.min.js","cdn/webui/icon.min.js","cdn/webui/loader.js","cdn/webui/loader.min.js","cdn/webui/standard-methods.min.js","cdn/webui/tabs.min.js"]},
+  "shows an error when the source cannot load": {"hash":"b062ff0d53ac65df72434d17136b2d264585cc02ad17a441113e440fc5318a97","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/icons/exclamation.webui","cdn/icons/xmark.webui","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/button.min.js","cdn/webui/content.min.js","cdn/webui/icon.min.js","cdn/webui/loader.min.js","cdn/webui/standard-methods.min.js","cdn/webui/tabs.min.js"]}
+}

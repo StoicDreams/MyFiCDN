@@ -1,0 +1,6 @@
+{
+  "inline svg is used directly, and removing src clears it": {"hash":"2a14545e341a8b3f16d3bbfa1059e9b806242e73e6bb2f9df40f8ebad0745b2d","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/avatar.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js"]},
+  "names display as icons": {"hash":"8262b5502e7923fe0b66c64270d77b4f81bfa41ce6948beed768b624a28e14ec","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/icons/person.webui","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/avatar.min.js","cdn/webui/content.min.js","cdn/webui/icon.min.js","cdn/webui/loader.min.js"]},
+  "paths display as images and cannot inject attributes": {"hash":"2a14545e341a8b3f16d3bbfa1059e9b806242e73e6bb2f9df40f8ebad0745b2d","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/avatar.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js"]},
+  "short values display as initials": {"hash":"2a14545e341a8b3f16d3bbfa1059e9b806242e73e6bb2f9df40f8ebad0745b2d","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/avatar.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js"]}
+}

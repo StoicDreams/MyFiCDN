@@ -1,0 +1,6 @@
+{
+  "apiroot only fetches the keys it was given": {"hash":"ee37e35b497742b0aae1ef63bdd05c8f48195fd429efe90d69142c1e70d61d20","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/data-loader.min.js","cdn/webui/loader.min.js"]},
+  "auth waits for its token and sends it": {"hash":"ee37e35b497742b0aae1ef63bdd05c8f48195fd429efe90d69142c1e70d61d20","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/data-loader.min.js","cdn/webui/loader.min.js"]},
+  "non json responses are stored as text": {"hash":"ee37e35b497742b0aae1ef63bdd05c8f48195fd429efe90d69142c1e70d61d20","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/data-loader.min.js","cdn/webui/loader.min.js"]},
+  "src loads json into the data-trigger key": {"hash":"ee37e35b497742b0aae1ef63bdd05c8f48195fd429efe90d69142c1e70d61d20","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/data-loader.min.js","cdn/webui/loader.min.js"]}
+}

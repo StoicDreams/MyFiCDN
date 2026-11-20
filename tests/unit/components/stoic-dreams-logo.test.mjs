@@ -38,3 +38,11 @@ test('names itself after its words unless given a title', async ({ page }) => {
     await expect(root.locator('webui-stoic-dreams-logo:not(#titled) svg.logo')).toHaveAttribute('title', 'Web UI Logo');
     await expect(root.locator('#titled svg.logo')).toHaveAttribute('title', 'Our Logo');
 });
+test('draws its large sphere in the site title color', async ({ page }) => {
+    // The logo's colors are its output: the Stoic Dreams pieces keep their own colors and the large sphere takes
+    // the site's title color.
+    const root = await mount(page, '<div style="--color-title:#123456"><webui-stoic-dreams-logo text="Web" text2="UI"></webui-stoic-dreams-logo></div>');
+    const logo = root.locator('webui-stoic-dreams-logo svg.logo');
+    await expect(logo.locator('circle[style*="--color-title"]')).toHaveCount(1);
+    await expect.poll(() => logo.locator('circle[style*="--color-title"]').evaluate(c => getComputedStyle(c).fill)).toBe('rgb(18, 52, 86)');
+});

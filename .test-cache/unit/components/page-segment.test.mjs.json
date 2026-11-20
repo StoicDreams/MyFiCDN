@@ -1,0 +1,4 @@
+{
+  "elevation applies": {"hash":"f964c0c39ae5d8f34f266fb0f91d325b032f86c5210a17dacecfcf07e638e0cb","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/page-segment.min.js"]},
+  "registers and keeps its content": {"hash":"f964c0c39ae5d8f34f266fb0f91d325b032f86c5210a17dacecfcf07e638e0cb","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/page-segment.min.js"]}
+}

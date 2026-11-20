@@ -1,0 +1,5 @@
+{
+  "displays the content and citation": {"hash":"01b2404acb3d9547f1014648b9eed1e8ec60b90b26cbc5fca698875a3df85f8b","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/quote.min.js"]},
+  "hides the citation when there is none": {"hash":"01b2404acb3d9547f1014648b9eed1e8ec60b90b26cbc5fca698875a3df85f8b","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/quote.min.js"]},
+  "theme sets the color": {"hash":"01b2404acb3d9547f1014648b9eed1e8ec60b90b26cbc5fca698875a3df85f8b","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/quote.min.js"]}
+}

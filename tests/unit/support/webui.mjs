@@ -16,11 +16,12 @@
 //   the state that decides what shows (attributes, hidden, text), as the behavior-not-looks rule asks anyway.
 import jsdom from 'jsdom';
 import { existsSync, readFileSync } from 'node:fs';
-import { extname } from 'node:path';
-import { test as base, vi } from 'vitest';
+import { extname, resolve } from 'node:path';
+import { afterAll, test as base, vi } from 'vitest';
 import { MarkdownParser } from '../../../cdn/js/mdparse.min.js';
 import { Locator, Page, pageExpect as expect } from './page.mjs';
 import { installStandIns, mediaMatcher, pageResponse } from './stand-ins.mjs';
+import { allTestNames, cacheFor, fromRoot, testName } from './test-cache.mjs';
 
 export { expect };
 
@@ -43,17 +44,20 @@ export function fileFor(url) {
     return path;
 }
 
-function diskResponse(url) {
+/** Answers a request from the files on disk, noting each file it reads in `env.record`, for the test cache. */
+function diskResponse(url, env) {
     const parsed = new URL(url);
     if (parsed.hostname === 'api.myfi.ws') return new Response('0', { headers: { 'content-type': 'text/plain', 'access-control-allow-origin': ORIGIN } });
     const file = fileFor(url);
     if (!file) {
         // A page route, with no file extension, gets the site's shell, as the CDN's server does.
         if (['localhost', 'cdn.myfi.ws'].includes(parsed.hostname) && !extname(parsed.pathname)) {
+            env.record?.(CDN_ROOT + 'index.html');
             return new Response(readFileSync(CDN_ROOT + 'index.html'), { headers: { 'content-type': 'text/html' } });
         }
         return new Response('Not Found', { status: 404, headers: { 'content-type': 'text/plain' } });
     }
+    env.record?.(file);
     return new Response(readFileSync(file), { headers: { 'content-type': TYPES[extname(file)] || 'application/octet-stream' } });
 }
 
@@ -143,12 +147,14 @@ async function answer(env, request) {
         if (result === 'continue') break;
         return result;
     }
-    return diskResponse(request.url());
+    return diskResponse(request.url(), env);
 }
 
 /** What a page at `startUrl` is: the blank page, or the site's own shell for any other address, as the server answers. */
-function pageFor(startUrl) {
-    return startUrl === '/__blank' ? BLANK_PAGE : readFileSync(CDN_ROOT + 'index.html', 'utf8');
+function pageFor(startUrl, env) {
+    if (startUrl === '/__blank') return BLANK_PAGE;
+    env.record?.(CDN_ROOT + 'index.html');
+    return readFileSync(CDN_ROOT + 'index.html', 'utf8');
 }
 
 /**
@@ -156,7 +162,7 @@ function pageFor(startUrl) {
  * startup roles request answered. The returned env can load the page again (reload) or another one (goto), keeping
  * the routes, listeners, and the origin's storage, as a browser tab would.
  */
-export async function openWindow({ html, url, startUrl = '/__blank', setup } = {}) {
+export async function openWindow({ html, url, startUrl = '/__blank', setup, record } = {}) {
     const errors = [];
     const listeners = {};
     const env = {
@@ -164,6 +170,7 @@ export async function openWindow({ html, url, startUrl = '/__blank', setup } = {
         initScripts: [],
         exposed: {},
         errors,
+        record,
         emit(event, value) { (listeners[event] || []).forEach(listener => listener(value)); },
         on(event, listener) { (listeners[event] ||= []).push(listener); },
         route(pattern, handler) { env.routes.push({ pattern, handler }); },
@@ -176,7 +183,7 @@ export async function openWindow({ html, url, startUrl = '/__blank', setup } = {
         async goto(target) {
             const next = new URL(target, env.window?.location.href || `${ORIGIN}/`);
             const storage = env.window && new URL(env.window.location.href).origin === next.origin ? storageOf(env.window) : null;
-            await load(pageFor(next.pathname), next.href, storage);
+            await load(pageFor(next.pathname, env), next.href, storage);
         },
     };
     // Playwright calls console.warn's messages 'warning'.
@@ -267,7 +274,7 @@ export async function openWindow({ html, url, startUrl = '/__blank', setup } = {
         await settle(window);
     };
     env.settle = () => settle(env.window);
-    await load(html ?? pageFor(startUrl), url ?? `${ORIGIN}${startUrl}`, null);
+    await load(html ?? pageFor(startUrl, env), url ?? `${ORIGIN}${startUrl}`, null);
     return env;
 }
 
@@ -291,13 +298,23 @@ export async function settle(window) {
 /**
  * Vitest's `test` with Playwright-style fixtures: `page` is a fresh jsdom window on the blank page, and a test fails if
  * the page had uncaught errors. `pageOptions` (html, url, setup) can be set for a file with test.override().
+ *
+ * A test with a page is skipped when it passed before and nothing it depends on has changed (test-cache.mjs).
  */
 export const test = base.extend({
     pageOptions: [{}, { injected: false }],
     // The site's address, as Playwright's baseURL.
     baseURL: async ({}, use) => use(ORIGIN),
-    page: async ({ pageOptions }, use) => {
-        const env = await openWindow(pageOptions);
+    page: async ({ pageOptions, task, skip, onTestFinished }, use) => {
+        const cache = cacheFor(task.file.filepath);
+        const name = testName(task);
+        if (cache.isFresh(name)) skip('passed before, and nothing it depends on has changed');
+        const files = new Set();
+        onTestFinished(({ task }) => {
+            if (task.result?.state === 'pass') cache.passed(name, [...files]);
+            else cache.failed(name);
+        });
+        const env = await openWindow({ ...pageOptions, record: file => files.add(fromRoot(resolve(file))) });
         const page = new Page(env);
         env.page = page;
         await use(page);
@@ -334,3 +351,9 @@ export async function mount(page, html) {
 
 /** As Playwright's test.use, for the options these tests set: `startUrl` opens that page of the site instead. */
 test.use = options => test.override({ pageOptions: options });
+
+// Each test file imports this harness, so this runs once its tests are done: the file's results are saved, dropping
+// tests it no longer has.
+afterAll(({}, file) => {
+    if (file?.filepath) cacheFor(file.filepath).save(allTestNames(file.tasks));
+});

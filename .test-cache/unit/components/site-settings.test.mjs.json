@@ -1,0 +1,3 @@
+{
+  "registers and renders without errors": {"hash":"5ba79feaca05cf6f565f106a9e525889df4a852716c6a6b8e8296f80f5257b32","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/input-range.min.js","cdn/webui/loader.min.js","cdn/webui/site-settings.min.js"]}
+}

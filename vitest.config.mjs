@@ -13,9 +13,13 @@ if (nice === 'idle' && process.platform === 'linux') {
 
 // The unit and component tests: plain logic in Node, and Web UI's minified components in jsdom
 // (tests/unit/support/webui.mjs). Tests that need a real browser's layout run in Playwright (tests/browser).
-export default defineConfig({
+// `vitest run --mode full` (npm run test:full) runs every test, ignoring the test cache, and records what passes.
+export default defineConfig(({ mode }) => ({
     test: {
+        env: mode === 'full' ? { TEST_CACHE: '0' } : {},
         include: ['tests/unit/**/*.test.mjs'],
+        // Removes the cached results of test files that are gone (tests/unit/support/test-cache.mjs).
+        globalSetup: ['tests/unit/support/test-cache.mjs'],
         environment: 'node',
         pool: 'threads',
         // One test at a time: one file after another, and a file's tests in order. Tests running side by side compete
@@ -34,4 +38,4 @@ export default defineConfig({
         // the browser tests. Every other unhandled error fails the run.
         onUnhandledError: error => !(error === 'canceled' || error?.message === 'canceled'),
     },
-});
+}));

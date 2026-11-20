@@ -1,0 +1,4 @@
+{
+  "alt is respected, and reverse puts the image first": {"hash":"c69a1870def8f005d4cb91b6031c94d6e1b14661a0aeb30c5d268ec5584af18f","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/flex.min.js","cdn/webui/loader.min.js","cdn/webui/paper.min.js","cdn/webui/sideimage.min.js"]},
+  "places the image and moves content beside it": {"hash":"c69a1870def8f005d4cb91b6031c94d6e1b14661a0aeb30c5d268ec5584af18f","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/flex.min.js","cdn/webui/loader.min.js","cdn/webui/paper.min.js","cdn/webui/sideimage.min.js"]}
+}

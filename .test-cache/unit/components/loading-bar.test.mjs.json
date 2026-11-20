@@ -1,0 +1,6 @@
+{
+  "bad percent values become zero": {"hash":"7e119175d0109f262cc6ab5e2cdf38f306e2e84ac3f955dac1f415abe901e16d","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/loading-bar.min.js"]},
+  "height sets the size": {"hash":"7e119175d0109f262cc6ab5e2cdf38f306e2e84ac3f955dac1f415abe901e16d","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/loading-bar.min.js"]},
+  "indeterminate and striped flags are kept": {"hash":"7e119175d0109f262cc6ab5e2cdf38f306e2e84ac3f955dac1f415abe901e16d","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/loading-bar.min.js"]},
+  "percent sets the bar width": {"hash":"7e119175d0109f262cc6ab5e2cdf38f306e2e84ac3f955dac1f415abe901e16d","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/loading-bar.min.js"]}
+}

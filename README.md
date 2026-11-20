@@ -1,6 +1,6 @@
 # My Fidelity CDN
 
-[Version: 0.11.132](https://github.com/StoicDreams/MyFiCDN)
+[Version: 0.11.133](https://github.com/StoicDreams/MyFiCDN)
 
 CDN Services for Stoic Dreams
 
@@ -40,6 +40,7 @@ On Linux the browser tests use `/usr/bin/chromium` if it exists, so the second c
 |---|---|
 | `npm test` | Run the unit tests, then the browser tests. `npm run test:min` is the same, for Publish and CI |
 | `npm run test:unit` | Run only the unit tests |
+| `npm run test:full` | Run every test, ignoring the unit test cache |
 | `npx vitest` | Watch the unit tests, rerunning the ones a change affects |
 | `npm run test:browser` | Run only the browser tests |
 | `npm run test:ui` | Open the interactive runner for the browser tests |
@@ -55,6 +56,8 @@ Test files:
 - `tests/unit/coverage.test.mjs` fails when a component or `webui.*` member has no tests, and names what is missing.
 - `tests/unit/support/webui.mjs` provides `test`, `expect`, and `mount(page, html)` for unit tests, with a `page` that works like Playwright's. `tests/browser/support/webui.mjs` provides the same for browser tests.
 - `tests/scripts.spec.mjs` and `tests/service-worker.spec.mjs` test the PowerShell scripts and service worker shared with every site, and run with the browser tests.
+
+**Unit test cache:** a unit test with a `page` that passed is skipped while nothing it depends on has changed: its test file, the harness (`tests/unit/support`, `vitest.config.mjs`, `package-lock.json`), and every file its page loaded, which the harness records as it serves them. Results are kept in `.test-cache/unit/`, which is committed, so CI skips what passed before the commit. A test file that reads files itself (`node:fs`) and a test without a `page` always run, since what they read is not recorded. A failed test always runs again. `npm run test:full`, or `TEST_CACHE=0`, runs everything. Browser tests always run.
 
 Any uncaught error during a test fails that test, even if its checks pass. A unit test that needs layout (`boundingBox`, `page.mouse`, screenshots) fails with a message saying it belongs in `tests/browser`. Nothing in a unit test has a size, so checks of sizes, scrolling, or computed styles from stylesheets belong there too.
 

@@ -1,0 +1,4 @@
+{
+  "shows the image with its alt text": {"hash":"c63eb8a2dbf0939d87e4d141e5a92f146519d98e07666ee63a51cb8e5cb9f6f0","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/media.min.js"]},
+  "without a src the image is hidden and has an empty alt": {"hash":"c63eb8a2dbf0939d87e4d141e5a92f146519d98e07666ee63a51cb8e5cb9f6f0","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/media.min.js"]}
+}

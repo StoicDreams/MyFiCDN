@@ -1,0 +1,5 @@
+{
+  "a target opens one new window and leaves this page alone": {"hash":"efeceaf8fd46a3dd8e1f73b0da908fb85b1aa6313a5f8675dc7d3f8716e11b9a","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/link.min.js","cdn/webui/loader.min.js"]},
+  "an internal href routes without a reload": {"hash":"efeceaf8fd46a3dd8e1f73b0da908fb85b1aa6313a5f8675dc7d3f8716e11b9a","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/link.min.js","cdn/webui/loader.min.js"]},
+  "icons go in their slots": {"hash":"bfd93adbedc8b1505723fdfef8909fd07d09618667f222fa15a2aa9b77c5fd97","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/icons/arrow.webui","cdn/icons/xmark.webui","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/icon.min.js","cdn/webui/link.min.js","cdn/webui/loader.min.js"]}
+}

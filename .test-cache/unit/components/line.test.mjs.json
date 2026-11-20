@@ -1,0 +1,4 @@
+{
+  "draws a line": {"hash":"2ab34234aee302d2cc4863f44abe4a212f2206e243d8bb5a5abf9d4107fa5a63","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/line.min.js","cdn/webui/loader.min.js"]},
+  "size sets the thickness": {"hash":"2ab34234aee302d2cc4863f44abe4a212f2206e243d8bb5a5abf9d4107fa5a63","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/line.min.js","cdn/webui/loader.min.js"]}
+}

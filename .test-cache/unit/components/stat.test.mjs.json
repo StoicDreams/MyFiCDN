@@ -1,0 +1,4 @@
+{
+  "shows the value, label, and description": {"hash":"84b5fb6bb2ff61bf64c2acaeeda22e24c668b205788b39b299d1b0e47eb5bf47","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/stat.min.js"]},
+  "without a label, the label is hidden": {"hash":"84b5fb6bb2ff61bf64c2acaeeda22e24c668b205788b39b299d1b0e47eb5bf47","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/stat.min.js"]}
+}

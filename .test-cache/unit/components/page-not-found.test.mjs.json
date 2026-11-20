@@ -1,0 +1,5 @@
+{
+  "app-not-found-html replaces the default": {"hash":"676d41af5207fb6bfc70604885ea57f47fe8fc5c645a5690109f4ecdadfd7689","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/page-not-found.min.js"]},
+  "existing content is kept": {"hash":"676d41af5207fb6bfc70604885ea57f47fe8fc5c645a5690109f4ecdadfd7689","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/page-not-found.min.js"]},
+  "shows the default message and image": {"hash":"e33af35ed1ffa8c24ce7c604fd7885792f0e2b7d41ff6db646510c4db0e19ef9","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/data.min.js","cdn/webui/flex.min.js","cdn/webui/loader.min.js","cdn/webui/page-not-found.min.js","cdn/webui/side-by-side.min.js"]}
+}
