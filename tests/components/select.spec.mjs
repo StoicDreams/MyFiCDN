@@ -121,6 +121,28 @@ test('many options add a filter that narrows the tiles', async ({ page }) => {
     await expect(names(page)).toHaveText(options.filter((_, i) => i % 2).map(o => o.display));
 });
 
+test('with more options than fit, every tile still shows its name, not covered by the next row', async ({ page }) => {
+    await page.setViewportSize({ width: 900, height: 600 });
+    const photo = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90"><rect width="160" height="90" fill="teal"/></svg>');
+    const options = Array.from({ length: 200 }, (_, i) => ({ id: `p${i}`, display: `Photo ${i}`, ...(i % 2 ? { image: photo } : {}) }));
+    const el = await select(page, '', options);
+    await field(el).click();
+    await expect(tiles(page)).toHaveCount(200);
+    // The point at the middle of each name in the first rows belongs to that name, not to a tile drawn over it.
+    const covered = () => panel(page).evaluate(panel => {
+        const root = panel.getRootNode();
+        const top = panel.querySelector('.grid').getBoundingClientRect().top;
+        return [...panel.querySelectorAll('.tile')].filter(tile => tile.getBoundingClientRect().bottom < top + 300).map(tile => {
+            const box = tile.querySelector('.name').getBoundingClientRect();
+            const hit = root.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+            return hit?.closest('.tile') === tile ? null : tile.dataset.value;
+        }).filter(Boolean);
+    });
+    await expect.poll(covered).toEqual([]);
+    await expect(tile(page, 'Photo 0')).toBeInViewport({ ratio: 1 });
+    await expect(tile(page, 'Photo 0').locator('.name')).toBeVisible();
+});
+
 test('a few options have no filter', async ({ page }) => {
     const el = await select(page);
     await field(el).click();

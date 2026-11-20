@@ -1989,12 +1989,17 @@ webui-nav-link,
     padding: calc(0.1 * var(--padding));
 }
 
-webui-nav-link>a>webui-stoic-dreams-logo,
 webui-nav-link>a>webui-icon,
 webui-nav-link>a>svg,
 webui-nav-link>a>img {
     max-height: 3.5ch;
     font-size: 1.1em;
+}
+
+/* The Stoic Dreams logo has words in it, so a nav link shows it large enough to read rather than at icon size. */
+webui-nav-link>a>webui-stoic-dreams-logo {
+    height: 4em;
+    margin: -0.3em 0 -0.3em -0.3em;
 }
 
 webui-nav-group>webui-nav-link,

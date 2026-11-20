@@ -21,17 +21,17 @@ test('embeds its font once, as WOFF2', async ({ page }) => {
 test('shows its words as text, never as markup', async ({ page }) => {
     const root = await mount(page, '<webui-stoic-dreams-logo text="<b>Bold</b>"></webui-stoic-dreams-logo>');
     const logo = root.locator('webui-stoic-dreams-logo svg.logo');
-    await expect(logo.locator('text')).toHaveText('<b>Bold</b>');
+    await expect(logo.locator('.words > g')).toHaveText('<b>Bold</b>');
     await expect(logo.locator('b')).toHaveCount(0);
 });
 test('draws one line or two, and redraws them when the words change', async ({ page }) => {
     const root = await mount(page, '<webui-stoic-dreams-logo text="App"></webui-stoic-dreams-logo>');
     const el = root.locator('webui-stoic-dreams-logo');
-    await expect(el.locator('svg.logo text')).toHaveText(['App']);
+    await expect(el.locator('svg.logo .words > g')).toHaveText(['App']);
     await el.evaluate(logo => logo.setAttribute('text2', 'Two'));
-    await expect(el.locator('svg.logo text')).toHaveText(['App', 'Two']);
+    await expect(el.locator('svg.logo .words > g')).toHaveText(['App', 'Two']);
     await el.evaluate(logo => logo.removeAttribute('text'));
-    await expect(el.locator('svg.logo text')).toHaveText(['Two']);
+    await expect(el.locator('svg.logo .words > g')).toHaveText(['Two']);
 });
 test('names itself after its words unless given a title', async ({ page }) => {
     const root = await mount(page, '<webui-stoic-dreams-logo text="Web" text2="UI"></webui-stoic-dreams-logo><webui-stoic-dreams-logo id="titled" text="Web" title="Our Logo"></webui-stoic-dreams-logo>');

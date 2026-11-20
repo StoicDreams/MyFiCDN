@@ -1,5 +1,5 @@
 <webui-page-segment elevation="10">
-    The `<webui-stoic-dreams-logo>` component draws the Stoic Dreams logo, a tilted ring threaded through four spheres, as a scalable vector (SVG) in the site's theme colors: the ring in `--color-title`, and the spheres in `--color-success`, `--color-tertiary`, `--color-secondary`, and `--color-primary`. The `text` and `text2` attributes add one or two small lines of words in the middle of the ring. The background is transparent, and the inside of the ring is black, so the words stay readable on any page.
+    The `<webui-stoic-dreams-logo>` component draws the Stoic Dreams logo, a tilted ring threaded through four spheres, as a scalable vector (SVG) in the site's theme colors: the ring in `--color-title`, and the spheres in `--color-success`, `--color-tertiary`, `--color-secondary`, and `--color-primary`. The `text` and `text2` attributes add one or two lines of words inside the ring, drawn in the logo's perspective: their tops follow the line through the two top spheres, and their bottoms the line through the two bottom spheres. The background is transparent, and the inside of the ring is black, so the words stay readable on any page.
 </webui-page-segment>
 
 <webui-side-by-side>

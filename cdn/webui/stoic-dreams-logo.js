@@ -6,6 +6,21 @@
  * Licensed under the MIT license - https://github.com/StoicDreams/MyFiCDN/blob/main/LICENSE
  */
 "use strict"
+{
+    // Nunito Bold's advance widths for the characters 32 to 126, in thousandths of an em.
+    const SVG = 'http://www.w3.org/2000/svg';
+    // The perspective that maps the words' 200 x 100 box onto the logo, as a 3 x 3 matrix by rows.
+    const PERSPECTIVE = [0.270495347,-2.64664414e-14,22,-0.255507026,0.465843798,64.7096875,-0.0020273801,-4.68237243e-16,1];
+    // The 2D transform that matches the perspective near (cx, cy): its value there, plus how it stretches and turns.
+    function perspectiveAt(cx, cy) {
+        const [h0, h1, h2, h3, h4, h5, h6, h7, h8] = PERSPECTIVE;
+        const w = h6 * cx + h7 * cy + h8;
+        const u = (h0 * cx + h1 * cy + h2) / w;
+        const v = (h3 * cx + h4 * cy + h5) / w;
+        const a = (h0 - u * h6) / w, b = (h3 - v * h6) / w, c = (h1 - u * h7) / w, d = (h4 - v * h7) / w;
+        return `matrix(${a} ${b} ${c} ${d} ${u - a * cx - c * cy} ${v - b * cx - d * cy})`;
+    }
+    const ADVANCES = [271,248,448,600,600,945,726,243,358,358,453,600,248,434,248,313,600,600,600,600,600,600,600,600,600,600,248,248,600,600,600,459,950,744,688,680,762,597,562,736,773,282,354,665,562,868,748,785,652,785,686,631,621,738,713,1113,672,618,605,354,313,354,600,500,377,547,600,472,600,542,364,604,585,255,259,536,319,877,585,576,600,600,392,488,384,579,527,853,546,526,474,391,288,391,600];
 webui.define('webui-stoic-dreams-logo', {
     constructor() {
         const t = this;
@@ -29,15 +44,15 @@ webui.define('webui-stoic-dreams-logo', {
         tempDiv.innerHTML = `<svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" version="1.1">
 <defs>
 <style type="text/css">
-.text{fill:#FFFFFF;font-family:'Nunito', Arial, sans-serif;font-weight:700;stroke:#000;stroke-width:5px;stroke-linejoin:round;paint-order:stroke;}
+.words{fill:#FFFFFF;font-family:'Nunito', Arial, sans-serif;font-weight:700;stroke:#000;stroke-width:7px;stroke-linejoin:round;paint-order:stroke fill;}
 </style>
 <linearGradient id="l-ring" gradientUnits="userSpaceOnUse" x1="120" y1="120" x2="520" y2="520"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient><linearGradient id="l-shine" gradientUnits="userSpaceOnUse" x1="120" y1="120" x2="480" y2="480"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient><g id="l-band"><path d="M524 100L534 109L543 119L550 131L557 143L562 156L566 170L569 184L571 199L571 215L570 230L568 246L565 263L561 279L556 296L550 312L543 328L535 345L526 361L516 377L506 393L495 409L483 424L470 439L457 453L443 467L429 480L414 492L399 504L384 515L369 526L353 535L337 544L321 552L304 559L288 565L272 569L256 573L240 576L224 577L209 578L194 577L179 575L165 571L152 567L139 561L128 553L117 545L108 536L99 525L92 514L86 502L81 490L78 477L75 464L74 450L73 436L74 421L75 407L78 392L81 376L86 361L91 346L97 330L104 314L112 299L121 283L130 268L140 253L151 238L163 223L175 209L187 195L201 182L214 169L228 157L243 146L257 135L272 125L287 115L303 107L318 99L333 92L349 86L364 81L379 77L394 74L408 72L423 70L437 70L451 71L464 73L477 76L490 80L502 86L513 92ZM485 129L479 123L472 118L464 114L455 111L445 108L434 107L423 106L411 106L399 107L386 109L373 112L359 116L345 121L331 127L317 134L303 142L289 150L275 160L261 170L248 180L234 192L222 204L209 216L197 229L186 242L175 256L165 270L156 284L147 299L139 313L132 327L126 342L121 356L116 370L113 384L111 397L109 410L108 423L109 435L110 446L112 456L115 466L119 475L124 483L129 490L134 496L141 501L147 505L154 509L162 512L170 514L179 516L188 517L198 517L208 517L219 516L230 514L242 512L255 508L267 504L280 499L293 493L307 486L320 479L333 471L346 462L360 452L372 442L385 431L397 419L409 407L421 395L432 382L442 369L452 356L461 342L469 328L477 315L484 301L490 287L495 274L500 261L503 248L506 236L508 224L509 212L510 201L510 191L509 181L507 172L505 163L503 155L499 148L495 141L491 135Z" style="fill:var(--color-title);stroke:#fff;stroke-opacity:.35;stroke-width:5" fill-rule="evenodd"/><path d="M524 100L534 109L543 119L550 131L557 143L562 156L566 170L569 184L571 199L571 215L570 230L568 246L565 263L561 279L556 296L550 312L543 328L535 345L526 361L516 377L506 393L495 409L483 424L470 439L457 453L443 467L429 480L414 492L399 504L384 515L369 526L353 535L337 544L321 552L304 559L288 565L272 569L256 573L240 576L224 577L209 578L194 577L179 575L165 571L152 567L139 561L128 553L117 545L108 536L99 525L92 514L86 502L81 490L78 477L75 464L74 450L73 436L74 421L75 407L78 392L81 376L86 361L91 346L97 330L104 314L112 299L121 283L130 268L140 253L151 238L163 223L175 209L187 195L201 182L214 169L228 157L243 146L257 135L272 125L287 115L303 107L318 99L333 92L349 86L364 81L379 77L394 74L408 72L423 70L437 70L451 71L464 73L477 76L490 80L502 86L513 92ZM485 129L479 123L472 118L464 114L455 111L445 108L434 107L423 106L411 106L399 107L386 109L373 112L359 116L345 121L331 127L317 134L303 142L289 150L275 160L261 170L248 180L234 192L222 204L209 216L197 229L186 242L175 256L165 270L156 284L147 299L139 313L132 327L126 342L121 356L116 370L113 384L111 397L109 410L108 423L109 435L110 446L112 456L115 466L119 475L124 483L129 490L134 496L141 501L147 505L154 509L162 512L170 514L179 516L188 517L198 517L208 517L219 516L230 514L242 512L255 508L267 504L280 499L293 493L307 486L320 479L333 471L346 462L360 452L372 442L385 431L397 419L409 407L421 395L432 382L442 369L452 356L461 342L469 328L477 315L484 301L490 287L495 274L500 261L503 248L506 236L508 224L509 212L510 201L510 191L509 181L507 172L505 163L503 155L499 148L495 141L491 135Z" fill="url(#l-ring)" fill-rule="evenodd"/><path d="M507 117L515 125L521 134L527 143L531 153L535 164L538 176L539 188L540 200L540 213L539 227L537 241L534 255L530 270L525 285L520 300L513 315L506 330L497 345L488 360L479 374L468 389L457 403L445 417L433 430L420 443L407 455L393 467L380 478L365 488L351 498L336 507L322 515L307 522L292 529L278 534L263 539L249 543L235 545L222 547L208 548L196 547L184 546L172 544L161 540L151 536L141 531L132 525L124 518L117 511L110 502L105 493L100 482L97 472L94 460L92 448L91 435L91 422L92 409L94 395L97 380L101 366L106 351L112 336L118 321L126 306L134 291L143 276L153 261L163 247L174 233L186 219L198 206L211 193L224 180L238 169L252 158L266 147L281 137L295 129L310 120L325 113L339 107L354 101L368 97L382 93L396 90L410 89L423 88L436 88L448 90L459 92L470 95L481 99L490 104L499 110L507 117" fill="none" stroke="url(#l-shine)" stroke-width="9" stroke-linecap="round"/></g><radialGradient id="l-success" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".22" style="stop-color:var(--color-success)"/><stop offset=".8" style="stop-color:var(--color-success)"/><stop offset="1" stop-color="#000"/></radialGradient><radialGradient id="l-tertiary" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".22" style="stop-color:var(--color-tertiary)"/><stop offset=".8" style="stop-color:var(--color-tertiary)"/><stop offset="1" stop-color="#000"/></radialGradient><clipPath id="l-front-tertiary"><path d="M431.0 209.4L541.4 228.4L579.4 7.6L469.0 -11.4Z"/></clipPath><radialGradient id="l-secondary" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".22" style="stop-color:var(--color-secondary)"/><stop offset=".8" style="stop-color:var(--color-secondary)"/><stop offset="1" stop-color="#000"/></radialGradient><clipPath id="l-front-secondary"><path d="M-9.4 485.2L14.8 595.6L235.6 547.2L211.4 436.8Z"/></clipPath><radialGradient id="l-primary" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".8"/><stop offset=".22" style="stop-color:var(--color-primary)"/><stop offset=".8" style="stop-color:var(--color-primary)"/><stop offset="1" stop-color="#000"/></radialGradient>
 </defs>
 <g transform="translate(9 9) scale(0.22)"><ellipse cx="315.7" cy="317.8" rx="277.3" ry="162.4" transform="rotate(-46.3 315.7 317.8)" fill="#000"/><use href="#l-band"/><circle cx="194" cy="200" r="54" fill="url(#l-success)"/><circle cx="450" cy="99" r="72" fill="url(#l-tertiary)"/><circle cx="101" cy="461" r="73" fill="url(#l-secondary)"/><circle cx="428" cy="430" r="102" fill="url(#l-primary)"/><use href="#l-band" clip-path="url(#l-front-tertiary)"/><use href="#l-band" clip-path="url(#l-front-secondary)"/></g>
-<g class="text"></g>
+<g class="words" aria-hidden="true"></g>
 </svg>`;
         t.svg = tempDiv.firstChild;
-        t._text = t.svg.querySelector('g.text');
+        t._text = t.svg.querySelector('.words');
         t._slot.appendChild(t.svg);
         t.render();
     },
@@ -51,21 +66,30 @@ webui.define('webui-stoic-dreams-logo', {
         let title = t.title || `${(`${t.text || ''} ${t.text2 || ''}`.trim())} Logo`;
         t.svg.setAttribute('title', title);
         const lines = [t.text, t.text2].filter(line => line);
-        // Small words in the middle of the ring, so the logo stays in front: one line centered, or two stacked.
-        const baselines = lines.length > 1 ? [72, 100] : [86];
+        // The words lie in the logo's perspective, their tops along the line through the two top spheres and their
+        // bottoms along the line through the two bottom spheres. They are laid out in a 200 x 100 box, each line at
+        // most 46 units tall and narrowed to fit 192 units, which PERSPECTIVE maps onto the logo. Each letter gets the
+        // 2D transform the perspective has at its center, since browsers draw 3D transforms in SVG differently.
+        const tops = lines.length > 1 ? [0, 50] : [25];
         t._text.replaceChildren(...lines.map((line, index) => {
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', '75');
-            text.setAttribute('y', baselines[index]);
-            text.setAttribute('text-anchor', 'middle');
-            text.setAttribute('font-size', '28');
-            // Nunito's letters average about 0.58em wide. A line that would run past 132 units is narrowed to fit.
-            if (line.length * 28 * 0.58 > 132) {
-                text.setAttribute('textLength', '132');
-                text.setAttribute('lengthAdjust', 'spacingAndGlyphs');
-            }
-            text.textContent = line;
-            return text;
+            const group = document.createElementNS(SVG, 'g');
+            const chars = [...line];
+            const advances = chars.map(ch => (ADVANCES[ch.charCodeAt(0) - 32] || 580) / 1000);
+            const size = Math.min(46, 192 / advances.reduce((sum, a) => sum + a, 0));
+            // Where a browser puts the baseline in a 50 unit line, from Nunito's ascent (1.011) and descent (0.353).
+            const baseline = tops[index] + (50 - size * 1.364) / 2 + size * 1.011;
+            let x = (200 - advances.reduce((sum, a) => sum + a, 0) * size) / 2;
+            chars.forEach((ch, i) => {
+                const letter = document.createElementNS(SVG, 'text');
+                letter.setAttribute('x', x);
+                letter.setAttribute('y', baseline);
+                letter.setAttribute('font-size', size);
+                letter.setAttribute('transform', perspectiveAt(x + advances[i] * size / 2, baseline - size * 0.35));
+                letter.textContent = ch;
+                group.appendChild(letter);
+                x += advances[i] * size;
+            });
+            return group;
         }));
     },
     shadowTemplate: `
@@ -84,3 +108,4 @@ overflow:visible;
 <slot name="logo"></slot>
 `
 });
+}

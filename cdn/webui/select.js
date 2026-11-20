@@ -204,6 +204,9 @@ outline-offset:var(--focus-offset, 2px);
 .grid {
 display:grid;
 grid-template-columns:repeat(var(--select-columns, 4), var(--select-item-size));
+/* Rows as tall as the square tiles. Left to size themselves, rows in a grid that scrolls shrink below the tiles
+once there are more than fit, and the tiles pile over each other, hiding their names. */
+grid-auto-rows:var(--select-item-size);
 gap:var(--select-gap);
 min-height:0;
 overflow:auto;
@@ -280,6 +283,15 @@ flex:0 0 auto;
 width:48%;
 max-width:4.5em;
 aspect-ratio:1;
+}
+/* A picture option's image is often a wide photo, so it takes the tile's whole width above the name, rather than
+the icon's square, where it would be too small to make out. */
+.picture:has(> img) {
+width:100%;
+max-width:none;
+flex:1 1 auto;
+min-height:0;
+aspect-ratio:auto;
 }
 .picture img {
 width:100%;
