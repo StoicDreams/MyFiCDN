@@ -231,6 +231,42 @@ test('a tooltip never blocks clicks, and closes when its element is hidden under
     await root.locator('#hide').evaluate(el => { el.style.display = 'none'; });
     await expect(tooltip).toHaveClass(/closed/);
 });
+test.describe('on a touch screen', () => {
+    test.use({ hasTouch: true, isMobile: true });
+    /** Taps, and waits until the tooltip has decided what to show for the mouse move the tap sends. */
+    async function tap(page, locator) {
+        await page.evaluate(() => {
+            window.__moveHandled = new Promise(resolve => {
+                document.body.addEventListener('mousemove', () => requestAnimationFrame(() => resolve()), { once: true });
+            });
+        });
+        await locator.tap();
+        await page.evaluate(() => window.__moveHandled);
+    }
+    test('tapping a button or link does its job without showing its tooltip', async ({ page }) => {
+        const root = await mount(page, `<button id="menu" aria-label="open navigation menu" style="position:fixed;top:300px;left:100px;z-index:9999">☰</button>
+<a id="home" href="#home" title="Home" style="position:fixed;top:400px;left:100px;z-index:9999"><webui-icon icon="home"></webui-icon></a>`);
+        const tooltip = page.locator('body > .tooltip');
+        await page.evaluate(() => { window.__taps = 0; document.querySelector('#menu').addEventListener('click', () => window.__taps++); });
+        await tap(page, root.locator('#menu'));
+        await expect.poll(() => page.evaluate(() => window.__taps)).toBe(1);
+        await expect(tooltip).toHaveClass(/closed/);
+        await tap(page, root.locator('#home webui-icon'));
+        await expect(page).toHaveURL(/#home$/);
+        await expect(tooltip).toHaveClass(/closed/);
+    });
+    test('tapping something that is only there to give information shows its tooltip', async ({ page }) => {
+        const root = await mount(page, '<button id="menu" aria-label="Menu" style="position:fixed;top:300px;left:100px;z-index:9999">☰</button><span id="info" tabindex="0" title="Saved every minute" style="position:fixed;top:400px;left:100px;z-index:9999">i</span>');
+        const tooltip = page.locator('body > .tooltip');
+        await tap(page, root.locator('#info'));
+        await expect(tooltip).toHaveText('Saved every minute');
+        await expect(tooltip).toHaveClass(/open/);
+        // A control tapped next closes it, and shows no tooltip of its own.
+        await tap(page, root.locator('#menu'));
+        await expect(tooltip).toHaveClass(/closed/);
+        await expect(tooltip).toHaveText('Saved every minute');
+    });
+});
 test('a mouse move handled after its element was hidden shows no tooltip', async ({ page }) => {
     const root = await mount(page, '<button id="gone" title="Rename" style="position:fixed;top:300px;left:300px;z-index:9999">x</button>');
     const tooltip = page.locator('body > .tooltip');
@@ -263,8 +299,10 @@ test('a tooltip shows above an open dropdown list', async ({ page }) => {
     expect(onTop).toBe(true);
     await expect(dropdown.getByRole('listbox')).toBeVisible();
 });
+// These open the home page, the heaviest on the site. Its load event waits for every image and font, which can take
+// most of a test's time on a busy machine, so they wait only for the tabs they check, which their checks do.
 test('a tab named in the url opens on load', async ({ page }) => {
-    await page.goto('/#condition');
+    await page.goto('/#condition', { waitUntil: 'commit' });
     const tabs = page.locator('webui-tabs').first();
     const button = tabs.locator(':scope > [hash="condition"]');
     await expect(button).toHaveAttribute('theme', 'active');
@@ -272,12 +310,13 @@ test('a tab named in the url opens on load', async ({ page }) => {
     await expect(tabs.locator('webui-condition').first()).toBeAttached({ timeout: 10000 });
 });
 test('a tab named in the url wins over the saved tab', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'commit' });
     await expect(page.locator('webui-tabs > [hash="welcome"]')).toHaveAttribute('theme', 'active');
     await page.locator('webui-tabs > [hash="quote"]').evaluate(el => el.click());
     await expect.poll(() => page.evaluate(() => sessionStorage.getItem('session-data'))).toContain('home-tab-index');
-    await page.goto('/about');
-    await page.goto('/#markdown');
+    // Another page between them, so the url's tab is read on a fresh load rather than as a hash change.
+    await page.goto('/about', { waitUntil: 'commit' });
+    await page.goto('/#markdown', { waitUntil: 'commit' });
     await expect(page.locator('webui-tabs > [hash="markdown"]')).toHaveAttribute('theme', 'active');
     await expect(page).toHaveURL(/#markdown$/);
 });
@@ -314,12 +353,17 @@ test.describe('first page load', () => {
         });
         await page.goto('/about');
     }
-    const shown = page => page.evaluate(() => window.__shown);
+    // Shown once the page has dropped the fade's class. The observer catches any moment it did, and the page's own
+    // text with no fade running covers a page that showed before the observer could be attached to it.
+    const shown = (page, text) => page.evaluate(text => {
+        const main = document.querySelector('webui-app')?.main;
+        return window.__shown || (!!main?.textContent.includes(text) && !main.classList.contains('transition'));
+    }, text);
     test('shows a page without components straight away', async ({ page }) => {
         // Later navigations wait 300 ms for the fade. The first page shows without that timer, so it shows even when
         // long timers never run. Timing it instead failed on busy machines, where a frame alone can take over 150 ms.
         await openWithFadeHeld(page, '# Quick\n\nNothing to load here.');
-        await expect.poll(() => shown(page)).toBe(true);
+        await expect.poll(() => shown(page, 'Nothing to load here.')).toBe(true);
     });
     test('waits for the page components, but not forever', async ({ page }) => {
         await page.route('**/webui/never-loads.min.js', () => { });
@@ -330,7 +374,7 @@ test.describe('first page load', () => {
         await expect.poll(() => page.evaluate(() => window.__heldTimers.some(timer => timer.ms === 300))).toBe(true);
         // A page that did not wait for its component would show in the next frame.
         await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
-        expect(await shown(page)).toBe(false);
+        expect(await shown(page, 'Slow')).toBe(false);
         // A component that never loads still lets the page show, once the fade time has passed.
         // Running a held timer twice is not possible, and a timer held later is run by a later try, so repeating
         // this only moves time on.

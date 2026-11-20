@@ -264,7 +264,8 @@
 }
 .toolbar {
     padding: 8px 16px;
-    background-color: var(--color-code-background, #252525);
+    /* A shade off the theme's background: lighter on a dark theme, darker on a light one. */
+    background-color: color-mix(in srgb, var(--theme-color-offset, #ccc) 5%, var(--theme-color, #1e1e1e));
     border-bottom: 1px solid color-mix(in srgb, var(--color-code-muted, #858585) 50%, transparent);
     display: flex;
     align-items: center;
@@ -277,7 +278,7 @@
     gap: 8px;
     font-family: var(--font-family, sans-serif);
     font-size: 13px;
-    color: var(--color-code, #ccc);
+    color: var(--theme-color-offset, #ccc);
     user-select: none;
 }
 .compare-container {
@@ -288,7 +289,8 @@
     flex-direction: column;
     gap: 2px;
     min-height: 0;
-    background-color: #333;
+    /* Shows between and below the rows: a shade off the theme's background, so it blends with any theme. */
+    background-color: color-mix(in srgb, var(--theme-color-offset, #ccc) 9%, var(--theme-color, #1e1e1e));
     contain: content;
 }
 .diff-row {

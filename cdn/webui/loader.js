@@ -3740,8 +3740,12 @@ const webui = (() => {
                         changePage(href);
                     }
                 }
+                // data-stopclick keeps a click inside, such as in a drawer, from reaching what is around it, like the app
+                // closing the drawer. The click still does what it does, so checkboxes, labels and details inside work.
                 if (target.hasAttribute("data-stopclick")) {
-                    stop();
+                    ev.stopPropagation();
+                    retValue = false;
+                    breakAtEnd = true;
                 }
                 if (target.dataset.setattr) {
                     let [val, attr, sel] = target.dataset.setattr
@@ -3966,14 +3970,35 @@ function setupWebuiTooltips() {
         }
         return [null, null];
     }
+    const controlTags = new Set(["BUTTON", "INPUT", "SELECT", "TEXTAREA", "SUMMARY", "LABEL"]);
+    const controlRoles = new Set(["button", "link", "checkbox", "radio", "switch", "tab", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "slider", "spinbutton", "textbox", "combobox", "searchbox", "treeitem"]);
+    /** Whether a tap on this path lands on something that does a job, such as a button or a link, or is inside one. */
+    function isControlPath(path) {
+        return path.some(el => el.tagName && (
+            controlTags.has(el.tagName)
+            || (el.tagName === "A" && el.hasAttribute("href"))
+            || controlRoles.has(el.getAttribute("role"))
+            || el.isContentEditable));
+    }
+    // A tap also sends a mouse move, which would show the tooltip of what was tapped, such as "open navigation menu"
+    // over the logo as the drawer opens. A control tapped already did its job, so only an element that is there to
+    // give information, such as an info icon, shows its tooltip on touch. A mouse or pen shows every tooltip.
+    let lastPointerType = "mouse";
+    document.addEventListener("pointerdown", (ev) => { lastPointerType = ev.pointerType; }, { capture: true, passive: true });
+    document.addEventListener("pointermove", (ev) => { lastPointerType = ev.pointerType; }, { capture: true, passive: true });
     let tooltipDistancePadding = 30;
     document.body.addEventListener("click", CloseIfOpen);
     document.body.addEventListener("input", CloseIfOpen);
     let isTooltipTicking = false;
     document.body.addEventListener("mousemove", (ev) => {
         if (!window.tooltipsEnabled || isTooltipTicking) return;
+        const path = ev.composedPath ? ev.composedPath() : [ev.target];
+        if (lastPointerType === "touch" && isControlPath(path)) {
+            CloseIfOpen();
+            return;
+        }
         isTooltipTicking = true;
-        const eventTarget = ev.composedPath ? ev.composedPath()[0] : ev.target;
+        const eventTarget = path[0];
         requestAnimationFrame(() => {
             try {
                 let [target, display] =

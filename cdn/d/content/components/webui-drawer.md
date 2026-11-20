@@ -29,6 +29,8 @@ A drawer with `data-dockable` also shows a Close button beside its Dock button. 
 
 ### Resizing
 
+A drawer leaves a little room below its content, so the end of a long list is not left against the footer. Add `fill` to a drawer whose content fills it to its footer, such as a panel of tabs, to leave that room out.
+
 Add `resizable` to a left or right drawer to let users drag its inner edge to make it wider or narrower. Double click the edge to go back to the width its content needs. The edge can also be focused and resized with the arrow keys.
 
 The chosen width is kept in the `width` attribute, in pixels, so add `width` to `data-state` to remember it between visits.

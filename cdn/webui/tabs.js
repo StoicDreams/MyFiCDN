@@ -63,6 +63,29 @@
             t.showLabel();
             t.render();
             t.checkResponsiveVertical();
+            // A new size moves where each tab sits, so the shown one is lined up again.
+            t._alignObserver ??= new ResizeObserver(() => t.alignContent());
+            t._alignObserver.observe(t._section);
+            t._alignObserver.observe(t._slotContent);
+        },
+        disconnected() {
+            this._alignObserver?.disconnect();
+        },
+        /**
+         * Slides the row of tab contents so the shown one is in view. It moves by where the shown tab really is, rather
+         * than by its index times the width, which drifted by a little more each tab whenever a column was not exactly
+         * as wide as the tabs, as WebKit could leave them until the tabs were resized, cutting off the left of later tabs.
+         */
+        alignContent() {
+            const t = this;
+            const contents = t.tabContents();
+            const shown = contents[t._index];
+            const first = contents[0];
+            if (!shown || !first) return;
+            // Before the tabs are laid out there is nothing to measure, so the slide is by index until they are.
+            const measured = shown.offsetWidth > 0 && first.offsetWidth > 0;
+            const translate = measured ? `${first.offsetLeft - shown.offsetLeft}px 0` : `-${t._index * 100}% 0`;
+            if (t._slotContent.style.translate !== translate) t._slotContent.style.translate = translate;
         },
         tabButtons() {
             return Array.from(this.children).filter(item => item.getAttribute('slot') === 'tabs');
@@ -268,8 +291,8 @@
                 // Other tabs are only moved out of view, so inert keeps keyboard focus and screen readers out of them.
                 c.inert = tabIndex !== index;
                 if (tabIndex === index++) {
-                    let offset = tabIndex * 100;
-                    t._slotContent.style.translate = `-${offset}% 0`;
+                    t._index = tabIndex;
+                    t.alignContent();
                     foundIndex = true;
                     if (c.previousElementSibling && c.previousElementSibling.hasAttribute && c.previousElementSibling.hasAttribute('hash')) {
                         // Selecting the initial tab is not a navigation, so it adds no history entry or replaces a hash in the url.

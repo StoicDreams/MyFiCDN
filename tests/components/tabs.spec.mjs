@@ -16,8 +16,31 @@ test('clicking a tab moves to its content', async ({ page }) => {
     const el = await tabs(page, 'transition-timing="0"');
     await buttons(el).nth(1).click();
     await expect(buttons(el).nth(1)).toHaveAttribute('theme', 'active');
-    await expect.poll(() => el.evaluate(c => [c._index, c._slotContent.style.translate])).toEqual([1, '-100%']);
+    // Its content slides into view, where a click on it reaches it.
+    const shown = el.locator(':scope > [slot="content"]').nth(1);
+    await expect(shown).toBeInViewport();
+    await expect.poll(() => shown.evaluate(content => {
+        const box = content.getBoundingClientRect();
+        return content.contains(document.elementFromPoint(box.left + 2, box.top + box.height / 2));
+    })).toBe(true);
 });
+test('a later tab shows from its start even when the columns are not as wide as the tabs', async ({ page }) => {
+    // WebKit could leave the columns a little off the tabs' width until they were resized, and sliding by index times
+    // the width then drifted by more each tab, cutting off the left of later tabs. Narrower columns stand in for that.
+    const root = await mount(page, `<webui-tabs style="width:400px">${Array.from({ length: 8 }, (_, i) =>
+        `<webui-button slot="tabs">${i + 1}</webui-button><div slot="content"><span class="start" data-tab="${i + 1}">Start ${i + 1}</span></div>`).join('')}</webui-tabs>`);
+    const el = root.locator('webui-tabs');
+    await el.evaluate(tabs => tabs.shadowRoot.querySelector('slot[name="content"]').style.setProperty('grid-template-columns', Array(8).fill('calc(100% - 6px)').join(' ')));
+    await buttons(el).nth(7).click();
+    // A click at the very start of the last tab's content lands on it, so none of it is out of view.
+    const start = el.locator('.start[data-tab="8"]');
+    await expect(start).toBeVisible();
+    await expect.poll(() => start.evaluate(span => {
+        const box = span.getBoundingClientRect();
+        return document.elementFromPoint(box.left + 1, box.top + box.height / 2) === span;
+    })).toBe(true);
+});
+
 test('a tab that is no longer active drops its active theme, rather than taking a theme named null', async ({ page }) => {
     const el = await tabs(page, 'transition-timing="0"');
     const first = buttons(el).first();

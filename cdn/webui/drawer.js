@@ -285,6 +285,16 @@ touch-action: none;
 .resize[hidden] {
 display: none;
 }
+/* The handle has room of its own on the inner edge, so it never covers the start of the content. Its width is
+   measured with that room in, so dragging the edge does not make the drawer jump by it. */
+:host([resizable][slot="right"]) {
+padding-left: 6px;
+box-sizing: border-box;
+}
+:host([resizable][slot="left"]) {
+padding-right: 6px;
+box-sizing: border-box;
+}
 :host([slot="right"]) .resize {
 left: 0;
 }
@@ -374,6 +384,9 @@ slot:not([name])::after {
 content:" ";
 display:block;
 min-height:2em;
+}
+:host([fill]) slot:not([name])::after {
+display:none;
 }
 #actions:empty {display:none;}
 button {

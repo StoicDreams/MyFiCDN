@@ -131,6 +131,20 @@ test.describe('resizing', () => {
     const appliedMin = drawer => drawer.evaluate(el => el.style.minWidth);
     const mountRight = async (page, attrs = '') => (await mount(page, `<webui-drawer slot="right" class="shared" data-dockable resizable docked="true" ${attrs} style="height:300px">Body</webui-drawer>`)).locator('webui-drawer');
 
+    test('the handle sits beside the content, so a click at the start of the content reaches it', async ({ page }) => {
+        for (const slot of ['right', 'left']) {
+            const root = await mount(page, `<webui-drawer slot="${slot}" resizable docked="true" width="300" style="height:300px"><div class="body" style="height:100%">Body</div></webui-drawer>`);
+            const body = root.locator('webui-drawer .body');
+            await expect(handle(root.locator('webui-drawer'))).toBeAttached();
+            // What a click lands on at the content's inner edge, the side the handle is on.
+            const hit = await body.evaluate((el, slot) => {
+                const box = el.getBoundingClientRect();
+                const x = slot === 'right' ? box.left + 1 : box.right - 1;
+                return document.elementFromPoint(x, box.top + box.height / 2)?.className;
+            }, slot);
+            expect(hit, `${slot} drawer`).toBe('body');
+        }
+    });
     test('dragging the inner edge of a right drawer makes it wider, and the width is kept', async ({ page }) => {
         const drawer = await mountRight(page, 'width="300"');
         await drag(page, drawer, -100);
@@ -235,4 +249,19 @@ test.describe('resizing', () => {
         await drawer.evaluate(el => el.setAttribute('slot', 'left'));
         await expect.poll(() => drawer.evaluate(el => el.style.width)).toBe('320px');
     });
+});
+
+test('a click inside data-stopclick stays inside, and checkboxes, labels and details there still work', async ({ page }) => {
+    const root = await mount(page, `<div id="outer" data-toggleclass="#outer|hit"><div data-stopclick>
+        <label><input type="checkbox" id="box"> Box</label>
+        <details id="more"><summary>More</summary><p>Inside</p></details>
+    </div></div>`);
+    await root.getByText('Box').click();
+    await expect(root.locator('#box')).toBeChecked();
+    await root.locator('#box').click();
+    await expect(root.locator('#box')).not.toBeChecked();
+    await root.getByText('More').click();
+    await expect(root.locator('#more')).toHaveAttribute('open', '');
+    // None of those clicks reached the element around it.
+    await expect(root.locator('#outer')).not.toHaveClass(/hit/);
 });
