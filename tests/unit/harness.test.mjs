@@ -17,3 +17,7 @@ test('matchers fail when they should', async ({ page }) => {
     expect(await fails(() => expect.poll(() => 1, { timeout: 100 }).not.toBe(1))).toBe(true);
     expect(await fails(() => expect.poll(() => 1).not.toBe(2))).toBe(false);
 });
+test('a fieldset is a group named by its legend, as in a browser', async ({ page }) => {
+    const root = await mount(page, '<fieldset><legend>Size</legend><label><input type="radio" name="s"> Small</label></fieldset>');
+    await expect(root.getByRole('group', { name: 'Size' }).getByRole('radio', { name: 'Small' })).toHaveCount(1);
+});

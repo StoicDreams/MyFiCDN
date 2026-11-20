@@ -21,7 +21,10 @@ import { afterAll, test as base, vi } from 'vitest';
 import { MarkdownParser } from '../../../cdn/js/mdparse.min.js';
 import { Locator, Page, pageExpect as expect } from './page.mjs';
 import { installStandIns, mediaMatcher, pageResponse } from './stand-ins.mjs';
-import { allTestNames, cacheFor, fromRoot, testName } from './test-cache.mjs';
+import { allTestNames, cacheFor, configureCache, fromRoot, testName } from './test-cache.mjs';
+
+// The harness loads the markdown parser itself, so every test depends on it.
+configureCache({ harness: ['cdn/js/mdparse.min.js'] });
 
 export { expect };
 

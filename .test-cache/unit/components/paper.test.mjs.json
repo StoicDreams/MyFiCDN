@@ -1,4 +1,4 @@
 {
-  "elevation applies": {"hash":"c032bdf8e43cda7a5be944e1fa7cda17dcf0c93a47bb18c5e7b146e8eb6246b9","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/paper.min.js"]},
-  "registers and keeps its content": {"hash":"c032bdf8e43cda7a5be944e1fa7cda17dcf0c93a47bb18c5e7b146e8eb6246b9","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/paper.min.js"]}
+  "elevation applies": {"hash":"146541eb79c41a48ad5e4db4f9784d6b5f2802ccb4031ab2325750dcaf8522d6","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/paper.min.js"]},
+  "registers and keeps its content": {"hash":"146541eb79c41a48ad5e4db4f9784d6b5f2802ccb4031ab2325750dcaf8522d6","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/paper.min.js"]}
 }

@@ -231,6 +231,7 @@ function roleOf(el) {
     if (name === 'progress') return 'progressbar';
     if (name === 'summary') return 'button';
     if (name === 'details') return 'group';
+    if (name === 'fieldset') return 'group';
     if (name === 'section' && (el.hasAttribute('aria-label') || el.hasAttribute('aria-labelledby'))) return 'region';
     if (name === 'form') return 'form';
     return null;
@@ -260,6 +261,11 @@ function nameOf(el) {
         return normalize(el.getAttribute('placeholder') || el.getAttribute('title') || '');
     }
     if (el.localName === 'img') return normalize(el.getAttribute('alt') || el.getAttribute('title') || '');
+    // A fieldset is named by its legend.
+    if (el.localName === 'fieldset') {
+        const legend = [...el.children].find(child => child.localName === 'legend');
+        if (legend) return normalize(renderedText(legend));
+    }
     const text = normalize(renderedText(el));
     return text || normalize(el.getAttribute('title') || '');
 }
@@ -787,7 +793,7 @@ export class Page {
     _attach(env) {
         this.env = env;
         this.window = env.window;
-        this.document = env.window.document;
+        this.document = env.window?.document;
     }
     /** Lets go of the window, once the test is over, so it can be freed. */
     release() {

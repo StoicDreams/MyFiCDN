@@ -1,4 +1,4 @@
 {
-  "links to Web UI and reports its version": {"hash":"95f10fd0a4349395b69868e4872770360872855fe6f30e22a967f715815f6e25","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/poweredby.min.js"]},
-  "matches the version file": {"hash":"9cccbc1ce80f075f1653067f6eb0344edfd5dc123056a07ee99a1c7565b10938","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/poweredby.min.js","cdn/webui/version"]}
+  "links to Web UI and reports its version": {"hash":"027ccd06c21fd1105d3cde1d075d1068c066f9379674291e681091fa0d35d297","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/poweredby.min.js"]},
+  "matches the version file": {"hash":"23ceac9b71871f87ae2284d488b2f505fab41f9ed308cf7f5dc3efef914179b6","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/poweredby.min.js","cdn/webui/version"]}
 }

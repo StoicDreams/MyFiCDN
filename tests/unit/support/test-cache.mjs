@@ -9,15 +9,22 @@ import { dirname, join, relative } from 'node:path';
  * commit. TEST_CACHE=0 runs every test, and still records what passes.
  *
  * Only tests with a page are cached, since only what a page loads is recorded. A test file that reads files itself
- * (node:fs, node:child_process) is never cached, since those reads are not recorded.
+ * (node:fs, node:child_process) is never cached, since those reads are not recorded. Files outside the repo, such as a
+ * MyFiCDN checkout next to it, are kept by their path from the repo, so a result from one is never used for another.
+ *
+ * This file is the same in MyFiCDN, Task Proxy, and every site. Change them all at once.
  */
 const ROOT = new URL('../../../', import.meta.url).pathname;
 const CACHE_DIR = join(ROOT, '.test-cache', 'unit');
 const TESTS_DIR = join(ROOT, 'tests', 'unit');
 export const cacheEnabled = !['0', 'false', 'off', 'no'].includes(`${process.env.TEST_CACHE ?? ''}`.trim().toLowerCase());
 
-// A change to any of these can change any test's result.
-const HARNESS = ['tests/unit/support', 'vitest.config.mjs', 'package-lock.json', 'cdn/js/mdparse.min.js'];
+// A change to any of these can change any test's result. The harness adds its own with configureCache.
+const HARNESS = ['tests/unit/support', 'vitest.config.mjs', 'package-lock.json'];
+/** Adds files, from the repo root, that every test depends on, such as a script the harness loads itself. */
+export function configureCache({ harness = [] } = {}) {
+    for (const path of harness) if (!HARNESS.includes(path)) HARNESS.push(path);
+}
 const READS_FILES = /['"]node:(fs|child_process)['"]/;
 
 /** A path from the repo root, with forward slashes, as cache files store it. */
