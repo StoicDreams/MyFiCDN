@@ -6,6 +6,20 @@ test('data-subscribe writes values to plain elements', async ({ page }) => {
     await expect(root.locator('#h')).toHaveText('hello');
     await expect(root.locator('#t')).toContainText('hello');
 });
+test('a bound native field has the new value at once, so a form sent right after a change sends it', async ({ page }) => {
+    const root = await mount(page, '<form><input type="hidden" name="pick" data-subscribe="bind-pick"></form>');
+    const values = await page.evaluate(() => {
+        const input = document.querySelector('input[name="pick"]');
+        const before = input.value;
+        webui.setData('bind-pick', '61');
+        const after = new FormData(input.form).get('pick');
+        webui.setData('bind-pick', null);
+        return [before, after, input.value];
+    });
+    // Before any data, and after it is cleared, the field is empty, never the text "undefined".
+    expect(values).toEqual(['', '61', '']);
+    await expect(root.locator('input[name="pick"]')).toHaveValue('');
+});
 test('data-subscribe matches camelCase keys', async ({ page }) => {
     const root = await mount(page, '<span data-subscribe="myThing:innerHTML"></span>');
     await page.evaluate(() => webui.setData('my-thing', 'hello'));

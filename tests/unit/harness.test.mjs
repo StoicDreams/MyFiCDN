@@ -69,3 +69,13 @@ test('an action finds its element again when it is drawn again, as in Playwright
     await root.locator('input[name="a"]').fill('typed');
     await expect(root.locator('input[name="a"]')).toHaveValue('typed');
 });
+test('dragged files show in the types as Files, and allInnerTexts reads each element', async ({ page }) => {
+    const root = await mount(page, '<i>a</i><i>b</i>');
+    expect(await root.locator('i').allInnerTexts()).toEqual(['a', 'b']);
+    const types = await page.evaluate(() => {
+        const transfer = new DataTransfer();
+        transfer.items.add(new File(['x'], 'x.txt'));
+        return [...transfer.types];
+    });
+    expect(types).toContain('Files');
+});

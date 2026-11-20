@@ -2853,6 +2853,13 @@ const webui = (() => {
                                 ) !== -1
                             ) {
                                 el[field] = value;
+                            } else if (
+                                !el.localName.includes("-") &&
+                                webui.hasSetter(el, "value")
+                            ) {
+                                // A native field, such as a hidden input, has no methods to wait for, so it gets the value
+                                // now: a form sent right after the data changes sends the new value. No data is empty.
+                                el.value = isNull ? "" : value;
                             } else {
                                 if (a++ < 5) {
                                     el.__setdata[key] = pcv;
