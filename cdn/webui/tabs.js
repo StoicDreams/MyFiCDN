@@ -21,8 +21,14 @@
             t._slotTabs = t.template.querySelector('slot[name="tabs"]');
             t._slotTemplates = t.template.querySelector('slot[name="template"]');
             t._section = t.template.querySelector('section');
+            t._label = t.template.querySelector('.label');
+            t._slotLabel = t.template.querySelector('slot[name="label"]');
+            t._slotLabel.addEventListener('slotchange', () => t.showLabel());
+            t.addEventListener('pointerdown', ev => t.dragTab(ev));
+            t.addEventListener('keydown', ev => t.keyTab(ev));
         },
-        attr: ['pad', 'transition-timing', 'index', 'theme', 'content-theme'],
+        attr: ['pad', 'transition-timing', 'index', 'theme', 'content-theme', 'label'],
+        flags: ['sortable'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
@@ -35,6 +41,9 @@
                     {
                         t._slotContent.style.setProperty('transition-duration', webui.msIfNumber(value));
                     }
+                    break;
+                case 'label':
+                    t.showLabel();
                     break;
                 case 'index':
                     {
@@ -51,8 +60,133 @@
         },
         connected() {
             const t = this;
+            t.showLabel();
             t.render();
             t.checkResponsiveVertical();
+        },
+        tabButtons() {
+            return Array.from(this.children).filter(item => item.getAttribute('slot') === 'tabs');
+        },
+        tabContents() {
+            return Array.from(this.children).filter(item => item.getAttribute('slot') === 'content');
+        },
+        /** The tab button an event came from, when the tabs can be sorted. */
+        tabFrom(ev) {
+            const t = this;
+            if (!t.hasAttribute('sortable')) return null;
+            const buttons = t.tabButtons();
+            return ev.composedPath().find(node => buttons.includes(node)) || null;
+        },
+        /**
+         * Moves a tab, with its content, before or after another, keeps the tab that was showing shown, and sends a
+         * reorder event with the tab buttons in their new order.
+         */
+        moveTab(tab, target, after) {
+            const t = this;
+            const buttons = t.tabButtons();
+            const contents = t.tabContents();
+            const from = buttons.indexOf(tab);
+            const to = buttons.indexOf(target);
+            if (from < 0 || to < 0 || tab === target) return false;
+            const shown = buttons[t._index];
+            const content = contents[from];
+            const targetContent = contents[to];
+            if (after) target.after(tab);
+            else target.before(tab);
+            if (content && targetContent && content !== targetContent) {
+                if (after) targetContent.after(content);
+                else targetContent.before(content);
+            }
+            if (t.tabButtons().indexOf(tab) === from) return false;
+            const index = t.tabButtons().indexOf(shown);
+            t._index = -1;
+            t.setTab(index >= 0 ? index : 0);
+            t.dispatchEvent(new CustomEvent('reorder', { bubbles: true, detail: { order: t.tabButtons() } }));
+            return true;
+        },
+        /** Alt with an arrow key moves the focused tab one place, as dragging does, for people who do not use a mouse. */
+        keyTab(ev) {
+            const t = this;
+            if (!ev.altKey || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(ev.key)) return;
+            const tab = t.tabFrom(ev);
+            if (!tab) return;
+            ev.preventDefault();
+            ev.stopPropagation();
+            const buttons = t.tabButtons();
+            const index = buttons.indexOf(tab);
+            const forward = ev.key === 'ArrowRight' || ev.key === 'ArrowDown';
+            const target = buttons[index + (forward ? 1 : -1)];
+            const focused = ev.composedPath()[0];
+            if (target) t.moveTab(tab, target, forward);
+            focused?.focus?.();
+        },
+        /**
+         * Dragging a tab, once the pointer has moved a little, so a click is still a click, moves it as it goes: over
+         * another tab, it takes that tab's place. The pointer is captured, so the drag keeps every move however fast
+         * it goes, and the browser's own dragging and text selection, which would cancel it, are stopped meanwhile.
+         */
+        dragTab(ev) {
+            const t = this;
+            if (ev.button !== 0 || !t.hasAttribute('sortable')) return;
+            const tab = t.tabFrom(ev);
+            if (!tab) return;
+            const start = { x: ev.clientX, y: ev.clientY };
+            const pointerId = ev.pointerId;
+            let dragging = false;
+            const block = e => e.preventDefault();
+            const move = e => {
+                if (e.pointerId !== pointerId) return;
+                if (!dragging) {
+                    if (Math.hypot(e.clientX - start.x, e.clientY - start.y) < 5) return;
+                    dragging = true;
+                    t.setAttribute('dragging', '');
+                    tab.setAttribute('tab-moving', '');
+                    try { t.setPointerCapture(pointerId); } catch { /* The pointer is already gone. */ }
+                    document.getSelection?.()?.removeAllRanges();
+                }
+                e.preventDefault();
+                const buttons = t.tabButtons();
+                const target = buttons.find(button => {
+                    if (button === tab) return false;
+                    const rect = button.getBoundingClientRect();
+                    return e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
+                });
+                if (!target) return;
+                // The tab takes the place of the one it is over: after it when coming from before it, before it otherwise.
+                t.moveTab(tab, target, buttons.indexOf(target) > buttons.indexOf(tab));
+            };
+            const end = e => {
+                if (e.pointerId !== pointerId) return;
+                window.removeEventListener('pointermove', move, true);
+                window.removeEventListener('pointerup', end, true);
+                window.removeEventListener('pointercancel', end, true);
+                window.removeEventListener('dragstart', block, true);
+                window.removeEventListener('selectstart', block, true);
+                try { if (t.hasPointerCapture?.(pointerId)) t.releasePointerCapture(pointerId); } catch { /* Already released. */ }
+                if (!dragging) return;
+                t.removeAttribute('dragging');
+                tab.removeAttribute('tab-moving');
+                // The click that ends a drag does not open the tab it ended on.
+                const swallow = e => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                };
+                window.addEventListener('click', swallow, { capture: true, once: true });
+                setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 0);
+            };
+            window.addEventListener('pointermove', move, true);
+            window.addEventListener('pointerup', end, true);
+            window.addEventListener('pointercancel', end, true);
+            window.addEventListener('dragstart', block, true);
+            window.addEventListener('selectstart', block, true);
+        },
+        /** A label before the tabs, on their row, from the label attribute or an element with slot="label". */
+        showLabel() {
+            const t = this;
+            const text = t.getAttribute('label') || '';
+            t._label.textContent = text;
+            t._label.hidden = !text;
+            t.toggleAttribute('labeled', !!text || t._slotLabel.assignedElements().length > 0);
         },
         onResize() {
             this.checkResponsiveVertical();
@@ -223,8 +357,10 @@
                 const myIndex = tabIndex++;
                 if (!node._isSetup) {
                     node._isSetup = true;
+                    // The tab's place is read when it is clicked, so tabs moved since still open their own content.
                     node.addEventListener('click', _ => {
-                        t.setTab(myIndex);
+                        const index = t.tabButtons().indexOf(node);
+                        t.setTab(index >= 0 ? index : myIndex);
                     });
                 }
             });
@@ -256,7 +392,7 @@
             }
         },
         shadowTemplate: `
-<slot name="tabs"></slot>
+<div class="bar" part="bar"><span class="label" part="label" hidden></span><slot name="label"></slot><slot name="tabs"></slot></div>
 <section>
 <slot name="content"></slot>
 </section>
@@ -276,16 +412,41 @@ display:grid;
 grid-template-columns:max-content auto;
 }
 slot[name="template"] {display:none;}
-slot[name="tabs"] {
+.bar {
 display:flex;
 flex-wrap:wrap;
+align-items:stretch;
 background-color:color-mix(in srgb, var(--theme-color) 30%, var(--color-background, #000));
 color:var(--color-background-offset, inherit);
 gap:var(--theme-padding);
 border-radius:var(--corners) var(--corners) 0 0;
 }
-:host([vertical]:not([narrow])) slot[name="tabs"] {
+slot[name="tabs"] {
+display:contents;
+}
+:host([vertical]:not([narrow])) .bar {
 flex-direction:column;
+}
+.label[hidden] {
+display:none;
+}
+:host([dragging]) {
+cursor:grabbing;
+user-select:none;
+}
+::slotted([tab-moving]) {
+opacity:0.6;
+}
+:host([sortable]) ::slotted([slot="tabs"]) {
+touch-action:none;
+-webkit-user-drag:none;
+user-select:none;
+}
+.label,
+::slotted([slot="label"]) {
+align-self:center;
+font-weight:bold;
+padding:0 var(--padding, 8px);
 }
 slot[name="content"] {
 display:grid;

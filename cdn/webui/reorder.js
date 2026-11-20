@@ -69,16 +69,19 @@
             if (place === 'below') target.after(item);
             else target.before(item);
         },
-        /** Alt+Up and Alt+Down move the focused item one place, as a drag does, for people who do not use a mouse. */
+        /**
+         * Alt+Up and Alt+Down, or Alt+Left and Alt+Right for items in a row, move the focused item one place, as a drag
+         * does, for people who do not use a mouse.
+         */
         keyDown(ev) {
             const t = this;
-            if (!ev.altKey || (ev.key !== 'ArrowUp' && ev.key !== 'ArrowDown')) return;
+            if (!ev.altKey || !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(ev.key)) return;
             const item = t.itemFrom(ev);
             if (!item) return;
             ev.preventDefault();
             ev.stopPropagation();
             const focused = ev.composedPath()[0];
-            const down = ev.key === 'ArrowDown';
+            const down = ev.key === 'ArrowDown' || ev.key === 'ArrowRight';
             const others = t.targetList().filter(el => el !== item && !item.contains(el));
             const candidates = down
                 ? others.filter(el => item.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING)
@@ -102,14 +105,19 @@
             t._drag = drag;
             const move = e => t.pointerMove(e);
             const end = e => t.pointerUp(e);
+            // The browser's text selection would cancel the drag in some browsers, so it is stopped meanwhile.
+            const block = e => e.preventDefault();
             drag.stop = () => {
                 window.removeEventListener('pointermove', move, true);
                 window.removeEventListener('pointerup', end, true);
                 window.removeEventListener('pointercancel', end, true);
+                window.removeEventListener('selectstart', block, true);
+                try { if (t.hasPointerCapture?.(drag.id)) t.releasePointerCapture(drag.id); } catch { /* Already released. */ }
             };
             window.addEventListener('pointermove', move, true);
             window.addEventListener('pointerup', end, true);
             window.addEventListener('pointercancel', end, true);
+            window.addEventListener('selectstart', block, true);
         },
         pointerMove(ev) {
             const t = this;
@@ -126,23 +134,52 @@
                 drag.item.setAttribute('reorder-moving', '');
                 t.setAttribute('dragging', '');
                 document.getSelection?.()?.removeAllRanges();
+                // Captured, the drag keeps every move however fast the pointer goes.
+                try { t.setPointerCapture(drag.id); } catch { /* The pointer is already gone. */ }
                 drag.item.after(drag.marker);
             }
             ev.preventDefault();
-            // The drop goes beside the target whose middle is nearest the pointer, or the side its marker says.
+            // The drop goes beside the target the pointer is on, or the nearest one. Targets sharing the pointer's row
+            // (a row or a wrapping grid) are told apart sideways; in a column it is before or after by height.
+            const targets = t.targetList()
+                .filter(el => el !== drag.item && !drag.item.contains(el))
+                .map(el => ({ el, rect: el.getBoundingClientRect() }));
+            const middleX = rect => rect.left + rect.width / 2;
+            const middleY = rect => rect.top + rect.height / 2;
+            const row = targets.filter(({ rect }) => ev.clientY >= rect.top && ev.clientY <= rect.bottom);
             let closest = null;
-            let distance = Infinity;
-            t.targetList().forEach(el => {
-                if (el === drag.item || drag.item.contains(el)) return;
-                const rect = el.getBoundingClientRect();
-                const middle = rect.top + rect.height / 2;
-                const away = Math.abs(ev.clientY - middle);
-                if (away < distance) {
-                    distance = away;
-                    closest = { el, side: ev.clientY < middle ? 'above' : 'below' };
+            // Over a target, the item takes its place: after it when coming from before it, before it otherwise, so
+            // letting go anywhere on a target, its middle included, moves the item there.
+            const over = row.find(({ rect }) => ev.clientX >= rect.left && ev.clientX <= rect.right);
+            const takePlace = el => (drag.item.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING ? 'below' : 'above');
+            if (over) {
+                closest = { el: over.el, side: takePlace(over.el) };
+            } else if (row.length > 1) {
+                const near = row.reduce((best, item) => Math.abs(ev.clientX - middleX(item.rect)) < Math.abs(ev.clientX - middleX(best.rect)) ? item : best);
+                closest = { el: near.el, side: ev.clientX > middleX(near.rect) ? 'below' : 'above' };
+            } else if (row.length === 1) {
+                closest = { el: row[0].el, side: ev.clientY > middleY(row[0].rect) ? 'below' : 'above' };
+            } else if (targets.length) {
+                // Off every target: the nearest row by height, then the nearest target in it sideways.
+                const gap = rect => Math.min(Math.abs(ev.clientY - rect.top), Math.abs(ev.clientY - rect.bottom));
+                const near = targets.reduce((best, item) => {
+                    const diff = gap(item.rect) - gap(best.rect);
+                    if (Math.abs(diff) > 1) return diff < 0 ? item : best;
+                    return Math.abs(ev.clientX - middleX(item.rect)) < Math.abs(ev.clientX - middleX(best.rect)) ? item : best;
+                });
+                closest = { el: near.el, side: ev.clientY > middleY(near.rect) ? 'below' : 'above' };
+            }
+            if (closest) {
+                // Between items in a row, the drop line stands upright beside them.
+                const across = row.length > 1;
+                if (drag.across !== across) {
+                    drag.across = across;
+                    drag.marker.style.cssText = across
+                        ? 'width:0;align-self:stretch;margin:0 2px;border-left:3px dashed var(--color-info, currentColor);pointer-events:none;'
+                        : 'height:0;margin:2px 0;border-top:3px dashed var(--color-info, currentColor);pointer-events:none;';
                 }
-            });
-            if (closest) t.putBy(drag.marker, closest.el, closest.side);
+                t.putBy(drag.marker, closest.el, closest.side);
+            }
         },
         pointerUp(ev) {
             const t = this;
@@ -177,6 +214,9 @@
 <style type="text/css">
 :host {
 display: block;
+}
+:host([hidden]) {
+display: none;
 }
 :host([dragging]) {
 cursor: grabbing;

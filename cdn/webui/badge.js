@@ -51,6 +51,9 @@ background-color: color-mix(in srgb, currentColor 15%, transparent);
 background-color: var(--theme-color);
 color: var(--theme-color-offset);
 }
+:host([hidden]) {
+display: none;
+}
 [hidden] {
 display: none !important;
 }

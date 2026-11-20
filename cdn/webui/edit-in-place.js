@@ -164,6 +164,9 @@ align-items: center;
 max-width: 100%;
 min-width: 0;
 }
+:host([hidden]) {
+display: none;
+}
 [hidden] {
 display: none !important;
 }

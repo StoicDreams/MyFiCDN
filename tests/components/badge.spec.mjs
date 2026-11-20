@@ -27,3 +27,10 @@ test('a theme sets its theme colors, and removing it clears them', async ({ page
     await badge.evaluate(el => el.removeAttribute('theme'));
     await expect.poll(theme).toBe('');
 });
+
+test('hidden hides it, as on any element', async ({ page }) => {
+    const root = await mount(page, '<webui-badge id="b" hidden>3</webui-badge>');
+    await expect(root.locator('#b')).toBeHidden();
+    await root.locator('#b').evaluate(el => { el.hidden = false; });
+    await expect(root.locator('#b')).toBeVisible();
+});

@@ -213,3 +213,72 @@ test('a theme and colors saved after the page starts are applied, as an app rest
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'stone');
     await expect.poll(() => rootStyle(page, '--color-title')).toBe('#00ff00');
 });
+
+test.describe('categories', () => {
+    const categorized = `
+        <option value="" data-scheme="dark" data-category="Classic" data-colors="#222222 #1878af #5e0592 #333333 #444444 #0d9488 #0369a1">Default</option>
+        <option value="porcelain" data-scheme="light" data-category="Classic" data-colors="#fafafa #4078f2 #a626a4 #e5e5e6 #0184bc #50a14f #4078f2">Porcelain</option>
+        <option value="moss" data-scheme="dark" data-category="Organic" data-colors="#2d353b #475258 #a7c080 #3d484d #dbbc7f #83c092 #7fbbb3">Moss</option>
+        <option value="sage" data-scheme="light" data-category="Organic" data-colors="#fdf6e3 #8da101 #35a77c #e6e2cc #dfa000 #3a94c5 #8da101">Sage</option>
+        <option value="rosewood" data-scheme="dark" data-category="Organic" data-colors="#191724">Rosewood</option>`;
+    const panel = page => page.locator('webui-theme-selector[panel]');
+    const tabs = page => panel(page).locator('webui-tabs.categories > webui-button.category-tab');
+    const shownCategory = page => panel(page).locator('webui-tabs.categories > .category:not([tab-hidden])');
+
+    test('themes are in a tab for each category, light beside dark, each a tile named for its theme', async ({ page }) => {
+        await mount(page, `<webui-theme-selector panel>${categorized}</webui-theme-selector>`);
+        await expect(tabs(page)).toHaveText(['Classic', 'Organic']);
+        // The default theme is in use, so its category is the tab shown.
+        await expect(shownCategory(page)).toHaveAttribute('data-category', 'Classic');
+        await tabs(page).nth(1).click();
+        const organic = panel(page).locator('.category[data-category="Organic"]');
+        await expect(organic).toMatchAriaSnapshot(`
+          - list "Light themes":
+            - listitem "Sage"
+          - list "Dark themes":
+            - listitem "Moss"
+            - listitem "Rosewood"
+        `);
+        await expect(organic.locator('webui-split-panes')).toBeVisible();
+    });
+
+    test('choosing a tile applies its theme and marks it, and the category shown stays shown', async ({ page }) => {
+        await mount(page, `<webui-theme-selector panel>${categorized}</webui-theme-selector>`);
+        await tabs(page).nth(1).click();
+        await panel(page).getByRole('listitem', { name: 'Sage' }).click();
+        await expect(page.locator('html')).toHaveAttribute('data-theme', 'sage');
+        await expect(panel(page).getByRole('listitem', { name: 'Sage' })).toHaveAttribute('aria-pressed', 'true');
+        await expect(panel(page).getByRole('listitem', { name: 'Porcelain' })).toHaveAttribute('aria-pressed', 'false');
+        await expect(shownCategory(page)).toHaveAttribute('data-category', 'Organic');
+    });
+
+    test('opened again, it starts on the category of the theme in use', async ({ page }) => {
+        await mount(page, `<webui-theme-selector panel>${categorized}</webui-theme-selector>`);
+        await tabs(page).nth(1).click();
+        await panel(page).getByRole('listitem', { name: 'Moss' }).click();
+        await mount(page, `<webui-theme-selector panel>${categorized}</webui-theme-selector>`);
+        await expect(shownCategory(page)).toHaveAttribute('data-category', 'Organic');
+    });
+
+    test("a tile is drawn in its theme's colors, from data-colors", async ({ page }) => {
+        // The preview's colors are what it shows, so they are checked here.
+        await mount(page, `<webui-theme-selector panel>${categorized}</webui-theme-selector>`);
+        const preview = panel(page).locator('button.tile[data-theme-value="porcelain"] .preview');
+        await expect.poll(() => preview.evaluate(el => [el.style.background, el.querySelector('.bar').style.background, el.querySelectorAll('.pill').length])).toEqual(['rgb(250, 250, 250)', 'rgb(64, 120, 242)', 4]);
+    });
+
+    test("a tile shows its theme's heading font, texture and mark, from data-font, data-texture and data-mark", async ({ page }) => {
+        const dot = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 4'%3E%3Ccircle cx='2' cy='2' r='1'/%3E%3C/svg%3E";
+        await mount(page, `<webui-theme-selector panel>${categorized}
+            <option value="stone" data-scheme="dark" data-category="Classic" data-colors="#1b1c1e #c9a46a" data-font="Georgia, serif" data-texture="${dot}" data-mark="${dot}">Stone</option>
+        </webui-theme-selector>`);
+        const preview = panel(page).locator('button.tile[data-theme-value="stone"] .preview');
+        await expect.poll(() => preview.evaluate(el => [
+            el.style.backgroundImage.includes('svg+xml'),
+            el.querySelector('.bar').style.fontFamily,
+            el.querySelector('.bar .mark')?.style.backgroundImage.includes('svg+xml'),
+        ])).toEqual([true, 'Georgia, serif', true]);
+        // A theme without them draws no mark.
+        await expect(panel(page).locator('button.tile[data-theme-value="porcelain"] .preview .mark')).toHaveCount(0);
+    });
+});

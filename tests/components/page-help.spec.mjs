@@ -76,6 +76,14 @@ test('a footer along the bottom of the window stays usable beside the bubble', a
     await help.locator('button.bubble').click();
     await expect.poll(() => isOpen(help)).toBe(true);
 });
+test("what fills the app's bottom slot stays usable beside the bubble", async ({ page }) => {
+    const bar = '<webui-app><div slot="bottom" style="height:48px;display:flex;justify-content:flex-end;align-items:center"><button id="bar-end">End</button></div></webui-app>';
+    const help = await ready(page, `${bar}${HELP}`);
+    // Real clicks, which Playwright refuses when another element, such as the bubble, would take them.
+    await page.locator('#bar-end').click();
+    await help.locator('button.bubble').click();
+    await expect.poll(() => isOpen(help)).toBe(true);
+});
 test('a docked drawer\'s buttons stay usable beside the bubble', async ({ page }) => {
     const drawer = '<webui-drawer slot="right" class="shared" data-dockable docked="true" style="position:fixed;right:0;top:0;height:100%;width:300px">Panel</webui-drawer>';
     const help = await ready(page, `${drawer}${HELP}`);

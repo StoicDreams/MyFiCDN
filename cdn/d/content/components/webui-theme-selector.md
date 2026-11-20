@@ -1,5 +1,5 @@
 <webui-page-segment elevation="10">
-    The `<webui-theme-selector>` component is a header button that lets visitors choose between a site's themes. List each theme as an `<option>` inside it, with a `value` and an optional `data-colors` list of swatch colors. The option with an empty value is the site's default theme.
+    The `<webui-theme-selector>` component is a header button that lets visitors choose between a site's themes. List each theme as an `<option>` inside it, with a `value` and an optional `data-colors` list of swatch colors. The option with an empty value is the site's default theme. Give options a `data-category`, such as `Organic` or `Space`, and the list becomes a tab for each category, with its light themes beside its dark ones (`data-scheme`) in split panes, and each theme a tile drawn in its colors: list `data-colors` as background, title, primary, secondary, tertiary, active, and button. A theme with its own look can show it on its tile too: `data-font` is its heading font, and `data-texture` and `data-mark` are image addresses for its page texture and the mark beside its headings.
 
     Clicking the button lists the themes in the drawer named by `data-toggleclass` (such as `.shared|open`, the same drawer `webui-alerts` uses), or in a dialog when there is none. `data-title` sets the heading above the list.
 

@@ -101,3 +101,39 @@ test('the content footer is marked empty without content, and shows when it has 
     await expect.poll(slot).toMatchObject({ empty: false });
     await expect(page.locator('webui-app > footer[slot="content-footer"]')).toBeVisible();
 });
+test('side drawers run the full height: docked, the bottom slot sits between them, and open over the page, they cover it', async ({ page }) => {
+    await page.setViewportSize({ width: 1300, height: 700 });
+    await page.evaluate(() => {
+        const bar = document.createElement('div');
+        bar.slot = 'bottom';
+        bar.id = 'bar';
+        bar.style.cssText = 'height:40px;display:flex;justify-content:space-between;align-items:center;';
+        bar.innerHTML = '<button id="bar-start">Start</button><button id="bar-end">End</button>';
+        document.querySelector('webui-app').appendChild(bar);
+        document.querySelector('webui-app > webui-drawer[slot="left"]').setAttribute('docked', 'true');
+    });
+    const left = page.locator('webui-app > webui-drawer[slot="left"]');
+    await expect(left).toHaveAttribute('docked', 'true');
+    // What a click at the bottom of the window reaches: the docked drawer runs the full height beside the bar.
+    const hitAtBottom = x => page.evaluate(x => {
+        const el = document.elementFromPoint(x, window.innerHeight - 4);
+        return el?.closest('webui-drawer') ? 'drawer' : el?.closest('#bar') ? 'bar' : el?.localName;
+    }, x);
+    const box = await left.boundingBox();
+    await expect.poll(() => hitAtBottom(box.x + 10)).toBe('drawer');
+    // Real clicks, which Playwright refuses when something covers what is clicked.
+    await page.locator('#bar-start').click();
+    await page.locator('#bar-end').click();
+    // A drawer open over the page runs the full height, over the bar too, with its own buttons on top.
+    const right = page.locator('webui-app > webui-drawer.shared');
+    await right.evaluate(drawer => {
+        drawer.setAttribute('data-dockable', '');
+        drawer.classList.add('open');
+    });
+    await expect(right).toHaveClass(/open/);
+    await expect(right).not.toHaveAttribute('docked');
+    const end = await page.locator('#bar-end').boundingBox();
+    await expect.poll(() => page.evaluate(({ x, y }) => !!document.elementFromPoint(x, y)?.closest('webui-drawer.shared'), { x: end.x + end.width / 2, y: end.y + end.height / 2 })).toBe(true);
+    await right.locator('[slot="footer"] .drawer-close').click();
+    await expect(right).not.toHaveClass(/open/);
+});

@@ -523,6 +523,18 @@ body.dragging * {
     height: calc(3*1em);
 }
 
+/*
+ * A theme can give headings its own font with --font-family-display, drawn in capitals with --heading-transform and
+ * --heading-spacing. Theme variables reach headings in components' shadow roots too, where page CSS does not.
+ */
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-family-display, inherit);
+    text-transform: var(--heading-transform, none);
+}
+
 h1,
 h2,
 h3,
@@ -597,6 +609,33 @@ header[slot="header"] h1:has(~h2:not(:empty)):after {
 :where(webui-app, webui-content, .readable-content, .content)>h2 {
     padding-bottom: 0.25em;
     border-bottom: 1px solid var(--color-line-strong);
+}
+
+/*
+ * Theme hooks for section headings in content, set on :root by a theme: --heading-color, --heading-fill (a background
+ * image, drawn through the text when --heading-clip is text), --heading-shadow, and --heading-decoration. A mark
+ * beside each h2 is --heading-mark, an image, shown when --heading-mark-content is "".
+ */
+:where(webui-app, webui-content, .readable-content, .content)>:is(h2, h3):where(:not([theme])) {
+    color: var(--heading-color, var(--color-heading));
+    background-image: var(--heading-fill, none);
+    -webkit-background-clip: var(--heading-clip, border-box);
+    background-clip: var(--heading-clip, border-box);
+    text-shadow: var(--heading-shadow, none);
+    text-decoration: var(--heading-decoration, none);
+    letter-spacing: var(--heading-spacing, -0.01em);
+}
+
+:where(webui-app, webui-content, .readable-content, .content)>h2:where(:not([theme])) {
+    border-bottom-color: var(--heading-rule, var(--color-line-strong));
+}
+
+:where(webui-app, webui-content, .readable-content, .content)>h2:where(:not([theme]))::before {
+    content: var(--heading-mark-content, none);
+    flex: 0 0 auto;
+    width: 0.8em;
+    height: 0.8em;
+    background: var(--heading-mark, none) center / contain no-repeat;
 }
 
 :where(webui-app, webui-content, .readable-content, .content)>:is(h4, h5, h6) {
@@ -1576,6 +1615,25 @@ webui-page-segment,
     margin: var(--padding);
 }
 
+/*
+ * Theme hooks for page segments, set on :root by a theme: --segment-background, --segment-image, --segment-border,
+ * --segment-radius, --segment-shadow, --segment-clip (a clip-path) and --segment-filter (a backdrop-filter). A segment
+ * with a theme attribute keeps its theme's color. These rules are as weak as a plain element rule, so a site's own
+ * heading and segment styles still win.
+ */
+webui-page-segment:where(:not([theme])) {
+    background-color: var(--segment-background, var(--theme-color));
+}
+
+webui-page-segment {
+    background-image: var(--segment-image, none);
+    border: var(--segment-border, none);
+    border-radius: var(--segment-radius, 0);
+    box-shadow: var(--segment-shadow, none);
+    clip-path: var(--segment-clip, none);
+    backdrop-filter: var(--segment-filter, none);
+}
+
 webui-card {
     display: grid;
     grid-template-columns: 1fr;
@@ -1980,6 +2038,21 @@ webui-nav-group>.navlink:not(.show)~webui-nav-group>*,
 .nav-group>.navlink:not(.show)~section>* {
     padding-top: 0;
     padding-bottom: 0;
+}
+
+/*
+ * A closed group's items take no room once they have slid up: no height, however tall nested groups make them, no
+ * padding, and no width, so a long name in a closed group never widens the menu. Opening shows them at once.
+ */
+webui-nav-group>.navlink:not(.show)~webui-nav-link,
+webui-nav-group>.navlink:not(.show)~webui-nav-group,
+.nav-group>.navlink:not(.show)~section {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    visibility: hidden;
+    contain: inline-size;
+    transition: all 300ms ease-in-out, max-height 0s linear 300ms, visibility 0s linear 300ms;
 }
 
 .nowrap,

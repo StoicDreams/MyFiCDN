@@ -187,3 +187,102 @@ test('a hidden tab takes no room once the slide ends, so a short tab leaves noth
     await expect.poll(hidden).toEqual([false, true]);
     await expect.poll(scrolls).toBe(false);
 });
+
+test('a label shows before the tabs, from the label attribute or an element in the label slot', async ({ page }) => {
+    const root = await mount(page, `<webui-tabs id="a" label="Tools"><webui-button slot="tabs">One</webui-button><div slot="content">1</div></webui-tabs>
+<webui-tabs id="b"><span slot="label" id="mine">Mine</span><webui-button slot="tabs">Two</webui-button><div slot="content">2</div></webui-tabs>
+<webui-tabs id="c"><webui-button slot="tabs">Three</webui-button><div slot="content">3</div></webui-tabs>`);
+    await expect(root.locator('#a .label')).toHaveText('Tools');
+    await expect(root.locator('#a .label')).toBeVisible();
+    await expect(root.locator('#a')).toHaveAttribute('labeled');
+    await expect(root.locator('#mine')).toBeVisible();
+    await expect(root.locator('#b')).toHaveAttribute('labeled');
+    await expect(root.locator('#c .label')).toBeHidden();
+    await expect(root.locator('#c')).not.toHaveAttribute('labeled');
+    // The label sits in the tab bar, ahead of the buttons.
+    await expect.poll(() => root.locator('#a').evaluate(el => {
+        const bar = el.shadowRoot.querySelector('.bar');
+        return [...bar.children].map(child => child.className || child.name);
+    })).toEqual(['label', 'label', 'tabs']);
+    await root.locator('#a').evaluate(el => el.removeAttribute('label'));
+    await expect(root.locator('#a .label')).toBeHidden();
+});
+test.describe('sortable', () => {
+    const TABS = `<webui-tabs id="s" sortable>
+<webui-button slot="tabs" data-id="a">A</webui-button><div slot="content">Content A</div>
+<webui-button slot="tabs" data-id="b">B</webui-button><div slot="content">Content B</div>
+<webui-button slot="tabs" data-id="c">C</webui-button><div slot="content">Content C</div>
+</webui-tabs>`;
+    const order = el => el.evaluate(tabs => tabs.tabButtons().map(button => button.dataset.id));
+    const contents = el => el.evaluate(tabs => tabs.tabContents().map(content => content.textContent));
+    async function tabs(page) {
+        const root = await mount(page, TABS);
+        const el = root.locator('#s');
+        await el.evaluate(tabs => { window.__orders = []; tabs.addEventListener('reorder', ev => window.__orders.push(ev.detail.order.map(b => b.dataset.id))); });
+        return el;
+    }
+
+    test('a tab let go over another tab takes its place, either way, from the middle of one to the middle of the other', async ({ page }) => {
+        const el = await tabs(page);
+        // Dragged as a person does: pressed in a tab's middle, let go in the middle of the tab where it should go.
+        const drag = async (from, to) => {
+            const a = await el.locator(`[data-id="${from}"]`).boundingBox();
+            const b = await el.locator(`[data-id="${to}"]`).boundingBox();
+            await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
+            await page.mouse.down();
+            await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 12 });
+            await page.mouse.up();
+        };
+        await drag('a', 'c');
+        await expect.poll(() => order(el)).toEqual(['b', 'c', 'a']);
+        await drag('a', 'b');
+        await expect.poll(() => order(el)).toEqual(['a', 'b', 'c']);
+        await drag('b', 'a');
+        await expect.poll(() => order(el)).toEqual(['b', 'a', 'c']);
+        await drag('c', 'a');
+        await expect.poll(() => order(el)).toEqual(['b', 'c', 'a']);
+    });
+
+    test('dragging a tab moves it and its content, keeps the shown tab shown, and says so', async ({ page }) => {
+        const el = await tabs(page);
+        await el.locator('[data-id="b"]').click();
+        await expect(el.locator('div[slot="content"]', { hasText: 'Content B' })).toBeVisible();
+        const from = await el.locator('[data-id="a"]').boundingBox();
+        const to = await el.locator('[data-id="c"]').boundingBox();
+        await page.mouse.move(from.x + 5, from.y + from.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(from.x + 15, from.y + from.height / 2, { steps: 3 });
+        await page.mouse.move(to.x + to.width - 3, to.y + to.height / 2, { steps: 6 });
+        await page.mouse.up();
+        await expect.poll(() => order(el)).toEqual(['b', 'c', 'a']);
+        await expect.poll(() => contents(el)).toEqual(['Content B', 'Content C', 'Content A']);
+        // B was shown, and stays shown; the click ending the drag did not open A.
+        await expect(el.locator('div[slot="content"]', { hasText: 'Content B' })).toBeVisible();
+        await expect.poll(() => page.evaluate(() => window.__orders.at(-1))).toEqual(['b', 'c', 'a']);
+        // Each tab still opens its own content where it is now.
+        await el.locator('[data-id="a"]').click();
+        await expect(el.locator('div[slot="content"]', { hasText: 'Content A' })).toBeVisible();
+    });
+
+    test('Alt+Left and Alt+Right move the focused tab, keeping its focus', async ({ page }) => {
+        const el = await tabs(page);
+        const a = el.locator('[data-id="a"]');
+        await a.focus();
+        await page.keyboard.press('Alt+ArrowRight');
+        await expect.poll(() => order(el)).toEqual(['b', 'a', 'c']);
+        await expect(a).toBeFocused();
+        await page.keyboard.press('Alt+ArrowLeft');
+        await expect.poll(() => order(el)).toEqual(['a', 'b', 'c']);
+        await page.keyboard.press('Alt+ArrowLeft');
+        await expect.poll(() => page.evaluate(() => window.__orders.length)).toBe(2);
+    });
+
+    test('without sortable, tabs stay where they are', async ({ page }) => {
+        const root = await mount(page, TABS.replace(' sortable', ''));
+        const el = root.locator('#s');
+        await el.locator('[data-id="a"]').focus();
+        await page.keyboard.press('Alt+ArrowRight');
+        await el.locator('[data-id="c"]').click();
+        await expect.poll(() => order(el)).toEqual(['a', 'b', 'c']);
+    });
+});

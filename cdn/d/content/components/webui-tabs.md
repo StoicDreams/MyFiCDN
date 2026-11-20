@@ -2,6 +2,10 @@
 <webui-page-segment elevation="10">
     This component renders a tabbed interface for displaying content, allowing users to switch between different sections of information.
     It is commonly used for organizing content into manageable sections, such as settings, documentation, or any other categorized information.
+
+    `label` puts a title before the tab buttons, on their row, such as a drawer's name, so it takes no row of its own. For more than text, give an element `slot="label"` instead.
+
+    With the `sortable` flag, people can put the tabs in their own order: drag a tab button, or focus it and press Alt with an arrow key. Its content moves with it, the tab that was shown stays shown, and a `reorder` event carries the tab buttons in their new order in `detail.order`, so a page can save it and build the tabs in that order next time.
 </webui-page-segment>
 
 ## Static Tabs Example

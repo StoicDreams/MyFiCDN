@@ -84,7 +84,9 @@
             if (t.dataset.enabled) {
                 let el = document.querySelector(t.dataset.enabled);
                 if (el) {
-                    t._enabled = !!el.docked;
+                    // Docked as an attribute is on when present, even empty, as a toggle sets it.
+                    t._enabled = !!el.docked || !!el.hasAttribute?.('docked');
+                    t.toggleAttribute('enabled', t._enabled);
                 } else if ((t._recheck || 0) < 20 && !t._recheckTimer) {
                     t._recheck = (t._recheck || 0) + 1;
                     t._recheckTimer = setTimeout(() => {

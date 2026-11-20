@@ -89,6 +89,22 @@ test.describe('close button', () => {
         await expect(drawer).not.toHaveAttribute('docked');
         await expect(drawer).not.toHaveClass(/open/);
     });
+    test('a docked drawer closed with it offers to dock again, not to hide, when it opens next', async ({ page }) => {
+        await page.setViewportSize({ width: 1300, height: 700 });
+        const root = await mount(page, '<webui-drawer slot="right" class="shared open" data-dockable docked="true">Body</webui-drawer>');
+        const drawer = root.locator('webui-drawer');
+        const dock = drawer.locator('[slot="footer"] webui-toggle-icon');
+        await expect(dock).toHaveAttribute('enabled');
+        await drawer.locator('[slot="footer"] .drawer-close').click();
+        await expect(drawer).not.toHaveAttribute('docked');
+        await drawer.evaluate(el => el.classList.add('open'));
+        await expect(dock).not.toHaveAttribute('enabled');
+        await expect(dock.locator('button')).toHaveAttribute('aria-label', 'Dock Panel');
+        // And it docks again from there.
+        await dock.click();
+        await expect(drawer).toHaveAttribute('docked');
+        await expect(dock).toHaveAttribute('enabled');
+    });
     test('shows on a narrow window too, where the dock button does not', async ({ page }) => {
         await page.setViewportSize({ width: 600, height: 700 });
         const root = await mount(page, '<webui-drawer slot="left" class="nav" data-dockable><webui-nav></webui-nav></webui-drawer>');

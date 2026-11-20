@@ -127,6 +127,9 @@
 --tile-gap: var(--padding, 8px);
 display: block;
 }
+:host([hidden]) {
+display: none;
+}
 [hidden] {
 display: none !important;
 }

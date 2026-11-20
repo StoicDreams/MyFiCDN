@@ -99,3 +99,8 @@ test('min and gap set the narrowest tile and the space between them, with number
     const el = root.locator('webui-tiles');
     await expect.poll(() => el.evaluate(c => [c.style.getPropertyValue('--tile-min'), c.style.getPropertyValue('--tile-gap')])).toEqual(['200px', '1em']);
 });
+
+test('hidden hides it, as on any element', async ({ page }) => {
+    const root = await mount(page, '<webui-tiles hidden><div class="tile">One</div></webui-tiles>');
+    await expect(root.locator('webui-tiles')).toBeHidden();
+});

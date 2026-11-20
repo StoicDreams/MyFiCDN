@@ -143,3 +143,57 @@ test('a handle inside an item\'s shadow root starts the move', async ({ page }) 
     await expect.poll(() => order(page)).toEqual(['b', 'a']);
     await expect(el.locator('[data-id="a"] .grip')).toBeFocused();
 });
+
+test('hidden hides it, as on any element', async ({ page }) => {
+    const root = await mount(page, '<webui-reorder id="r" hidden><div>One</div></webui-reorder>');
+    await expect(root.locator('#r')).toBeHidden();
+});
+
+test('let go over another item, an item takes its place, in a column or a row, from middle to middle', async ({ page }) => {
+    const middle = async (from, to) => {
+        const a = await from.boundingBox();
+        const b = await to.boundingBox();
+        await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 12 });
+        await page.mouse.up();
+    };
+    let el = await list(page);
+    await middle(el.locator('[data-id="a"] .grip'), el.locator('[data-id="b"] .grip'));
+    await expect.poll(() => order(page)).toEqual(['b', 'a', 'c']);
+    await middle(el.locator('[data-id="c"] .grip'), el.locator('[data-id="a"] .grip'));
+    await expect.poll(() => order(page)).toEqual(['b', 'c', 'a']);
+    el = await list(page, `
+<webui-reorder id="r" handle=".grip" style="display:flex;gap:8px;">
+    <button class="item grip" data-id="a" style="width:40px;height:40px;">A</button>
+    <button class="item grip" data-id="b" style="width:40px;height:40px;">B</button>
+    <button class="item grip" data-id="c" style="width:40px;height:40px;">C</button>
+</webui-reorder>`);
+    await middle(el.locator('[data-id="a"]'), el.locator('[data-id="b"]'));
+    await expect.poll(() => order(page)).toEqual(['b', 'a', 'c']);
+    await middle(el.locator('[data-id="c"]'), el.locator('[data-id="b"]'));
+    await expect.poll(() => order(page)).toEqual(['c', 'b', 'a']);
+});
+
+test('items in a row move with Alt+Left and Alt+Right, and drop beside the item the pointer is over', async ({ page }) => {
+    const el = await list(page, `
+<webui-reorder id="r" handle=".grip" style="display:flex;gap:8px;">
+    <button class="item grip" data-id="a" style="width:40px;height:40px;">A</button>
+    <button class="item grip" data-id="b" style="width:40px;height:40px;">B</button>
+    <button class="item grip" data-id="c" style="width:40px;height:40px;">C</button>
+</webui-reorder>`);
+    await el.locator('[data-id="a"]').focus();
+    await page.keyboard.press('Alt+ArrowRight');
+    await expect.poll(() => order(page)).toEqual(['b', 'a', 'c']);
+    await page.keyboard.press('Alt+ArrowLeft');
+    await expect.poll(() => order(page)).toEqual(['a', 'b', 'c']);
+    // Dragged past the right half of the last item, it goes after it.
+    const from = await el.locator('[data-id="a"]').boundingBox();
+    const to = await el.locator('[data-id="c"]').boundingBox();
+    await page.mouse.move(from.x + 20, from.y + 20);
+    await page.mouse.down();
+    await page.mouse.move(from.x + 30, from.y + 20, { steps: 3 });
+    await page.mouse.move(to.x + to.width - 4, to.y + 20, { steps: 6 });
+    await page.mouse.up();
+    await expect.poll(() => order(page)).toEqual(['b', 'c', 'a']);
+});

@@ -16,12 +16,15 @@
     const minPanelWidth = 240;
     const minPanelHeight = 120;
     const prefersReducedMotion = () => !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    /** A footer bar along the bottom of the window, such as a docked drawer's buttons, so the bubble can sit just above it. */
+    /**
+     * A footer bar along the bottom of the window, such as a docked drawer's buttons or what fills the app's bottom slot,
+     * so the bubble can sit just above it.
+     */
     function findFooter(host) {
         const elements = document.elementsFromPoint(window.innerWidth - edgeGap * 2, window.innerHeight - 1);
         for (const el of elements) {
             if (el === host) continue;
-            const footer = el.closest?.('footer, webui-drawer > [slot="footer"]');
+            const footer = el.closest?.('footer, webui-drawer > [slot="footer"], webui-app > [slot="bottom"]');
             if (footer) return footer;
         }
         return null;

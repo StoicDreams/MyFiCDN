@@ -223,19 +223,21 @@ overflow:auto;
 ::slotted([slot="bottom"]) {
 height:min-content;
 grid-row: 5;
-z-index: 12;
+z-index: 8;
 max-width: var(--window-width);
 }
 ::slotted([slot="top"]) {
 height:min-content;
 grid-row: 1;
-z-index: 13;
+z-index: 9;
 max-width: var(--window-width);
 }
+/* Side drawers run the full height, so docked, the top and bottom slots sit between them. Open over the page, they
+cover everything, the top and bottom slots too, which is why those sit below them. */
 ::slotted([slot="left"]),
 ::slotted([slot="right"]) {
 max-width: calc(0.66 * var(--window-width));
-grid-row: 2/5;
+grid-row: 1/6;
 display: flex!important;
 flex-direction: column;
 }

@@ -179,6 +179,8 @@
                     if (!t._forceUndocked) {
                         t._cacheDocked = !!value;
                     }
+                    // The dock button shows the state the drawer is in, however it changed, such as by the close button.
+                    t.querySelector(':scope > [slot="footer"] webui-toggle-icon')?.setValue?.(t.hasAttribute('docked'));
                     // Docked and undocked can have different limits.
                     t.applyWidth(parseFloat(t.getAttribute('width')));
                     break;

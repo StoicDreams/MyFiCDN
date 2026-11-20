@@ -140,3 +140,8 @@ test('the text is shown as written, never as markup', async ({ page }) => {
     await expect(text(el)).toHaveText('<img src=x onerror="window.__xss=1">');
     await expect(el.locator('img')).toHaveCount(0);
 });
+
+test('hidden hides it, as on any element', async ({ page }) => {
+    const root = await mount(page, '<webui-edit-in-place id="e" value="Repo" hidden></webui-edit-in-place>');
+    await expect(root.locator('#e')).toBeHidden();
+});

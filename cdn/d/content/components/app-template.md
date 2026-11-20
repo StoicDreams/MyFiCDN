@@ -149,8 +149,12 @@ The `linkCss` option, which added the whole stylesheet to every instance, is dep
 | `--color-paper`, `--color-paper-offset` | Writing areas. |
 | `--fill-accent` | A color or gradient for accent text, such as the number in `webui-stat`. Set a gradient here to give accents a stylized look. |
 | `--main-transition`, `--transition-speed`, `--transition-fast` | Animation timing. |
+| `--font-family-display`, `--heading-transform`, `--heading-spacing` | A theme's font for `h1` to `h4`, and whether headings are drawn in capitals (`uppercase`) and how far apart their letters are. |
+| `--heading-color`, `--heading-fill`, `--heading-clip`, `--heading-shadow`, `--heading-decoration`, `--heading-rule` | How section headings (`h2`, `h3`) in content are drawn: their color, a background image or gradient (drawn through the text when `--heading-clip` is `text` and the color `transparent`), a glow or shadow, an underline, and the color of the line under `h2`. |
+| `--heading-mark`, `--heading-mark-content` | An image beside each `h2`, shown when `--heading-mark-content` is `""`. |
+| `--segment-background`, `--segment-image`, `--segment-border`, `--segment-radius`, `--segment-shadow`, `--segment-clip`, `--segment-filter` | How `webui-page-segment` panels look: background, a background image, border, corners, shadow, a `clip-path` shape, and a `backdrop-filter`. A segment with a `theme` attribute keeps its theme's color. |
 
-A site changes any of these in its own CSS, on `:root` or on a single element.
+A site changes any of these in its own CSS, on `:root` or on a single element. A theme that sets the heading and segment variables on `:root[data-theme="name"]` reaches content inside components' shadow roots too, where its own selectors would not. Web UI's rules for them are as weak as a plain element rule, so a site's own heading and segment styles still win.
 
 <webui-restrict-to-role role="1073741824" class="content">
     <template slot="valid">

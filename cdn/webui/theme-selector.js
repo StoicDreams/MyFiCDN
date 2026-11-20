@@ -151,11 +151,62 @@
             name: option.textContent.trim() || option.value || 'Default',
             colors: (option.dataset.colors || '').split(/\s+/).filter(c => c),
             scheme: option.dataset.scheme || '',
+            category: option.dataset.category || '',
+            font: option.dataset.font || '',
+            texture: option.dataset.texture || '',
+            mark: option.dataset.mark || '',
         }));
     }
 
+    /**
+     * A tile drawn as the theme looks: its page, title bar, text, and colors, from data-colors in the order
+     * background, title, primary, secondary, tertiary, active, button. Fewer colors draw what they can. data-font,
+     * data-texture and data-mark (image addresses) show the theme's heading font, page texture and heading mark.
+     */
+    function themeTile(option, current) {
+        const [background, title, primary, secondary, tertiary, active, button] = option.colors;
+        const tile = webui.create('button', {
+            type: 'button',
+            class: 'tile',
+            'aria-pressed': option.value === current ? 'true' : 'false',
+            'data-theme-value': option.value,
+            'aria-label': option.name,
+            click: () => applyTheme(option.value),
+        });
+        const preview = webui.create('span', { class: 'preview', 'aria-hidden': 'true' });
+        if (background) {
+            preview.style.background = background;
+            preview.style.color = offsetFor(background);
+        }
+        // A theme's texture, heading font and heading mark, when its option gives them, so the tile looks like the theme.
+        if (option.texture) preview.style.backgroundImage = `url("${option.texture}")`;
+        const bar = webui.create('span', { class: 'bar' });
+        if (option.mark) {
+            const mark = webui.create('span', { class: 'mark' });
+            mark.style.backgroundImage = `url("${option.mark}")`;
+            bar.appendChild(mark);
+        }
+        bar.appendChild(webui.create('span', { text: 'Aa' }));
+        if (option.font) bar.style.fontFamily = option.font;
+        if (title) {
+            bar.style.background = title;
+            bar.style.color = offsetFor(title);
+        }
+        const lines = webui.create('span', { class: 'lines' });
+        lines.append(webui.create('span', { class: 'line' }), webui.create('span', { class: 'line short' }));
+        const pills = webui.create('span', { class: 'pills' });
+        [primary, secondary, tertiary, button || active].filter(Boolean).forEach(color => {
+            const pill = webui.create('span', { class: 'pill' });
+            pill.style.background = color;
+            pills.appendChild(pill);
+        });
+        preview.append(bar, lines, pills);
+        tile.append(preview, webui.create('span', { class: 'name', text: option.name }));
+        return tile;
+    }
+
     webui.define('webui-theme-selector', {
-        preload: 'icon dialogs',
+        preload: 'icon dialogs tabs split-panes tiles',
         attr: ['title', 'data-title', 'data-toggleclass'],
         flags: ['panel', 'editable'],
         constructor() {
@@ -270,7 +321,9 @@
             if (!t.hasAttribute('panel')) return;
             const current = currentTheme();
             const options = themeOptions(t);
-            if (options.some(option => option.scheme)) {
+            if (options.some(option => option.category)) {
+                t.renderCategories(options, current);
+            } else if (options.some(option => option.scheme)) {
                 const groups = SCHEMES.map(([scheme, label]) => [label, options.filter(option => option.scheme === scheme)]);
                 groups.push(['Other', options.filter(option => !SCHEMES.some(([scheme]) => scheme === option.scheme))]);
                 t._list.replaceChildren(...groups.filter(([, items]) => items.length).map(([label, items]) => {
@@ -282,6 +335,49 @@
                 t._list.replaceChildren(...options.map(option => t.themeButton(option, current)));
             }
             t.renderEditor(options.find(option => option.value === current));
+        },
+        /**
+         * Themes in a tab for each category, each tab with its light themes beside its dark ones, every theme a tile
+         * drawn as it looks. Built once for a set of themes, so choosing one keeps the tab and the pane in view.
+         */
+        renderCategories(options, current) {
+            const t = this;
+            const built = JSON.stringify(options);
+            if (t._builtCategories === built && t._list.firstChild) {
+                t._list.querySelectorAll('.tile').forEach(tile => tile.setAttribute('aria-pressed', tile.dataset.themeValue === current ? 'true' : 'false'));
+                return;
+            }
+            t._builtCategories = built;
+            const categories = [...new Set(options.map(option => option.category || 'Other'))];
+            const chosen = options.find(option => option.value === current);
+            const tabs = webui.create('webui-tabs', { theme: 'secondary', 'transition-timing': '200', class: 'categories', index: `${Math.max(0, categories.indexOf(chosen?.category || 'Other'))}` });
+            categories.forEach(category => {
+                const inCategory = options.filter(option => (option.category || 'Other') === category);
+                tabs.appendChild(webui.create('webui-button', { slot: 'tabs', class: 'category-tab', 'data-category': category, text: category }));
+                const content = webui.create('div', { slot: 'content', class: 'category', 'data-category': category });
+                const split = webui.create('webui-split-panes', {
+                    class: 'schemes', min: '150', ratio: '0.5', 'start-label': 'Light themes', 'end-label': 'Dark themes',
+                    show: chosen && chosen.category === category && chosen.scheme === 'light' ? 'start' : 'end',
+                });
+                const pane = (scheme, label, slot) => {
+                    const box = webui.create('div', { slot, class: `scheme ${scheme}` });
+                    box.appendChild(webui.create('span', { class: 'heading', text: label }));
+                    const tiles = webui.create('webui-tiles', { min: '7.5em', label: `${label} themes`, gap: '8' });
+                    const items = inCategory.filter(option => scheme === 'light' ? option.scheme === 'light' : option.scheme !== 'light');
+                    items.forEach(option => {
+                        const tile = themeTile(option, current);
+                        tile.setAttribute('role', 'listitem');
+                        tiles.appendChild(tile);
+                    });
+                    if (!items.length) box.appendChild(webui.create('span', { class: 'note', text: `No ${label.toLowerCase()} themes here.` }));
+                    else box.appendChild(tiles);
+                    return box;
+                };
+                split.append(pane('light', 'Light', 'start'), pane('dark', 'Dark', 'end'));
+                content.appendChild(split);
+                tabs.appendChild(content);
+            });
+            t._list.replaceChildren(tabs);
         },
         /** The color inputs of an editable selector, showing the colors the page uses now. */
         renderEditor(theme) {
@@ -424,6 +520,95 @@ color: var(--color-secondary-offset, #fff);
 }
 button.reset[hidden] {
 display: none;
+}
+.scheme {
+display: flex;
+flex-direction: column;
+gap: calc(var(--padding, 1em) * 0.5);
+padding: calc(var(--padding, 1em) * 0.5);
+}
+.schemes {
+min-height: 12em;
+}
+button.tile {
+display: flex;
+flex-direction: column;
+align-items: stretch;
+gap: 0.35em;
+width: 100%;
+padding: 0.35em;
+background: none;
+color: inherit;
+border: 2px solid rgb(127 127 127 / 35%);
+}
+button.tile:hover {
+border-color: currentColor;
+}
+button.tile[aria-pressed="true"] {
+border-color: var(--color-active, currentColor);
+}
+button.tile[aria-pressed="true"]::after {
+content: none;
+}
+.preview {
+display: flex;
+flex-direction: column;
+gap: 0.3em;
+height: 4.5em;
+overflow: hidden;
+border-radius: calc(var(--corners, 4px) * 0.75);
+border: 1px solid rgb(127 127 127 / 40%);
+background: var(--color-background);
+}
+.preview .bar {
+display: flex;
+align-items: center;
+gap: 0.3em;
+padding: 0.1em 0.4em;
+font-size: 0.75em;
+font-weight: bold;
+}
+.preview .mark {
+flex: 0 0 auto;
+width: 0.9em;
+height: 0.9em;
+background: center / contain no-repeat;
+}
+.preview .lines {
+display: flex;
+flex-direction: column;
+gap: 0.25em;
+padding: 0 0.4em;
+}
+.preview .line {
+display: block;
+height: 0.3em;
+width: 80%;
+border-radius: 0.2em;
+background: currentColor;
+opacity: 0.55;
+}
+.preview .line.short {
+width: 50%;
+}
+.preview .pills {
+display: flex;
+gap: 0.25em;
+padding: 0 0.4em 0.35em;
+margin-top: auto;
+}
+.preview .pill {
+display: block;
+flex: 1 1 0;
+height: 0.7em;
+border-radius: 0.35em;
+}
+button.tile .name {
+font-size: 0.85em;
+text-align: center;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
 }
 .swatches {
 display: inline-flex;
