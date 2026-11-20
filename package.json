@@ -8,6 +8,7 @@
     "test:min": "vitest run && playwright test",
     "test:report": "playwright show-report",
     "icons": "node tools/icons/build.mjs",
+    "fonts": "node tools/fonts/build.mjs",
     "icons:check": "node tools/icons/build.mjs --check",
     "test:unit": "vitest run",
     "test:full": "vitest run --mode full && playwright test",
