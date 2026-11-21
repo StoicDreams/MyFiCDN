@@ -81,3 +81,27 @@ ${html('data-subscribe="vertical-tabs:setVertical"')}`;
     await tabs.first().evaluate(el => el.setVertical(false));
     await expect(tabs.first()).not.toHaveAttribute('vertical');
 });
+test('currentTab says which tab is shown, as it is chosen', async ({ page }) => {
+    const root = await mount(page, html('index="1"'));
+    const tabs = root.locator('webui-tabs');
+    await expect.poll(() => tabs.evaluate(el => el.currentTab())).toBe(1);
+    await buttons(root).nth(2).click();
+    await expect.poll(() => tabs.evaluate(el => el.currentTab())).toBe(2);
+    await tabs.evaluate(el => el.setTab(0));
+    await expect.poll(() => tabs.evaluate(el => el.currentTab())).toBe(0);
+});
+test('removing the shown tab shows the one now in its place', async ({ page }) => {
+    const root = await mount(page, html());
+    const tabs = root.locator('webui-tabs');
+    await buttons(root).nth(1).click();
+    await expect(buttons(root).nth(1)).toHaveAttribute('aria-current', 'true');
+    await tabs.evaluate(el => {
+        el.tabButtons()[1].remove();
+        el.tabContents()[1].remove();
+        el.render();
+        el.setTab(el.currentTab());
+    });
+    await expect(buttons(root).nth(1)).toHaveText('Plain');
+    await expect(buttons(root).nth(1)).toHaveAttribute('aria-current', 'true');
+    await expect.poll(() => tabs.evaluate(el => el.tabContents()[1].inert)).toBe(false);
+});

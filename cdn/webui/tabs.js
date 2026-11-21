@@ -165,6 +165,10 @@
             const translate = measured ? `${first.offsetLeft - shown.offsetLeft}px 0` : `-${t._index * 100}% 0`;
             if (t._slotContent.style.translate !== translate) t._slotContent.style.translate = translate;
         },
+        /** The index of the tab shown, counting from 0, for pages that keep or restore which tab was open. */
+        currentTab() {
+            return Math.max(0, parseInt(this._index) || 0);
+        },
         tabButtons() {
             return Array.from(this.children).filter(item => item.getAttribute('slot') === 'tabs');
         },
@@ -348,7 +352,8 @@
                     tabIndex = linkedTab;
                 }
             }
-            if (t._initiated && tabIndex === t._index) return;
+            // Showing the tab already shown does nothing, unless tabs added or removed put other content in its place.
+            if (t._initiated && tabIndex === t._index && t.tabContents()[tabIndex] === t._shownContent) return;
             let index = 0;
             let foundIndex = false;
             Array.from(t.querySelectorAll('[slot="tabs"]')).filter(item => item.parentNode === t).forEach(tab => {
@@ -375,6 +380,7 @@
                 c.inert = tabIndex !== index;
                 if (tabIndex === index++) {
                     t._index = tabIndex;
+                    t._shownContent = c;
                     t.alignContent();
                     foundIndex = true;
                     if (c.previousElementSibling && c.previousElementSibling.hasAttribute && c.previousElementSibling.hasAttribute('hash')) {
