@@ -1,4 +1,4 @@
 {
-  "attributes become config and data": {"hash":"2c92f41e1a82b5c33669d843b30552aeabc824e8fee3b1fb6d378ab5fdb8c756","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js"]},
-  "src loads config and data from json": {"hash":"2c92f41e1a82b5c33669d843b30552aeabc824e8fee3b1fb6d378ab5fdb8c756","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js"]}
+  "attributes become config and data": {"hash":"c50402837ff44039015d43a9f60f7c59366479d521fe75ca4970a23f1f486043","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js"]},
+  "src loads config and data from json": {"hash":"c50402837ff44039015d43a9f60f7c59366479d521fe75ca4970a23f1f486043","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js"]}
 }

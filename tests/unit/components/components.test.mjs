@@ -9,6 +9,14 @@ test('lists a tab for every entry in components.json', async ({ page }) => {
     await expect(buttons.first()).toHaveAttribute('hash', names[0]);
     await expect(root.locator('webui-components > webui-alert')).toHaveCount(0);
 });
+test('the list shows names only, with no toggle to icons, since every name starts with webui-', async ({ page }) => {
+    const root = await mount(page, '<webui-components></webui-components>');
+    const tabs = root.locator('webui-components > webui-tabs');
+    await expect(tabs.locator(':scope > webui-button').first()).toBeAttached();
+    await expect(tabs).toHaveAttribute('tab-display', 'label');
+    await expect(tabs.locator('.collapse-toggle')).toHaveAttribute('hidden', '');
+    await expect(tabs.locator(':scope > webui-button').first()).not.toHaveAttribute('collapsed');
+});
 test('shows an error when the list cannot load', async ({ page }) => {
     await page.route('**/webui/components.json', route => route.fulfill({ status: 500, body: '' }));
     const root = await mount(page, '<webui-components></webui-components>');

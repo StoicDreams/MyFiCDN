@@ -109,3 +109,43 @@ test('a button with an href is a link, and a role or tabindex set on it is kept'
     await expect(root.locator('#b')).toHaveAttribute('role', 'tab');
     await expect(root.locator('#b')).toHaveAttribute('tabindex', '-1');
 });
+test('icon-only shows just the icon, named by its text', async ({ page }) => {
+    const root = await mount(page, '<webui-button id="a" icon-only start-icon="gear">Settings</webui-button><webui-button id="c" icon-only start-icon="home" aria-label="Go home">Home</webui-button>');
+    await expect(root.locator('#a')).toHaveAttribute('collapsed', '');
+    await expect(root.getByRole('button', { name: 'Settings' })).toHaveAttribute('aria-label', 'Settings');
+    await expect(root.locator('#a').locator('.initials')).toHaveText('');
+    // A name the page gave it is kept.
+    await expect(root.locator('#c')).toHaveAttribute('aria-label', 'Go home');
+});
+test('icon-only follows its text, and turning it off shows the text again without the added name', async ({ page }) => {
+    const root = await mount(page, '<webui-button icon-only start-icon="gear">Settings</webui-button>');
+    const button = root.locator('webui-button');
+    await expect(button).toHaveAttribute('aria-label', 'Settings');
+    await button.evaluate(el => { [...el.childNodes].find(node => node.nodeType === Node.TEXT_NODE).data = 'Options'; });
+    await expect(button).toHaveAttribute('aria-label', 'Options');
+    await button.evaluate(el => el.removeAttribute('icon-only'));
+    await expect(button).not.toHaveAttribute('collapsed');
+    await expect(button).not.toHaveAttribute('aria-label');
+});
+test('icon-only without an icon shows two letters of its text in place of one', async ({ page }) => {
+    const root = await mount(page, `<webui-button icon-only>Projects</webui-button><webui-button icon-only>Security Key</webui-button>
+<webui-button icon-only>Remote Desktop Connections</webui-button><webui-button icon-only>remote-desktop</webui-button>`);
+    const buttons = root.locator('webui-button');
+    await expect(buttons.locator('.initials')).toHaveText(['Pr', 'SK', 'RD', 'RD']);
+    await expect(root.getByRole('button', { name: 'Security Key' })).toHaveAttribute('collapsed', '');
+    // The letters stand in for an icon, so screen readers hear the name, not the letters.
+    await expect(buttons.first().locator('.initials')).toHaveAttribute('aria-hidden', 'true');
+    // Turned off, it shows its text, and the letters go.
+    await buttons.first().evaluate(el => el.removeAttribute('icon-only'));
+    await expect(buttons.first().locator('.initials')).toHaveText('');
+    await expect(buttons.first()).not.toHaveAttribute('initials');
+});
+test('icon-only with no text yet shows nothing until text arrives', async ({ page }) => {
+    const root = await mount(page, '<webui-button icon-only></webui-button>');
+    const button = root.locator('webui-button');
+    await expect(button).toHaveAttribute('role', 'button');
+    await expect(button).not.toHaveAttribute('collapsed');
+    await button.evaluate(el => { el.textContent = 'Billing'; });
+    await expect(button.locator('.initials')).toHaveText('Bi');
+    await expect(button).toHaveAttribute('aria-label', 'Billing');
+});

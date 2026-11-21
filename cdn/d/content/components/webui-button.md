@@ -1,5 +1,7 @@
 <webui-page-segment elevation="10">
     The `<webui-button>` component provides an interactive button element that can act as a standard click target, a form submission trigger, or a navigational link. It features built-in data manipulation capabilities, allowing it to transfer data, clear global data keys, or remove specific items from stored arrays or objects directly via HTML attributes. It also supports `start-icon` and `end-icon` integrations.
+
+    The `icon-only` flag shows just the button's icon, and its text becomes its name, read by screen readers and shown as its tooltip. A button without an icon shows two letters of its text instead: the first letters of its first two words, such as "SK" for Security Key, or the first two letters of a single word, such as "Pr" for Projects. `webui-tabs` sets it on its tab buttons when they show as icons.
 </webui-page-segment>
 
 <webui-side-by-side>

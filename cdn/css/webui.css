@@ -206,6 +206,11 @@ webui-dialogs :not(:defined) {
     opacity: 0;
 }
 
+/* A newsletter takes no room until it knows its key is good, so a page never shifts for one that stays hidden. */
+webui-newsletter:not(:defined) {
+    display: none;
+}
+
 i.vl {
     content: " ";
     display: inline-block;

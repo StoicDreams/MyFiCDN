@@ -222,11 +222,11 @@ test('a label shows before the tabs, from the label attribute or an element in t
     await expect(root.locator('#b')).toHaveAttribute('labeled');
     await expect(root.locator('#c .label')).toBeHidden();
     await expect(root.locator('#c')).not.toHaveAttribute('labeled');
-    // The label sits in the tab bar, ahead of the buttons.
+    // The label sits in the tab bar, ahead of the buttons, and the collapse toggle after them.
     await expect.poll(() => root.locator('#a').evaluate(el => {
         const bar = el.shadowRoot.querySelector('.bar');
         return [...bar.children].map(child => child.className || child.name);
-    })).toEqual(['label', 'label', 'tabs']);
+    })).toEqual(['label', 'label', 'tabs', 'collapse-toggle']);
     await root.locator('#a').evaluate(el => el.removeAttribute('label'));
     await expect(root.locator('#a .label')).toBeHidden();
 });
@@ -307,5 +307,55 @@ test.describe('sortable', () => {
         await page.keyboard.press('Alt+ArrowRight');
         await el.locator('[data-id="c"]').click();
         await expect.poll(() => order(el)).toEqual(['a', 'b', 'c']);
+    });
+});
+test.describe('names and icons', () => {
+    const viewTabs = attributes => `<webui-tabs ${attributes}>
+<webui-button slot="tabs" start-icon="home">Home page</webui-button><div slot="content">A</div>
+<webui-button slot="tabs" start-icon="gear">Settings and options</webui-button><div slot="content">B</div>
+<webui-button slot="tabs">Security Key</webui-button><div slot="content">C</div></webui-tabs>`;
+    // What a person sees on each button: its text, which is gone when only its icon or letters show.
+    const shownText = root => root.locator('webui-tabs > [slot="tabs"]').evaluateAll(list => list.map(el => el.innerText.trim()));
+    test('the toggle switches between names and icons, and a collapsed tab shows its name as a tooltip', async ({ page }) => {
+        const root = await mount(page, viewTabs(''));
+        await expect.poll(() => shownText(root)).toEqual(['Home page', 'Settings and options', 'Security Key']);
+        await root.getByRole('button', { name: 'Show tabs as icons' }).click();
+        await expect.poll(() => shownText(root)).toEqual(['', '', '']);
+        await expect(root.locator('webui-tabs > [slot="tabs"]').nth(2).locator('.initials')).toHaveText('SK');
+        await expect(root.locator('webui-tabs > [slot="tabs"]').nth(2).locator('.initials')).toBeVisible();
+        await root.getByRole('button', { name: 'Settings and options' }).hover();
+        await expect(page.locator('body > .tooltip')).toHaveText('Settings and options');
+        await expect(page.locator('body > .tooltip')).toHaveClass(/open/);
+        await root.getByRole('button', { name: 'Show tab names' }).click();
+        await expect.poll(() => shownText(root)).toEqual(['Home page', 'Settings and options', 'Security Key']);
+    });
+    test('vertical tabs switch too, with the toggle at the foot of their column', async ({ page }) => {
+        await page.setViewportSize({ width: 1200, height: 800 });
+        const root = await mount(page, viewTabs('vertical'));
+        await expect(root.locator('webui-tabs')).not.toHaveAttribute('narrow');
+        const toggle = root.getByRole('button', { name: 'Show tabs as icons' });
+        await expect(toggle).toBeInViewport();
+        // The toggle comes after the last tab, down the column.
+        await expect.poll(() => toggle.evaluate(button => {
+            // The button is inside the toggle, which is inside the tabs.
+            const tabs = button.getRootNode().host.getRootNode().host.querySelectorAll(':scope > [slot="tabs"]');
+            return button.getBoundingClientRect().top >= tabs[tabs.length - 1].getBoundingClientRect().bottom;
+        })).toBe(true);
+        await toggle.click();
+        await expect.poll(() => shownText(root)).toEqual(['', '', '']);
+        await expect(root.getByRole('button', { name: 'Settings and options' })).toBeInViewport();
+        await expect(root.getByRole('button', { name: 'Show tab names' })).toBeInViewport();
+        await root.getByRole('button', { name: 'Show tab names' }).click();
+        await expect.poll(() => shownText(root)).toEqual(['Home page', 'Settings and options', 'Security Key']);
+    });
+    test('vertical tabs on a narrow window sit in a row, with the toggle at its end', async ({ page }) => {
+        await page.setViewportSize({ width: 600, height: 800 });
+        const root = await mount(page, viewTabs('vertical'));
+        await expect(root.locator('webui-tabs')).toHaveAttribute('narrow');
+        const toggle = root.getByRole('button', { name: 'Show tabs as icons' });
+        await expect(toggle).toBeInViewport();
+        await toggle.click();
+        await expect.poll(() => shownText(root)).toEqual(['', '', '']);
+        await expect(root.getByRole('button', { name: 'Show tab names' })).toBeInViewport();
     });
 });

@@ -1,4 +1,4 @@
 {
-  "shows the value, label, and description": {"hash":"2e47ced6240d68f2e5878b192cb3e373a2d046bf3b7c95b9c45eaf2cd9d06388","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/stat.min.js"]},
-  "without a label, the label is hidden": {"hash":"2e47ced6240d68f2e5878b192cb3e373a2d046bf3b7c95b9c45eaf2cd9d06388","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/stat.min.js"]}
+  "shows the value, label, and description": {"hash":"8d8f444cbd54c6f405766306e87d6bab4a0d626459a1141f5dc5651a53f43619","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/stat.min.js"]},
+  "without a label, the label is hidden": {"hash":"8d8f444cbd54c6f405766306e87d6bab4a0d626459a1141f5dc5651a53f43619","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/stat.min.js"]}
 }

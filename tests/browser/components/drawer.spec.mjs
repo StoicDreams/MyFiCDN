@@ -121,7 +121,7 @@ test.describe('close button', () => {
         await expect(drawer).not.toHaveAttribute('docked');
         await expect(drawer).not.toHaveClass(/open/);
     });
-    test('a docked drawer closed with it offers to dock again, not to hide, when it opens next', async ({ page }) => {
+    test('a docked drawer closed with it comes back docked when it opens next', async ({ page }) => {
         await page.setViewportSize({ width: 1300, height: 700 });
         const root = await mount(page, '<webui-drawer slot="right" class="shared open" data-dockable docked="true">Body</webui-drawer>');
         const drawer = root.locator('webui-drawer');
@@ -130,12 +130,40 @@ test.describe('close button', () => {
         await drawer.locator('[slot="footer"] .drawer-close').click();
         await expect(drawer).not.toHaveAttribute('docked');
         await drawer.evaluate(el => el.classList.add('open'));
-        await expect(dock).not.toHaveAttribute('enabled');
-        await expect(dock.locator('button')).toHaveAttribute('aria-label', 'Dock Panel');
-        // And it docks again from there.
-        await dock.click();
         await expect(drawer).toHaveAttribute('docked');
         await expect(dock).toHaveAttribute('enabled');
+        // Undocked with its dock button, it stays undocked when it opens again.
+        await dock.click();
+        await expect(drawer).not.toHaveAttribute('docked');
+        await drawer.evaluate(el => { el.classList.remove('open'); el.classList.add('open'); });
+        await expect(drawer).not.toHaveAttribute('docked');
+    });
+    test('a docked drawer closed with it is kept to dock again over a reload', async ({ page }) => {
+        await page.setViewportSize({ width: 1300, height: 700 });
+        const root = await mount(page, '<webui-drawer class="redock" slot="right" data-dockable data-state="docked|dock-on-open" docked="true">Body</webui-drawer>');
+        await root.locator('webui-drawer.redock [slot="footer"] .drawer-close').click();
+        await expect(root.locator('webui-drawer.redock')).not.toHaveAttribute('docked');
+        // The same drawer drawn again, as after a reload, starts closed, and docks when it opens.
+        await root.evaluate(el => {
+            el.querySelector('webui-drawer.redock').remove();
+            el.insertAdjacentHTML('beforeend', '<webui-drawer class="redock again" slot="right" data-dockable data-state="docked|dock-on-open">Body</webui-drawer>');
+        });
+        const again = root.locator('webui-drawer.again');
+        await expect(again).toHaveAttribute('dock-on-open', 'true');
+        await expect(again).not.toHaveAttribute('docked');
+        await again.evaluate(el => el.classList.add('open'));
+        await expect(again).toHaveAttribute('docked');
+    });
+    test('a drawer closed while docked on a narrow window docks when the window widens', async ({ page }) => {
+        await page.setViewportSize({ width: 1300, height: 700 });
+        const root = await mount(page, '<webui-drawer slot="right" class="shared open" data-dockable docked="true">Body</webui-drawer>');
+        const drawer = root.locator('webui-drawer');
+        await drawer.locator('[slot="footer"] .drawer-close').click();
+        await page.setViewportSize({ width: 600, height: 700 });
+        await drawer.evaluate(el => el.classList.add('open'));
+        await expect(drawer).not.toHaveAttribute('docked');
+        await page.setViewportSize({ width: 1300, height: 700 });
+        await expect(drawer).toHaveAttribute('docked');
     });
     test('shows on a narrow window too, where the dock button does not', async ({ page }) => {
         await page.setViewportSize({ width: 600, height: 700 });

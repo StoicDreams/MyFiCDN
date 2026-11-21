@@ -14,6 +14,7 @@
         });
     }
     webui.define('webui-tabs', {
+        preload: 'toggle-icon',
         constructor() {
             const t = this;
             t._index = 0;
@@ -24,10 +25,22 @@
             t._label = t.template.querySelector('.label');
             t._slotLabel = t.template.querySelector('slot[name="label"]');
             t._slotLabel.addEventListener('slotchange', () => t.showLabel());
+            t._bar = t.template.querySelector('.bar');
+            // Buttons the tabs made icon-only, so a button the page made icon-only itself stays that way.
+            t._iconOnlySet = new WeakSet();
+            t._slotTabs.addEventListener('slotchange', () => t.applyCollapse());
+            t._toggle = t.template.querySelector('.collapse-toggle');
+            t._toggle.addEventListener('change', () => {
+                // The toggle also reports the state this sets on it, which is not a person's choice.
+                if (t._syncingToggle) return;
+                t.chooseView(t._toggle.value ? 'icon' : 'label');
+            });
+            // The toggle loads after the tabs, so it takes their state once it can.
+            customElements.whenDefined('webui-toggle-icon').then(() => t.applyCollapse());
             t.addEventListener('pointerdown', ev => t.dragTab(ev));
             t.addEventListener('keydown', ev => t.keyTab(ev));
         },
-        attr: ['pad', 'transition-timing', 'index', 'theme', 'content-theme', 'label'],
+        attr: ['pad', 'transition-timing', 'index', 'theme', 'content-theme', 'label', 'tab-display', 'tab-display-key'],
         flags: ['sortable'],
         attrChanged(property, value) {
             const t = this;
@@ -44,6 +57,10 @@
                     break;
                 case 'label':
                     t.showLabel();
+                    break;
+                case 'tabDisplay':
+                case 'tabDisplayKey':
+                    t.applyCollapse();
                     break;
                 case 'index':
                     {
@@ -65,11 +82,72 @@
             t.checkResponsiveVertical();
             // A new size moves where each tab sits, so the shown one is lined up again.
             t._alignObserver ??= new ResizeObserver(() => t.alignContent());
-            t._alignObserver.observe(t._section);
-            t._alignObserver.observe(t._slotContent);
+            t.observeSizes();
+            t.applyCollapse();
+        },
+        reconnected() {
+            // A move disconnects the observer, and connected does not run again.
+            this.observeSizes();
         },
         disconnected() {
             this._alignObserver?.disconnect();
+        },
+        observeSizes() {
+            const t = this;
+            t._alignObserver?.observe(t._section);
+            t._alignObserver?.observe(t._slotContent);
+        },
+        /**
+         * The views the tab buttons can show, from tab-display: "label" for their names, "icon" for just their icons (or two
+         * letters of a name without one), with the name as a tooltip. Both, as "label|icon" (the default) or
+         * "icon|label", add a toggle to switch between them, starting on the first.
+         */
+        tabViews() {
+            const views = [...new Set((this.getAttribute('tab-display') || '').split('|').map(view => view.trim().toLowerCase()))]
+                .filter(view => view === 'label' || view === 'icon');
+            return views.length ? views : ['label', 'icon'];
+        },
+        /** Where a person's choice of view is kept: tab-display-key="name" keeps it, under that name. */
+        viewKey() {
+            const name = (this.getAttribute('tab-display-key') || '').trim();
+            return name ? `session-webui-tabs-view-${name}` : '';
+        },
+        /** The view shown: the one a person chose with the toggle, while tab-display still offers it, or else the first. */
+        currentView() {
+            const t = this;
+            const views = t.tabViews();
+            const key = t.viewKey();
+            const chosen = t._chosenView ?? (key ? webui.getData(key) : undefined);
+            return views.includes(chosen) ? chosen : views[0];
+        },
+        /** A person chose names or icons with the toggle. */
+        chooseView(view) {
+            const t = this;
+            t._chosenView = view;
+            const key = t.viewKey();
+            if (key) webui.setData(key, view);
+            t.applyCollapse();
+        },
+        /** Shows the current view, and the toggle when tab-display offers both. */
+        applyCollapse() {
+            const t = this;
+            const collapsed = t.currentView() === 'icon';
+            t._toggle.hidden = t.tabViews().length < 2;
+            t.toggleAttribute('collapsed', collapsed);
+            if (typeof t._toggle.setValue === 'function' && !!t._toggle.value !== collapsed) {
+                t._syncingToggle = true;
+                try { t._toggle.setValue(collapsed); } finally { t._syncingToggle = false; }
+            }
+            t.tabButtons().forEach(button => {
+                if (collapsed) {
+                    if (button.hasAttribute('icon-only')) return;
+                    button.setAttribute('icon-only', '');
+                    t._iconOnlySet.add(button);
+                } else if (t._iconOnlySet.has(button)) {
+                    button.removeAttribute('icon-only');
+                    t._iconOnlySet.delete(button);
+                }
+            });
         },
         /**
          * Slides the row of tab contents so the shown one is in view. It moves by where the shown tab really is, rather
@@ -213,6 +291,11 @@
         },
         onResize() {
             this.checkResponsiveVertical();
+        },
+        /** Puts the tabs down the side when given true, or across the top otherwise, such as from data-subscribe. */
+        setVertical(value) {
+            const vertical = value === true || value === 'true' || value === 1 || value === '1' || value === '';
+            this.toggleAttribute('vertical', vertical);
         },
         setData: function (data, key) {
             const t = this;
@@ -415,7 +498,7 @@
             }
         },
         shadowTemplate: `
-<div class="bar" part="bar"><span class="label" part="label" hidden></span><slot name="label"></slot><slot name="tabs"></slot></div>
+<div class="bar" part="bar"><span class="label" part="label" hidden></span><slot name="label"></slot><slot name="tabs"></slot><webui-toggle-icon class="collapse-toggle" part="collapse-toggle" icon-on="expand" icon-off="compress" title-on="Show tab names" title-off="Show tabs as icons"></webui-toggle-icon></div>
 <section>
 <slot name="content"></slot>
 </section>
@@ -450,8 +533,18 @@ display:contents;
 :host([vertical]:not([narrow])) .bar {
 flex-direction:column;
 }
-.label[hidden] {
+.label[hidden],
+.collapse-toggle[hidden] {
 display:none;
+}
+.collapse-toggle {
+align-self:center;
+margin-inline-start:auto;
+padding:0 calc(var(--padding, 8px) / 2);
+}
+:host([vertical]:not([narrow])) .collapse-toggle {
+margin-inline-start:0;
+margin-block-start:auto;
 }
 :host([dragging]) {
 cursor:grabbing;

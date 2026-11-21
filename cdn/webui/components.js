@@ -73,7 +73,8 @@
                 const exclude = t._exclude || [];
                 data = JSON.parse(data).filter(component => !exclude.includes(component));
                 t._names = data;
-                const tabs = webui.create('webui-tabs', { pad: 'var(--padding)', vertical: true, 'transition-timing': 200, 'data-subscribe': 'session-components-tab-index:setTab' });
+                // Every name starts with webui-, so two letters would not tell them apart: names only.
+                const tabs = webui.create('webui-tabs', { pad: 'var(--padding)', vertical: true, 'transition-timing': 200, 'tab-display': 'label', 'data-subscribe': 'session-components-tab-index:setTab' });
                 data.forEach(component => {
                     // Without a hash, choosing a tab leaves the url alone, for a page that shows the components as a reference.
                     let button = webui.create('webui-button', { align: 'left', slot: 'tabs', text: component });

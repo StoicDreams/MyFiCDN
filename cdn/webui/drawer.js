@@ -62,12 +62,32 @@
                 t.close();
             });
             t.setupResizing();
+            // A drawer closed while docked docks again when it next opens.
+            new MutationObserver(() => t.redockOnOpen()).observe(t, { attributes: true, attributeFilter: ['class'] });
         },
-        /** Close the drawer, undocking it first if it is docked. */
+        /**
+         * Close the drawer. A docked drawer is always shown, so it undocks to close, and is marked dock-on-open, so it
+         * comes back docked when it opens next, rather than over the page. List dock-on-open in data-state to keep
+         * that over a reload.
+         */
         close() {
             const t = this;
-            if (t.hasAttribute('docked')) t.removeAttribute('docked');
+            if (t.hasAttribute('docked')) {
+                t.setAttribute('dock-on-open', 'true');
+                t.removeAttribute('docked');
+            }
             t.classList.remove('open');
+        },
+        /** Docks a drawer that was closed while docked, once it opens. On a narrow window it docks when it widens. */
+        redockOnOpen() {
+            const t = this;
+            if (!t.classList.contains('open') || !t.hasAttribute('dock-on-open')) return;
+            t.removeAttribute('dock-on-open');
+            if (t._forceUndocked) {
+                t._cacheDocked = true;
+            } else {
+                t.setAttribute('docked', true);
+            }
         },
         isSideDrawer() {
             const slot = this.getAttribute('slot');
@@ -195,6 +215,8 @@
                     if (!t._forceUndocked) {
                         t._cacheDocked = !!value;
                     }
+                    // Docked some other way, such as with its dock button, it has nothing left to do when it opens.
+                    if (value) t.removeAttribute('dock-on-open');
                     // The dock button shows the state the drawer is in, however it changed, such as by the close button.
                     t.querySelector(':scope > [slot="footer"] webui-toggle-icon')?.setValue?.(t.hasAttribute('docked'));
                     // Docked and undocked can have different limits.

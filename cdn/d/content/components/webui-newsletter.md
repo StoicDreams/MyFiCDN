@@ -1,5 +1,5 @@
 <webui-page-segment elevation="10">
-    The `<webui-newsletter>` component shows a newsletter signup form backed by [My Fidelity](https://www.myfi.ws). Create the newsletter on a verified domain in My Fidelity, then put its key in the `key` attribute. The form only works on the newsletter's own domain, and only while the newsletter's subscription is active. Otherwise it hides itself, except on localhost, where it says why.
+    The `<webui-newsletter>` component shows a newsletter signup form backed by [My Fidelity](https://www.myfi.ws). Create the newsletter on a verified domain in My Fidelity, then put its key in the `key` attribute. The form only works on the newsletter's own domain, and only while the newsletter's subscription is active. Otherwise it hides itself, except on localhost, where it says why. It takes no room on the page while it checks its key, and fades in once the key is confirmed, so a newsletter that turns out to be unavailable never shows at all.
 </webui-page-segment>
 
 ```html:Signup form

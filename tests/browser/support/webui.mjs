@@ -124,8 +124,7 @@ export { expect };
  * Returns a locator for the container. Locators see inside shadow DOM automatically.
  */
 export async function mount(page, html) {
-    const tags = [...new Set((html.match(/<(webui|app)-[a-z0-9-]+/g) || []).map(tag => tag.substring(1)))];
-    await page.evaluate(async ({ html, tags }) => {
+    await page.evaluate(async html => {
         let root = document.getElementById('test-root');
         if (!root) {
             root = document.createElement('div');
@@ -133,7 +132,10 @@ export async function mount(page, html) {
             document.body.appendChild(root);
         }
         root.innerHTML = html;
+        // Only elements in the page load their components. A tag inside a <template>, such as a tab label's icon,
+        // is not loaded until the template is used, so waiting for it would wait forever.
+        const tags = [...new Set([...root.querySelectorAll('*')].map(el => el.localName).filter(name => /^(webui|app)-/.test(name)))];
         await Promise.all(tags.map(tag => customElements.whenDefined(tag)));
-    }, { html, tags });
+    }, html);
     return page.locator('#test-root');
 }

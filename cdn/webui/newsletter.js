@@ -233,11 +233,22 @@
 <button id="action" type="button" part="button" hidden></button>
 <p id="status" role="status" aria-live="polite" part="status"></p>
 <style type="text/css">
+/* A signup form shows only once newsletter/info has confirmed its key, fading in, so a newsletter that turns out to
+   be unavailable never shows at all, rather than showing and then vanishing. */
 :host {
 display:block;
+animation:webui-newsletter-in 300ms ease-out;
 }
+:host(:not([state])),
+:host([state="loading"]),
 :host([unavailable]) {
 display:none;
+}
+@keyframes webui-newsletter-in {
+from { opacity:0; }
+}
+@media (prefers-reduced-motion: reduce) {
+:host { animation:none; }
 }
 [hidden] {
 display:none !important;

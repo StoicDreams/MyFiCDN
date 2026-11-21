@@ -183,7 +183,8 @@
                 const extracted = extractClassBody(data);
                 window.src = extracted;
                 data = parseWebUIMethods(data);
-                const tabs = webui.create('webui-tabs', { pad: 'var(--padding)', vertical: true, 'transition-timing': 200, 'data-subscribe': 'session-components-tab-index:setTab' });
+                // Method names share their first letters, such as setData and setTheme, so two letters would not tell them apart.
+                const tabs = webui.create('webui-tabs', { pad: 'var(--padding)', vertical: true, 'transition-timing': 200, 'tab-display': 'label', 'data-subscribe': 'session-components-tab-index:setTab' });
                 data.forEach(method => {
                     if (!method.name) {
                         console.error('Method is missing name %o', method);

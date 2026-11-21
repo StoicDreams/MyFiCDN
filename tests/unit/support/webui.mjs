@@ -346,7 +346,9 @@ export async function mount(page, html) {
         document.body.appendChild(root);
     }
     root.innerHTML = html;
-    const tags = [...new Set((html.match(/<(webui|app)-[a-z0-9-]+/g) || []).map(tag => tag.substring(1)))];
+    // Only elements in the page load their components. A tag inside a <template>, such as a tab label's icon, is not
+    // loaded until the template is used, so waiting for it would wait forever.
+    const tags = [...new Set([...root.querySelectorAll('*')].map(el => el.localName).filter(name => /^(webui|app)-/.test(name)))];
     await Promise.all(tags.map(tag => window.customElements.whenDefined(tag)));
     await page.settle();
     return new Locator(page, () => [document.getElementById('test-root')].filter(Boolean), '#test-root');

@@ -1,4 +1,4 @@
 {
-  "count displays in its slot": {"hash":"247498f4b1a9abcab4b8ec1ed931ffe92f4813eeb099a40e11b97336d6d7bafc","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/fa.min.js","cdn/webui/loader.min.js"]},
-  "icon updates are safe while icon loading is not implemented": {"hash":"247498f4b1a9abcab4b8ec1ed931ffe92f4813eeb099a40e11b97336d6d7bafc","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/fa.min.js","cdn/webui/loader.min.js"]}
+  "count displays in its slot": {"hash":"5097c769ee5a7b7d64703718180fed70a954d1661b180bf8dd5446994ea63f63","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/fa.min.js","cdn/webui/loader.min.js"]},
+  "icon updates are safe while icon loading is not implemented": {"hash":"5097c769ee5a7b7d64703718180fed70a954d1661b180bf8dd5446994ea63f63","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/fa.min.js","cdn/webui/loader.min.js"]}
 }
