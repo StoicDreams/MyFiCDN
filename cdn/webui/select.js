@@ -274,6 +274,10 @@ height:100%;
 .tile[aria-selected="true"] .check {
 display:block;
 }
+/* A chosen tile's badge keeps clear of its check. */
+.tile[aria-selected="true"] .badge {
+max-width:calc(100% - 2.2em);
+}
 /* Every picture is the same size, whatever its name or badge, so the icons line up across the grid. */
 .picture {
 display:flex;
@@ -309,21 +313,32 @@ filter:drop-shadow(0 2px 4px rgb(0 0 0 / 22%));
 font-size:2.8em;
 color:var(--color-title, currentColor);
 }
-/* A tile's badge sits over its top-right corner, as a count does on an icon, so it never takes the picture's room. */
+/* A tile's badge sits in its top-right corner, as a count does on an icon. Its tile's picture is smaller and its
+content sits at the bottom, so the badge has the top to itself and never covers the picture or the chosen check. */
+.tile:has(> .badge) {
+justify-content:flex-end;
+gap:0.35em;
+}
+.tile:has(> .badge) .picture {
+flex:0 0 auto;
+width:36%;
+min-height:auto;
+aspect-ratio:1;
+}
 .tile .badge {
 position:absolute;
 top:0.3em;
 right:0.3em;
 z-index:1;
 display:inline-flex;
-flex-wrap:nowrap;
+flex-wrap:wrap;
 align-items:center;
-justify-content:center;
-gap:0.3em;
-max-width:calc(100% - 2.2em);
-padding:0.3em 0.5em;
+justify-content:flex-end;
+gap:0.2em;
+max-width:calc(100% - 0.6em);
+padding:0.2em 0.4em;
 box-sizing:border-box;
-font-size:0.9em;
+font-size:0.8em;
 line-height:1;
 border-radius:999px;
 background-color:color-mix(in srgb, var(--tile-surface) 80%, black);
