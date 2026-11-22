@@ -156,13 +156,13 @@
                     break;
                 case 'startIcon':
                 case 'icon':
-                    t._startIcon.setAttribute('icon', value);
+                    webui.setOrRemoveAttribute(t._startIcon, 'icon', value);
                     break;
                 case 'midIcon':
-                    t._midIcon.setAttribute('icon', value);
+                    webui.setOrRemoveAttribute(t._midIcon, 'icon', value);
                     break;
                 case 'endIcon':
-                    t._endIcon.setAttribute('icon', value);
+                    webui.setOrRemoveAttribute(t._endIcon, 'icon', value);
                     break;
                 case 'value':
                     t.setValue(value);

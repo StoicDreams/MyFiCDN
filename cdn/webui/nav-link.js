@@ -36,7 +36,7 @@ webui.define('webui-nav-link', {
         const t = this;
         switch (property) {
             case 'url':
-                t._anchor.setAttribute('href', value);
+                webui.setOrRemoveAttribute(t._anchor, 'href', value);
                 break;
             case 'name':
                 t._display.innerHTML = value;
@@ -59,7 +59,7 @@ webui.define('webui-nav-link', {
                     t._icon.removeAttribute('stroke');
                     t._icon.removeAttribute('theme');
                 }
-                t._icon.setAttribute('icon', value);
+                webui.setOrRemoveAttribute(t._icon, 'icon', value);
                 break;
         }
     },

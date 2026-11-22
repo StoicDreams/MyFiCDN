@@ -172,3 +172,9 @@ test('closing an alert in a panel removes only that one, leaving the others in p
     expect(await page.evaluate(() => window.__moved)).toEqual(['Two']);
     await expect(root.locator('webui-alerts[hidden] webui-icon')).toHaveAttribute('count', '2');
 });
+test('data-bind names the key that triggers alerts, the same as data-subscribe', async ({ page }) => {
+    await mount(page, '<webui-alerts data-bind="my-alerts"></webui-alerts>');
+    await expect(page.locator('webui-alerts')).toHaveAttribute('data-subscribe', 'my-alerts:triggerAlert');
+    await page.evaluate(() => webui.setData('my-alerts', { message: 'Bound alert', show: true, variant: 'success' }));
+    await expect(popup(page)).toContainText('Bound alert');
+});

@@ -37,3 +37,11 @@ test('an icon only link is named from its title, and the current page is marked'
     await root.locator('#docs').evaluate(el => el.setPagePath('/other'));
     await expect(root.locator('#docs a')).not.toHaveAttribute('aria-current');
 });
+test('removing url and icon removes them, rather than linking to /null', async ({ page }) => {
+    const root = await mount(page, '<webui-nav-link name="About" url="/about" icon="xmark"></webui-nav-link>');
+    const el = root.locator('webui-nav-link');
+    await expect(el.locator('a')).toHaveAttribute('href', '/about');
+    await el.evaluate(c => { c.removeAttribute('url'); c.removeAttribute('icon'); });
+    await expect(el.locator('a')).not.toHaveAttribute('href');
+    await expect(el.locator('webui-icon')).not.toHaveAttribute('icon');
+});

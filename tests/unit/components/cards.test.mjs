@@ -28,3 +28,10 @@ test('card-width sets the grid and existing cards', async ({ page }) => {
     await cards.evaluate(el => el.setAttribute('card-width', '300'));
     await expect(cards.locator('webui-card')).toHaveAttribute('width', '300');
 });
+test('removing card-width removes the width from its cards', async ({ page }) => {
+    const root = await mount(page, '<webui-cards card-width="300"><webui-card name="A"></webui-card></webui-cards>');
+    const el = root.locator('webui-cards');
+    await expect(el.locator('webui-card')).toHaveAttribute('width', '300');
+    await el.evaluate(c => c.removeAttribute('card-width'));
+    await expect(el.locator('webui-card')).not.toHaveAttribute('width');
+});

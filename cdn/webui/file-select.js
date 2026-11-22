@@ -108,7 +108,7 @@
                     t.labelLimit = parseInt(value) || 0;
                     break;
                 case 'accept':
-                    t._input.setAttribute('accept', value);
+                    webui.setOrRemoveAttribute(t._input, 'accept', value);
                     break;
                 case 'multiple':
                     if (value === false || value === null) {

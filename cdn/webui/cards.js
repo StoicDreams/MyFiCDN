@@ -45,9 +45,9 @@ webui.define("webui-cards", {
                 t.buildContentFromSource();
                 break;
             case 'cardWidth':
-                t.style.gridTemplateColumns = `repeat(auto-fit, minmax(1em, ${value}px))`
+                t.style.gridTemplateColumns = value ? `repeat(auto-fit, minmax(1em, ${value}px))` : '';
                 t.querySelectorAll('webui-card').forEach(n => {
-                    n.setAttribute('width', value);
+                    webui.setOrRemoveAttribute(n, 'width', value);
                 });
                 break;
         }

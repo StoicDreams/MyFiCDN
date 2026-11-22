@@ -490,9 +490,12 @@
                     t.click();
                 });
             }
-            if (t.dataset.subscribe) {
-                alertTrigger = t.dataset.subscribe;
-            };
+            // The first key in data-subscribe or data-bind, without a method named after it.
+            const boundKey = [t.dataset.subscribe, t.dataset.bind].filter(Boolean).join('|')
+                .split('|').map(ds => ds.split(':')[0].trim()).find(Boolean);
+            if (boundKey) {
+                alertTrigger = boundKey;
+            }
             t.dataset.subscribe = `${alertTrigger}:triggerAlert`;
         },
         disconnected() {

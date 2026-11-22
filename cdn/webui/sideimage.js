@@ -20,12 +20,12 @@ webui.define("webui-sideimage", {
         const t = this;
         switch (property) {
             case 'alt':
-                t._sideImage.setAttribute('alt', value);
-                break;
             case 'src':
-                t._sideImage.setAttribute('src', value);
-                if (!t._sideImage.hasAttribute('alt')) {
-                    t._sideImage.setAttribute('alt', value.split('/').pop());
+                {
+                    const src = t.getAttribute('src');
+                    webui.setOrRemoveAttribute(t._sideImage, 'src', src);
+                    // Without alt text, the image is named by its file name.
+                    webui.setOrRemoveAttribute(t._sideImage, 'alt', t.getAttribute('alt') ?? src?.split('/').pop());
                 }
                 break;
             case 'reverse':

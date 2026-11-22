@@ -14,3 +14,12 @@ test('alt is respected, and reverse puts the image first', async ({ page }) => {
     await expect(el.locator('img')).toHaveAttribute('alt', 'Mine');
     await expect(el.locator(':scope > webui-flex').first().locator('img')).toHaveCount(1);
 });
+test('removing src or alt never sets the text "null", and alt falls back to the file name', async ({ page }) => {
+    const root = await mount(page, '<webui-sideimage alt="Mine" src="/a/pic.png"><p>Body</p></webui-sideimage>');
+    const el = root.locator('webui-sideimage');
+    await el.evaluate(c => c.removeAttribute('alt'));
+    await expect(el.locator('img')).toHaveAttribute('alt', 'pic.png');
+    await el.evaluate(c => c.removeAttribute('src'));
+    await expect(el.locator('img')).not.toHaveAttribute('src');
+    await expect(el.locator('img')).not.toHaveAttribute('alt');
+});

@@ -66,3 +66,17 @@ test('without a label, its title names the field', async ({ page }) => {
     await mount(page, '<webui-input-message title="Script"></webui-input-message>');
     await expect(page.getByRole('textbox', { name: 'Script' })).toHaveCount(1);
 });
+test('removing name, placeholder, or autofocus clears it from the field, rather than setting the text "null"', async ({ page }) => {
+    const root = await mount(page, '<webui-input-message label="Note" name="n" placeholder="P" autofocus></webui-input-message>');
+    const el = root.locator('webui-input-message');
+    await expect(el.locator('textarea')).toHaveAttribute('placeholder', 'P');
+    await el.evaluate(c => ['name', 'placeholder', 'autofocus'].forEach(a => c.removeAttribute(a)));
+    for (const a of ['name', 'placeholder', 'autofocus']) await expect(el.locator('textarea')).not.toHaveAttribute(a);
+});
+test('an empty tab attribute indents with two spaces, and removing it goes back to a tab', async ({ page }) => {
+    const root = await mount(page, '<webui-input-message label="Note" tab=""></webui-input-message>');
+    const el = root.locator('webui-input-message');
+    await expect(el.locator('textarea')).toHaveAttribute('tab', '  ');
+    await el.evaluate(c => c.removeAttribute('tab'));
+    await expect(el.locator('textarea')).not.toHaveAttribute('tab');
+});

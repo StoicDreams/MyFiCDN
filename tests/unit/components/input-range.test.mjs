@@ -51,3 +51,10 @@ test('the label names the slider', async ({ page }) => {
     await mount(page, '<webui-input-range label="Rotation" max="10"></webui-input-range>');
     await expect(page.getByRole('slider', { name: 'Rotation' })).toHaveCount(1);
 });
+test('removing name, placeholder, min, max, or step clears it from the field, rather than setting the text "null"', async ({ page }) => {
+    const root = await mount(page, '<webui-input-range label="Size" name="n" placeholder="P" min="1" max="9" step="2"></webui-input-range>');
+    const el = root.locator('webui-input-range');
+    await expect(el.locator('input')).toHaveAttribute('step', '2');
+    await el.evaluate(c => ['name', 'placeholder', 'min', 'max', 'step'].forEach(a => c.removeAttribute(a)));
+    for (const a of ['name', 'placeholder', 'min', 'max', 'step']) await expect(el.locator('input')).not.toHaveAttribute(a);
+});

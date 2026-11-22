@@ -48,3 +48,10 @@ test('each item keeps its File', async ({ page }) => {
         return [item.file instanceof File, item.file.name];
     })).toEqual([true, 'a.mp4']);
 });
+test('removing accept lets the picker take any file again', async ({ page }) => {
+    const root = await mount(page, '<webui-file-select accept=".txt"></webui-file-select>');
+    const el = root.locator('webui-file-select');
+    await expect(el.locator('input[type="file"]')).toHaveAttribute('accept', '.txt');
+    await el.evaluate(c => c.removeAttribute('accept'));
+    await expect(el.locator('input[type="file"]')).not.toHaveAttribute('accept');
+});
