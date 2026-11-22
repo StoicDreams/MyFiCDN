@@ -18,7 +18,7 @@
     if (ev.key !== "Tab" || !ev.shiftKey) {
       return;
     }
-    if (!ev.target || ev.target.nodeName !== "TEXTAREA") {
+    if (!ev.target || ev.target.nodeName !== "TEXTAREA" || ev.target.readOnly || ev.target.disabled) {
       return;
     }
     ev.preventDefault();
@@ -62,7 +62,8 @@
       "placeholder",
       "tab",
       "height",
-      "max-height"
+      "max-height",
+      "readonly"
     ],
     attrChanged(property, value) {
       const t = this;
@@ -97,7 +98,13 @@
           // An empty tab attribute indents with two spaces; a removed one goes back to a tab character.
           webui.setOrRemoveAttribute(t._field, "tab", value === "" ? "  " : value);
           break;
+        case "readonly":
+          t._field.readOnly = value !== null && value !== undefined;
+          break;
       }
+    },
+    formDisabledCallback(isDisabled) {
+      this._field.disabled = isDisabled;
     },
     props: {
       value: {

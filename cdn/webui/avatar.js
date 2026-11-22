@@ -11,10 +11,13 @@ webui.define("webui-avatar", {
         const t = this;
         t._slot = t.template.querySelector('slot');
     },
-    attr: ['src'],
+    attr: ['src', 'alt'],
     attrChanged(property, value) {
         const t = this;
         switch (property) {
+            case 'alt':
+                t._slot.querySelector('img')?.setAttribute('alt', value || '');
+                break;
             case 'src':
                 if (!value) {
                     t._slot.innerHTML = '';
@@ -33,7 +36,8 @@ webui.define("webui-avatar", {
                     t._slot.appendChild(webui.create('webui-icon', { icon: value }));
                     return;
                 }
-                t._slot.appendChild(webui.create('img', { src: value, alt: 'avatar image' }));
+                // An avatar usually sits beside the name it shows, so its picture is decoration unless alt describes it.
+                t._slot.appendChild(webui.create('img', { src: value, alt: t.getAttribute('alt') || '' }));
                 break;
         }
     },

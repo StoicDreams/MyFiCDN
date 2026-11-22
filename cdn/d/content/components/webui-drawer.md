@@ -23,6 +23,16 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+### Attributes
+
+- **`slot`:** the side of the app it opens from: `left`, `right`, `top`, or `bottom`.
+- **`docked`:** keeps it open beside the page rather than over it.
+- **`data-dockable`:** adds Dock and Close buttons to its footer.
+- **`data-moveable`:** adds buttons to move it to another side, optionally only the sides listed, such as `left|right`.
+- **`resizable`**, **`width`**, and the width limits: see Resizing below.
+- **`fill`:** leaves no room below its content, for content that fills it to its footer.
+- **`data-state="slot|docked|width"`:** remembers those attributes between visits.
+
 ### Closing
 
 A drawer with `data-dockable` also shows a Close button beside its Dock button. It closes an open drawer, and undocks a docked drawer first so it stays closed.
@@ -36,7 +46,7 @@ Add `resizable` to a left or right drawer to let users drag its inner edge to ma
 The chosen width is kept in the `width` attribute, in pixels, so add `width` to `data-state` to remember it between visits.
 
 | Attribute | Default | Limit |
-|---|---|---|
+|:---|:---|:---|
 | `docked-min-width` | `240px` | Narrowest while docked |
 | `docked-max-width` | `90%` | Widest while docked |
 | `undocked-min-width` | `240px` | Narrowest while undocked |
@@ -45,8 +55,8 @@ The chosen width is kept in the `width` attribute, in pixels, so add `width` to 
 Limits are pixels, such as `320` or `320px`, or a share of the window, such as `50%` or `50vw`. A drawer is never wider than the window, and when a minimum is larger than the maximum, the maximum wins. The saved width is kept as dragged, and shown within the limits of the drawer's current state, so docking or undocking can show it narrower or wider.
 
 ```html
-<webui-drawer slot="right" data-dockable resizable data-state="slot|width"
-    docked-min-width="300" docked-max-width="50%" undocked-max-width="90%">
+<webui-drawer slot="right" data-dockable resizable data-state="slot|width" width="360"
+    docked-min-width="300" docked-max-width="50%" undocked-min-width="280" undocked-max-width="90%">
 </webui-drawer>
 ```
 

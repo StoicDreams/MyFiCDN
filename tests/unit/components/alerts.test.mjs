@@ -178,3 +178,16 @@ test('data-bind names the key that triggers alerts, the same as data-subscribe',
     await page.evaluate(() => webui.setData('my-alerts', { message: 'Bound alert', show: true, variant: 'success' }));
     await expect(popup(page)).toContainText('Bound alert');
 });
+test('removing data-toggleclass goes back to listing alerts in a dialog', async ({ page }) => {
+    const root = await mount(page, '<webui-dialogs></webui-dialogs><webui-alerts data-toggleclass=".shared|open"></webui-alerts>');
+    const el = root.locator('webui-alerts');
+    await expect.poll(() => el.evaluate(c => c.drawer)).toBe('.shared');
+    await el.evaluate(c => c.removeAttribute('data-toggleclass'));
+    await expect.poll(() => el.evaluate(c => c.drawer)).toBe(undefined);
+});
+test('popups are read out by screen readers as they arrive', async ({ page }) => {
+    await ready(page);
+    await page.evaluate(() => webui.alert('Heads up', 'info'));
+    await expect(popup(page)).toHaveAttribute('aria-live', 'polite');
+    await expect(popup(page)).toContainText('Heads up');
+});

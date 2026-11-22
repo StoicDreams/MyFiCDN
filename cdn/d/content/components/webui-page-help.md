@@ -6,7 +6,7 @@
 
 <webui-side-by-side>
     ```html:Code Snippet
-        <webui-page-help heading="Example Page Help" storage-key="webui-page-help-demo">
+        <webui-page-help heading="Example Page Help" label="Page help" icon="circle_question" storage-key="webui-page-help-demo">
             <p>Help content for this page goes here, including other components.</p>
             <webui-tabs theme="info">
                 <webui-button slot="tabs">Getting Started</webui-button>
@@ -18,7 +18,7 @@
     ```
     <webui-page-segment elevation="10">
         Look for the **Help** bubble at the bottom right of the window.
-        <webui-page-help heading="Example Page Help" storage-key="webui-page-help-demo">
+        <webui-page-help heading="Example Page Help" label="Page help" icon="circle_question" storage-key="webui-page-help-demo">
             <p>Help content for this page goes here, including other components.</p>
             <webui-tabs theme="info">
                 <webui-button slot="tabs">Getting Started</webui-button>
@@ -33,7 +33,7 @@
 ### Attributes
 
 | Attribute | Description |
-|---|---|
+|:---|:---|
 | `label` | Text on the bubble. Defaults to `Help`. |
 | `heading` | Title of the dialog. Defaults to the label. |
 | `icon` | Icon on the bubble. Defaults to `question`. |
@@ -44,7 +44,7 @@
 ### Methods
 
 | Method | Description |
-|---|---|
+|:---|:---|
 | `open()` | Opens the help panel. |
 | `close()` | Closes the help panel. |
 | `toggle()` | Opens the help panel when it is closed, and closes it when it is open. |
@@ -54,7 +54,7 @@
 ### CSS Variables
 
 | Variable | Description |
-|---|---|
+|:---|:---|
 | `--page-help-width` | Starting width of the panel, until it is resized. Defaults to `600px`, or less in a narrow window. |
 
 ### Source Code

@@ -14,6 +14,7 @@
   "webui-components",
   "webui-condition",
   "webui-content",
+  "webui-content-compare",
   "webui-data",
   "webui-data-loader",
   "webui-dialog-action",

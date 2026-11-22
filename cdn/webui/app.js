@@ -70,23 +70,24 @@ webui.define("webui-app", {
     attrChanged(property, value) {
         const t = this;
         switch (property) {
+            // A removed attribute puts back the default.
             case 'rootPage':
-                webui._appSettings.rootPage = value;
+                webui._appSettings.rootPage = value ?? 'root';
                 break;
             case 'contentExtension':
-                webui._appSettings.contentExtension = value;
+                webui._appSettings.contentExtension = value ?? '.md';
                 break;
             case 'pageContent':
-                webui._appSettings.pageContentEndpoint = value;
+                webui._appSettings.pageContentEndpoint = value ?? undefined;
                 break;
             case 'pageData':
-                webui._appSettings.pageDataEndpoint = value;
+                webui._appSettings.pageDataEndpoint = value ?? undefined;
                 break;
             case 'pageDataEncrypt':
-                webui._appSettings.encryptPageData = value;
+                webui._appSettings.encryptPageData = value ?? 'base64';
                 break;
             case 'pageContentEncrypt':
-                webui._appSettings.encryptPageContent = value;
+                webui._appSettings.encryptPageContent = value ?? false;
                 break;
         }
     },

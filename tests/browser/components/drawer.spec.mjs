@@ -325,3 +325,15 @@ test('a click inside data-stopclick stays inside, and checkboxes, labels and det
     // None of those clicks reached the element around it.
     await expect(root.locator('#outer')).not.toHaveClass(/hit/);
 });
+test('removing data-dockable and data-moveable takes their buttons away', async ({ page }) => {
+    const root = await mount(page, '<webui-drawer slot="left" data-dockable data-moveable></webui-drawer>');
+    const drawer = root.locator('webui-drawer');
+    await expect(drawer.locator('[slot="footer"] webui-toggle-icon')).toHaveCount(1);
+    await expect(drawer.locator('[slot="footer"] .drawer-close')).toHaveCount(1);
+    await drawer.evaluate(d => d.removeAttribute('data-dockable'));
+    await expect(drawer.locator('[slot="footer"] webui-toggle-icon')).toHaveCount(0);
+    await expect(drawer.locator('[slot="footer"] .drawer-close')).toHaveCount(0);
+    await expect(drawer.locator('[slot="footer"] button[data-setattr]').first()).toBeAttached();
+    await drawer.evaluate(d => d.removeAttribute('data-moveable'));
+    await expect(drawer.locator('[slot="footer"] button[data-setattr]')).toHaveCount(0);
+});

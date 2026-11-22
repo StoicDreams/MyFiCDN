@@ -27,7 +27,10 @@
                 t._query = `${field?.value ?? ''}`;
                 t.filter();
             });
-            t.template.querySelector('slot').addEventListener('slotchange', () => t.filter());
+            t.template.querySelector('slot').addEventListener('slotchange', () => {
+                t.markItems();
+                t.filter();
+            });
             // Tiles can be added, renamed, or given new words while the page runs, so what is found follows them.
             t._observer = new MutationObserver(() => t.filter());
         },
@@ -60,6 +63,7 @@
                         t._grid.removeAttribute('role');
                         t._grid.removeAttribute('aria-label');
                     }
+                    t.markItems();
                     break;
             }
         },
@@ -88,6 +92,24 @@
          * Shows the tiles that have every word of the query in their `data-find`, or in their text when they have none,
          * ignoring case. Sends a `filter` event with the query and how many tiles show, when that changes.
          */
+        /**
+         * A labelled set of tiles is a list for screen readers, so each tile is one of its items. A role the page gave a
+         * tile is kept, and only the roles this set are taken away when the label is.
+         */
+        markItems() {
+            const t = this;
+            const isList = t.hasAttribute('label') && !!t.getAttribute('label');
+            [...t.children].forEach(tile => {
+                if (tile.hasAttribute('slot')) return;
+                if (isList && !tile.hasAttribute('role')) {
+                    tile.setAttribute('role', 'listitem');
+                    tile.dataset.tileRole = '';
+                } else if (!isList && tile.dataset.tileRole !== undefined) {
+                    tile.removeAttribute('role');
+                    delete tile.dataset.tileRole;
+                }
+            });
+        },
         filter() {
             const t = this;
             if (!t._grid) return;

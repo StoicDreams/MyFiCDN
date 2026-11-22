@@ -10,23 +10,17 @@
     webui.define("webui-data-loader", {
         constructor() {
             const t = this;
-            t.map = {};
             t.delay = 10;
         },
-        attr: ['src', 'keymap', 'auth', 'apiroot', 'delay'],
+        attr: ['src', 'auth', 'apiroot', 'delay'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
                 case 'auth':
-                    t.usesAuth = true;
+                    t.usesAuth = value !== null && value !== undefined;
                     break;
                 case 'delay':
                     t.delay = parseInt(value) || 10;
-                    break;
-                case 'keymap':
-                    try {
-                        t.map = JSON.parse(value);
-                    } catch (_) { }
                     break;
             }
             if (t.isProcessed) {

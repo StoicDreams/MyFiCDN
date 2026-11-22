@@ -31,6 +31,11 @@
             const t = this;
             switch (property) {
                 case 'api':
+                    if (!value) {
+                        t.apiUrl = undefined;
+                        t.apiMethod = 'post';
+                        break;
+                    }
                     let segments = value.split('|');
                     let api = value;
                     if (segments.length > 1 && ['get', 'post', 'put', 'delete', 'patch'].indexOf(segments[0].toLowerCase()) !== -1) {
@@ -106,8 +111,12 @@
                                     if (resp.status < 300) {
                                         resolve(true);
                                         if (t.jsonSuccess) {
-                                            let json = await JSON.parse(message);
-                                            message = json[t.jsonSuccess] || json.message || message;
+                                            // A success that isn't JSON still succeeded, and says what it says.
+                                            let json = message;
+                                            try {
+                                                json = JSON.parse(message);
+                                                message = json[t.jsonSuccess] || json.message || message;
+                                            } catch { }
                                             if (t.dataset.success) {
                                                 webui.setData(t.dataset.success, json);
                                             }
@@ -128,10 +137,13 @@
                                             message = webui.getResponseHeader(resp, ...t.headerMessage.split('|')) || message;
                                         }
                                         // A failure with nothing to say still has to say something.
-                                        showError(message || `The request failed (${resp.status}). Nothing was saved.`);
+                                        message = message || `The request failed (${resp.status}). Nothing was saved.`;
+                                        if (t.dataset.exception) webui.setData(t.dataset.exception, message);
+                                        showError(message);
                                     }
                                 })
                                 .catch(ex => {
+                                    if (t.dataset.exception) webui.setData(t.dataset.exception, `${ex}`);
                                     showError(`${ex}`);
                                     resolve(false);
                                 });

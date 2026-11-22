@@ -53,3 +53,14 @@ test('the close button has a name for screen readers', async ({ page }) => {
     const root = await mount(page, '<webui-alert show variant="info">Hello</webui-alert>');
     await expect(root.locator('webui-alert').getByRole('button', { name: 'Close' })).toBeAttached();
 });
+test('a message set while in use is read out: a problem at once, other news when the reader is free', async ({ page }) => {
+    const root = await mount(page, '<webui-alert id="a"></webui-alert><webui-alert id="b" role="note"></webui-alert>');
+    const a = root.locator('#a');
+    await a.evaluate(el => el.setValue('Saving failed', 'danger'));
+    await expect(a).toHaveAttribute('role', 'alert');
+    await a.evaluate(el => el.setValue('Saved', 'success'));
+    await expect(a).toHaveAttribute('role', 'status');
+    // A role the page gave is kept.
+    await root.locator('#b').evaluate(el => el.setValue('Hi', 'danger'));
+    await expect(root.locator('#b')).toHaveAttribute('role', 'note');
+});

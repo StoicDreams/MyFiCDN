@@ -1,4 +1,0 @@
-{
-  "count displays in its slot": {"hash":"ea5ad55945737aed2da42f0c9b6f82a50051698cf52dc3ea4db38cea1299e8a6","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/fa.min.js","cdn/webui/loader.min.js"]},
-  "icon updates are safe while icon loading is not implemented": {"hash":"ea5ad55945737aed2da42f0c9b6f82a50051698cf52dc3ea4db38cea1299e8a6","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/fa.min.js","cdn/webui/loader.min.js"]}
-}

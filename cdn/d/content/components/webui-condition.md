@@ -2,6 +2,14 @@
     The `<webui-condition>` component conditionally renders content by evaluating its `value` or data bound via `data-subscribe`. It supports explicit condition rules including `data-equals`, `data-unequals`, `data-contains`, and `data-match`, along with an optional `data-ignore-case` modifier. If the condition is met, it renders the `valid` slot; otherwise, it renders the `invalid` slot.
 </webui-page-segment>
 
+### Attributes
+
+- **`value`:** the value to check.
+- **`data-subscribe="key"`** or **`data-bind="key"`:** checks the data at that key instead, again whenever it changes. Several keys can be separated by `|`.
+- **`data-equals`**, **`data-unequals`**, **`data-contains`**, and **`data-match`** (a regular expression): the rule the value must pass. Without one, any value passes except an empty one, `false`, `0`, `null`, `undefined`, or an empty list or object.
+- **`data-ignore-case`:** compares text without regard to case.
+
+
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Basic Truthy Check -->
@@ -35,6 +43,25 @@
                 <template slot="valid">Contains 'World'</template>
             </webui-condition>
         </webui-flex>
+    </webui-page-segment>
+</webui-side-by-side>
+
+### Bound to data
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-toggle-icon data-bind="demo-condition-on" label="Show the message"></webui-toggle-icon>
+        <webui-condition data-bind="demo-condition-on">
+            <template slot="valid">The toggle is on.</template>
+            <template slot="invalid">The toggle is off.</template>
+        </webui-condition>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-toggle-icon data-bind="demo-condition-on" label="Show the message"></webui-toggle-icon>
+        <webui-condition data-bind="demo-condition-on">
+            <template slot="valid">The toggle is on.</template>
+            <template slot="invalid">The toggle is off.</template>
+        </webui-condition>
     </webui-page-segment>
 </webui-side-by-side>
 

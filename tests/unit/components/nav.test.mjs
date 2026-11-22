@@ -49,15 +49,6 @@ test('open groups are remembered', async ({ page }) => {
     await nav.evaluate(c => c._buildNav());
     await expect.poll(() => nav.locator('webui-nav-group').evaluate(g => g.isOpen)).toBe(true);
 });
-test('does not load the unused fa component', async ({ page }) => {
-    const requests = [];
-    page.on('request', request => { if (/\/webui\/fa\./.test(request.url())) requests.push(request.url()); });
-    const root = await mount(page, '<webui-nav></webui-nav>');
-    // The nav sets its role once the components it preloads have loaded, so every request it makes has started.
-    await expect(root.locator('webui-nav')).toHaveAttribute('role', 'navigation');
-    expect(requests).toEqual([]);
-    await expect.poll(() => page.evaluate(() => customElements.get('webui-fa'))).toBeUndefined();
-});
 test('is a navigation landmark', async ({ page }) => {
     const root = await mount(page, '<webui-nav></webui-nav>');
     await expect(root.getByRole('navigation', { name: 'Site menu' })).toBeAttached();

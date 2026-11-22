@@ -12,7 +12,7 @@
 <webui-page-segment elevation="10">
 
 | Name | Description |
-|---|---|
+|:---|:---|
 | `src` | The URL of an OpenAPI document in JSON. `setSource(url)` does the same. |
 | `setDoc(doc, { baseUrl })` | Show a document that is already parsed, such as one pasted by a visitor or converted from YAML. `baseUrl` is where it came from, used to resolve relative server URLs. |
 | `hash` | When set, opening an endpoint puts a link to it in the address bar (`#{hash}-{method}-{path}`), and opening that link opens the endpoint. |
@@ -27,6 +27,8 @@ Everything from the document is shown as text, never as HTML, and only `http`, `
 
 ```html:Code Snippet
 <webui-openapi src="https://api.myfi.ws/openapi.json" hash="api"></webui-openapi>
+<!-- An API that allows any site, which refuses requests that send cookies -->
+<webui-openapi src="https://api.example.com/openapi.json" credentials="omit"></webui-openapi>
 ```
 
 <webui-openapi src="https://api.myfi.ws/openapi.json"></webui-openapi>

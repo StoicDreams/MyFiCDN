@@ -47,6 +47,15 @@ test('Alt+Down and Alt+Up move the focused item one place, keep its focus, and s
     await expect.poll(() => moves(page)).toEqual(['a', 'a', 'a']);
 });
 
+test('a keyboard move tells screen readers where the item is now', async ({ page }) => {
+    const el = await list(page);
+    await el.locator('[data-id="a"] .grip').focus();
+    await page.keyboard.press('Alt+ArrowDown');
+    await expect(el.getByRole('status')).toHaveText('A Open a, 2 of 3');
+    await page.keyboard.press('Alt+ArrowDown');
+    await expect(el.getByRole('status')).toHaveText('A Open a, 3 of 3');
+});
+
 test('keys on something in an item other than its handle move nothing', async ({ page }) => {
     const el = await list(page);
     await el.locator('.other').focus();

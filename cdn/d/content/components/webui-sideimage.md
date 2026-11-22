@@ -4,7 +4,7 @@
 
 <webui-side-by-side>
     ```html:Code Snippet
-        <webui-sideimage src="[https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg](https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg)" alt="Cloud Storage">
+        <webui-sideimage src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg" alt="Cloud Storage">
             <webui-page-segment elevation="10">
                 <h3>Cloud Integration</h3>
                 <p>Easily manage and deploy your assets utilizing our integrated cloud network.</p>
@@ -17,6 +17,21 @@
                 <h3>Cloud Integration</h3>
                 <p>Easily manage and deploy your assets utilizing our integrated cloud network.</p>
             </webui-page-segment>
+        </webui-sideimage>
+    </webui-page-segment>
+</webui-side-by-side>
+
+### Reversed
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-sideimage src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg" alt="Cloud Storage" reverse>
+            <p>With <code>reverse</code>, the image sits on the other side.</p>
+        </webui-sideimage>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-sideimage src="https://cdn.myfi.ws/v/Vecteezy/cartoon-style-cloud-storage-data-processing-message.svg" alt="Cloud Storage" reverse>
+            <p>With <code>reverse</code>, the image sits on the other side.</p>
         </webui-sideimage>
     </webui-page-segment>
 </webui-side-by-side>

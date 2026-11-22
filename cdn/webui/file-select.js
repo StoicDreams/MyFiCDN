@@ -90,14 +90,20 @@
                 t._label.innerHTML = t.label;
             } else {
                 t.value = value;
-                let label = t.value.map(v => v.name).join(',') || t.label;
+                const names = t.value.map(v => v.name).join(',');
+                if (!names) {
+                    t._label.innerHTML = t.label;
+                    return;
+                }
+                let label = names;
                 if (t.labelLimit && label.length > t.labelLimit) {
                     label = `${label.substr(0, t.labelLimit)}...`;
                 }
-                t._label.innerHTML = label;
+                // File names come from the visitor's files, so they are shown as text, never markup.
+                t._label.textContent = label;
             }
         },
-        attr: ['label', 'data-trigger', 'accept', 'multiple', 'content-type', 'label-limit'],
+        attr: ['label', 'data-trigger', 'accept', 'multiple', 'label-limit'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
@@ -160,12 +166,17 @@ width:100%;
 height:100%;
 cursor:pointer;
 }
+/* The field is see-through over its label, so the label shows where keyboard focus is. */
+label:has(~ input:focus-visible) {
+outline:var(--focus-outline);
+outline-offset:var(--focus-offset);
+}
 :host(.selected) input,
 :host(:not(.selected)) webui-button {display:none;}
 </style>
-<label><slot></slot><span></span></label>
-<input type="file" accept="*" />
-<webui-button theme="danger"><webui-icon icon="xmark"></webui-icon></webui-button>
+<label for="file"><slot></slot><span></span></label>
+<input type="file" id="file" accept="*" />
+<webui-button theme="danger" aria-label="Clear the chosen files" title="Clear the chosen files"><webui-icon icon="xmark"></webui-icon></webui-button>
 `
     });
 }

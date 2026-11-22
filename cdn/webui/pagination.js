@@ -331,7 +331,7 @@
                         if (pn === t.page) {
                         } else {
                             let pageNumber = pn;
-                            let page = webui.create('webui-button', { html: `${pageNumber}` });
+                            let page = webui.create('webui-button', { html: `${pageNumber}`, 'aria-label': `Page ${pageNumber}` });
                             page.addEventListener('click', _ => {
                                 t.setValue(pageNumber);
                             });
@@ -402,6 +402,11 @@
 <div class="total"><label class="per-page">Per page <select aria-label="Items per page"></select></label><span>Total: </span><strong>0</strong></div>
 <pre><slot></slot></pre>
 <style type="text/css">
+/* hide-prev-next-buttons leaves only the page numbers and the page field. */
+:host([hide-prev-next-buttons]) div.prev,
+:host([hide-prev-next-buttons]) div.next {
+display:none;
+}
 :host {
 display:grid;
 /* The page buttons can wrap onto more rows, so the bar is never wider than a narrow drawer it sits in. */

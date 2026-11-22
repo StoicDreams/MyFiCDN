@@ -32,3 +32,14 @@ test('auth waits for its token and sends it', async ({ page }) => {
     await expect.poll(() => page.evaluate(() => webui.getData('dl-secure'))).toBe(1);
     expect(authorization).toBe('abc');
 });
+test('removing auth loads without a token', async ({ page }) => {
+    await page.route('**/open.json', route => route.fulfill({ contentType: 'application/json', body: '2' }));
+    const root = await mount(page, '<webui-data-loader auth="dl-missing-token" delay="1"></webui-data-loader>');
+    await root.locator('webui-data-loader').evaluate(el => {
+        el.removeAttribute('auth');
+        el.setAttribute('data-trigger', 'dl-open');
+        el.setAttribute('src', '/open.json');
+        el.process();
+    });
+    await expect.poll(() => page.evaluate(() => webui.getData('dl-open'))).toBe(2);
+});

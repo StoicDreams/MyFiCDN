@@ -17,7 +17,8 @@ const creator = async page => {
     await expect(el.locator('a').first()).toBeVisible();
     return el;
 };
-const iconFromList = (el, name) => el.locator('a').filter({ has: el.page().locator(`label:text-is("${name}")`) });
+// Each icon in the list is a button, so the keyboard reaches it, named by the icon's name.
+const iconFromList = (el, name) => el.locator('button').filter({ has: el.page().locator(`span:text-is("${name}")`) });
 
 test('a resize while it is still loading is harmless', async ({ page }) => {
     // A component it uses is held back, so it is still loading when the resize arrives.

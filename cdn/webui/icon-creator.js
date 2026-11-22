@@ -644,11 +644,11 @@
                 let isFirst = true;
                 icons.forEach(data => {
                     let icon = data.name;
-                    let container = webui.create('a', { style: 'flex-direction:column;' });
+                    let container = webui.create('button', { type: 'button', style: 'flex-direction:column;' });
                     t._bottomGrid.appendChild(container);
                     let el = webui.create('webui-icon', { icon: `${icon}|fill|shade:tri|theme:white`, width: '32' });
                     container.appendChild(el);
-                    let label = webui.create('label', { text: icon });
+                    let label = webui.create('span', { text: icon });
                     container.appendChild(label);
                     container.addEventListener('click', _ => {
                         t.editIcon(el);

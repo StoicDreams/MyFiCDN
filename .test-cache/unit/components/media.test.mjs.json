@@ -1,4 +1,4 @@
 {
-  "shows the image with its alt text": {"hash":"a1ec52d5e8bee6959e47bdb82c4a158ec77d47b3d18fe60309459f46df32efaa","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/media.min.js"]},
-  "without a src the image is hidden and has an empty alt": {"hash":"a1ec52d5e8bee6959e47bdb82c4a158ec77d47b3d18fe60309459f46df32efaa","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/media.min.js"]}
+  "shows the image with its alt text": {"hash":"160ba16c48c27d796df301a7873e4cc004b49b3918b1ca8d243f8d55dfb3737a","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/media.min.js"]},
+  "without a src the image is hidden and has an empty alt": {"hash":"160ba16c48c27d796df301a7873e4cc004b49b3918b1ca8d243f8d55dfb3737a","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/media.min.js"]}
 }

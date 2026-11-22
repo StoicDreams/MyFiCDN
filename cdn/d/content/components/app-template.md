@@ -125,7 +125,7 @@ The Web UI stylesheet does not reach inside a component's shadow DOM, but CSS va
 The `linkCss` option, which added the whole stylesheet to every instance, is deprecated.
 
 | Variable | Use |
-| --- | --- |
+| :--- | :--- |
 | `--theme-color`, `--theme-color-offset` | Background and text of the current theme. A `theme` attribute sets them. |
 | `--color-{name}`, `--color-{name}-offset` | Theme colors: `title`, `primary`, `secondary`, `tertiary`, `info`, `success`, `warning`, `danger`, `active`, `button`, `action`, `footer`, `background`. |
 | `--font-family`, `--font-family-mono`, `--font-family-emoji` | Text, code, and emoji fonts. |

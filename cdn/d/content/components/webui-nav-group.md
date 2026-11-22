@@ -4,6 +4,14 @@
     `data-bind="key:setShow"` opens or closes the group from data and saves a person opening or closing it, and `data-subscribe="key:setShow"` only follows the data. Only `true`, `"true"`, `1`, and `"1"` open it, so text such as `"false"` or `""` from storage keeps it closed. In the example below, the toggle and the group share one key.
 </webui-page-segment>
 
+### Attributes
+
+- **`name`:** the group's text, which also names its button.
+- **`icon`:** an icon before the name.
+- **`show`:** starts the group open.
+- **`disabled`:** keeps the group from opening or closing.
+
+
 <webui-side-by-side>
     ```html:Code Snippet
         <webui-nav-group name="User Settings" icon="gear">
@@ -29,6 +37,21 @@
     <webui-page-segment elevation="10">
         <webui-toggle-icon data-bind="demo-nav-group-open" label="Open the group" icon-on="folder-open" icon-off="folder"></webui-toggle-icon>
         <webui-nav-group name="Bound Group" icon="link" data-bind="demo-nav-group-open:setShow">
+            <webui-nav-link name="Profile" url="/profile" icon="person"></webui-nav-link>
+        </webui-nav-group>
+    </webui-page-segment>
+</webui-side-by-side>
+
+### Open at start
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-nav-group name="Open at Start" icon="folder-open" show>
+            <webui-nav-link name="Profile" url="/profile" icon="person"></webui-nav-link>
+        </webui-nav-group>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-nav-group name="Open at Start" icon="folder-open" show>
             <webui-nav-link name="Profile" url="/profile" icon="person"></webui-nav-link>
         </webui-nav-group>
     </webui-page-segment>

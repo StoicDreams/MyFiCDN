@@ -90,3 +90,11 @@ test('src loads a file, and reports failures', async ({ page }) => {
     await expect(root.locator('webui-code code').first()).toContainText('User-agent');
     await expect(root.locator('webui-code code').nth(1)).toContainText('Failed to load file');
 });
+test('lines sets how many lines show, and removing it lets the code size itself', async ({ page }) => {
+    const root = await mount(page, '<webui-code lines="3">a\nb</webui-code>');
+    const code = root.locator('webui-code code');
+    // The height is the point of lines, so the style it sets is what is checked.
+    await expect.poll(() => code.evaluate(c => c.style.height)).toContain('3 * var(--line-height)');
+    await root.locator('webui-code').evaluate(c => c.removeAttribute('lines'));
+    await expect.poll(() => code.evaluate(c => c.style.height)).toBe('');
+});

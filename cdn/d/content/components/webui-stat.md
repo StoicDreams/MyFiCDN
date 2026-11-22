@@ -29,6 +29,17 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+### A set width
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-stat value="42" label="Open tasks" width="180"></webui-stat>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-stat value="42" label="Open tasks" width="180"></webui-stat>
+    </webui-page-segment>
+</webui-side-by-side>
+
 ### Source Code
 
 <webui-code src="https://cdn.myfi.ws/webui/stat.js" language="javascript" label="stat.js"></webui-code>

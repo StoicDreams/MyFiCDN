@@ -25,7 +25,8 @@ webui.define('webui-nav-group', {
                 ev.stopPropagation();
                 ev.preventDefault();
             }
-            if (t.classList.contains('disabled') || t.getAttribute('disabled')) return;
+            // A bare disabled attribute is empty text, so its presence turns the group off.
+            if (t.classList.contains('disabled') || (t.hasAttribute('disabled') && t.getAttribute('disabled') !== 'false')) return;
             t.setShow(!t.open);
         });
     },

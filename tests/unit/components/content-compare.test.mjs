@@ -46,3 +46,16 @@ test('the toggle switches between changes and full view', async ({ page }) => {
     await toggle.evaluate(t => { t.checked = true; t.dispatchEvent(new Event('change')); });
     await expect.poll(() => el.evaluate(c => c._viewMode)).toBe('full');
 });
+test('removed and added lines say so in words, beside their color', async ({ page }) => {
+    const el = await compare(page);
+    await el.evaluate((c, [a, b]) => c.setDiff(a, b), [lines('same', 'old'), lines('same', 'new')]);
+    await expect(el.locator('.diff-cell.delete .txt')).toHaveText('Removed: old');
+    await expect(el.locator('.diff-cell.insert .txt')).toHaveText('Added: new');
+    await expect(el.locator('.diff-cell:not(.delete):not(.insert) .txt').first()).toHaveText('same');
+});
+test('colors and line numbers from data are text, never markup', async ({ page }) => {
+    const el = await compare(page);
+    await el.evaluate(c => c.setDiff([{ line: 'a', lineNumber: '<b>1</b>', color: 'red" onmouseover="window.__ran=1' }], [{ line: 'b' }]));
+    await expect(el.locator('.diff-cell.delete .num')).toHaveText('<b>1</b>');
+    await expect(el.locator('.diff-cell.delete')).not.toHaveAttribute('onmouseover');
+});

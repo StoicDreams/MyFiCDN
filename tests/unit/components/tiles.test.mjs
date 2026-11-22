@@ -91,3 +91,15 @@ test('hidden hides it, as on any element', async ({ page }) => {
     const root = await mount(page, '<webui-tiles hidden><div class="tile">One</div></webui-tiles>');
     await expect(root.locator('webui-tiles')).toBeHidden();
 });
+test('a label makes the tiles a named list whose tiles are its items, keeping roles the page gave', async ({ page }) => {
+    const root = await mount(page, `<webui-tiles label="Fruit"><div class="tile">Apple</div><div class="tile" role="article">Banana</div></webui-tiles>`);
+    const el = root.locator('webui-tiles');
+    await expect(el.getByRole('list', { name: 'Fruit' })).toBeAttached();
+    await expect(el.locator('.tile').first()).toHaveAttribute('role', 'listitem');
+    await expect(el.locator('.tile').nth(1)).toHaveAttribute('role', 'article');
+    await el.evaluate(t => t.appendChild(Object.assign(document.createElement('div'), { className: 'tile', textContent: 'Cherry' })));
+    await expect(el.locator('.tile').nth(2)).toHaveAttribute('role', 'listitem');
+    await el.evaluate(t => t.removeAttribute('label'));
+    await expect(el.locator('.tile').first()).not.toHaveAttribute('role');
+    await expect(el.locator('.tile').nth(1)).toHaveAttribute('role', 'article');
+});

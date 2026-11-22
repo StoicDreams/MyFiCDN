@@ -24,3 +24,10 @@ test('typed text stays readable on the box when the page uses a dark color schem
     });
     expect(ratio).toBeGreaterThanOrEqual(4.5);
 });
+test('disabled turns the box off, and removing it turns it on again', async ({ page }) => {
+    const root = await mount(page, '<webui-input-message value="a" disabled></webui-input-message>');
+    const el = root.locator('webui-input-message');
+    await expect(el.locator('textarea')).toBeDisabled();
+    await el.evaluate(c => c.removeAttribute('disabled'));
+    await expect(el.locator('textarea')).toBeEnabled();
+});

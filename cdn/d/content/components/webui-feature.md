@@ -34,6 +34,23 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+### Linked somewhere else
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-feature src="https://cdn.myfi.ws/v/webui/loop-video-demo.webp" alt="The Task Proxy Git Controller" href="https://www.taskproxy.com">
+            <h3>Linked to its site</h3>
+            <p>With <code>href</code>, the screenshot links to the product's site rather than to its full size.</p>
+        </webui-feature>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-feature src="https://cdn.myfi.ws/v/webui/loop-video-demo.webp" alt="The Task Proxy Git Controller" href="https://www.taskproxy.com">
+            <h3>Linked to its site</h3>
+            <p>With <code>href</code>, the screenshot links to the product's site rather than to its full size.</p>
+        </webui-feature>
+    </webui-page-segment>
+</webui-side-by-side>
+
 ### Source Code
 
 <webui-code src="https://cdn.myfi.ws/webui/feature.js" language="javascript" label="feature.js"></webui-code>

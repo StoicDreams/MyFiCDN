@@ -99,7 +99,7 @@
         /** Selects an option the way a click does, firing input and change when it changes. */
         choose(value) {
             const t = this;
-            if (value === t._value || !t._options.includes(value)) return;
+            if (t._disabled || value === t._value || !t._options.includes(value)) return;
             t.setValue(value);
             t.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
             t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
@@ -133,7 +133,13 @@
                 button.setAttribute('aria-checked', isSelected ? 'true' : 'false');
                 // Only the selected option is a tab stop, and arrow keys move between options.
                 button.tabIndex = isSelected ? 0 : -1;
+                button.disabled = !!t._disabled;
             });
+        },
+        /** Turned off by its disabled attribute or a disabled fieldset, it shows its choice but can't change it. */
+        formDisabledCallback(isDisabled) {
+            this._disabled = isDisabled;
+            this.render();
         },
         shadowTemplate: `
 <div role="radiogroup"></div>
@@ -148,6 +154,12 @@ max-width: 100%;
 :host([theme]) {
 --switch-color: var(--theme-color);
 --switch-color-offset: var(--theme-color-offset);
+}
+:host(:disabled) {
+opacity: 0.5;
+}
+:host(:disabled) button {
+cursor: default;
 }
 [role="radiogroup"] {
 display: inline-flex;

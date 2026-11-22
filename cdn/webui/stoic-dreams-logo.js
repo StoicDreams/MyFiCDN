@@ -66,6 +66,9 @@ webui.define('webui-stoic-dreams-logo', {
         const t = this;
         let title = t.title || `${(`${t.text || ''} ${t.text2 || ''}`.trim())} Logo`;
         t.svg.setAttribute('title', title);
+        // An svg is named by role and label, not its title attribute, which only shows as a tooltip.
+        t.svg.setAttribute('role', 'img');
+        t.svg.setAttribute('aria-label', title);
         const lines = [t.text, t.text2].filter(line => line);
         // The words lie in the logo's perspective, their tops along the line through the original logo's two top spheres
         // (the gray one is now behind the primary sphere) and their bottoms along the line through the two bottom spheres,

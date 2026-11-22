@@ -15,6 +15,8 @@
         constructor() {
             const t = this;
             t._drag = null;
+            // Screen readers hear where a keyboard move put the item, which they can't see.
+            t._status = t.template.querySelector('.status');
             t.addEventListener('pointerdown', ev => t.pointerDown(ev));
             t.addEventListener('keydown', ev => t.keyDown(ev));
             // Links and images drag on their own, which would take the pointer away from the item.
@@ -92,8 +94,18 @@
                 const [parent, next] = t.placeOf(item);
                 if (parent !== before[0] || next !== before[1]) break;
             }
-            t.moved(item, before);
+            if (t.moved(item, before)) t.announce(item);
             focused?.focus?.();
+        },
+        /** Says where a moved item is now, such as "Second, 3 of 4". */
+        announce(item) {
+            const t = this;
+            const items = t.itemList().filter(el => !el.hasAttribute('place'));
+            const name = (item.getAttribute('aria-label') || item.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+            const text = `${name ? `${name}, ` : 'Moved to '}${items.indexOf(item) + 1} of ${items.length}`;
+            // The same text twice in a row is only announced when it changes, so the old text is cleared first.
+            t._status.textContent = '';
+            requestAnimationFrame(() => { t._status.textContent = text; });
         },
         pointerDown(ev) {
             const t = this;
@@ -211,9 +223,21 @@
         },
         shadowTemplate: `
 <slot></slot>
+<div class="status" role="status"></div>
 <style type="text/css">
 :host {
 display: block;
+}
+.status {
+position: absolute;
+width: 1px;
+height: 1px;
+margin: -1px;
+padding: 0;
+overflow: hidden;
+clip: rect(0 0 0 0);
+white-space: nowrap;
+border: 0;
 }
 :host([hidden]) {
 display: none;

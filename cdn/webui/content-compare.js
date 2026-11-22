@@ -237,14 +237,17 @@
             let style = '';
             if (bg) style += `background-color: ${bg}; `;
             if (fg) style += `color: ${fg};`;
-            style = style ? `style="${style}"` : '';
-            let num = entry.lineNumber || '';
-            let text = (entry.line || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            // Colors and line numbers come from the caller's data, so they are escaped like the text.
+            style = style ? `style="${webui.escapeHtml(style)}"` : '';
+            let num = webui.escapeHtml(`${entry.lineNumber || ''}`);
+            let text = webui.escapeHtml(`${entry.line || ''}`);
+            // Color alone shows a removed or added line, which screen readers can't see, so they hear it said.
+            const change = typeClass === 'delete' ? '<span class="sr">Removed: </span>' : typeClass === 'insert' ? '<span class="sr">Added: </span>' : '';
             return `
                 <div class="diff-cell ${typeClass}" ${style}>
                     <div class="line">
                         <span class="num">${num}</span>
-                        <span class="txt">${text}</span>
+                        <span class="txt">${change}${text}</span>
                     </div>
                 </div>
             `;
@@ -310,6 +313,17 @@
 }
 .diff-cell.empty {
     background-color: transparent;
+}
+.sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
 }
 .diff-cell.delete {
     background-color: var(--color-diff-removed, rgb(248 81 73 / 15%));

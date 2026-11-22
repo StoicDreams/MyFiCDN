@@ -85,3 +85,9 @@ test('removing name or placeholder clears it, rather than setting the text "null
     await expect(el.locator('input')).not.toHaveAttribute('placeholder');
     await expect(el.locator('input')).not.toHaveAttribute('name');
 });
+test('readonly keeps the field from being changed, and removing it lets it change again', async ({ page }) => {
+    const el = await input(page, 'value="fixed" readonly');
+    await expect(el.locator('input')).not.toBeEditable();
+    await el.evaluate(c => c.removeAttribute('readonly'));
+    await expect(el.locator('input')).toBeEditable();
+});

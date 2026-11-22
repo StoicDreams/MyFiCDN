@@ -75,3 +75,15 @@ test('removing the icon removes it, rather than naming an icon "null"', async ({
     await root.locator('webui-nav-group').evaluate(c => c.removeAttribute('icon'));
     await expect(icon).not.toHaveAttribute('icon');
 });
+test('a bare disabled attribute keeps the group from opening', async ({ page }) => {
+    const root = await mount(page, '<webui-nav-group name="Off" disabled><webui-nav-link name="A" url="/a"></webui-nav-link></webui-nav-group>');
+    const el = root.locator('webui-nav-group');
+    const button = el.getByRole('button', { name: 'Off' });
+    await button.click();
+    // Click handlers run during the click, so the group has already ignored it; the click after disabled is removed
+    // goes the same way and shows clicks do reach it.
+    await expect(button).toHaveAttribute('aria-expanded', 'false');
+    await el.evaluate(g => g.removeAttribute('disabled'));
+    await button.click();
+    await expect(button).toHaveAttribute('aria-expanded', 'true');
+});

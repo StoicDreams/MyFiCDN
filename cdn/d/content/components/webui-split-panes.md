@@ -7,6 +7,8 @@
 
     With the `single` flag, the component is `narrow` at any width, so one pane shows at a time with the buttons to switch between them, as when a user prefers one pane at a time. Remove it to show the panes side by side again when there is room.
 
+    `show` says which pane is seen while one covers the other, `start` or `end` (the default), and changes as the buttons are used, firing a `show` event. Set it to choose one.
+
     With the `fill` flag, the panes are as tall as the visible part of whatever scrolls them, below where they start, and follow it as it is resized. Without it, give the component a height.
 </webui-page-segment>
 
@@ -29,6 +31,23 @@
             <div slot="end" style="padding:var(--padding);">
                 <p>The item chosen from the list.</p>
             </div>
+        </webui-split-panes>
+    </webui-page-segment>
+</webui-side-by-side>
+
+### One pane at a time, starting on the list
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-split-panes single show="start" start-label="List" end-label="Item" style="height:200px;">
+            <div slot="start">The list, shown first.</div>
+            <div slot="end">The item.</div>
+        </webui-split-panes>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-split-panes single show="start" start-label="List" end-label="Item" style="height:200px;">
+            <div slot="start">The list, shown first.</div>
+            <div slot="end">The item.</div>
         </webui-split-panes>
     </webui-page-segment>
 </webui-side-by-side>

@@ -12,6 +12,15 @@
     With the `sortable` flag, people can put the tabs in their own order: drag a tab button, or focus it and press Alt with an arrow key. Its content moves with it, the tab that was shown stays shown, and a `reorder` event carries the tab buttons in their new order in `detail.order`, so a page can save it and build the tabs in that order next time.
 </webui-page-segment>
 
+### Attributes
+
+- **`index`:** the tab shown first, counting from 0. Changed later, it switches tabs.
+- **`theme`** and **`content-theme`:** the colors of the tab bar, and of the content of tabs built from data (which otherwise take the bar's).
+- **`pad`:** the space around the content. Numbers are pixels.
+- **`transition-timing`:** how long switching tabs takes. Numbers are milliseconds.
+- **`label`**, **`vertical`**, **`tab-display`**, **`tab-display-key`**, and **`sortable`:** as described above.
+
+
 ## Static Tabs Example
 
 <webui-side-by-side>
@@ -111,6 +120,27 @@
                 This is tab page {TAB_PAGE}.
                 <webui-button class="p-abs" top="5" right="5" title="Delete Tab" start-icon="trash" theme="danger" data-remove-item="session-demo-dynamic-tabs:{TAB_INDEX}"></webui-button>
             </template>
+        </webui-tabs>
+    </webui-page-segment>
+</webui-side-by-side>
+
+### A label, padding, icons first, and sortable
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-tabs label="Panel" pad="20" index="1" tab-display="icon|label" tab-display-key="demo-tabs-view" sortable>
+            <webui-button slot="tabs" start-icon="home">Home</webui-button>
+            <webui-content slot="content">Home content, with more padding.</webui-content>
+            <webui-button slot="tabs" start-icon="gear">Settings</webui-button>
+            <webui-content slot="content">Settings content, shown first.</webui-content>
+        </webui-tabs>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-tabs label="Panel" pad="20" index="1" tab-display="icon|label" tab-display-key="demo-tabs-view" sortable>
+            <webui-button slot="tabs" start-icon="home">Home</webui-button>
+            <webui-content slot="content">Home content, with more padding.</webui-content>
+            <webui-button slot="tabs" start-icon="gear">Settings</webui-button>
+            <webui-content slot="content">Settings content, shown first.</webui-content>
         </webui-tabs>
     </webui-page-segment>
 </webui-side-by-side>

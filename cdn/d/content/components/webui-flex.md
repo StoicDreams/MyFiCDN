@@ -32,6 +32,23 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+### Growing, and wrapping when narrow
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-flex gap="10" wrap-at="600" grow>
+            <webui-paper theme="info">Grows</webui-paper>
+            <webui-paper theme="success">Wraps under 600px</webui-paper>
+        </webui-flex>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-flex gap="10" wrap-at="600" grow>
+            <webui-paper theme="info">Grows</webui-paper>
+            <webui-paper theme="success">Wraps under 600px</webui-paper>
+        </webui-flex>
+    </webui-page-segment>
+</webui-side-by-side>
+
 ### Source Code
 
 <webui-code src="https://cdn.myfi.ws/webui/flex.js" language="javascript" label="flex.js"></webui-code>

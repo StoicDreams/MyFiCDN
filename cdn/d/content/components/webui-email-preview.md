@@ -33,7 +33,7 @@
 ### Attributes
 
 | Attribute | Description |
-|---|---|
+|:---|:---|
 | `data-subscribe` | Keys holding the email's fields, as objects. |
 | `api` | `method\|url` of an API that returns the finished email. The method defaults to `POST`. |
 | `data-api` | A data key whose object is sent with each API request. |
@@ -44,10 +44,21 @@
 ### Methods and properties
 
 | Name | Description |
-|---|---|
+|:---|:---|
 | `setValue(fields)` | Adds fields to the email, as `data-subscribe` does. |
 | `setView(view)` | Shows the `html` or `text` view. |
 | `email` | The email shown, as `{ subject, html, text, notices }`. |
+
+### Opening on the plain text version
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-email-preview data-subscribe="demo-email" view="text" height="200" placeholder="Write the email to see it here."></webui-email-preview>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-email-preview data-subscribe="demo-email" view="text" height="200" placeholder="Write the email to see it here."></webui-email-preview>
+    </webui-page-segment>
+</webui-side-by-side>
 
 ### Source Code
 

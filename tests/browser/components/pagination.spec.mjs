@@ -32,3 +32,13 @@ test('the page size can be read: drawn without the native look, with text that c
     const [light, dark] = [luminance(style.color), luminance(style.background)].sort((a, b) => b - a);
     expect((light + 0.05) / (dark + 0.05)).toBeGreaterThanOrEqual(4.5);
 });
+test('hide-prev-next-buttons leaves only the page numbers, which are named as pages', async ({ page }) => {
+    const root = await mount(page, '<webui-pagination per-page="1" hide-prev-next-buttons></webui-pagination>');
+    const el = root.locator('webui-pagination');
+    await el.evaluate(p => p.setData([1, 2, 3]));
+    await expect(el.getByRole('button', { name: 'Page 2' })).toBeVisible();
+    await expect(el.getByRole('button', { name: 'Next page' })).toBeHidden();
+    await expect(el.getByRole('button', { name: 'Previous page' })).toBeHidden();
+    await el.evaluate(p => p.removeAttribute('hide-prev-next-buttons'));
+    await expect(el.getByRole('button', { name: 'Next page' })).toBeVisible();
+});

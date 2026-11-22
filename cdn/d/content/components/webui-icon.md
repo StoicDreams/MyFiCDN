@@ -39,6 +39,46 @@ Slashes, containers, directions, and fills are flags on any icon, so there is no
 - **`stroke`:** sets the line weight, `thin`, `thick`, or a number, as in `star|stroke:thin`.
 - **`theme`:** colors the icon with a theme, as in `star|theme:warning`.
 
+### Size, shadow, and count
+
+- **`width`** and **`height`:** its size. Numbers are pixels.
+- **`shadow`:** a CSS drop shadow behind the drawing, such as `2px 2px 2px rgb(0 0 0 / 40%)`.
+- **`count`:** a number shown over the icon, such as unread messages.
+- **`title`** (or **`aria-label`**): names the icon for screen readers and shows as its tooltip. Without one, screen readers skip it as decoration, so an icon that is the only content of a button or link needs a name on that button or link.
+
+Each flag can also be written as its own attribute, as in the second row below.
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-flex gap="4" align="center">
+            <webui-icon icon="bell" width="40" count="12" title="12 notifications"></webui-icon>
+            <webui-icon icon="star" width="40" height="40" shadow="2px 2px 2px rgb(0 0 0 / 40%)" fill></webui-icon>
+        </webui-flex>
+        <webui-flex gap="4" align="center">
+            <webui-icon icon="heart" shape="circle" inverted width="40"></webui-icon>
+            <webui-icon icon="exclamation" shape="triangle" backing bordered width="40"></webui-icon>
+            <webui-icon icon="arrow" rotate="90" stroke="thick" width="40"></webui-icon>
+            <webui-icon icon="undo" flip width="40"></webui-icon>
+            <webui-icon icon="bell" fill shade="tri" width="40"></webui-icon>
+            <webui-icon icon="eye" ban width="40"></webui-icon>
+        </webui-flex>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-flex gap="4" align="center">
+            <webui-icon icon="bell" width="40" count="12" title="12 notifications"></webui-icon>
+            <webui-icon icon="star" width="40" height="40" shadow="2px 2px 2px rgb(0 0 0 / 40%)" fill></webui-icon>
+        </webui-flex>
+        <webui-flex gap="4" align="center">
+            <webui-icon icon="heart" shape="circle" inverted width="40"></webui-icon>
+            <webui-icon icon="exclamation" shape="triangle" backing bordered width="40"></webui-icon>
+            <webui-icon icon="arrow" rotate="90" stroke="thick" width="40"></webui-icon>
+            <webui-icon icon="undo" flip width="40"></webui-icon>
+            <webui-icon icon="bell" fill shade="tri" width="40"></webui-icon>
+            <webui-icon icon="eye" ban width="40"></webui-icon>
+        </webui-flex>
+    </webui-page-segment>
+</webui-side-by-side>
+
 Inside a shape the icon shrinks to fit, keeping its line weight. Set `--icon-glyph-scale` to change how much, such as `0.5`.
 
 <webui-flex gap="4" align="center" wrap>

@@ -34,7 +34,22 @@
     </webui-page-segment>
 </webui-side-by-side>
 
-The example on the right is the list the button opens, shown with the `panel` flag. These docs don't define the example themes, so choosing one here only changes the selection.
+The example on the right is the list the button opens, shown with the `panel` flag. With the `editable` flag, the list also offers color pickers to adjust the current theme's colors, and a button to reset them. `data-toggleclass` opens the list in a drawer instead, as `<webui-alerts>` does, and `data-title` is that drawer's heading. These docs don't define the example themes, so choosing one here only changes the selection.
+
+### Editable colors
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-theme-selector panel editable>
+            <option value="" data-colors="#14111c #ff5c8a #ff8a3d">Voxel Dusk</option>
+        </webui-theme-selector>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-theme-selector panel editable>
+            <option value="" data-colors="#14111c #ff5c8a #ff8a3d">Voxel Dusk</option>
+        </webui-theme-selector>
+    </webui-page-segment>
+</webui-side-by-side>
 
 ### Source Code
 

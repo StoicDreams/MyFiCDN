@@ -79,7 +79,7 @@
                     break;
                 case 'columns':
                     t._columns = [];
-                    value.split(';').forEach(c => {
+                    (value || '').split(';').forEach(c => {
                         c = c.trim();
                         if (c) {
                             t._columns.push(webui.replaceAppData(c));
@@ -135,23 +135,29 @@
                 let isSortable = sortable[key];
                 if (isSortable) {
                     let flexAlign = align === 'text-center' ? 'center' : align === 'text-right' ? 'right' : 'left';
-                    let c = webui.create('webui-flex', { align: 'center', justify: flexAlign, gap: 1, class: 'no-select' });
-                    c.style.cursor = 'pointer';
+                    // A button, so the keyboard reaches the sort too, and the header says which way it sorts.
+                    let sortButton = webui.create('button', { type: 'button', class: 'no-select', 'data-sort': key });
+                    sortButton.style.width = '100%';
+                    let c = webui.create('webui-flex', { align: 'center', justify: flexAlign, gap: 1 });
+                    sortButton.appendChild(c);
                     c.appendChild(webui.create('span', { html: display }));
                     if (t.currentSort === key) {
+                        th.setAttribute('aria-sort', t.currentSortDir === 'asc' ? 'ascending' : 'descending');
                         let ico = webui.create('webui-icon', { icon: t.currentSortDir === 'asc' ? "caret|fill|rotate:0" : "caret|fill|rotate:180" });
                         c.appendChild(ico);
                     }
-                    c.addEventListener('click', _ => {
+                    sortButton.addEventListener('click', _ => {
                         let sortDir = t.currentSort === key ? t.currentSortDir === 'asc' ? 'desc' : 'asc' : sortable[key];
                         t.currentSort = key;
                         t.currentSortDir = sortDir;
                         t.setAttribute('current-sort', key);
                         t.setAttribute('current-sort-dir', sortDir);
                         t.render();
+                        // The header is drawn again, so focus goes back to this column's button.
+                        [...t.querySelectorAll('button[data-sort]')].find(b => b.dataset.sort === key)?.focus();
                         t.dispatchEvent(new Event('update-sort', { bubbles: true, composed: true }));
                     });
-                    th.appendChild(c);
+                    th.appendChild(sortButton);
                 } else {
                     th.innerHTML = webui.replaceAppData(display);
                 }

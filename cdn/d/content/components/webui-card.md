@@ -34,6 +34,19 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-card name="Raised Card" avatar="star|fill" elevation="5" theme="tertiary">
+            A card with a deeper shadow.
+        </webui-card>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-card name="Raised Card" avatar="star|fill" elevation="5" theme="tertiary">
+            A card with a deeper shadow.
+        </webui-card>
+    </webui-page-segment>
+</webui-side-by-side>
+
 ### Source Code
 
 <webui-code src="https://cdn.myfi.ws/webui/card.js" language="javascript" label="card.js"></webui-code>

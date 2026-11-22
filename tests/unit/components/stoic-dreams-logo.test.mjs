@@ -46,3 +46,8 @@ test('draws its large sphere in the site primary color', async ({ page }) => {
     await expect(logo.locator('circle[style*="--color-primary"]')).toHaveCount(1);
     await expect.poll(() => logo.locator('circle[style*="--color-primary"]').evaluate(c => getComputedStyle(c).fill)).toBe('rgb(18, 52, 86)');
 });
+test('screen readers hear it as a picture named by its title, or its text and "Logo"', async ({ page }) => {
+    const root = await mount(page, '<webui-stoic-dreams-logo id="titled" title="Stoic Dreams home"></webui-stoic-dreams-logo><webui-stoic-dreams-logo id="text" text="MyFi" text2="CDN"></webui-stoic-dreams-logo>');
+    await expect(root.locator('#titled').getByRole('img', { name: 'Stoic Dreams home' })).toBeAttached();
+    await expect(root.locator('#text').getByRole('img', { name: 'MyFi CDN Logo' })).toBeAttached();
+});

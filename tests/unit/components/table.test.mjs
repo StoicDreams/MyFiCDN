@@ -57,6 +57,17 @@ test('sortable headers toggle direction and fire update-sort', async ({ page }) 
     await expect.poll(() => page.evaluate(() => window.__sorts)).toEqual([['Name', 'desc'], ['Name', 'asc']]);
     await expect(el).toHaveAttribute('current-sort-dir', 'asc');
 });
+test('a sortable header is a button the keyboard sorts with, and says which way the column sorts', async ({ page }) => {
+    const el = await table(page, 'columns="Name;Age" sortable="Name"');
+    const sort = el.getByRole('button', { name: 'Name' });
+    await expect(el.locator('th').first()).toHaveAttribute('aria-sort', 'ascending');
+    await expect(el.locator('th').nth(1)).not.toHaveAttribute('aria-sort');
+    await sort.focus();
+    await sort.press('Enter');
+    await expect(el.locator('th').first()).toHaveAttribute('aria-sort', 'descending');
+    // The header is drawn again, and focus stays on its button, so Enter sorts again.
+    await expect(el.getByRole('button', { name: 'Name' })).toBeFocused();
+});
 test('bordered toggles the class', async ({ page }) => {
     const el = await table(page, 'bordered columns="A"');
     await expect(el.locator('table')).toHaveClass('bordered');
@@ -114,4 +125,10 @@ test('with data-subscribe and data-bind, the rows come from the setData key, not
     await page.evaluate(() => { webui.setData('table-title', 'Names'); webui.setData('table-rows', [{ Name: 'Cy' }]); });
     const el = await table(page, 'columns="Name" data-subscribe="table-title:title" data-bind="table-rows:setData"');
     await expect(el.locator('td')).toHaveText(['Cy']);
+});
+test('removing columns empties the header', async ({ page }) => {
+    const el = await table(page, 'columns="Name;Age"');
+    await expect(el.locator('th')).toHaveText(['Name', 'Age']);
+    await el.evaluate(c => c.removeAttribute('columns'));
+    await expect(el.locator('th')).toHaveCount(0);
 });

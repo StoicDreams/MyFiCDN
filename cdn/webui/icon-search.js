@@ -447,12 +447,12 @@
             const t = this;
             let icon = data.name;
             let display = data.display || data.name;
-            let container = webui.create('a', { style: 'flex-direction:column;' });
+            let container = webui.create('button', { type: 'button', style: 'flex-direction:column;' });
             container.icon = data;
             let el = webui.create('webui-icon', { icon: t.appendPipe(icon), width: '32' });
             container.appendChild(el);
             container.el = el;
-            let label = webui.create('label', { text: display });
+            let label = webui.create('span', { text: display });
             container.appendChild(label);
             container.addEventListener('click', _ => {
                 t.setIcon(icon);

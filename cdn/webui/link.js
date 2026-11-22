@@ -13,9 +13,33 @@ webui.define('webui-link', {
         t._endIcon = t.template.querySelector('slot[name="end-icon"]');
     },
     attr: ['href', 'target', 'icon', 'start-icon', 'end-icon'],
+    /**
+     * Makes the link reachable by keyboard and named for screen readers: a link with an href, or a button when it only
+     * runs a data-trigger or onclick. A role or tabindex the page sets is kept.
+     */
+    setKeyboard() {
+        const t = this;
+        const role = t.hasAttribute('href') ? 'link' : (t.hasAttribute('data-trigger') || t.hasAttribute('onclick')) ? 'button' : '';
+        if (t._role !== undefined && t.getAttribute('role') === t._role) t.removeAttribute('role');
+        if (t._tabbed && t.getAttribute('tabindex') === '0') t.removeAttribute('tabindex');
+        t._role = undefined;
+        t._tabbed = false;
+        if (!role) return;
+        if (!t.hasAttribute('role')) {
+            t.setAttribute('role', role);
+            t._role = role;
+        }
+        if (!t.hasAttribute('tabindex')) {
+            t.setAttribute('tabindex', '0');
+            t._tabbed = true;
+        }
+    },
     attrChanged(property, value) {
         const t = this;
         switch (property) {
+            case 'href':
+                if (t.isConnected) t.setKeyboard();
+                break;
             case 'icon':
             case 'startIcon':
                 {
@@ -41,6 +65,16 @@ webui.define('webui-link', {
     },
     connected() {
         const t = this;
+        t.setKeyboard();
+        // Enter follows a link, and Enter or Space presses a button, as they do on the real elements.
+        t.addEventListener('keydown', ev => {
+            if (ev.target !== t || ev.altKey || ev.ctrlKey || ev.metaKey) return;
+            const role = t.getAttribute('role');
+            if (ev.key === 'Enter' || (ev.key === ' ' && role === 'button')) {
+                ev.preventDefault();
+                t.click();
+            }
+        });
         t.addEventListener('click', _ => {
             if (t.href) {
                 if (t.target) {
@@ -63,7 +97,6 @@ align-items: center;
 text-decoration: underline;
 padding: 0;
 border:none;
-outline:none;
 font-size:inherit;
 font:inherit;
 -webkit-user-select: text;
@@ -74,6 +107,10 @@ color:var(--theme-color-offset, inherit);
 :host([data-trigger]:not(:disabled)),
 :host([onclick]:not(:disabled)) {
 cursor:pointer;
+}
+:host(:focus-visible) {
+outline:var(--focus-outline);
+outline-offset:var(--focus-offset);
 }
 </style>
 <slot name="start-icon"></slot>

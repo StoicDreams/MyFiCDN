@@ -18,7 +18,7 @@
 ### Attributes
 
 | Attribute | Description |
-|---|---|
+|:---|:---|
 | `include` | Optional rows to add, separated by spaces or commas: `strikethrough`, `image`, `task-list`, `rule`, and `paragraph`. `all` adds every one. |
 | `exclude` | Rows to leave out, by the same names. The rows shown by default are `heading`, `bold`, `italic`, `link`, `bullet-list`, `numbered-list`, `inline-code`, `code-block`, `quote`, and `table`. |
 | `theme` | Color theme of the table. Defaults to `info`, like tables in page content. |
@@ -27,8 +27,19 @@
 ### Methods
 
 | Method | Description |
-|---|---|
+|:---|:---|
 | `rowKeys()` | The names of the rows shown, in order. |
+
+### Labels and theme
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-markdown-guide include="bold|italic|link" theme="info" type-label="Write" result-label="Shows"></webui-markdown-guide>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-markdown-guide include="bold|italic|link" theme="info" type-label="Write" result-label="Shows"></webui-markdown-guide>
+    </webui-page-segment>
+</webui-side-by-side>
 
 ### Source Code
 

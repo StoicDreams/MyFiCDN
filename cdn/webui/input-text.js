@@ -65,7 +65,7 @@ webui.define('webui-input-text', {
             t.setAttribute('value', t._field.value);
         });
     },
-    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'type', 'placeholder', 'maxlength', 'minlength', 'min', 'max'],
+    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'type', 'placeholder', 'maxlength', 'minlength', 'min', 'max', 'readonly'],
     attrChanged(property, value) {
         const t = this;
         switch (property) {
@@ -110,6 +110,10 @@ webui.define('webui-input-text', {
                 break;
             case 'max':
                 webui.setOrRemoveAttribute(t._field, 'max', value);
+                break;
+            case 'readonly':
+                // Shown but not changed, as a native field's readonly.
+                t._field.readOnly = value !== null && value !== undefined;
                 break;
         }
     },

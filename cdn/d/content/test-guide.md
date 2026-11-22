@@ -41,7 +41,7 @@ A test that cannot fail proves nothing. After a new test passes, briefly break t
 ## Where a new test goes
 
 | What you are testing | File |
-|---|---|
+|:---|:---|
 | A component | `tests/components/{component}.spec.mjs` |
 | A `webui.*` method for text or values | `tests/methods/text.spec.mjs` |
 | A `webui.*` method for data, roles, or storage | `tests/methods/data.spec.mjs` |
@@ -182,7 +182,7 @@ test('webui.navigateTo changes page without a reload', async ({ page }) => {
 ## Source and minified files
 
 | Command | Files loaded |
-|---|---|
+|:---|:---|
 | `npm test` | Source files, even when `.min.js` is requested |
 | `npm run test:min` | The real `.min.js` files |
 
@@ -201,7 +201,7 @@ Promises rejected for other reasons don't count, such as a canceled dialog. `Fai
 ## How requests are answered
 
 | Request | Response |
-|---|---|
+|:---|:---|
 | `localhost` and `cdn.myfi.ws` | The matching file in `cdn/` |
 | A page route with no file extension | `index.html`, like the deployed site |
 | A missing file | A 404 |
@@ -229,7 +229,7 @@ test('the close button is inside the shadow DOM', async ({ page }) => {
 ## Common ways to find elements
 
 | Code | Finds |
-|---|---|
+|:---|:---|
 | `root.locator('webui-alert')` | Elements by CSS selector, in the mounted content |
 | `page.locator('.webui-alerts-popup')` | Elements anywhere on the page |
 | `el.locator('option')` | Elements inside another locator |
@@ -261,7 +261,7 @@ Some components change their own attributes. `webui-input-text` and `webui-input
 Checks on a locator or page retry for up to 5 seconds until they pass. Most Web UI work finishes a moment later, so these are the best choice. Don't forget `await`.
 
 | Check | Passes when |
-|---|---|
+|:---|:---|
 | `toHaveText('x')` | The text is exactly `x`, ignoring extra whitespace |
 | `toContainText('x')` | The text includes `x` |
 | `toHaveAttribute('a', 'b')` | Attribute `a` has value `b`. Regular expressions work too |
@@ -281,7 +281,7 @@ Add `.not` to check the opposite, such as `expect(el).not.toHaveClass(/open/)`. 
 These check a value once, with no retry. Use them for values that are already final, such as the return value of a synchronous method:
 
 | Check | Passes when |
-|---|---|
+|:---|:---|
 | `expect(value).toBe(5)` | Exactly equal. Use for strings, numbers, and booleans |
 | `expect(value).toEqual({ a: 1 })` | Equal by content. Use for objects and arrays |
 | `expect(value).toMatchObject({ a: 1 })` | The object includes these fields |
@@ -458,7 +458,7 @@ test('the copy icon copies the code', async ({ page }) => {
 Prefer these over setting values directly, because they fire the same events a real person would. They also wait for the element to be visible and able to receive the action.
 
 | Code | Action |
-|---|---|
+|:---|:---|
 | `el.click()`, `el.hover()` | Click or move the mouse over it |
 | `el.fill('text')` | Replace the text in a field, firing `input` |
 | `el.press('Control+Enter')` | Focus it and press keys |
@@ -538,7 +538,7 @@ test('src loads cards', async ({ page }) => {
 ## Other route options
 
 | Code | Result |
-|---|---|
+|:---|:---|
 | `route.fulfill({ status: 500, body: 'Broken' })` | Responds with an error status |
 | `route.abort()` | Fails like a lost connection |
 | `route.fallback()` | Continues to the default file serving |
@@ -679,7 +679,7 @@ test('keeps the total when pagination loads after the icon list', async ({ page 
 ## Other markers
 
 | Code | Use |
-|---|---|
+|:---|:---|
 | `test.only('...')` | Run only this test while debugging. Never commit it |
 | `test.skip('...')` | Don't run this test. Prefer `test.fail` for bugs, since a skipped test never tells you when the bug is fixed |
 | `test.slow()` | Give this test three times as long before it times out |
@@ -695,7 +695,7 @@ A failure names the file and line, shows expected and received values, and quote
 ## Tools
 
 | Command | What it does |
-|---|---|
+|:---|:---|
 | `npm run test:ui` | Runs tests in a window with a timeline, the page at each step, and rerun on save |
 | `npm run test:report` | Opens the last report, with a screenshot and trace for each failure |
 | `npx playwright test file --debug` | Opens a visible browser and steps through the test |
@@ -733,7 +733,7 @@ Running the full suite with `--repeat-each=3` adds heavy load, which brings out 
 ## Common causes
 
 | Symptom | Likely cause |
-|---|---|
+|:---|:---|
 | Passes alone, fails in the full suite | The check runs before slow work finishes. Use a retrying check |
 | Passes in `npm test`, fails in `test:min` | The `.min.js` file is out of date |
 | Timeout inside `page.evaluate` | The function returned a promise that never finishes |

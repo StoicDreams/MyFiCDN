@@ -20,7 +20,7 @@
 ### Supported Files
 
 | Files | Preview |
-|---|---|
+|:---|:---|
 | Images: PNG, JPEG, GIF, WebP, AVIF, SVG, BMP, ICO, APNG | Shown as an image. SVG scripts do not run. |
 | Video: MP4, WebM, OGV, MOV, M4V | Plays with controls. |
 | Audio: MP3, WAV, OGG, Opus, M4A, AAC, FLAC | Plays with controls. |
@@ -55,6 +55,17 @@ Given more than one file, the component shows a pagination control to move betwe
 - **`url`:** a link to the file.
 
 `clear()` removes the preview.
+
+### From an address, without downloads or frames
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-file-preview src="https://cdn.myfi.ws/Logo.svg" max-height="200" nodownload noframes details></webui-file-preview>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-file-preview src="https://cdn.myfi.ws/Logo.svg" max-height="200" nodownload noframes details></webui-file-preview>
+    </webui-page-segment>
+</webui-side-by-side>
 
 ### Source Code
 

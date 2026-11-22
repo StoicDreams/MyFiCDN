@@ -41,7 +41,7 @@ webui.define('webui-input-range', {
             t.setValue(t._field.value);
         });
     },
-    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'placeholder', 'min', 'max', 'step', 'onrender'],
+    attr: ['id', 'label', 'title', 'name', 'autofocus', 'value', 'placeholder', 'min', 'max', 'step', 'onrender', 'readonly'],
     attrChanged(property, value) {
         const t = this;
         switch (property) {
@@ -88,7 +88,16 @@ webui.define('webui-input-range', {
                 webui.setOrRemoveAttribute(t._field, 'step', value);
                 t.reapplyValue();
                 break;
+            case 'readonly':
+                // A range field ignores readonly, so a read-only slider is turned off, which still shows its value.
+                t._readonly = value !== null && value !== undefined;
+                t._field.disabled = t._readonly || !!t._formDisabled;
+                break;
         }
+    },
+    formDisabledCallback(isDisabled) {
+        this._formDisabled = isDisabled;
+        this._field.disabled = isDisabled || !!this._readonly;
     },
     props: {
         'value': {

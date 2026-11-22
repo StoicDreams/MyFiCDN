@@ -4,12 +4,28 @@
     [&lt;webui-tabs&gt;](/components#webui-tabs) is used to display the list of methods, with each method's documentation displayed in a separate tab.
 </webui-page-segment>
 
+### Attributes
+
+- **`height`** and **`max-height`:** set its height, scrolling for the rest. Numbers are pixels.
+
+
 <webui-side-by-side>
     ```html:Code Snippet
         <webui-standard-methods></webui-standard-methods>
     ```
     <webui-page-segment elevation="10">
         See the [Web UI Standard Methods Demo](https://webui.stoicdreams.com/functions) for a live example.
+    </webui-page-segment>
+</webui-side-by-side>
+
+### With a height limit
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-standard-methods max-height="400"></webui-standard-methods>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-standard-methods max-height="400"></webui-standard-methods>
     </webui-page-segment>
 </webui-side-by-side>
 

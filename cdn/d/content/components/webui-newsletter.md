@@ -9,7 +9,7 @@
 The newsletter's name and description from My Fidelity are shown above the form. To write your own, add content: a `slot="title"` element replaces the name, and other content replaces the description.
 
 ```html:Your own offer text
-<webui-newsletter key="your-newsletter-key" button="Join" success="Thanks! Check your inbox to confirm.">
+<webui-newsletter key="your-newsletter-key" label="Your email" button="Join" success="Thanks! Check your inbox to confirm.">
     <h2 slot="title">Get our weekly notes</h2>
     <p>One short email every Friday.</p>
 </webui-newsletter>
@@ -22,6 +22,8 @@ Signing up sends a confirmation email from Stoic Dreams. Nothing else is sent to
 ```html:Confirm and unsubscribe pages
 <webui-newsletter confirm></webui-newsletter>
 <webui-newsletter unsubscribe></webui-newsletter>
+<!-- With the token written in, rather than read from the address -->
+<webui-newsletter confirm token="token-from-the-email"></webui-newsletter>
 ```
 
 Both read the token from the `token` attribute, or from `?token=` in the address.
@@ -29,7 +31,7 @@ Both read the token from the `token` attribute, or from `?token=` in the address
 ### Attributes
 
 | Attribute | Description |
-|---|---|
+|:---|:---|
 | `key` | The newsletter's key from My Fidelity |
 | `label` | The email field's label. Defaults to "Email" |
 | `button` | The button text |

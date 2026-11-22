@@ -61,3 +61,36 @@ test('keeps resizing after being moved', async ({ page }) => {
     await el.evaluate(c => { c.style.width = '300px'; });
     await expect.poll(() => el.evaluate(c => c._canvas.width)).toBe(300);
 });
+test('screen readers get the text the canvas draws', async ({ page }) => {
+    const el = await canvas(page);
+    await el.evaluate(c => c.setFromText('first line\nsecond line'));
+    await expect(el).toMatchAriaSnapshot('- text: first line second line');
+});
+test('the keyboard reaches and scrolls it, and shows where it is', async ({ page }) => {
+    const el = await canvas(page);
+    await el.evaluate(c => c.setFromText(Array.from({ length: 100 }, (_, i) => `line ${i + 1}`).join('\n')));
+    await page.keyboard.press('Tab');
+    await expect(el).toBeFocused();
+    // An accessibility rule, so the ring itself is checked (Websites/CLAUDE.md, What tests check).
+    await expect.poll(() => el.evaluate(c => getComputedStyle(c).outlineStyle)).toBe('solid');
+    await page.keyboard.press('ArrowDown');
+    await expect.poll(() => el.evaluate(c => c.getScroll())).toBe(20);
+    await page.keyboard.press('End');
+    const end = await el.evaluate(c => c._contentHeight - c._canvas.height);
+    await expect.poll(() => el.evaluate(c => c.getScroll())).toBe(end);
+    await page.keyboard.press('PageUp');
+    await expect.poll(() => el.evaluate(c => c.getScroll())).toBeLessThan(end);
+    await page.keyboard.press('Home');
+    await expect.poll(() => el.evaluate(c => c.getScroll())).toBe(0);
+});
+test('a finger drags it to scroll', async ({ page }) => {
+    const el = await canvas(page);
+    await el.evaluate(c => c.setFromText(Array.from({ length: 100 }, (_, i) => `line ${i + 1}`).join('\n')));
+    await el.locator('canvas').evaluate(canvas => {
+        const send = (type, y) => canvas.dispatchEvent(new PointerEvent(type, { pointerId: 7, pointerType: 'touch', clientX: 50, clientY: y, bubbles: true }));
+        send('pointerdown', 150);
+        send('pointermove', 90);
+        send('pointerup', 90);
+    });
+    await expect.poll(() => el.evaluate(c => c.getScroll())).toBe(60);
+});

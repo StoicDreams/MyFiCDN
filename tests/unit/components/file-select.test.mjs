@@ -55,3 +55,18 @@ test('removing accept lets the picker take any file again', async ({ page }) => 
     await el.evaluate(c => c.removeAttribute('accept'));
     await expect(el.locator('input[type="file"]')).not.toHaveAttribute('accept');
 });
+test('a file name is shown as text, never markup', async ({ page }) => {
+    const root = await mount(page, '<webui-file-select label="Pick" label-limit="0"></webui-file-select>');
+    const el = root.locator('webui-file-select');
+    const name = '<img src=x onerror="window.__ran=1">.txt';
+    await el.locator('input').setInputFiles([file(name, 'text/plain')]);
+    await expect(el.locator('label')).toHaveText(name);
+    await expect(el.locator('label img')).toHaveCount(0);
+});
+test('the field is named by its label, and the clear button says what it does', async ({ page }) => {
+    const root = await mount(page, '<webui-file-select label="Upload Photo"></webui-file-select>');
+    const el = root.locator('webui-file-select');
+    await expect(el.getByLabel('Upload Photo')).toHaveAttribute('type', 'file');
+    await el.locator('input').setInputFiles([file('a.txt', 'text/plain')]);
+    await expect(el.getByRole('button', { name: 'Clear the chosen files' })).toBeVisible();
+});

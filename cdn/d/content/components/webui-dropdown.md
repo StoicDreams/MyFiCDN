@@ -2,6 +2,22 @@
     The `<webui-dropdown>` component renders an enhanced select menu. It supports loading options directly from JSON arrays, delimited strings, or external API endpoints. It features customizable icons, labels, and support for multiple selections.
 </webui-page-segment>
 
+### Attributes
+
+- **`options`:** the choices, as JSON (an array of strings, or of objects with `id` or `value`, and `display`), or as text such as `Display|id, Other|id2` (`Display:id` works too).
+- **`data-id`** and **`data-display`:** name other fields of each option to read its id and name from.
+- **`value`:** the chosen option's id. With `multiple`, several ids, separated by commas.
+- **`label`:** the field's name, shown beside it and read by screen readers. Without one, its `aria-label` or `title` names it.
+- **`icon`** (or **`start-icon`**), **`mid-icon`**, and **`end-icon`:** icons before the label, after the label, and after the field.
+- **`stack`:** puts the label above the field rather than beside it.
+- **`multiple`:** lets several options be chosen.
+- **`html-options`:** shows options as HTML, as described below.
+- **`disabled`:** shows the choice, but it can't be changed or focused.
+- **`newid`** and **`newlabel`:** add an option at the top, such as "Add new", with that id and name.
+- **`api`:** loads the options from an API, with its method in front, such as `get|/api/teams`. `data-api` names a data key whose value is sent with the request (as the query for `get`), and `data-fields`, separated by `|`, the fields it must have before the request is sent.
+- **`data-name`:** the data key that gets the whole chosen option (or the list of them with `multiple`), not only its id.
+
+
 <webui-side-by-side>
     ```html:Code Snippet
         <webui-flex column>
@@ -42,6 +58,23 @@ Each option's HTML comes from its `html` field (or the field named by `data-html
             <webui-dropdown html-options multiple label="Tags" options='[{"id":"a","name":"Alpha"},{"id":"b","name":"Beta"}]'>
                 <template slot="template"><webui-icon icon="tag"></webui-icon> <strong>{TEMPLATE_NAME}</strong></template>
             </webui-dropdown>
+        </webui-flex>
+    </webui-page-segment>
+</webui-side-by-side>
+
+### Icons, a new option, and turned off
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-flex column>
+            <webui-dropdown label="Stacked with Icons" stack start-icon="folder" mid-icon="star" end-icon="gear" value="b" newid="new" newlabel="Add a project" options="Alpha|a, Beta|b, Gamma|c"></webui-dropdown>
+            <webui-dropdown label="Turned Off" disabled value="b" options="Alpha|a, Beta|b"></webui-dropdown>
+        </webui-flex>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-flex column>
+            <webui-dropdown label="Stacked with Icons" stack start-icon="folder" mid-icon="star" end-icon="gear" value="b" newid="new" newlabel="Add a project" options="Alpha|a, Beta|b, Gamma|c"></webui-dropdown>
+            <webui-dropdown label="Turned Off" disabled value="b" options="Alpha|a, Beta|b"></webui-dropdown>
         </webui-flex>
     </webui-page-segment>
 </webui-side-by-side>

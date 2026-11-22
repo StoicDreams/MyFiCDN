@@ -58,3 +58,10 @@ test('removing name, placeholder, min, max, or step clears it from the field, ra
     await el.evaluate(c => ['name', 'placeholder', 'min', 'max', 'step'].forEach(a => c.removeAttribute(a)));
     for (const a of ['name', 'placeholder', 'min', 'max', 'step']) await expect(el.locator('input')).not.toHaveAttribute(a);
 });
+test('readonly turns the slider off, and removing it lets it move again', async ({ page }) => {
+    const root = await mount(page, '<webui-input-range value="5" readonly></webui-input-range>');
+    const el = root.locator('webui-input-range');
+    await expect(el.locator('input')).toBeDisabled();
+    await el.evaluate(c => c.removeAttribute('readonly'));
+    await expect(el.locator('input')).toBeEnabled();
+});

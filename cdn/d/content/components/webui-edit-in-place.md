@@ -13,6 +13,17 @@
     </webui-page-segment>
 </webui-side-by-side>
 
+### Empty, with a placeholder
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-edit-in-place label="Nickname" edit-title="Change the nickname" placeholder="Add a nickname" required></webui-edit-in-place>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-edit-in-place label="Nickname" edit-title="Change the nickname" placeholder="Add a nickname" required></webui-edit-in-place>
+    </webui-page-segment>
+</webui-side-by-side>
+
 ### Source Code
 
 <webui-code src="https://cdn.myfi.ws/webui/edit-in-place.js" language="javascript" label="edit-in-place.js"></webui-code>

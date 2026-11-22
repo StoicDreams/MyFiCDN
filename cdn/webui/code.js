@@ -227,7 +227,7 @@
                     t._code.classList.add(`language-${webui.toSnake(value.replace(/[ ]+/g, '-'), '-')}`);
                     break;
                 case 'lines':
-                    t._code.style.height = `calc((${value} * var(--line-height)) + (2 * var(--padding)))`;
+                    t._code.style.height = value ? `calc((${value} * var(--line-height)) + (2 * var(--padding)))` : '';
                     t._code.style.maxHeight = `calc((${value} * var(--line-height)) + (2 * var(--padding)))`;
                     break;
                 case 'nocopy':

@@ -69,3 +69,20 @@ test('the enabled attribute matches the value', async ({ page }) => {
     await el.click();
     await expect(el).toHaveAttribute('enabled');
 });
+test('screen readers hear whether it is on, unless its title already says what pressing does', async ({ page }) => {
+    const root = await mount(page, '<webui-toggle-icon id="plain" title="Bold"></webui-toggle-icon><webui-toggle-icon id="action" title-on="Hide" title-off="Show"></webui-toggle-icon>');
+    const plain = root.locator('#plain').getByRole('button', { name: 'Bold' });
+    await expect(plain).toHaveAttribute('aria-pressed', 'false');
+    await plain.click();
+    await expect(plain).toHaveAttribute('aria-pressed', 'true');
+    const action = root.locator('#action').getByRole('button', { name: 'Show' });
+    await expect(action).not.toHaveAttribute('aria-pressed');
+    await action.click();
+    await expect(root.locator('#action').getByRole('button', { name: 'Hide' })).not.toHaveAttribute('aria-pressed');
+});
+test('an enabled attribute written in the page starts it on', async ({ page }) => {
+    const root = await mount(page, '<webui-toggle-icon enabled icon-on="bell" icon-off="xmark"></webui-toggle-icon>');
+    const el = root.locator('webui-toggle-icon');
+    await expect.poll(() => el.evaluate(t => t.value)).toBe(true);
+    await expect(el.locator('webui-icon')).toHaveAttribute('icon', 'bell');
+});

@@ -22,14 +22,9 @@
                 }
             });
         },
-                attr: ['label', 'title-on', 'title-off', 'icon', 'icon-on', 'icon-off', 'flags-on', 'flags-off', 'data-enabled', 'enabled', 'theme-on', 'theme-off', 'class'],
+                attr: ['label', 'title-on', 'title-off', 'icon', 'icon-on', 'icon-off', 'flags-on', 'flags-off', 'data-enabled', 'enabled', 'theme-on', 'theme-off'],
         attrChanged(prop, _v) {
             const t = this;
-            switch (prop) {
-                case '_class':
-                    t._button.classList = t.classList;
-                    break;
-            }
             // Attributes change in bursts while an element upgrades, so only update once per burst.
             if (t._updateQueued) return;
             t._updateQueued = true;
@@ -40,6 +35,8 @@
         },
         connected() {
             const t = this;
+            // An enabled attribute written in the page starts it on, before anything has set its value.
+            if (t._enabled === undefined && t.hasAttribute('enabled')) t._enabled = true;
             t.updateElements();
         },
         props: {
@@ -127,9 +124,16 @@
                 t._button.setAttribute('aria-label', title);
                 t.setAttribute('title', title);
             }
+            // A title that changes with the state says what pressing does, such as "Dock" and "Hide". Otherwise screen
+            // readers are told whether it is on, which only the icon shows.
+            if (t.getTitleOn() !== t.getTitleOff()) {
+                t._button.removeAttribute('aria-pressed');
+            } else {
+                t._button.setAttribute('aria-pressed', t._enabled ? 'true' : 'false');
+            }
         },
         shadowTemplate: `
-<button><span></span><webui-icon></webui-icon></button>
+<button type="button"><span></span><webui-icon></webui-icon></button>
 <style type="text/css">
 :host {
 display:inline-block;

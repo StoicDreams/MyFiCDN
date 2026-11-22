@@ -60,6 +60,13 @@ webui.define("webui-alert", {
         } else if (options.variant) {
             t.setVariant(options.variant);
         }
+        // A message set while the page is in use, such as a form's error, is read out as it appears: at once for a
+        // problem, and when the reader is free otherwise. A role the page gave it is kept.
+        if (!t.hasAttribute('role') || t._liveRole) {
+            const variantNow = options.variant || options.theme || t.variant;
+            t._liveRole = ['danger', 'warning'].includes(variantNow) ? 'alert' : 'status';
+            t.setAttribute('role', t._liveRole);
+        }
         if (options.text) {
             t.innerText = options.text;
         } else if (options.html) {

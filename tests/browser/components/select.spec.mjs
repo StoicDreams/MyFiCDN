@@ -322,10 +322,55 @@ test('a name cut off by its tile shows in full as a tooltip', async ({ page }) =
     const el = await select(page, 'item-size="6em"', [{ id: 'long', display: long }, { id: 'short', display: 'Hi' }]);
     await field(el).click();
     const tooltip = page.locator('body > .tooltip');
-    await tile(page, long).locator('.name').hover();
+    // Anywhere on the tile, such as its picture, not only over its name.
+    await tile(page, long).locator('.picture').hover();
     await expect(tooltip).toHaveText(long);
     await expect(tooltip).toHaveClass(/open/);
     // A name that fits shows no tooltip, since it is already all there.
-    await tile(page, 'Hi').locator('.name').hover();
+    await tile(page, 'Hi').locator('.picture').hover();
     await expect(tooltip).toHaveClass(/closed/);
+});
+
+test('an option\'s title is its tooltip, over any part of its tile and of the chosen value', async ({ page }) => {
+    const path = 'PowerShell/Release/Publish.ps1';
+    const el = await select(page, 'value="publish"', [{ id: 'publish', display: 'Publish.ps1', title: path }, { id: 'other', display: 'Other.ps1' }]);
+    const tooltip = page.locator('body > .tooltip');
+    await expect(el.locator('.pick-name')).toHaveText(['Publish.ps1']);
+    await el.locator('.pick-picture').hover();
+    await expect(tooltip).toHaveText(path);
+    await expect(tooltip).toHaveClass(/open/);
+    await field(el).click();
+    await panel(page).locator('.tile[data-value="publish"] .picture').hover();
+    await expect(tooltip).toHaveText(path);
+    await expect(tooltip).toHaveClass(/open/);
+    // An option with no title, whose name fits, shows none.
+    await panel(page).locator('.tile[data-value="other"] .picture').hover();
+    await expect(tooltip).toHaveClass(/closed/);
+});
+
+test('an option\'s title describes its tile and choice for screen readers, and hovering never renames them', async ({ page }) => {
+    const path = 'PowerShell/Release/Publish.ps1';
+    const el = await select(page, 'value="publish"', [{ id: 'publish', display: 'Publish.ps1', title: path }, { id: 'other', display: 'Other.ps1' }]);
+    const tooltip = page.locator('body > .tooltip');
+    await field(el).click();
+    const option = panel(page).locator('.tile[data-value="publish"]');
+    await expect(option).toHaveAccessibleName('Publish.ps1');
+    await option.locator('.picture').hover();
+    await expect(tooltip).toHaveText(path);
+    await expect(option).toHaveAccessibleName('Publish.ps1');
+    await expect(option).toHaveAccessibleDescription(path);
+    await page.keyboard.press('Escape');
+    await expect(panel(page)).toBeHidden();
+    await expect(field(el)).toHaveAccessibleName('Project');
+    await el.locator('.pick-picture').hover();
+    await expect(tooltip).toHaveText(path);
+    // The field keeps its label as its name, and still shows the chosen option's name, not its title.
+    await expect(field(el)).toHaveAccessibleName('Project');
+    await expect(field(el)).toContainText('Publish.ps1');
+    await expect(field(el)).not.toContainText('PowerShell');
+});
+
+test('data-title names the field an option\'s title is read from', async ({ page }) => {
+    const el = await select(page, 'data-title="path"', [{ id: 'a', display: 'a.ps1', path: 'scripts/a.ps1' }]);
+    await expect.poll(() => el.evaluate(e => e._options[0].title)).toBe('scripts/a.ps1');
 });

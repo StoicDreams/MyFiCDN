@@ -1,7 +1,6 @@
 @charset "UTF-8";
 
 :root {
-    --fa-default-family: regular;
     --icon-transition-duration: 400ms;
     --color-black: #101010FF;
     --color-white: #FFFFFFFF;

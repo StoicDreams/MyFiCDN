@@ -2,6 +2,15 @@
     The `<webui-data-loader>` component is designed to fetch external data from APIs or URLs and inject the responses directly into the application's data state. It supports automatic JSON parsing, request authorization, configurable load delays, and automatic retry logic for missing authentication or API root definitions.
 </webui-page-segment>
 
+### Attributes
+
+- **`src`** with **`data-trigger="key"`:** loads that address once and stores the answer at the key, parsed when it is JSON.
+- **`data-{key}="/path"`:** with `apiroot`, loads each path from the API and stores it at that key. Write as many as needed.
+- **`apiroot`:** the data key holding the API's address, which each path is added to. Loading waits for it to be set.
+- **`auth`:** the data key holding the token sent as the `Authorization` header. Loading waits for it to be set.
+- **`delay`:** how long, in milliseconds, to wait before loading. The default is 10.
+
+
 <webui-side-by-side>
     ```html:Code Snippet
         <!-- Basic Data Load -->

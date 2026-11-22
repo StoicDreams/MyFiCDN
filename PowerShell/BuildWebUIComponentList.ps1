@@ -4,8 +4,8 @@
 Set-Location $PSScriptRoot
 Set-Location ../cdn
 
-# Documented, but kept off the list. webui-fa was removed from it in 71f83fff5.
-$exclude = @('webui-fa')
+# Documented, but kept off the list.
+$exclude = @()
 
 $names = Get-ChildItem -Path ./d/content/components -File -Filter *.md |
 Select-Object -ExpandProperty BaseName |

@@ -17,6 +17,22 @@
     Currently, we only have a single app component. But if you need a different layout, then copy the `webui-app` component code into your own `app-app` component file (e.g. `/wc/app.js`), use that component in your HTML, and customize it as needed. This allows you to create multiple app layouts if necessary.
 </webui-page-segment>
 
+### Attributes
+
+These change where and how the app loads its pages. Most sites leave them out.
+
+- **`root-page`:** the page shown at `/`, which is `root` by default, loading `root.md`.
+- **`content-extension`:** the file extension added to each page's path, `.md` by default.
+- **`page-content`:** where page files load from, `/d` by default (the `app-content-endpoint` data otherwise).
+- **`page-data`:** an address that each page's data is loaded from beside its content (the `app-data-endpoint` data otherwise).
+- **`page-content-encrypt`** and **`page-data-encrypt`:** encode the page path in those requests, with `base64`. Page data is encoded by default.
+
+```html:Loading pages from an API
+<webui-app root-page="home" page-content="https://api.example.com/pages" content-extension=".html" page-content-encrypt="base64">
+    ...
+</webui-app>
+```
+
 ## Full context sample
 
 ```html:index.html

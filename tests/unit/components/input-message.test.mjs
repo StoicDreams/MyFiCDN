@@ -80,3 +80,13 @@ test('an empty tab attribute indents with two spaces, and removing it goes back 
     await el.evaluate(c => c.removeAttribute('tab'));
     await expect(el.locator('textarea')).not.toHaveAttribute('tab');
 });
+test('readonly keeps the text from being changed, Shift+Tab included', async ({ page }) => {
+    const root = await mount(page, '<webui-input-message value="b" readonly></webui-input-message>');
+    const el = root.locator('webui-input-message');
+    await expect(el.locator('textarea')).not.toBeEditable();
+    await el.locator('textarea').focus();
+    await el.locator('textarea').press('Shift+Tab');
+    await expect(el.locator('textarea')).toHaveValue('b');
+    await el.evaluate(c => c.removeAttribute('readonly'));
+    await expect(el.locator('textarea')).toBeEditable();
+});

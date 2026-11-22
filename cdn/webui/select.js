@@ -486,8 +486,9 @@ transform:none;
             this.setOptions(options);
         },
         /**
-         * Sets the options: an array of strings or of objects with id (or value), display, and icon, as JSON, or as
-         * "Display|id, Other|id2". data-id, data-display, and data-icon name other fields to read.
+         * Sets the options: an array of strings or of objects with id (or value), display, icon, and title, as JSON, or
+         * as "Display|id, Other|id2". data-id, data-display, data-icon, and data-title name other fields to read. An
+         * option's title is its tooltip, such as the whole path of a file shown by its name, and defaults to its display.
          */
         setOptions(options) {
             const t = this;
@@ -496,6 +497,7 @@ transform:none;
             const iconKey = t.dataset.icon;
             const imageKey = t.dataset.image;
             const badgeKey = t.dataset.badge;
+            const titleKey = t.dataset.title;
             t._options = extractOptions(options).map(item => {
                 if (typeof item !== 'object' || item === null) item = { id: `${item}`, display: `${item}` };
                 const id = webui.getDefined(idKey ? item[idKey] : undefined, item.id, item.value);
@@ -505,7 +507,8 @@ transform:none;
                 const image = webui.getDefined(imageKey ? item[imageKey] : undefined, item.image) || '';
                 // Markup the page itself supplies, such as status icons, never text from data, as with webui-dropdown's html.
                 const badge = webui.getDefined(badgeKey ? item[badgeKey] : undefined, item.badge) || '';
-                return { id: `${id}`, display, icon: `${icon}`, image: `${image}`, badge: `${badge}`, data: item };
+                const title = `${webui.getDefined(titleKey ? item[titleKey] : undefined, item.title) || display}`;
+                return { id: `${id}`, display, title, icon: `${icon}`, image: `${image}`, badge: `${badge}`, data: item };
             }).filter(Boolean);
             t._optionsSet = true;
             let value = t._pendingValue !== undefined ? t._pendingValue : t._selected;
@@ -580,13 +583,14 @@ transform:none;
                 const pick = webui.create('span', { class: 'pick' });
                 const picture = webui.create('span', { class: 'pick-picture' });
                 picture.append(iconFor(option));
-                const name = webui.create('span', { class: 'pick-name' });
+                // The tooltip shows over the whole choice. It is the option's title, or its name when that is cut off.
+                const name = webui.create('span', { class: 'pick-name', 'data-clip': '' });
                 name.textContent = option.display;
+                pick.title = option.title;
                 if (t.iconOnly) {
-                    // Just the picture, which carries the name for screen readers and as a tip.
+                    // Just the picture, which carries the name for screen readers.
                     picture.setAttribute('role', 'img');
                     picture.setAttribute('aria-label', option.display);
-                    pick.title = option.display;
                     pick.append(picture);
                 } else {
                     pick.append(picture, name);
@@ -687,13 +691,13 @@ transform:none;
             if (!t.isOpen()) return;
             const focused = t.shadowRoot.activeElement?.closest?.('.tile')?.dataset.value;
             t._tiles = t._options.map((option, index) => {
-                const tile = webui.create('button', { type: 'button', class: 'tile', role: 'option', 'data-value': option.id });
+                // The tooltip shows over the whole tile: the option's title, or its name when two lines cut it off.
+                const tile = webui.create('button', { type: 'button', class: 'tile', role: 'option', 'data-value': option.id, title: option.title });
                 tile.setAttribute('aria-selected', t._selected.includes(option.id) ? 'true' : 'false');
                 tile.tabIndex = -1;
                 const picture = webui.create('span', { class: 'picture' });
                 picture.append(iconFor(option));
-                // The title shows the whole name as a tooltip when two lines cut it off, such as a long file path.
-                const name = webui.create('span', { class: 'name', title: option.display });
+                const name = webui.create('span', { class: 'name', 'data-clip': '' });
                 name.textContent = option.display;
                 const check = webui.create('span', { class: 'check', 'aria-hidden': 'true' });
                 check.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6.5 12.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -720,7 +724,7 @@ transform:none;
             t._tiles.forEach((tile, index) => { tile.hidden = !!words && !t._options[index].display.toLowerCase().includes(words); });
         },
         listName() {
-            // Web UI's tooltips move a title to aria-label, so either names the list.
+            // Web UI's tooltips move the host's title to aria-label, since it shows no text of its own, so either names the list.
             return this.getAttribute('title') || this.getAttribute('aria-label') || (this._label.textContent || '').trim() || 'Choose';
         },
         focusTile(tile, tiles) {

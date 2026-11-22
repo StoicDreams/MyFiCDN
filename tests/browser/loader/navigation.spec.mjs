@@ -185,13 +185,55 @@ test('disabled elements stop click handling', async ({ page }) => {
     await expect(root.locator('#b')).not.toHaveClass('x');
 });
 test('tooltips show aria-labels and titles on hover', async ({ page }) => {
-    const root = await mount(page, '<button title="Helpful" style="position:fixed;top:300px;left:300px;z-index:9999">x</button>');
+    const root = await mount(page, '<button title="Helpful" style="position:fixed;top:300px;left:300px;width:40px;height:30px;z-index:9999"></button>');
     await root.locator('button').hover();
     await expect(page.locator('body > .tooltip')).toHaveText('Helpful');
     await expect(page.locator('body > .tooltip')).toHaveClass(/open/);
-    await expect(root.locator('button')).toHaveAttribute('aria-label', 'Helpful');
+    // A button with no text of its own keeps the title as its name.
+    await expect(root.locator('button')).toHaveAccessibleName('Helpful');
     // The button already has the label, so screen readers do not also hear the tooltip.
     await expect(page.locator('body > .tooltip')).toHaveAttribute('aria-hidden', 'true');
+});
+test('hovering never renames an element: a title beside a name or text stays its description', async ({ page }) => {
+    const root = await mount(page, `<button id="text" title="PowerShell/Release/Publish.ps1" style="position:fixed;top:200px;left:200px;z-index:9999">Publish.ps1</button>
+<div id="bar" role="separator" aria-label="Resize" tabindex="0" title="Drag to resize" style="position:fixed;top:300px;left:200px;width:40px;height:30px;z-index:9999"></div>
+<button id="same" title="Save" style="position:fixed;top:400px;left:200px;z-index:9999">Save</button>`);
+    const tooltip = page.locator('body > .tooltip');
+    for (const [id, name, description, tip] of [['text', 'Publish.ps1', 'PowerShell/Release/Publish.ps1', true], ['bar', 'Resize', 'Drag to resize', true], ['same', 'Save', '', false]]) {
+        const el = root.locator(`#${id}`);
+        await expect(el).toHaveAccessibleName(name);
+        await el.hover();
+        await expect(tooltip).toHaveClass(tip ? /open/ : /closed/);
+        await expect(el).not.toHaveAttribute('title');
+        await expect(el).toHaveAccessibleName(name);
+        await expect(el).toHaveAccessibleDescription(description);
+        await page.mouse.move(5, 5);
+        await expect(tooltip).toHaveClass(/closed/);
+        // The tooltip still shows on the next hover, with the title gone from the element.
+        if (tip) {
+            await el.hover();
+            await expect(tooltip).toHaveText(description);
+            await page.mouse.move(5, 5);
+        }
+    }
+});
+test('a changed title replaces the name or description the last one gave', async ({ page }) => {
+    const root = await mount(page, `<button id="icon" title="Old" style="position:fixed;top:200px;left:200px;width:40px;height:30px;z-index:9999"></button>
+<button id="text" title="Old tip" style="position:fixed;top:300px;left:200px;z-index:9999">Go</button>`);
+    const tooltip = page.locator('body > .tooltip');
+    for (const [id, name, description] of [['icon', 'New', ''], ['text', 'Go', 'New tip']]) {
+        const el = root.locator(`#${id}`);
+        await el.hover();
+        await expect(tooltip).toHaveClass(/open/);
+        await page.mouse.move(5, 5);
+        await expect(tooltip).toHaveClass(/closed/);
+        await el.evaluate((e, title) => e.setAttribute('title', title), id === 'icon' ? 'New' : 'New tip');
+        await el.hover();
+        await expect(tooltip).toHaveText(id === 'icon' ? 'New' : 'New tip');
+        await expect(el).toHaveAccessibleName(name);
+        await expect(el).toHaveAccessibleDescription(description);
+        await page.mouse.move(5, 5);
+    }
 });
 test('a landmark label such as the nav\'s Site menu is not shown as a tooltip, but a title on a region is', async ({ page }) => {
     const root = await mount(page, `<div role="navigation" aria-label="Site menu" style="position:fixed;top:200px;left:200px;width:300px;padding:20px;z-index:9999">

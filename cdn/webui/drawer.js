@@ -206,7 +206,7 @@
             // Limits can be shares of the window, and a saved width can be wider than a smaller window allows.
             this.applyWidth(parseFloat(this.getAttribute('width')));
         },
-        attr: ['position', 'docked', 'data-dockable', 'data-moveable', 'resizable', 'width', 'slot',
+        attr: ['docked', 'data-dockable', 'data-moveable', 'resizable', 'width', 'slot',
             'docked-min-width', 'docked-max-width', 'undocked-min-width', 'undocked-max-width'],
         attrChanged(property, value) {
             const t = this;
@@ -223,11 +223,11 @@
                     t.applyWidth(parseFloat(t.getAttribute('width')));
                     break;
                 case 'dataDockable':
-                    t.dataDockable = true;
+                    t.dataDockable = value !== null && value !== undefined;
                     t.buildFooterContent();
                     break;
                 case 'dataMoveable':
-                    t.dataMoveable = true;
+                    t.dataMoveable = value !== null && value !== undefined;
                     t.keepToMoveSlots();
                     t.buildFooterContent();
                     break;

@@ -217,7 +217,9 @@ const webui = (() => {
         isDesktopApp: false,
         rootPage: "root",
         contentExtension: ".md",
-        pageContentEndpoint: "/d",
+        // Set by webui-app's page-content and page-data attributes, which win over the app data endpoints.
+        pageContentEndpoint: undefined,
+        pageDataEndpoint: undefined,
         encryptPageContent: false,
         encryptPageData: "base64",
     };
@@ -3332,7 +3334,7 @@ const webui = (() => {
         });
     }
     async function fetchRemoteData(contentPage, signal) {
-        const pageDataEndpoint = webui.getData("app-data-endpoint");
+        const pageDataEndpoint = appSettings.pageDataEndpoint ?? webui.getData("app-data-endpoint");
         if (pageDataEndpoint) {
             const dataUrl = encryptUrl(
                 `${contentPage}${location.search}`,
@@ -3448,7 +3450,7 @@ const webui = (() => {
         if (appSettings.encryptPageContent) {
             contentUrl = encryptUrl(contentUrl, appSettings.encryptPageContent);
         }
-        let fullContentUrl = `${webui.getData("app-content-endpoint")}${contentUrl}`;
+        let fullContentUrl = `${appSettings.pageContentEndpoint ?? webui.getData("app-content-endpoint")}${contentUrl}`;
         let fetchContent = fetch(fullContentUrl, { signal });
         let fetchData = fetchRemoteData(contentPage, signal);
         // A superseded load returns before awaiting this, so its rejection would otherwise go unhandled.
@@ -4022,8 +4024,41 @@ function setupWebuiTooltips() {
     }
     const regionRoles = new Set(["navigation", "main", "banner", "contentinfo", "complementary", "region", "search", "form", "group", "dialog", "alertdialog", "list", "listbox", "menu", "menubar", "toolbar", "tablist", "radiogroup", "tree", "grid", "table", "application", "document", "article", "feed"]);
     const regionTags = new Set(["NAV", "MAIN", "ASIDE", "HEADER", "FOOTER", "SECTION", "FORM", "DIALOG", "FIELDSET", "UL", "OL", "TABLE", "ARTICLE"]);
-    // Elements given a title, which asks for a tooltip, even on a region.
-    const titled = new WeakSet();
+    // Elements given a title, which asks for a tooltip, even on a region, mapped to that title.
+    const titled = new WeakMap();
+    // Roles a screen reader names from the element's text, where a title only describes it.
+    const contentRoles = new Set(["button", "cell", "checkbox", "columnheader", "gridcell", "heading", "link", "menuitem", "menuitemcheckbox", "menuitemradio", "option", "radio", "row", "rowheader", "switch", "tab", "tooltip", "treeitem", "generic", "none", "presentation"]);
+    const fieldTags = new Set(["INPUT", "SELECT", "TEXTAREA", "IMG", "svg", "IFRAME", "OBJECT"]);
+    /** Whether the element gets its name from what it shows, such as a button's text or a picture's alt text. */
+    function isNamedByContent(el) {
+        const role = el.getAttribute("role");
+        if (role ? !contentRoles.has(role) : (regionTags.has(el.tagName) || fieldTags.has(el.tagName))) return false;
+        return !!(`${el.innerText ?? el.textContent ?? ""}`.trim()
+            || el.querySelector?.('[aria-label]:not([aria-hidden="true"]), img[alt]:not([alt=""])'));
+    }
+    /**
+     * Moves a title, which the browser would show as its own tooltip, to where screen readers read it the same way the
+     * title did: the name of an element with no other, otherwise its description. So hovering never renames an element,
+     * such as a file's tile, named by its file name, whose title is the whole path.
+     */
+    function moveTitle(el, title) {
+        el.removeAttribute("title");
+        // A title changed since: drop what the last one put there, which the new one replaces.
+        const prior = titled.get(el);
+        if (prior !== undefined) {
+            if (el.getAttribute("aria-label") === prior) el.removeAttribute("aria-label");
+            if (el.getAttribute("aria-description") === prior) el.removeAttribute("aria-description");
+        }
+        titled.set(el, title);
+        if (el.hasAttribute("aria-label") || el.hasAttribute("aria-labelledby") || isNamedByContent(el)) {
+            const name = (el.getAttribute("aria-label") || `${el.innerText ?? el.textContent ?? ""}`).trim();
+            if (title !== name && !el.hasAttribute("aria-description") && !el.hasAttribute("aria-describedby")) {
+                el.setAttribute("aria-description", title);
+            }
+        } else {
+            el.setAttribute("aria-label", title);
+        }
+    }
     /** An element whose aria-label names a region of the page rather than a control. */
     function isRegionLabel(el) {
         if (titled.has(el)) return false;
@@ -4038,13 +4073,12 @@ function setupWebuiTooltips() {
             }
             let title = target.getAttribute("title");
             if (title && title != "null") {
-                target.setAttribute("aria-label", title);
-                target.removeAttribute("title");
-                titled.add(target);
+                moveTitle(target, title);
                 return [target, title];
             } else if (title === "null") {
                 target.removeAttribute("title");
             }
+            if (titled.has(target)) return [target, titled.get(target)];
             let ariaLabel = target.getAttribute("aria-label");
             if (ariaLabel) {
                 // A landmark or group label names a whole region for screen readers, such as the nav's "Site menu".
@@ -4103,10 +4137,13 @@ function setupWebuiTooltips() {
                     CloseIfOpen();
                     return;
                 }
-                let targetDisplay = `${target.innerText}`.trim();
+                // An element can mark the part of it whose text shows the label, and can be cut off, with data-clip,
+                // such as an option's name beside its icon.
+                const shown = target.querySelector?.("[data-clip]") || target;
+                let targetDisplay = `${shown.innerText}`.trim();
                 if (
                     targetDisplay === display &&
-                    !webui.isTextOverflowing(target)
+                    !webui.isTextOverflowing(shown)
                 ) {
                     skippedElement = target;
                     CloseIfOpen();

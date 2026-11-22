@@ -8,9 +8,9 @@
             theme="primary" 
             flags="shape:circle backing border" 
             title="Provide us your feedback" 
-            data-post="[https://api.myfi.ws/feedback/new](https://api.myfi.ws/feedback/new)" 
+            data-post="https://api.myfi.ws/feedback/new" 
             data-json-name="message">
-            <p>You can also come <a href="[https://discord.gg/5X4YSDFdHD](https://discord.gg/5X4YSDFdHD)">chat with us on Discord.</a></p>
+            <p>You can also come <a href="https://discord.gg/5X4YSDFdHD">chat with us on Discord.</a></p>
         </webui-feedback>
     ```
     <webui-page-segment elevation="10">

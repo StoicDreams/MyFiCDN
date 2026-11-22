@@ -127,7 +127,8 @@
             let endIndex = startIndex + perPage;
             t._filteredKeys.slice(startIndex, endIndex).forEach(key => {
                 const code = `:${key}:`;
-                let el = webui.create('a', { title: code, html: t.emojis[key] });
+                // A button, so the keyboard reaches it. Its name says what it does; the tooltip shows the code.
+                let el = webui.create('button', { type: 'button', title: code, 'aria-label': `Copy ${code}`, html: t.emojis[key] });
                 t._grid.appendChild(el);
                 el.addEventListener('click', ev => {
                     ev.stopPropagation();
@@ -150,8 +151,12 @@ display:block;
 overflow:auto;
 overflow-x:hidden;
 }
-a {
+button {
 display:block;
+padding:0;
+border:none;
+background:none;
+color:inherit;
 font-size:var(--font-size);
 aspect-ratio:1;
 width:var(--font-size);
@@ -159,6 +164,10 @@ cursor:pointer;
 }
 webui-flex {
 width:100%;
+}
+button:focus-visible {
+outline:var(--focus-outline);
+outline-offset:var(--focus-offset);
 }
 </style>
 <slot></slot>

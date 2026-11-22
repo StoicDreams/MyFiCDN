@@ -19,6 +19,23 @@
     </webui-pinned-side>
 </webui-side-by-side>
 
+### A set side width, shown first when stacked
+
+<webui-side-by-side>
+    ```html:Code Snippet
+        <webui-pinned-side side-width="200px" gap="24" split-width="700" side-first>
+            <webui-paper>Main content.</webui-paper>
+            <webui-paper slot="side" theme="info">Side, shown first when stacked.</webui-paper>
+        </webui-pinned-side>
+    ```
+    <webui-page-segment elevation="10">
+        <webui-pinned-side side-width="200px" gap="24" split-width="700" side-first>
+            <webui-paper>Main content.</webui-paper>
+            <webui-paper slot="side" theme="info">Side, shown first when stacked.</webui-paper>
+        </webui-pinned-side>
+    </webui-page-segment>
+</webui-side-by-side>
+
 ### Source Code
 
 <webui-code src="https://cdn.myfi.ws/webui/pinned-side.js" language="javascript" label="pinned-side.js"></webui-code>

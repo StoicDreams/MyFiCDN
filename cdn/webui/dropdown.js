@@ -124,6 +124,12 @@
             const t = this;
             switch (property) {
                 case 'api':
+                    // A removed api stops loading options from it.
+                    if (!value) {
+                        t.apiUrl = undefined;
+                        t.apiMethod = 'GET';
+                        break;
+                    }
                     let segments = value.split('|');
                     let api = value;
                     if (segments.length > 1 && ['get', 'post', 'put', 'delete', 'patch'].indexOf(segments[0].toLowerCase()) !== -1) {
@@ -139,10 +145,8 @@
                     t.setOptions(value);
                     break;
                 case 'newid':
-                    t._includeNew = true;
-                    break;
                 case 'newlabel':
-                    t._includeNew = true;
+                    t._includeNew = t.hasAttribute('newid') || t.hasAttribute('newlabel');
                     break;
                 case 'label':
                     t._label.innerHTML = value;

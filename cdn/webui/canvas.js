@@ -14,7 +14,25 @@
         constructor() {
             const t = this;
             t._canvas = t.template.querySelector('canvas');
+            // The text the canvas draws, kept out of sight for screen readers, which can't read a drawing.
+            t._text = t.template.querySelector('pre.text');
             t._ctx = t._canvas.getContext('2d');
+            // The keyboard scrolls it, as it would any scrolling box.
+            t.addEventListener('keydown', ev => t.onKey(ev));
+            // A finger drags it, as the wheel scrolls it.
+            t._canvas.addEventListener('pointerdown', ev => {
+                if (ev.pointerType === 'mouse') return;
+                t._drag = { id: ev.pointerId, y: ev.clientY, top: t._scrollTop };
+                // Keeps the drag when the finger leaves the canvas. A pointer the browser has already let go of can't be captured.
+                try { t._canvas.setPointerCapture?.(ev.pointerId); } catch { }
+            });
+            t._canvas.addEventListener('pointermove', ev => {
+                if (!t._drag || t._drag.id !== ev.pointerId) return;
+                t.setScroll(t._drag.top + (t._drag.y - ev.clientY));
+            });
+            const endDrag = ev => { if (t._drag?.id === ev.pointerId) t._drag = null; };
+            t._canvas.addEventListener('pointerup', endDrag);
+            t._canvas.addEventListener('pointercancel', endDrag);
             t._textLines = [];
             t._lines = [];
             t._lineHeight = 20;
@@ -40,6 +58,7 @@
             const t = this;
             t._lines = [...(lines || []), {}];
             t._textLines = (lines || []).map(l => l.line || '').join('\n');
+            t._text.textContent = t._textLines;
             t.wrapAllLines();
             t._contentHeight = t._wrappedLines.length * t._lineHeight;
             t.updateCanvas();
@@ -187,6 +206,20 @@
             const allText = t._lines.map(l => l.line || '').join('\n');
             navigator.clipboard.writeText(allText);
         },
+        /** Arrow keys scroll a line, Page Up and Page Down a screen, and Home and End to either end. */
+        onKey(ev) {
+            const t = this;
+            if (ev.altKey || ev.ctrlKey || ev.metaKey) return;
+            const page = Math.max(t._lineHeight, t._canvas.height - t._lineHeight);
+            const moves = {
+                ArrowDown: t._lineHeight, ArrowUp: -t._lineHeight, PageDown: page, PageUp: -page,
+                ' ': ev.shiftKey ? -page : page, Home: -Infinity, End: Infinity,
+            };
+            if (!(ev.key in moves)) return;
+            ev.preventDefault();
+            const move = moves[ev.key];
+            t.setScroll(move === -Infinity ? 0 : move === Infinity ? t._contentHeight : t._scrollTop + move);
+        },
         onWheel(e) {
             const t = this;
             e.preventDefault();
@@ -209,6 +242,7 @@
         },
         connected() {
             const t = this;
+            if (!t.hasAttribute('tabindex')) t.setAttribute('tabindex', '0');
             t.addEventListener('click', _ => {
                 t.checkDimensions();
             });
@@ -240,7 +274,8 @@
             }
         },
         shadowTemplate: `
-<canvas></canvas>
+<canvas aria-hidden="true"></canvas>
+<pre class="text"></pre>
 <style type="text/css">
 :host {
 display: block;
@@ -256,6 +291,22 @@ width: 100%;
 height: 100%;
 background-color: var(--theme-color);
 cursor: text;
+touch-action: none;
+}
+.text {
+position:absolute;
+width:1px;
+height:1px;
+margin:-1px;
+padding:0;
+overflow:hidden;
+clip:rect(0 0 0 0);
+white-space:pre;
+border:0;
+}
+:host(:focus-visible) {
+outline:var(--focus-outline);
+outline-offset:var(--focus-offset);
 }
 </style>
 `

@@ -150,3 +150,18 @@ test('side drawers run the full height: docked, the bottom slot sits between the
     await right.locator('[slot="footer"] .drawer-close').click();
     await expect(right).not.toHaveClass(/open/);
 });
+test('page-content and page-data name where pages and their data load from', async ({ page }) => {
+    // Later routes win in Playwright, so these answer before the harness serves from disk.
+    await page.route('**/alt-content/contact.md', route => route.fulfill({ contentType: 'text/markdown', body: '<webui-data data-page-title="From Alt"></webui-data>\n\nAlt content page' }));
+    const dataRequests = [];
+    await page.route('**/alt-data/**', route => { dataRequests.push(new URL(route.request().url()).pathname); return route.fulfill({ contentType: 'application/json', body: '{}' }); });
+    await page.evaluate(() => {
+        const app = document.querySelector('webui-app');
+        app.setAttribute('page-content', '/alt-content');
+        app.setAttribute('page-data', '/alt-data');
+        app.setAttribute('page-data-encrypt', '');
+        webui.navigateTo('/contact');
+    });
+    await expect(page.locator('webui-app')).toContainText('Alt content page');
+    await expect.poll(() => dataRequests).toEqual(['/alt-data/contact']);
+});

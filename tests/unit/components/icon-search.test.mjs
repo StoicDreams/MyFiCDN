@@ -172,3 +172,9 @@ test('the code puts the shape before the icon name, and reads it back', async ({
     await expect.poll(() => el.evaluate(c => c._codeSample.value)).not.toContain('shape=');
     await expect.poll(() => el.evaluate(c => c._containers[0].el.getAttribute('icon'))).toMatch(/^circle_[^|]+\|fill$/);
 });
+test('each icon in the list is a button the keyboard reaches, named by the icon', async ({ page }) => {
+    const el = await search(page);
+    await expect.poll(() => el.evaluate(c => c._containers[1].tagName)).toBe('BUTTON');
+    const name = await el.evaluate(c => c._containers[1].icon.display || c._containers[1].icon.name);
+    await expect(el.getByRole('button', { name, exact: true }).first()).toBeVisible();
+});

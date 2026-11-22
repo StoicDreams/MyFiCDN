@@ -16,6 +16,9 @@
     let alertTrigger = 'trigger-alert';
     const popup = webui.create('section');
     popup.classList.add('webui-alerts-popup');
+    // Screen readers read each alert that pops up, as people see it arrive, without interrupting them.
+    popup.setAttribute('aria-live', 'polite');
+    popup.setAttribute('aria-relevant', 'additions');
     popup.style.display = 'block';
     popup.style.position = 'fixed';
     popup.style.bottom = '30px';
@@ -256,7 +259,7 @@
                     }
                     break;
                 case 'dataToggleclass':
-                    t.drawer = value.split('|')[0];
+                    t.drawer = value ? value.split('|')[0] : undefined;
                     break;
             }
         },

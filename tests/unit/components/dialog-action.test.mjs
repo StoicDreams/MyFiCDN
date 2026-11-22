@@ -64,3 +64,32 @@ test('a network failure stays open and shows the error', async ({ page }) => {
     await dialog.locator('#dlg-confirm').click();
     await expect(root.locator('webui-dialogs form webui-alert').last()).toContainText('Failed to fetch');
 });
+test('removing api clears where it posts, putting back the default method', async ({ page }) => {
+    const root = await action(page);
+    const el = root.locator('webui-dialog-action');
+    await expect.poll(() => el.evaluate(c => [c.apiUrl, c.apiMethod])).toEqual(['http://localhost:3199/da-api', 'post']);
+    await el.evaluate(c => c.removeAttribute('api'));
+    await expect.poll(() => el.evaluate(c => [c.apiUrl, c.apiMethod])).toEqual([undefined, 'post']);
+});
+test('data-exception gets the error of a failed request', async ({ page }) => {
+    await page.route('**/da-api', route => route.fulfill({ status: 400, body: 'Nope' }));
+    const root = await action(page, 'data-exception="da-error"');
+    await page.evaluate(() => webui.setData('da-open', { id: 7 }));
+    await root.locator('webui-dialogs dialog #dlg-confirm').click();
+    await expect.poll(() => page.evaluate(() => webui.getData('da-error'))).toBe('Nope');
+});
+test('json-success shows that field of the answer, and an answer that is not JSON still succeeds', async ({ page }) => {
+    const answers = ['{"note":"Saved it"}', 'Plain done'];
+    await page.route('**/da-api', route => route.fulfill({ body: answers.shift() }));
+    const root = await action(page, 'json-success="note" data-success="da-result"');
+    const dialog = root.locator('webui-dialogs dialog');
+    await page.evaluate(() => webui.setData('da-open', { id: 7 }));
+    await dialog.locator('#dlg-confirm').click();
+    await expect(dialog).toBeHidden();
+    await expect(page.locator('.webui-alerts-popup')).toContainText('Saved it');
+    await expect.poll(() => page.evaluate(() => webui.getData('da-result'))).toEqual({ note: 'Saved it' });
+    await page.evaluate(() => webui.setData('da-open', { id: 8 }));
+    await dialog.locator('#dlg-confirm').click();
+    await expect(dialog).toBeHidden();
+    await expect.poll(() => page.evaluate(() => webui.getData('da-result'))).toBe('Plain done');
+});
