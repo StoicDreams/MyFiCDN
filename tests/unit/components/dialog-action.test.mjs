@@ -12,6 +12,14 @@ test('setting its value opens the dialog and clears the trigger', async ({ page 
     await expect(root.locator('webui-dialogs form')).toContainText('Are you sure?');
     await expect.poll(() => page.evaluate(() => webui.getData('da-open'))).toBeUndefined();
 });
+test('with data-bind, opening clears the key, so the same value opens it again', async ({ page }) => {
+    const root = await mount(page, `<webui-dialogs></webui-dialogs><webui-alerts></webui-alerts>
+<webui-dialog-action data-bind="da-bound : setValue" api="post|http://localhost:3199/da-api"><template><p>Are you sure?</p></template></webui-dialog-action>`);
+    await page.evaluate(() => customElements.whenDefined('webui-dialog-action'));
+    await page.evaluate(() => webui.setData('da-bound', { id: 7 }));
+    await expect(root.locator('webui-dialogs form')).toContainText('Are you sure?');
+    await expect.poll(() => page.evaluate(() => webui.getData('da-bound'))).toBeUndefined();
+});
 test('confirm posts the value and closes on success', async ({ page }) => {
     let body;
     await page.route('**/da-api', route => { body = route.request().postData(); return route.fulfill({ body: 'Done' }); });

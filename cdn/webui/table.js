@@ -206,8 +206,13 @@
             t.appendChild(t._table);
             t.render();
             setTimeout(() => {
-                if (t.dataset.subscribe) {
-                    let data = webui.getData(t.dataset.subscribe);
+                // The first key in data-subscribe or data-bind that is for the rows: with no method, or with setData.
+                const entry = [t.dataset.subscribe, t.dataset.bind].filter(Boolean).join('|')
+                    .split('|').map(ds => ds.split(':').map(part => part.trim()))
+                    .find(([k, m]) => k && (!m || m === 'setData'));
+                const key = entry?.[0];
+                if (key) {
+                    let data = webui.getData(key);
                     if (data !== t._data) {
                         t.setData(data);
                     }

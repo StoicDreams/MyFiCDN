@@ -17,6 +17,12 @@ test('a subscribed value picks valid or invalid content', async ({ page }) => {
     await page.evaluate(() => webui.setData('cond-a', ''));
     await expect(el).toHaveText('INVALID');
 });
+test('data-bind picks valid or invalid content the same as data-subscribe, ignoring a method name', async ({ page }) => {
+    const el = await show(page, 'data-bind="cond-bound : setValue"');
+    await expect(el).toHaveText('INVALID');
+    await page.evaluate(() => webui.setData('cond-bound', 'yes'));
+    await expect(el).toHaveText('VALID');
+});
 for (const value of ['0', 'false', 'null', 'undefined', '[]', '{}', '{TEMPLATE_X}']) {
     test(`the value ${value} counts as invalid`, async ({ page }) => {
         const el = await show(page, `data-value="${value}"`);

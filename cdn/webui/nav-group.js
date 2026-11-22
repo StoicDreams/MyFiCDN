@@ -34,9 +34,15 @@ webui.define('webui-nav-group', {
             get() { return this._anchor.classList.contains('show'); }
         }
     },
+    /** Whether the group is open, read by data-bind="key:setShow". */
+    getShow() {
+        return !!this.open;
+    },
     setShow(value) {
         let t = this;
-        t.open = value;
+        const wasOpen = !!t.open;
+        // Data such as "false" from storage is text, which would otherwise count as open.
+        t.open = value === true || value === 'true' || value === 1 || value === '1';
         t._caret.setAttribute('rotate', t.open ? '0' : '180');
         // Screen readers announce whether the group is open, which the caret only shows visually.
         t._anchor.setAttribute('aria-expanded', t.open ? 'true' : 'false');
@@ -45,7 +51,8 @@ webui.define('webui-nav-group', {
         } else {
             t._anchor.classList.remove('show');
         }
-        t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
+        // Only a real change is reported, so data that says the same thing in other words, such as "false", is left as it is.
+        if (t.open !== wasOpen) t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
     },
     /** Opens the group when the page being shown is one of its links, so visitors can see where they are. It never closes it. */
     openForPage(value) {
@@ -89,7 +96,7 @@ webui.define('webui-nav-group', {
                     t._icon.removeAttribute('stroke');
                     t._icon.removeAttribute('theme');
                 }
-                t._icon.setAttribute('icon', value);
+                webui.setOrRemoveAttribute(t._icon, 'icon', value);
                 break;
         }
     },

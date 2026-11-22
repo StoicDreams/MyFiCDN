@@ -111,6 +111,17 @@ test('webui.setProperty sets or removes a property and handles elevation', async
         return [set, 'thing' in el, up, el.className];
     })).toEqual([1, false, 'elevation-3', 'elevation-n2']);
 });
+test('webui.setProperty clears a prop that cannot be deleted through its setter, and leaves one without a setter', async ({ page }) => {
+    expect(await page.evaluate(() => {
+        const el = document.createElement('div');
+        let shown = 'old';
+        Object.defineProperty(el, 'caption', { get() { return shown; }, set(v) { shown = v ?? ''; } });
+        Object.defineProperty(el, 'placeholder', { get() { return 'kept'; } });
+        webui.setProperty(el, 'caption', null);
+        webui.setProperty(el, 'placeholder', null);
+        return [el.caption, el.placeholder];
+    })).toEqual(['', 'kept']);
+});
 test('webui.setTheme sets theme variables', async ({ page }) => {
     expect(await page.evaluate(() => {
         const el = document.createElement('div');
@@ -187,4 +198,17 @@ test('webui.setApp registers the main app element', async ({ page }) => {
 });
 test('webui.applyDynamicStyles is safe to call without an app', async ({ page }) => {
     await page.evaluate(() => webui.applyDynamicStyles());
+});
+test('webui.setOrRemoveAttribute sets a value and removes the attribute for null or undefined', async ({ page }) => {
+    expect(await page.evaluate(() => {
+        const el = document.createElement('a');
+        webui.setOrRemoveAttribute(el, 'href', '/x');
+        const set = el.getAttribute('href');
+        webui.setOrRemoveAttribute(el, 'href', null);
+        const afterNull = el.hasAttribute('href');
+        webui.setOrRemoveAttribute(el, 'title', '');
+        const empty = el.getAttribute('title');
+        webui.setOrRemoveAttribute(el, 'title', undefined);
+        return [set, afterNull, empty, el.hasAttribute('title')];
+    })).toEqual(['/x', false, '', false]);
 });

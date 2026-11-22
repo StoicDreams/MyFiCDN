@@ -77,3 +77,11 @@ test('the label names the field, and without one its title does', async ({ page 
     await root.getByText('Project Name').click();
     await expect(page.getByRole('textbox', { name: 'Project Name' })).toBeFocused();
 });
+test('removing name or placeholder clears it, rather than setting the text "null"', async ({ page }) => {
+    const el = await input(page, 'label="Name" name="n" placeholder="P"');
+    await expect(el.locator('input')).toHaveAttribute('placeholder', 'P');
+    await el.evaluate(c => { c.removeAttribute('name'); c.removeAttribute('placeholder'); });
+    await expect(el).not.toHaveAttribute('name');
+    await expect(el.locator('input')).not.toHaveAttribute('placeholder');
+    await expect(el.locator('input')).not.toHaveAttribute('name');
+});

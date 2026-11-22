@@ -301,6 +301,14 @@
             const vertical = value === true || value === 'true' || value === 1 || value === '1' || value === '';
             this.toggleAttribute('vertical', vertical);
         },
+        /** Whether the tabs are down the side, read by data-bind="key:setVertical". */
+        getVertical() {
+            return this.hasAttribute('vertical');
+        },
+        /** The index of the tab shown, read by data-bind="key:setTab". */
+        getTab() {
+            return this.currentTab();
+        },
         setData: function (data, key) {
             const t = this;
             if (!data || !data.forEach) return;
@@ -423,9 +431,11 @@
             }
             t._index = tabIndex;
             t.collapseHiddenTabs();
-            if (t.dataset.subscribe) {
-                t.dataset.subscribe.split('|').forEach(ds => {
-                    let dss = ds.split(':');
+            // The shown tab goes back to the data it is bound to, with data-subscribe or data-bind.
+            const bound = [t.dataset.subscribe, t.dataset.bind].filter(Boolean).join('|');
+            if (bound) {
+                bound.split('|').forEach(ds => {
+                    let dss = ds.split(':').map(part => part.trim());
                     if (dss[1] !== 'setTab') return;
                     let curTab = webui.getData(dss[0]);
                     if (curTab !== t._index) {
@@ -476,10 +486,11 @@
                     });
                 }
             });
-            if (t.dataset.subscribe) {
+            const bound = [t.dataset.subscribe, t.dataset.bind].filter(Boolean).join('|');
+            if (bound) {
                 let tabIsSet = false;
-                t.dataset.subscribe.split('|').forEach(ds => {
-                    let dss = ds.split(':');
+                bound.split('|').forEach(ds => {
+                    let dss = ds.split(':').map(part => part.trim());
                     if (dss.length !== 2 || dss[1] !== 'setTab') return;
                     let cached = webui.getData(dss[0]);
                     if (cached !== undefined) {

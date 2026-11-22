@@ -3,7 +3,7 @@
     This component renders a tabbed interface for displaying content, allowing users to switch between different sections of information.
     It is commonly used for organizing content into manageable sections, such as settings, documentation, or any other categorized information.
 
-    The `vertical` flag puts the tab buttons down the side of the content, rather than across the top. Windows narrower than 900 pixels show them across the top anyway, where there is room for the content. `setVertical(true)` or `setVertical(false)` switches it, so `data-subscribe="key:setVertical"` lets a toggle switch it, as in the examples below, where one toggle switches all three.
+    The `vertical` flag puts the tab buttons down the side of the content, rather than across the top. Windows narrower than 900 pixels show them across the top anyway, where there is room for the content. `setVertical(true)` or `setVertical(false)` switches it, so `data-subscribe="key:setVertical"` lets a toggle switch it, as in the examples below, where one toggle switches all three. `data-bind="key:setVertical"` works the same as `data-subscribe` here, since only the data changes the layout. `data-bind="key:setTab"` opens the tab the data names and saves the tab a person picks. Fields inside the tabs keep their own bindings and never change the tabs' data.
 
     `label` puts a title before the tab buttons, on their row, such as a drawer's name, so it takes no row of its own. For more than text, give an element `slot="label"` instead.
 

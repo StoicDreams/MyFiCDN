@@ -1,4 +1,4 @@
 {
-  "redirects home when required data is missing": {"hash":"545d1d75ed4aaf4d4dbd12f9fdc86017ec3f5b839bd06963df79cc76c9023dc2","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/page-requires.min.js"]},
-  "stays put while the data has a value": {"hash":"545d1d75ed4aaf4d4dbd12f9fdc86017ec3f5b839bd06963df79cc76c9023dc2","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/page-requires.min.js"]}
+  "redirects home when required data is missing": {"hash":"1de3dea5cf26e8d3e86e4fc9b2722513cff77db24459dd2659e12520ef049694","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/page-requires.min.js"]},
+  "stays put while the data has a value": {"hash":"1de3dea5cf26e8d3e86e4fc9b2722513cff77db24459dd2659e12520ef049694","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/page-requires.min.js"]}
 }

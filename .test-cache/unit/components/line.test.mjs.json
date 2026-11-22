@@ -1,4 +1,4 @@
 {
-  "draws a line": {"hash":"5f666a9ebd14233cbf617fef8fd700a68fa1c7da39c75a5022464dd112ef0a97","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/line.min.js","cdn/webui/loader.min.js"]},
-  "size sets the thickness": {"hash":"5f666a9ebd14233cbf617fef8fd700a68fa1c7da39c75a5022464dd112ef0a97","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/line.min.js","cdn/webui/loader.min.js"]}
+  "draws a line": {"hash":"c6aabd25094aa0ccad26be2eeddb518b2707c106cef26aef3d4ef6989a0cf9c1","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/line.min.js","cdn/webui/loader.min.js"]},
+  "size sets the thickness": {"hash":"c6aabd25094aa0ccad26be2eeddb518b2707c106cef26aef3d4ef6989a0cf9c1","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/line.min.js","cdn/webui/loader.min.js"]}
 }

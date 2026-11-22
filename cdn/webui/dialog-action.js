@@ -50,9 +50,10 @@
             if (value === undefined) return;
             const t = this;
             let content = '';
-            if (t.dataset.subscribe) {
-                webui.setData(t.dataset.subscribe, undefined);
-            }
+            // Each key that opened the dialog is cleared, so setting the same value again opens it again.
+            [t.dataset.subscribe, t.dataset.bind].filter(Boolean).join('|').split('|')
+                .map(ds => ds.split(':')[0].trim()).filter(Boolean)
+                .forEach(key => webui.setData(key, undefined));
             t._slotMain.assignedElements().forEach(node => {
                 switch (node.nodeName) {
                     case 'TEMPLATE':

@@ -63,13 +63,13 @@ webui.define('webui-input-range', {
                 nameField(t, t._field);
                 break;
             case 'name':
-                t._field.setAttribute('name', value);
+                webui.setOrRemoveAttribute(t._field, 'name', value);
                 break;
             case 'autofocus':
-                t._field.setAttribute('autofocus', value);
+                webui.setOrRemoveAttribute(t._field, 'autofocus', value);
                 break;
             case 'placeholder':
-                t._field.setAttribute('placeholder', value);
+                webui.setOrRemoveAttribute(t._field, 'placeholder', value);
                 break;
             case 'value':
                 if (value === undefined) return;
@@ -77,15 +77,15 @@ webui.define('webui-input-range', {
                 t.setValue(value);
                 break;
             case 'min':
-                t._field.setAttribute('min', value);
+                webui.setOrRemoveAttribute(t._field, 'min', value);
                 t.reapplyValue();
                 break;
             case 'max':
-                t._field.setAttribute('max', value);
+                webui.setOrRemoveAttribute(t._field, 'max', value);
                 t.reapplyValue();
                 break;
             case 'step':
-                t._field.setAttribute('step', value);
+                webui.setOrRemoveAttribute(t._field, 'step', value);
                 t.reapplyValue();
                 break;
         }

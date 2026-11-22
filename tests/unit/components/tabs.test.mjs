@@ -105,3 +105,26 @@ test('removing the shown tab shows the one now in its place', async ({ page }) =
     await expect(buttons(root).nth(1)).toHaveAttribute('aria-current', 'true');
     await expect.poll(() => tabs.evaluate(el => el.tabContents()[1].inert)).toBe(false);
 });
+test('data-bind="key:setTab" shows the tab the data names and saves the tab a person picks', async ({ page }) => {
+    // Data set before the tabs load is the tab they open on.
+    await page.evaluate(() => webui.setData('tabs-shown', 1));
+    const root = await mount(page, html('data-bind="tabs-shown:setTab"'));
+    await expect(root.getByRole('button', { name: 'Settings' })).toHaveAttribute('aria-current', 'true');
+    await page.evaluate(() => webui.setData('tabs-shown', 0));
+    await expect(root.getByRole('button', { name: 'Home' })).toHaveAttribute('aria-current', 'true');
+    await root.getByRole('button', { name: 'Plain' }).click();
+    await expect.poll(() => page.evaluate(() => webui.getData('tabs-shown'))).toBe(2);
+    // The tabs' own names and icons toggle is not a tab choice.
+    await root.getByRole('button', { name: 'Show tabs as icons' }).click();
+    await expect(buttons(root).nth(0)).toHaveAttribute('collapsed', '');
+    expect(await page.evaluate(() => webui.getData('tabs-shown'))).toBe(2);
+});
+test('data-bind="key:setVertical" follows the data, and the tabs\' own toggle leaves it alone', async ({ page }) => {
+    const root = await mount(page, `<webui-toggle-icon data-bind="tabs-side" label="Layout"></webui-toggle-icon>${html('data-bind="tabs-side:setVertical"')}`);
+    await root.getByRole('button', { name: 'Layout' }).click();
+    await expect(root.locator('webui-tabs')).toHaveAttribute('vertical', '');
+    await root.getByRole('button', { name: 'Show tabs as icons' }).click();
+    await expect(buttons(root).nth(0)).toHaveAttribute('collapsed', '');
+    expect(await page.evaluate(() => webui.getData('tabs-side'))).toBe(true);
+    await expect(root.locator('webui-tabs')).toHaveAttribute('vertical', '');
+});

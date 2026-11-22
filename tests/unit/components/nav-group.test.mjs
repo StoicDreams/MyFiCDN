@@ -51,3 +51,27 @@ test('tells screen readers whether the group is open', async ({ page }) => {
     await button.click();
     await expect(button).toHaveAttribute('aria-expanded', 'false');
 });
+test('data-bind="key:setShow" opens the group from data and saves a person opening or closing it', async ({ page }) => {
+    const root = await mount(page, '<webui-nav-group name="Tests" data-bind="nav-group-open:setShow"><webui-nav-link url="/x" name="X"></webui-nav-link></webui-nav-group>');
+    const el = root.locator('webui-nav-group');
+    await page.evaluate(() => webui.setData('nav-group-open', true));
+    await expect.poll(() => el.evaluate(e => e.isOpen)).toBe(true);
+    await root.getByRole('button', { name: 'Tests' }).click();
+    await expect.poll(() => page.evaluate(() => webui.getData('nav-group-open'))).toBe(false);
+});
+test('bound text such as "false" keeps the group closed and the data as it was', async ({ page }) => {
+    await page.evaluate(() => webui.setData('nav-group-text', 'false'));
+    const root = await mount(page, '<webui-nav-group name="Tests" data-bind="nav-group-text:setShow"><webui-nav-link url="/x" name="X"></webui-nav-link></webui-nav-group>');
+    const el = root.locator('webui-nav-group');
+    await expect(el.locator('button.navlink')).toHaveAttribute('aria-expanded', 'false');
+    expect(await page.evaluate(() => webui.getData('nav-group-text'))).toBe('false');
+    await page.evaluate(() => webui.setData('nav-group-text', 'true'));
+    await expect(el.locator('button.navlink')).toHaveAttribute('aria-expanded', 'true');
+});
+test('removing the icon removes it, rather than naming an icon "null"', async ({ page }) => {
+    const root = await mount(page, '<webui-nav-group name="Tests" icon="xmark"></webui-nav-group>');
+    const icon = root.locator('webui-nav-group button.navlink > webui-icon').first();
+    await expect(icon).toHaveAttribute('icon', 'xmark');
+    await root.locator('webui-nav-group').evaluate(c => c.removeAttribute('icon'));
+    await expect(icon).not.toHaveAttribute('icon');
+});

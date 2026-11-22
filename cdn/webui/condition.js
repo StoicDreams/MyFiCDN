@@ -38,11 +38,12 @@
                 set(v) { this.setValue(webui.getDefined(v, ''), 'value'); }
             }
         },
-        attr: ['data-subscribe', 'value'],
+        attr: ['data-subscribe', 'data-bind', 'value'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
                 case 'dataSubscribe':
+                case 'dataBind':
                     t.checkConditions();
                     break;
                 case 'value':
@@ -85,8 +86,10 @@
         checkConditions() {
             const t = this;
             if (!t._isConnected) return;
-            let keys = t.dataset.subscribe;
-            if (!keys && !t.dataset.value) {
+            // The data keys in data-subscribe and data-bind, without any method named after them.
+            let keys = [t.dataset.subscribe, t.dataset.bind].filter(Boolean).join('|').split('|')
+                .map(ds => ds.split(':')[0].trim()).filter(Boolean);
+            if (!keys.length && !t.dataset.value) {
                 t.showInvalid();
                 return;
             }
@@ -135,8 +138,8 @@
                     isGood = false;
                 }
             }
-            if (keys && keys.split) {
-                keys.split('|').forEach(key => {
+            if (keys.length) {
+                keys.forEach(key => {
                     let val = webui.getData(key);
                     checkValue(val);
                 });

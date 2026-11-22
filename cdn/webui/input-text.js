@@ -84,32 +84,32 @@ webui.define('webui-input-text', {
                 nameField(t, t._field);
                 break;
             case 'name':
-                t._field.setAttribute('name', value);
+                webui.setOrRemoveAttribute(t._field, 'name', value);
                 break;
             case 'autofocus':
-                t._field.setAttribute('autofocus', value);
+                webui.setOrRemoveAttribute(t._field, 'autofocus', value);
                 break;
             case 'placeholder':
-                t._field.setAttribute('placeholder', value);
+                webui.setOrRemoveAttribute(t._field, 'placeholder', value);
                 nameField(t, t._field);
                 break;
             case 'type':
-                t._field.setAttribute('type', value);
+                webui.setOrRemoveAttribute(t._field, 'type', value);
                 break;
             case 'value':
                 t._field.value = value;
                 break;
             case 'minlength':
-                t._field.setAttribute('minlength', value);
+                webui.setOrRemoveAttribute(t._field, 'minlength', value);
                 break;
             case 'maxlength':
-                t._field.setAttribute('maxlength', value);
+                webui.setOrRemoveAttribute(t._field, 'maxlength', value);
                 break;
             case 'min':
-                t._field.setAttribute('min', value);
+                webui.setOrRemoveAttribute(t._field, 'min', value);
                 break;
             case 'max':
-                t._field.setAttribute('max', value);
+                webui.setOrRemoveAttribute(t._field, 'max', value);
                 break;
         }
     },
@@ -126,7 +126,7 @@ webui.define('webui-input-text', {
             get() { return this._field.getAttribute('placeholder'); },
             set(v) {
                 if (this._field.getAttribute('placeholder') === v) return;
-                if (v === undefined) {
+                if (v === undefined || v === null) {
                     this._field.removeAttribute('placeholder');
                     return;
                 }

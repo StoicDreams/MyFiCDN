@@ -98,6 +98,46 @@ test('data-bind syncs both directions', async ({ page }) => {
     await root.locator('input').fill('from input');
     await expect.poll(() => page.evaluate(() => webui.getData('bind-both'))).toBe('from input');
 });
+test('a key:click binding on a field leaves the field and the data alone when the field changes', async ({ page }) => {
+    const root = await mount(page, '<input type="checkbox" aria-label="Pick" data-bind="bind-clicked:click">');
+    await page.evaluate(() => webui.setData('bind-clicked', 'kept'));
+    await root.getByRole('checkbox', { name: 'Pick' }).check();
+    await expect(root.getByRole('checkbox', { name: 'Pick' })).toBeChecked();
+    expect(await page.evaluate(() => webui.getData('bind-clicked'))).toBe('kept');
+});
+test('data-bind with a setter, such as key:setValue, reads the matching getter or property back', async ({ page }) => {
+    const root = await mount(page, '<webui-input-range label="Size" min="1" max="5" data-bind="bind-size:setValue"></webui-input-range>');
+    await page.evaluate(() => webui.setData('bind-size', '3'));
+    await expect(root.getByRole('slider')).toHaveValue('3');
+    await root.getByRole('slider').fill('4');
+    await expect.poll(() => page.evaluate(() => webui.getData('bind-size'))).toBe('4');
+});
+test('data-bind with spaces around its keys reads and writes the trimmed keys', async ({ page }) => {
+    const root = await mount(page, `<webui-tabs data-bind=" bind-at : setTab | bind-side : setVertical ">
+<webui-button slot="tabs">Home</webui-button><div slot="content">A</div>
+<webui-button slot="tabs">Settings</webui-button><div slot="content">B</div></webui-tabs>`);
+    await page.evaluate(() => webui.setData('bind-side', true));
+    await expect(root.locator('webui-tabs')).toHaveAttribute('vertical', '');
+    await root.getByRole('button', { name: 'Settings' }).click();
+    await expect.poll(() => page.evaluate(() => webui.getData('bind-at'))).toBe(1);
+    await page.evaluate(() => webui.setData('bind-at', 0));
+    await expect(root.getByRole('button', { name: 'Home' })).toHaveAttribute('aria-current', 'true');
+    // The tabs' own toggle sends a change event, which writes each binding back without changing it.
+    await root.getByRole('button', { name: 'Show tabs as icons' }).click();
+    await expect(root.getByRole('button', { name: 'Settings' })).toHaveAttribute('collapsed', '');
+    expect(await page.evaluate(() => [webui.getData('bind-at'), webui.getData('bind-side')])).toEqual([0, true]);
+});
+test('a field placed inside a bound component writes only its own binding, never the component\'s', async ({ page }) => {
+    const root = await mount(page, `<webui-tabs data-bind="bind-list:setData|bind-tab:setTab">
+<webui-button slot="tabs">Home</webui-button><div slot="content"><input aria-label="Inner"></div></webui-tabs>`);
+    await page.evaluate(() => webui.setData('bind-list', [{ label: 'One', content: 'Added' }]));
+    await expect(root.getByRole('button', { name: 'One' })).toHaveCount(1);
+    await root.getByRole('textbox', { name: 'Inner' }).fill('typed');
+    // The tabs still show what the data asked for, so typing cleared neither key.
+    await root.getByRole('button', { name: 'Show tabs as icons' }).click();
+    await expect(root.getByRole('button', { name: 'One' })).toHaveAttribute('collapsed', '');
+    expect(await page.evaluate(() => [webui.getData('bind-list'), webui.getData('bind-tab')])).toEqual([[{ label: 'One', content: 'Added' }], 0]);
+});
 test('data-default sets missing data', async ({ page }) => {
     await mount(page, '<span data-default="bind-d:start"></span>');
     await expect.poll(() => page.evaluate(() => webui.getData('bind-d'))).toBe('start');
@@ -200,4 +240,12 @@ test('corrupt session data does not stop the framework loading', async ({ page }
     await page.evaluate(() => sessionStorage.setItem('session-data', '{bad'));
     await page.reload();
     await page.waitForFunction(() => typeof webui === 'object' && webui.loaded);
+});
+test('a field inside bound tabs never writes to a binding around the tabs', async ({ page }) => {
+    const root = await mount(page, `<div data-bind="bind-outer"><webui-tabs data-bind="bind-outer-tab:setTab">
+<webui-button slot="tabs">Home</webui-button><div slot="content"><input type="checkbox" aria-label="Inner pick"></div></webui-tabs></div>`);
+    await page.evaluate(() => webui.setData('bind-outer', 'kept'));
+    await root.getByRole('checkbox', { name: 'Inner pick' }).check();
+    await expect(root.getByRole('checkbox', { name: 'Inner pick' })).toBeChecked();
+    expect(await page.evaluate(() => webui.getData('bind-outer'))).toBe('kept');
 });

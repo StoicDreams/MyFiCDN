@@ -105,3 +105,13 @@ test('text column templates keep values as text without escaping them', async ({
     await expect(el.locator('td')).toHaveText('[<b>A & B</b>]');
     await expect(el.locator('td b')).toHaveCount(0);
 });
+test('data-bind loads rows set before the table, from a key with no method', async ({ page }) => {
+    await page.evaluate(() => webui.setData('table-bound-rows', [{ Name: 'Ann' }, { Name: 'Bo' }]));
+    const el = await table(page, 'columns="Name" data-bind="table-bound-rows"');
+    await expect(el.locator('td')).toHaveText(['Ann', 'Bo']);
+});
+test('with data-subscribe and data-bind, the rows come from the setData key, not the first key', async ({ page }) => {
+    await page.evaluate(() => { webui.setData('table-title', 'Names'); webui.setData('table-rows', [{ Name: 'Cy' }]); });
+    const el = await table(page, 'columns="Name" data-subscribe="table-title:title" data-bind="table-rows:setData"');
+    await expect(el.locator('td')).toHaveText(['Cy']);
+});

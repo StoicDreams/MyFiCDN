@@ -223,10 +223,10 @@
                 t.setData(data);
             }
 
-            let ds = t.dataset.subscribe;
+            let ds = [t.dataset.subscribe, t.dataset.bind].filter(Boolean).join('|');
             if (!ds) return;
             ds.split('|').forEach(ds => {
-                let kt = ds.split(':');
+                let kt = ds.split(':').map(part => part.trim());
                 if (kt.length !== 2) return;
                 if (kt[1] === 'setData') {
                     let attempts = 0;
@@ -279,9 +279,10 @@
                 if (t._pid !== pid) return;
                 t.processData();
                 t.dispatchEvent(new Event('change', { bubbles: true, composed: true }));
-                if (t.dataset.subscribe) {
-                    t.dataset.subscribe.split('|').forEach(ds => {
-                        let dk = ds.split(':');
+                const bound = [t.dataset.subscribe, t.dataset.bind].filter(Boolean).join('|');
+                if (bound) {
+                    bound.split('|').forEach(ds => {
+                        let dk = ds.split(':').map(part => part.trim());
                         if (dk.length === 1) return;
                         if (dk[1] === 'setValue') {
                             webui.setData(dk[0], t.page);

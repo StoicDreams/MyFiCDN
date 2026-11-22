@@ -759,7 +759,9 @@ webui-flex[column]>webui-paper,
 webui-flex[column]>webui-flex,
 webui-flex[column]>*:not(img):not(svg) {
     width: 100%;
-    width: --webkit-fit-available;
+    width: -webkit-fill-available;
+    width: -moz-available;
+    width: stretch;
 }
 
 button {
@@ -963,6 +965,8 @@ pre>code {
 webui-table>table {
     width: 100%;
     width: -webkit-fill-available;
+    width: -moz-available;
+    width: stretch;
 }
 
 /*
@@ -1728,50 +1732,6 @@ webui-sideimage,
     grid-gap: calc(2 * var(--padding));
 }
 
-.gap-0 {
-    grid-gap: 0;
-}
-
-.gap-1 {
-    grid-gap: calc(0.1 * var(--padding));
-}
-
-.gap-2 {
-    grid-gap: calc(0.2 * var(--padding));
-}
-
-.gap-3 {
-    grid-gap: calc(0.4 * var(--padding));
-}
-
-.gap-4 {
-    grid-gap: calc(0.7 * var(--padding));
-}
-
-.gap-5 {
-    grid-gap: calc(1 * var(--padding));
-}
-
-.gap-6 {
-    grid-gap: calc(1.5 * var(--padding));
-}
-
-.gap-7 {
-    grid-gap: calc(2 * var(--padding));
-}
-
-.gap-8 {
-    grid-gap: calc(4 * var(--padding));
-}
-
-.gap-9 {
-    grid-gap: calc(8 * var(--padding));
-}
-
-.gap-10 {
-    grid-gap: calc(10 * var(--padding));
-}
-
 webui-sideimage> :only-child,
 webui-side-by-side> :only-child,
 .side-by-side> :only-child,
@@ -1890,12 +1850,16 @@ a[href]:not([disabled]):not(:disabled):not(.disabled) {
     cursor: pointer;
 }
 
+/* Icons draw with the theme colors, which a themed parent (such as the current page's nav link) sets for its own
+   background, so they are set to the shade too. */
 .disabled,
 [disabled],
 :disabled,
 .btn:disabled {
     background-color: var(--color-shade);
     color: var(--color-shade-offset);
+    --theme-color: var(--color-shade);
+    --theme-color-offset: var(--color-shade-offset);
 }
 
 /* Link colors (a:link) otherwise win over the disabled text color, which left light text on a light shade. */
@@ -2061,8 +2025,9 @@ webui-nav-group>.navlink:not(.show)~webui-nav-group,
     padding-top: 0;
     padding-bottom: 0;
     visibility: hidden;
-    contain: inline-size;
-    transition: all 300ms ease-in-out, max-height 0s linear 300ms, visibility 0s linear 300ms;
+    /* No width only once the items have slid up, so a closing group's names don't squeeze while they are still shown. */
+    max-width: 0;
+    transition: all 300ms ease-in-out, max-height 0s linear 300ms, max-width 0s linear 300ms, visibility 0s linear 300ms;
 }
 
 .nowrap,
@@ -2128,17 +2093,13 @@ webui-nav-group>.navlink:not(.show)~webui-nav-group,
     grid-template-columns: repeat(auto-fit, minmax(1em, 400px))
 }
 
-.d-float {
-    display: float;
-}
-
 .d-flex {
     display: flex;
     gap: var(--padding);
 }
 
 .d-flexbox {
-    display: flexbox;
+    display: flex;
 }
 
 .d-inline {
@@ -2154,7 +2115,7 @@ webui-nav-group>.navlink:not(.show)~webui-nav-group,
 }
 
 .d-inlineflexbox {
-    display: inline-flexbox;
+    display: inline-flex;
 }
 
 .p-abs,
@@ -2196,7 +2157,7 @@ main>*>.d-flex>*[width] {
 }
 
 .flex-columnreverse {
-    flex-direction: row-reverse;
+    flex-direction: column-reverse;
 }
 
 .flex-wrap {
@@ -2338,14 +2299,6 @@ main>*>.d-flex>*[width] {
     padding: 0;
 }
 
-.pa-a {
-    padding: auto;
-}
-
-.pt-a {
-    padding-top: auto;
-}
-
 .pa-1 {
     padding: var(--padding);
 }
@@ -2384,15 +2337,6 @@ main>*>.d-flex>*[width] {
 
 .pa-10 {
     padding: calc(10 * var(--padding));
-}
-
-.px-a {
-    padding-left: auto;
-    padding-right: auto;
-}
-
-.pt-a {
-    padding-top: auto;
 }
 
 .px-0 {
@@ -2503,18 +2447,6 @@ main>*>.d-flex>*[width] {
 .py-10 {
     padding-top: calc(10 * var(--padding));
     padding-bottom: calc(10 * var(--padding));
-}
-
-.pr-a {
-    padding-right: auto;
-}
-
-.pb-a {
-    padding-bottom: auto;
-}
-
-.pl-a {
-    padding-left: auto;
 }
 
 .pt-0 {
@@ -3615,8 +3547,8 @@ a.theme-white:focus,
 a.theme-white:active {
     background-color: var(--color-white);
     color: var(--color-black);
-    --theme-color: var(--color-active);
-    --theme-color-offset: var(--color-active-offset);
+    --theme-color: var(--color-white);
+    --theme-color-offset: var(--color-white-offset);
 }
 
 .theme-shade,

@@ -708,7 +708,9 @@ const webui = (() => {
                                 return t.getAttribute("name");
                             },
                             set(v) {
-                                t.setAttribute("name", v);
+                                // No name, such as when the attribute is removed, leaves the field out of its form.
+                                if (v === null || v === undefined) t.removeAttribute("name");
+                                else t.setAttribute("name", v);
                             },
                         });
                         t.addEventListener("input", (_) => {
@@ -2164,6 +2166,19 @@ const webui = (() => {
             }
         }
         /**
+         * Set an attribute, or remove it when the value is null or undefined, such as when the attribute it copies was removed.
+         *
+         * @param {Element} el - The target element.
+         * @param {string} name - The attribute name.
+         * @param {any} value - The value, or null or undefined to remove the attribute.
+         * @returns {undefined}
+         */
+        setOrRemoveAttribute(el, name, value) {
+            if (!el) return;
+            if (value === null || value === undefined) el.removeAttribute(name);
+            else el.setAttribute(name, value);
+        }
+        /**
          * Set property on node.
          *
          * @param {Node} el - The target node.
@@ -2176,7 +2191,13 @@ const webui = (() => {
                 property !== "value" &&
                 (value === null || value === undefined)
             ) {
-                delete el[property];
+                // A component's own props are defined on it and can't be deleted, so their setter is given the empty value to clear itself.
+                const own = Object.getOwnPropertyDescriptor(el, property);
+                if (own && !own.configurable) {
+                    if (own.set || own.writable) el[property] = value;
+                } else {
+                    delete el[property];
+                }
             } else {
                 el[property] = value;
             }
@@ -2705,29 +2726,67 @@ const webui = (() => {
             const key = clickKey.split(":")[0].trim();
             map.subs[key]?.forEach((sub) => {
                 if (sub === el) return;
-                let subAttr = sub.getAttribute("data-subscribe") || "";
-                let subscriptions = subAttr.split("|").map((s) => s.trim());
+                const subAttr = [sub.getAttribute("data-subscribe"), sub.getAttribute("data-bind")]
+                    .filter(Boolean)
+                    .join("|");
+                const subscriptions = subAttr
+                    .split("|")
+                    .map((s) => s.split(":").map((part) => part.trim()).join(":"));
                 if (subscriptions.includes(`${key}:click`)) {
                     sub.click();
                 }
             });
         });
     }
+    /**
+     * Whether an event that started at origin is the bound element's own. A component with a shadow root owns events from
+     * itself and its shadow root, but not from the page content placed in it, such as a field inside a tab, which has its
+     * own binding or none. An element without a shadow root owns every event inside it, as a label wrapping a field does.
+     */
+    function ownsEvent(el, origin) {
+        if (!el.shadowRoot || !origin) return true;
+        let node = origin;
+        while (node) {
+            if (node === el) return true;
+            node = node.getRootNode?.().host;
+        }
+        return false;
+    }
+    /**
+     * Reads the value for a "key:name" binding. For a setter, such as data-bind="tab:setTab", that is its getter (getTab)
+     * or property (tab), since calling a setter with nothing would change the element. found is false when there is none.
+     */
+    function readBoundValue(el, name) {
+        const setter = /^set([A-Z].*)$/.exec(name);
+        if (setter) {
+            const getter = el[`get${setter[1]}`];
+            if (typeof getter === "function") {
+                return { found: true, value: getter.call(el) };
+            }
+            const prop = setter[1][0].toLowerCase() + setter[1].slice(1);
+            if (prop in el && typeof el[prop] !== "function") {
+                return { found: true, value: el[prop] };
+            }
+            return { found: false };
+        }
+        if (typeof el[name] === "function") {
+            return { found: true, value: el[name]() };
+        }
+        return { found: true, value: webui.getDefined(el[name], el.dataset[name]) };
+    }
     async function handleDataTrigger(ev) {
         // May be called with an element, whose target property is the link target rather than an event target.
         let el = ev instanceof Event ? ev.srcElement || ev.target : ev;
         if (ev.composedPath) {
-            for (let path of ev.composedPath()) {
-                if (
-                    path.dataset &&
-                    (path.dataset.trigger || path.dataset.bind)
-                ) {
-                    el = path;
-                    break;
-                }
-            }
+            const path = ev.composedPath();
+            el = path.find(
+                (node) =>
+                    node.dataset && (node.dataset.trigger || node.dataset.bind),
+            );
+            // An event from content placed in a bound component goes no further, so it never reaches a binding around it.
+            if (el && !ownsEvent(el, path[0])) return;
         }
-        if (!el.dataset || !(el.dataset.trigger || el.dataset.bind)) return;
+        if (!el?.dataset || !(el.dataset.trigger || el.dataset.bind)) return;
         let tick = 0;
         if (
             el.nodeName.startsWith("APP-") ||
@@ -2749,20 +2808,28 @@ const webui = (() => {
             .filter(Boolean)
             .join("|");
         if (!key) return;
-        key.split("|").forEach((key) => {
-            let oldData = webui.getData(key);
-            if (key.indexOf(":") !== -1) {
-                let kp = key.split(":");
-                key = kp[0];
-                let getter = kp[1];
-                let value =
-                    typeof el[getter] === "function"
-                        ? el[getter]()
-                        : webui.getDefined(el[getter], el.dataset[getter]);
-                if (oldData !== value) {
-                    webui.setData(key, value);
+        key.split("|").forEach((part) => {
+            part = part.trim();
+            if (!part) return;
+            if (part.includes(":")) {
+                const [name, member] = part.split(":").map((p) => p.trim());
+                // A click binding clicks this element when the data changes, so it has no value to read back.
+                if (member === "click") return;
+                const read = readBoundValue(el, member);
+                if (read.found && webui.getData(name) !== read.value) {
+                    webui.setData(name, read.value);
                 }
             } else {
+                const key = part;
+                const oldData = webui.getData(key);
+                // An element with no value, such as tabs bound for their tab list, has nothing to write.
+                if (
+                    typeof el.getValue !== "function" &&
+                    !("value" in el) &&
+                    el.dataset.value === undefined
+                ) {
+                    return;
+                }
                 // A native button's value is empty unless set, which must not hide its data-value.
                 const elValue =
                     el.localName === "button" && el.value === ""
@@ -2799,7 +2866,8 @@ const webui = (() => {
                 .filter(Boolean)
                 .join("|");
             combinedAttrs.split("|").forEach((ds) => {
-                let kts = ds.trim().split(":");
+                ds = ds.trim();
+                let kts = ds.split(":").map((part) => part.trim());
                 if (!(key === ds || kts[0] === key)) return;
                 if (kts.length === 2) {
                     toSet = kts[1];

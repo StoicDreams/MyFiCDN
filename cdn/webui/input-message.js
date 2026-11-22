@@ -74,7 +74,7 @@
           t.style.maxHeight = webui.pxIfNumber(value);
           break;
         case "placeholder":
-          t._field.setAttribute("placeholder", value);
+          webui.setOrRemoveAttribute(t._field, "placeholder", value);
           nameField(t, t._field);
           break;
         case "label":
@@ -85,16 +85,17 @@
           nameField(t, t._field);
           break;
         case "name":
-          t._field.setAttribute("name", value);
+          webui.setOrRemoveAttribute(t._field, "name", value);
           break;
         case "autofocus":
-          t._field.setAttribute("autofocus", value);
+          webui.setOrRemoveAttribute(t._field, "autofocus", value);
           break;
         case "value":
           t.setValue(value);
           break;
         case "tab":
-          t._field.setAttribute("tab", value || "  ");
+          // An empty tab attribute indents with two spaces; a removed one goes back to a tab character.
+          webui.setOrRemoveAttribute(t._field, "tab", value === "" ? "  " : value);
           break;
       }
     },

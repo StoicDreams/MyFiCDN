@@ -160,3 +160,17 @@ test('the arrow buttons are named for screen readers', async ({ page }) => {
         await expect(page.getByRole('button', { name, includeHidden: true })).toHaveCount(1);
     }
 });
+test('data-bind="key:setValue" goes to the page the data names and saves the page a person picks', async ({ page }) => {
+    const el = await pager(page, 'per-page="1" data-bind="pager-page:setValue"');
+    await el.evaluate(e => e.setData([1, 2, 3, 4]));
+    await page.evaluate(() => webui.setData('pager-page', 3));
+    await expect.poll(() => el.evaluate(e => e.page)).toBe(3);
+    await el.getByRole('button', { name: 'Next page' }).click();
+    await expect.poll(() => page.evaluate(() => webui.getData('pager-page'))).toBe(4);
+});
+test('data-bind with spaces around a key and its method still loads the data', async ({ page }) => {
+    await page.evaluate(() => webui.setData('pager-rows', [{ i: 0 }, { i: 1 }, { i: 2 }]));
+    const el = await pager(page, 'per-page="1" data-current="pager-row" data-bind=" pager-rows : setData "');
+    await el.evaluate(e => e.setValue(3));
+    await expect.poll(() => page.evaluate(() => webui.getData('pager-row'))).toEqual({ i: 2 });
+});
