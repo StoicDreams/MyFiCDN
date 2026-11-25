@@ -1,3 +1,3 @@
 {
-  "displays its placeholder content": {"hash":"73dd3dd072f5389efcfdf02164bde99da24a1a324a91c414d80f6a79fdf9dff0","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/myfi-dev-settings.min.js"]}
+  "displays its placeholder content": {"hash":"df241aa6aabb8d4362160d5c092d128b8cb51c408ee96f799800bda1fe826a4c","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/loader.min.js","cdn/webui/myfi-dev-settings.min.js"]}
 }

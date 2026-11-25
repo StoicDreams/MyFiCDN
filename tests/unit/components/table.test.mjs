@@ -68,6 +68,16 @@ test('a sortable header is a button the keyboard sorts with, and says which way 
     // The header is drawn again, and focus stays on its button, so Enter sorts again.
     await expect(el.getByRole('button', { name: 'Name' })).toBeFocused();
 });
+test('angled leans the column titles, and turns off again', async ({ page }) => {
+    const el = await table(page, 'columns="Name;Age" sortable="Age" angled');
+    await el.evaluate(c => c.setData([{ Name: 'A', Age: 1 }]));
+    await expect(el.locator('table')).toHaveClass(/angled-headers/);
+    // Each title is one element in its header, which is what leans.
+    await expect(el.locator('th > span')).toHaveText('Name');
+    await expect(el.locator('th > button')).toHaveText('Age');
+    await el.evaluate(c => c.removeAttribute('angled'));
+    await expect(el.locator('table')).not.toHaveClass(/angled-headers/);
+});
 test('bordered toggles the class', async ({ page }) => {
     const el = await table(page, 'bordered columns="A"');
     await expect(el.locator('table')).toHaveClass('bordered');

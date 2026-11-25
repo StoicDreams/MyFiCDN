@@ -9,6 +9,7 @@
 - **`current-sort`** and **`current-sort-dir`:** the column it is sorted by and its direction, which it updates as headings are pressed, firing `update-sort`.
 - **`column-formats`:** `field:html` for columns whose values or templates are shown as markup, separated by `;`. Other columns show text.
 - **`bordered`:** draws lines between cells.
+- **`angled`:** leans each column title at 45 degrees, reading from bottom left to top right, so long titles don't make a column wider than its values. Any `<table>` gets the same with the `angled-headers` class, when each `<th>` holds its title in one element, or in one element inside a button. The titles lean out past the right of the table, so `webui-table` keeps that much room beside it, and a plain table needs room there or a container that scrolls.
 - **`data-subscribe="key:setData"`** (or `data-bind`): the rows, as a list of objects.
 
 A sortable heading is a button, so the keyboard sorts with it, and screen readers hear which way the column sorts.

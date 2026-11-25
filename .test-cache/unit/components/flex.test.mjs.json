@@ -1,4 +1,4 @@
 {
-  "attributes control gap, alignment, and direction": {"hash":"34928ddab4094d836ee30a4c32edbf58d1ec5a7c95e01bc8fd1d999ab4c2af11","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/flex.min.js","cdn/webui/loader.min.js"]},
-  "page styles and inline styles can hide it": {"hash":"34928ddab4094d836ee30a4c32edbf58d1ec5a7c95e01bc8fd1d999ab4c2af11","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/flex.min.js","cdn/webui/loader.min.js"]}
+  "attributes control gap, alignment, and direction": {"hash":"115c9f53719754c77076772309f19d39e9f82d0840c28ae2e9f03f681e0d902e","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/flex.min.js","cdn/webui/loader.min.js"]},
+  "page styles and inline styles can hide it": {"hash":"115c9f53719754c77076772309f19d39e9f82d0840c28ae2e9f03f681e0d902e","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/flex.min.js","cdn/webui/loader.min.js"]}
 }

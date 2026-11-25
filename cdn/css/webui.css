@@ -1008,6 +1008,26 @@ table.bordered td {
     border-width: var(--theme-border-width);
 }
 
+/*
+ * Angled headers: each column title leans at 45 degrees, reading from bottom left to top right, so a column is only
+ * as wide as its values. A title is the header cell's child element, or the child of a button there, turned on end so
+ * the row is as tall as the title is long, then tipped back to 45 degrees about its corner at the bottom of the
+ * header, so none of it reaches down into the rows. A button stays level, so what it covers is its header cell.
+ * A title leans out past the right of the table by most of its length: webui-table keeps that much room beside it.
+ */
+table.angled-headers th {
+    vertical-align: bottom;
+    white-space: nowrap;
+}
+
+table.angled-headers th>:not(button),
+table.angled-headers th>button>* {
+    display: inline-block;
+    writing-mode: vertical-rl;
+    transform-origin: 0 0;
+    transform: translateY(100%) rotate(-135deg);
+}
+
 table th.left,
 table td.left {
     text-align: left;

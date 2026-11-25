@@ -1,3 +1,3 @@
 {
-  "registers and renders without errors": {"hash":"19acf35151617881a1921cdd1525c75dd68340bf44dda5b45aaf702cf08d2056","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/input-range.min.js","cdn/webui/loader.min.js","cdn/webui/site-settings.min.js"]}
+  "registers and renders without errors": {"hash":"acbdb58c1e87c918b8a8011b5e88c40c1e79c98b0c1d31be0c05a73eb05f5cff","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/input-range.min.js","cdn/webui/loader.min.js","cdn/webui/site-settings.min.js"]}
 }

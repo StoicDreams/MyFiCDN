@@ -59,10 +59,15 @@
                 t._columnTemplates[key] = n.innerHTML;
             });
         },
-        attr: ['bordered', 'columns', 'sortable', 'current-sort', 'current-sort-dir', 'column-formats'],
+        attr: ['angled', 'bordered', 'columns', 'sortable', 'current-sort', 'current-sort-dir', 'column-formats'],
         attrChanged(property, value) {
             const t = this;
             switch (property) {
+                case 'angled':
+                    // Column titles lean at 45 degrees, so a column is only as wide as its values (webui.css).
+                    t._table.classList.toggle('angled-headers', value !== null);
+                    t.reserveOverhang();
+                    break;
                 case 'bordered':
                     t._table.classList.toggle('bordered', value !== null);
                     break;
@@ -159,7 +164,8 @@
                     });
                     th.appendChild(sortButton);
                 } else {
-                    th.innerHTML = webui.replaceAppData(display);
+                    // In a span, which angled headers turn as one.
+                    th.appendChild(webui.create('span', { html: webui.replaceAppData(display) }));
                 }
                 h.appendChild(th);
             });
@@ -206,11 +212,36 @@
                 });
                 t._table.appendChild(rows);
             }
+            t.reserveOverhang();
+        },
+        /**
+         * Angled titles lean out past the right of the table, so a margin as wide as the furthest one keeps them
+         * inside whatever holds the table. Measured in the next frame, once the titles are laid out.
+         */
+        reserveOverhang() {
+            const t = this;
+            cancelAnimationFrame(t._overhangFrame);
+            t._overhangFrame = requestAnimationFrame(() => {
+                let overhang = 0;
+                if (t._table.classList.contains('angled-headers')) {
+                    const edge = t._table.getBoundingClientRect().right;
+                    t._table.querySelectorAll('th>:not(button), th>button>*').forEach(title => {
+                        overhang = Math.max(overhang, title.getBoundingClientRect().right - edge);
+                    });
+                }
+                const margin = overhang > 0 ? `${Math.ceil(overhang)}px` : '';
+                if (t._table.style.marginRight !== margin) t._table.style.marginRight = margin;
+            });
         },
         connected() {
             const t = this;
             t.appendChild(t._table);
             t.render();
+            // Titles change length as fonts load or the page's text size changes, which changes the header's height.
+            if (typeof ResizeObserver === 'function' && !t._overhangObserver) {
+                t._overhangObserver = new ResizeObserver(() => t.reserveOverhang());
+                t._overhangObserver.observe(t._table);
+            }
             setTimeout(() => {
                 // The first key in data-subscribe or data-bind that is for the rows: with no method, or with setData.
                 const entry = [t.dataset.subscribe, t.dataset.bind].filter(Boolean).join('|')
@@ -224,6 +255,12 @@
                     }
                 }
             }, 1);
+        },
+        disconnected() {
+            const t = this;
+            cancelAnimationFrame(t._overhangFrame);
+            t._overhangObserver?.disconnect();
+            t._overhangObserver = null;
         },
         shadowTemplate: `
 <slot name="column"></slot>

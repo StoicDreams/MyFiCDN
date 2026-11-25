@@ -1,3 +1,3 @@
 {
-  "removing start-icon, mid-icon, or end-icon clears it, rather than naming an icon \"null\"": {"hash":"19d035ba29d00f69913fe327d5ec530914f8a8f1cbce582a38e98d8b6255cd60","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/icons/gear.webui","cdn/icons/star.webui","cdn/icons/xmark.webui","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/icon.min.js","cdn/webui/loader.min.js","cdn/webui/select.min.js"]}
+  "removing start-icon, mid-icon, or end-icon clears it, rather than naming an icon \"null\"": {"hash":"90314489020e405ef0041f74d1e289544fb76670de52d14a0da2b004d3c5fb28","files":["cdn/appConfig.json","cdn/css/webui.min.css","cdn/icons/gear.webui","cdn/icons/star.webui","cdn/icons/xmark.webui","cdn/roles.json","cdn/webui/alert.min.js","cdn/webui/app-config.min.js","cdn/webui/content.min.js","cdn/webui/icon.min.js","cdn/webui/loader.min.js","cdn/webui/select.min.js"]}
 }
