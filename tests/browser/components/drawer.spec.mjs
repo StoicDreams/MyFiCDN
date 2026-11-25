@@ -64,6 +64,18 @@ test('a drawer undocked by a narrow window is kept docked, so it docks again aft
     await page.setViewportSize({ width: 1300, height: 700 });
     await expect(again).toHaveAttribute('docked', 'true');
 });
+test('a drawer docked while the window is narrow, as its saved state can be as the app starts, docks once the window widens', async ({ page }) => {
+    await page.setViewportSize({ width: 600, height: 700 });
+    const root = await mount(page, '<webui-drawer class="late" data-dockable data-state="docked"></webui-drawer>');
+    const drawer = root.locator('webui-drawer.late');
+    await expect(drawer).toHaveAttribute('id', /./);
+    await drawer.evaluate(el => el.setAttribute('docked', 'true'));
+    // Still narrow, it stays undocked until the window widens.
+    await page.setViewportSize({ width: 650, height: 700 });
+    await expect(drawer).not.toHaveAttribute('docked');
+    await page.setViewportSize({ width: 1300, height: 700 });
+    await expect(drawer).toHaveAttribute('docked', 'true');
+});
 test('the docking is checked again when the window gets focus, and a window with no width is not narrow', async ({ page }) => {
     const root = await mount(page, '<webui-drawer data-dockable docked="true"></webui-drawer>');
     const drawer = root.locator('webui-drawer');

@@ -214,6 +214,13 @@
                 case 'docked':
                     if (!t._forceUndocked) {
                         t._cacheDocked = !!value;
+                    } else if (value) {
+                        // Docked while the window is narrow, as a saved state can be while the app starts before its
+                        // window has its size: it is kept to dock once the window widens, and stays undocked until then.
+                        // Otherwise the next narrow check undocked it for good, and that was saved.
+                        t._cacheDocked = true;
+                        t.removeAttribute('docked');
+                        return;
                     }
                     // Docked some other way, such as with its dock button, it has nothing left to do when it opens.
                     if (value) t.removeAttribute('dock-on-open');
