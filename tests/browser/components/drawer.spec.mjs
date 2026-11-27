@@ -189,6 +189,11 @@ test.describe('resizing', () => {
     test.beforeEach(async ({ page }) => page.setViewportSize({ width: 1300, height: 700 }));
     const handle = drawer => drawer.locator('.resize');
     const drag = async (page, drawer, dx) => {
+        // Docking, undocking, and opening animate the drawer for 400ms. A press where the handle was before that ends can
+        // miss it on a slow machine, so the drag waits for the drawer to settle, and for the handle to be steady and the
+        // first thing under the pointer, as Playwright checks before its own actions.
+        await drawer.evaluate(el => Promise.all(el.getAnimations().map(animation => animation.finished.catch(() => { }))));
+        await handle(drawer).hover();
         const box = await handle(drawer).boundingBox();
         const x = box.x + box.width / 2, y = box.y + box.height / 2;
         await page.mouse.move(x, y);

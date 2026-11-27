@@ -249,6 +249,8 @@ test.describe('sortable', () => {
         const el = await tabs(page);
         // Dragged as a person does: pressed in a tab's middle, let go in the middle of the tab where it should go.
         const drag = async (from, to) => {
+            // Waits for it to be steady and the first thing under the pointer, as Playwright does before its own actions.
+            await el.locator(`[data-id="${from}"]`).hover();
             const a = await el.locator(`[data-id="${from}"]`).boundingBox();
             const b = await el.locator(`[data-id="${to}"]`).boundingBox();
             await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
@@ -270,6 +272,7 @@ test.describe('sortable', () => {
         const el = await tabs(page);
         await el.locator('[data-id="b"]').click();
         await expect(el.locator('div[slot="content"]', { hasText: 'Content B' })).toBeVisible();
+        await el.locator('[data-id="a"]').hover({ position: { x: 5, y: 5 } });
         const from = await el.locator('[data-id="a"]').boundingBox();
         const to = await el.locator('[data-id="c"]').boundingBox();
         await page.mouse.move(from.x + 5, from.y + from.height / 2);

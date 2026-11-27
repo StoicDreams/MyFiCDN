@@ -35,6 +35,7 @@ test('dragging the bar resizes the panes, keeps each at its minimum, and sends t
     });
     const bar = split.locator('.bar');
     // The bar's place is only used to drag it, as a person would.
+    await bar.hover({ position: { x: 4, y: 100 } });
     const box = await bar.boundingBox();
     await page.mouse.move(box.x + 4, box.y + 100);
     await page.mouse.down();

@@ -22,6 +22,8 @@ const moves = page => page.evaluate(() => window.__moves);
 
 /** Drags from one element to another with the mouse, as a person would. */
 async function drag(page, from, to, side = 'below') {
+    // Waits for it to be steady and the first thing under the pointer, as Playwright does before its own actions.
+    await from.hover();
     const a = await from.boundingBox();
     const b = await to.boundingBox();
     await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
@@ -160,6 +162,7 @@ test('hidden hides it, as on any element', async ({ page }) => {
 
 test('let go over another item, an item takes its place, in a column or a row, from middle to middle', async ({ page }) => {
     const middle = async (from, to) => {
+        await from.hover();
         const a = await from.boundingBox();
         const b = await to.boundingBox();
         await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
@@ -197,6 +200,7 @@ test('items in a row move with Alt+Left and Alt+Right, and drop beside the item 
     await page.keyboard.press('Alt+ArrowLeft');
     await expect.poll(() => order(page)).toEqual(['a', 'b', 'c']);
     // Dragged past the right half of the last item, it goes after it.
+    await el.locator('[data-id="a"]').hover({ position: { x: 20, y: 20 } });
     const from = await el.locator('[data-id="a"]').boundingBox();
     const to = await el.locator('[data-id="c"]').boundingBox();
     await page.mouse.move(from.x + 20, from.y + 20);
