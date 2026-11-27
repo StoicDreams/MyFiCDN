@@ -35,6 +35,7 @@
   "webui-icon",
   "webui-icon-creator",
   "webui-icon-search",
+  "webui-image-stack",
   "webui-input-message",
   "webui-input-range",
   "webui-input-text",

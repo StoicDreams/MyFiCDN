@@ -16,9 +16,16 @@
         poster: item.poster ? `${item.poster}` : '',
         video: item.type === 'video' || (item.type !== 'image' && videoFile.test(item.src || '')),
     });
-    /** A gallery item from an `<img>`, `<video>`, or `<webui-loop-video>` written inside the gallery. */
+    /** A gallery item from an `<img>`, `<video>`, `<webui-loop-video>`, or `<webui-image-stack>` written inside the gallery. */
     const fromElement = el => {
         const tag = el.localName;
+        if (tag === 'webui-image-stack') {
+            // The stack itself is shown in the viewer; its first image is its card.
+            const first = el.querySelector(':scope > img');
+            const src = first?.getAttribute('src') || '';
+            const name = el.getAttribute('title') || el.getAttribute('aria-label') || first?.getAttribute('alt') || fileName(src);
+            return { name, src, poster: '', video: false, stack: el };
+        }
         const src = el.getAttribute('src') || el.querySelector('source')?.getAttribute('src') || '';
         const name = el.getAttribute('title') || el.getAttribute('alt') || el.getAttribute('aria-label') || fileName(src);
         return { name, src, poster: el.getAttribute('poster') || '', video: tag !== 'img' };
@@ -35,7 +42,7 @@
         },
         /** The items written inside the gallery, which it shows in their place. */
         childItems() {
-            return Array.from(this.querySelectorAll(':scope > img, :scope > video, :scope > webui-loop-video'))
+            return Array.from(this.querySelectorAll(':scope > img, :scope > video, :scope > webui-loop-video, :scope > webui-image-stack'))
                 .map(fromElement)
                 .filter(item => item.src);
         },
@@ -67,9 +74,23 @@
         show(item) {
             const t = this;
             t.currentImage = item;
-            t._img.hidden = item.video;
+            t._img.hidden = item.video || !!item.stack;
             t._video.hidden = !item.video;
-            if (item.video) {
+            // Only the shown stack is in the viewer.
+            t.flexImage.querySelectorAll(':scope > webui-image-stack').forEach(s => { if (s !== item.stack) s.remove(); });
+            if (item.stack) {
+                t._video.pause();
+                t._video.removeAttribute('src');
+                t._img.removeAttribute('src');
+                if (item.stack.parentNode !== t.flexImage) {
+                    // The viewer's room, which the stack's images share.
+                    item.stack.style.height = '100%';
+                    item.stack.style.width = '100%';
+                    item.stack.style.maxWidth = '100%';
+                    t.flexImage.appendChild(item.stack);
+                }
+                if (!item.stack.hasAttribute('aria-label')) item.stack.setAttribute('aria-label', item.name);
+            } else if (item.video) {
                 t._img.removeAttribute('src');
                 if (t._video.getAttribute('src') !== item.src) {
                     t._video.poster = item.poster || '';

@@ -84,3 +84,24 @@ test('names are shown as text', async ({ page }) => {
     await expect(root.locator('webui-flex p')).toHaveText('<b>bold</b>');
     await expect(root.locator('webui-flex p b')).toHaveCount(0);
 });
+test('an image stack written inside is one item, shown whole in the viewer with its first image as the card', async ({ page }) => {
+    const root = await mount(page, `<webui-gallery card-width="100">
+<img src="/a.png" alt="Home page">
+<webui-image-stack title="Creator windows" rotate><img src="/render.png" alt="Render view"><img src="/tools.png" alt="Toolbox"></webui-image-stack>
+</webui-gallery>`);
+    const gallery = root.locator('webui-gallery');
+    await expect(gallery.locator('webui-card')).toHaveCount(2);
+    await expect(gallery.locator('webui-flex webui-image-stack')).toHaveCount(0);
+    await expect.poll(() => gallery.locator('webui-card').nth(1).locator('div').first().evaluate(div => div.style.backgroundImage)).toContain('/render.png');
+    await gallery.getByRole('button', { name: 'Creator windows' }).click();
+    const shown = gallery.locator('webui-flex webui-image-stack');
+    await expect(shown).toHaveCount(1);
+    await expect(shown.locator('img')).toHaveCount(2);
+    await expect(gallery.locator('webui-flex > img')).toBeHidden();
+    await expect(gallery.locator('webui-flex p')).toHaveText('Creator windows');
+    await shown.getByRole('button', { name: 'Bring to front: Toolbox' }).click();
+    await expect(shown.locator('img').nth(1)).toHaveAttribute('aria-pressed', 'true');
+    await gallery.getByRole('button', { name: 'Home page' }).click();
+    await expect(gallery.locator('webui-flex webui-image-stack')).toHaveCount(0);
+    await expect(gallery.locator('webui-flex > img')).toHaveAttribute('src', '/a.png');
+});
