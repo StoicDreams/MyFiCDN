@@ -35,6 +35,7 @@
                 case 'maxRotation':
                 case 'rotate':
                     t.render();
+                    t.fit();
                     break;
             }
         },
@@ -83,22 +84,40 @@
             }
         },
         /** Sizes every image by one scale, the largest that lets each fit the stack's room, so they keep their sizes
-            relative to one another. The room is measured by the resize observer; the sizes are written next frame. */
+            relative to one another. A tilted image's corners reach past its box, so every image gets a margin as wide
+            as the furthest reach, and the scale keeps image and margin inside the room. The room is measured by the
+            resize observer; the sizes are written next frame. */
         fit() {
             const t = this;
             const room = t._room;
             if (!room || !t._order) return;
             const loaded = t._order.filter(img => img.naturalWidth > 0 && img.naturalHeight > 0);
             if (!loaded.length) return;
+            // How far, in the images' own pixels, the furthest tilted corner reaches past its image on each side.
+            let reachX = 0;
+            let reachY = 0;
+            if (t.rotate) {
+                for (const img of loaded) {
+                    const turn = Math.abs(t.rotationOf(img)) * Math.PI / 180;
+                    const w = img.naturalWidth;
+                    const h = img.naturalHeight;
+                    reachX = Math.max(reachX, (w * Math.cos(turn) + h * Math.sin(turn) - w) / 2);
+                    reachY = Math.max(reachY, (w * Math.sin(turn) + h * Math.cos(turn) - h) / 2);
+                }
+            }
             let scale = 1;
             for (const img of loaded) {
-                scale = Math.min(scale, room.width / img.naturalWidth);
-                if (room.height) scale = Math.min(scale, room.height / img.naturalHeight);
+                scale = Math.min(scale, room.width / (img.naturalWidth + 2 * reachX));
+                if (room.height) scale = Math.min(scale, room.height / (img.naturalHeight + 2 * reachY));
             }
             scale = Math.max(0, scale);
+            const margin = `${Math.ceil(reachY * scale)}px ${Math.ceil(reachX * scale)}px`;
             cancelAnimationFrame(t._fitFrame);
             t._fitFrame = requestAnimationFrame(() => {
-                for (const img of loaded) img.style.width = `${Math.floor(img.naturalWidth * scale)}px`;
+                for (const img of loaded) {
+                    img.style.width = `${Math.floor(img.naturalWidth * scale)}px`;
+                    img.style.margin = margin;
+                }
             });
         },
         /** Places every image by its place in the stack. */

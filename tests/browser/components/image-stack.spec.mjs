@@ -48,3 +48,27 @@ test('images share one scale, so they keep their sizes relative to one another',
     await expect.poll(() => imgs.nth(0).boundingBox().then(r => Math.round(r.width))).toBe(204);
     expect(Math.round((await imgs.nth(0).boundingBox()).height)).toBe(136);
 });
+test('tilted images keep their corners inside the stack', async ({ page }) => {
+    const root = await mount(page, `<div style="width:600px"><webui-image-stack rotate offset-x="40" offset-y="30" transition="0" style="height:300px">
+<img src="${picture(300, 100, 'red')}" alt="Wide" data-rotation="8">
+<img src="${picture(600, 150, 'blue')}" alt="Wider" data-rotation="-8">
+</webui-image-stack></div>`);
+    const stackEl = root.locator('webui-image-stack');
+    const imgs = stackEl.locator('img');
+    await expect.poll(() => imgs.nth(1).evaluate(img => img.style.margin)).not.toBe('');
+    // Each image's turned corners, measured where the browser draws them.
+    const corners = () => imgs.evaluateAll(list => list.map(img => {
+        const r = img.getBoundingClientRect();
+        return { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+    }));
+    for (const front of [0, 1]) {
+        await imgs.nth(front).click({ force: true });
+        const box = await stackEl.boundingBox();
+        for (const c of await corners()) {
+            expect(c.left).toBeGreaterThanOrEqual(box.x - 0.5);
+            expect(c.top).toBeGreaterThanOrEqual(box.y - 0.5);
+            expect(c.right).toBeLessThanOrEqual(box.x + box.width + 0.5);
+            expect(c.bottom).toBeLessThanOrEqual(box.y + box.height + 0.5);
+        }
+    }
+});
